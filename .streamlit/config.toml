@@ -1,0 +1,7 @@
+[server]
+port=8502 # change port number. By default streamlit uses 8501 port
+headless=true
+[browser]
+serverAddress = "search.nprod.net/text"
+serverPort = 8502
+gatherUsageStats = false
