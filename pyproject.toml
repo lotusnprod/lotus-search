@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>"]
 readme = "README.md"
-packages = [{include = "text_search"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
