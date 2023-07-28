@@ -34,8 +34,8 @@ if id is not None and wid is not None:
         name = db["taxa_name"][t]
         name_id_list.append([name, t])
     name_id_list = sorted(name_id_list, key=lambda x: x[0])
-    for name, wid in name_id_list:
-        st.markdown(f"[{name}](/Taxon_search?id={wid})")
+    for name, wid_tax in name_id_list:
+        st.markdown(f"[{name}](/Taxon_search?id={wid_tax})")
     st.header("Wikidata")
     st.write("You can find a lot more information on the page of this compound on Wikidata.")
     st.markdown(f"[Go to the wikidata page](http://www.wikidata.org/entity/Q{wid})")
