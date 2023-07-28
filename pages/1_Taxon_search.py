@@ -70,17 +70,17 @@ else:
 matches = sorted(matches)
 for match in matches:
     for i in taxa[match]:
-
-        with st.expander(f"{match} - {len(t2c[i])} compound(s)", expanded=False):
-            st.markdown(f"[Wikidata page of {match}](https://www.wikidata.org/entity/Q{i})")
-            cs = st.columns(3)
-            for idx, j in enumerate(t2c[i]):
-                with cs[idx%3]:
-                    link_svg(f"/Molecule_taxa?id={j}&type=structure", molecule_svg(Chem.MolFromSmiles(compounds[j])))
-                    st.markdown(f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})")
-                    taxa_count = len(c2t[j])
-                    if taxa_count == 1:
-                        st.markdown(f"[Compound only found in this taxon](/Molecule_taxa?id={j}&type=structure)")
-                    else:
-                        st.markdown(f"[Found in {taxa_count} taxa](/Molecule_taxa?id={j}&type=structure)")
-                    st.divider()
+        if i in t2c:
+            with st.expander(f"{match} - {len(t2c[i])} compound(s)", expanded=False):
+                st.markdown(f"[Wikidata page of {match}](https://www.wikidata.org/entity/Q{i})")
+                cs = st.columns(3)
+                for idx, j in enumerate(t2c[i]):
+                    with cs[idx%3]:
+                        link_svg(f"/Molecule_taxa?id={j}&type=structure", molecule_svg(Chem.MolFromSmiles(compounds[j])))
+                        st.markdown(f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})")
+                        taxa_count = len(c2t[j])
+                        if taxa_count == 1:
+                            st.markdown(f"[Compound only found in this taxon](/Molecule_taxa?id={j}&type=structure)")
+                        else:
+                            st.markdown(f"[Found in {taxa_count} taxa](/Molecule_taxa?id={j}&type=structure)")
+                        st.divider()
