@@ -48,7 +48,7 @@ c1, c2, c3, c4 = st.columns(4)
 amarogentin = "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
 
 if "input_query" not in st.session_state:
-    st.session_state["input_query"] = amarogentin
+    st.session_state["input_query"] = ""
 
 if c1.button("Amarogentin"):
     st.session_state["input_query"] = amarogentin
