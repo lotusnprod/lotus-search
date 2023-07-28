@@ -16,7 +16,7 @@ SELECT DISTINCT ?taxon ?taxon_name WITH {
     INCLUDE %taxa
     ?taxon wdt:P225 ?taxon_name.
   }
-} 
+}
 """
 
 r = requests.get(url, params={'query': query},
