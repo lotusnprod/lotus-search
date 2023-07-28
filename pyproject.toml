@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "text_search"
-version = "0.1.0"
+name = "lotus_search"
+version = "0.1.1"
 description = ""
 authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>"]
 readme = "README.md"
@@ -8,9 +8,17 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
-streamlit = "^1.25.0"
+streamlit-nightly = "^1.25.1.dev20230726"
 rdkit = "^2023.3.2"
+bjonnh-streamlit-ketcher = {version = "^0.0.4", source = "test"}
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[[tool.poetry.source]]
+name = "test"
+url = "https://test.pypi.org/simple/"
+priority = "explicit"
