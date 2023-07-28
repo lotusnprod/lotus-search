@@ -39,7 +39,7 @@ if id is not None and wid is not None:
     st.header("Wikidata")
     st.write("You can find a lot more information on the page of this compound on Wikidata.")
     st.markdown(f"[Go to the wikidata page](http://www.wikidata.org/entity/Q{wid})")
-    components.iframe(f"http://www.wikidata.org/entity/Q{wid}", scrolling=True, height=500)
+    components.iframe(f"https://www.wikidata.org/entity/Q{wid}", scrolling=True, height=500)
     if id in db["c2t"]:
         taxa_count = len(db["c2t"][id])
         st.markdown(f"Found in {taxa_count} taxa")
