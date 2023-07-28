@@ -61,12 +61,12 @@ if "taxon" not in st.session_state and wid is not None:
 query = st.text_input("Enter the name or part of the name of your taxa of interest", key="taxon")
 matches = []
 query = query.lower()
-if query != "" and len(query) > 3:
+if query != "" and len(query) > 2:
     for taxon in taxa.keys():
         if query in taxon.lower():
             matches.append(taxon)
 else:
-    st.write("Please enter a query longer than 3 characters.")
+    st.write("Please enter a query longer than 2 characters.")
 matches = sorted(matches)
 for match in matches:
     for i in taxa[match]:
