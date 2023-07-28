@@ -7,10 +7,16 @@ start = time.time()
 
 url = "https://query.wikidata.org/sparql"
 query = """
-SELECT DISTINCT ?taxon ?taxon_name WHERE {
-  ?compound wdt:P703 ?taxon.         # Found in taxon
-  ?taxon wdt:P225 ?taxon_name.       # Get scientific name of the taxon
-}
+SELECT DISTINCT ?taxon ?taxon_name WITH {
+  SELECT DISTINCT ?taxon WHERE {
+    ?compound wdt:P703 ?taxon.
+  }
+} AS %taxa WHERE {
+  SELECT ?taxon ?taxon_name WHERE {
+    INCLUDE %taxa
+    ?taxon wdt:P225 ?taxon_name.
+  }
+} 
 """
 
 r = requests.get(url, params={'query': query},
