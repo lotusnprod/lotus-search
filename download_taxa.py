@@ -7,14 +7,20 @@ start = time.time()
 
 url = "https://query.wikidata.org/sparql"
 query = """
-SELECT DISTINCT ?taxon ?taxon_name WITH {
+SELECT DISTINCT ?taxon ?taxon_name ?parent_taxon ?parent_taxon_name WITH {
   SELECT DISTINCT ?taxon WHERE {
     ?compound wdt:P703 ?taxon.
   }
-} AS %taxa WHERE {
-  SELECT ?taxon ?taxon_name WHERE {
+} AS %taxa WITH {
+  SELECT ?taxon ?taxon_name ?parent_taxon WHERE {
     INCLUDE %taxa
-    ?taxon wdt:P225 ?taxon_name.
+    ?taxon wdt:P225 ?taxon_name;
+           wdt:P171* ?parent_taxon.
+  }
+} AS %taxa_2 WHERE {
+  SELECT ?taxon ?taxon_name ?parent_taxon ?parent_taxon_name WHERE {
+    INCLUDE %taxa_2
+    ?parent_taxon wdt:P225 ?parent_taxon_name;
   }
 }
 """
