@@ -21,5 +21,15 @@ st.markdown(
     The Wikidata version allows for community curation and addition
      of novel data and this search engine is updated daily with new
      data. 
+     
+     You can currently:
+     
+     [Search for a taxon](/Taxon_search)
+     
+     and
+     
+     [Search for a structure](/Structure_search)
+     
+     (or use the buttons on the left, click on the arrow on the top left of your screen if you are on a phone)
 """
 )
