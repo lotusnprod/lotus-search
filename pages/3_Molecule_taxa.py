@@ -27,7 +27,7 @@ except Exception as e:
 
 if id is not None and wid is not None:
     m = db["smileses"][id]
-    st.image(molecule_svg(db["library"].GetMol(id), width=600), use_column_width="always", width=250)
+    st.image(molecule_svg(db["library"].GetMol(id), width=250), use_column_width="always", width=250)
     st.header("Species")
     name_id_list = []
     for t in db["c2t"][wid]:
