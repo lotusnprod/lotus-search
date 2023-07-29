@@ -5,7 +5,6 @@ from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, rdSubstructLibrary
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem.MolStandardize import rdMolStandardize
-import streamlit as st
 fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 uncharger = rdMolStandardize.Uncharger()
 
@@ -39,33 +38,44 @@ def process_smiles(inp):
 
 def load_all_data():
     taxa = {}
+    taxa_childs = {}
     compounds = {}
     t2c = {}
     c2t = {}
+    tc2r = {}
 
     with open("./data/couples.csv", "r") as f:
         ccount = 0
         reader = csv.reader(f)
         next(reader)
         for x in reader:
-            c, t = x
+            c, t, r = x
             ic = int(c)
             it = int(t)
             if it not in t2c:
                 t2c[it] = set()
             if ic not in c2t:
                 c2t[ic] = set()
+            if (it, ic) not in tc2r:
+                tc2r[(it, ic)] = set()
+                ccount += 1
             t2c[it].add(ic)
             c2t[ic].add(it)
-            ccount += 1
+            tc2r[(it, ic)] = r
     with open("./data/taxa.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
         for x in reader:
-            t, i = x
-            if i not in taxa:
-                taxa[i] = set()
-            taxa[i].add(int(t))
+            taxon_id, taxon_name, parent_id, parent_name = x
+            if taxon_name not in taxa:
+                taxa[taxon_name] = set()
+            if parent_name not in taxa:
+                taxa[parent_name] = set()
+            if parent_id not in taxa_childs:
+                taxa_childs[parent_id] = set()
+            taxa[taxon_name].add(int(taxon_id))
+            taxa[parent_name].add(int(parent_id))
+            taxa_childs[parent_id].add(int(taxon_id))
 
     with open("./data/smiles.csv", "r") as f:
         reader = csv.reader(f)
@@ -93,12 +103,7 @@ def load_all_data():
     data["compounds"] = compounds
     data["t2c"] = t2c
     data["c2t"] = c2t
+    data["tc2r"] = tc2r
+    data["taxa_childs"] = taxa_childs
     data["ccount"] = ccount
     return data
-
-
-def molecule_svg(mol, width):
-    d2d = rdMolDraw2D.MolDraw2DSVG(width, width)
-    d2d.DrawMolecule(mol)
-    d2d.FinishDrawing()
-    return d2d.GetDrawingText()

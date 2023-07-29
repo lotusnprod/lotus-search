@@ -6,6 +6,7 @@ from bjonnh_streamlit_ketcher import st_ketcher
 from rdkit import Chem, DataStructs
 from rdkit.Chem.Draw import rdMolDraw2D
 
+from chemistry_helpers import molecule_png
 from processing_common import fingerprint, load_all_data, standardize
 
 start = time.time()
@@ -21,11 +22,13 @@ def load_data():
 db = load_data()
 
 
+@st.cache_data(ttl=3600)
 def search(fp: bytes) -> list[tuple[int, float]]:
     results = DataStructs.BulkTanimotoSimilarity(fp, db["sim_fps"])
     return [(j, score) for j, score in enumerate(results)]
 
 
+@st.cache_data(ttl=3600)
 def ss_search(fp, mol) -> list[tuple[int, float]]:
     out = []
     for j in db["library"].GetMatches(mol, numThreads=-1, maxResults=-1):
@@ -94,7 +97,7 @@ if query:
             st.warning(
                 f"There are {len(scores_sorted)} results, but we only show the top 100. Please refine your search.")
 
-        c1,c2 = st.columns(2)
+        c1, c2 = st.columns(2)
 
         scores_dl = scores
         if count >= 100:
@@ -108,7 +111,7 @@ if query:
             with cs[idx % 4]:
                 st.divider()
                 m = db["smileses"][result[0]]
-                st.image(Chem.Draw.MolToImage(db["library"].GetMol(result[0]), size=(600,600)), use_column_width="always", width=250)
+                st.image(molecule_png(m), use_column_width="always", width=250)
                 wid = db["links"][result[0]]
                 cc1, cc2 = st.columns(2)
                 cc1.markdown(f"[Wikidata page](http://www.wikidata.org/entity/Q{wid})")
@@ -123,4 +126,4 @@ if query:
 
     except Exception as e:
         raise e
-        st.error(f"Your molecule is likely invalid. {e}")
+        st.error(f"Your molecule is likely invalid.")

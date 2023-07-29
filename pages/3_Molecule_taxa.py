@@ -1,6 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from processing_common import load_all_data, molecule_svg
+
+from chemistry_helpers import molecule_svg
+from processing_common import load_all_data
 
 params = st.experimental_get_query_params()
 
@@ -27,7 +29,7 @@ except Exception as e:
 
 if id is not None and wid is not None:
     m = db["smileses"][id]
-    st.image(molecule_svg(db["library"].GetMol(id), width=250), use_column_width="always", width=250)
+    st.image(molecule_svg(m, width=250), use_column_width="always", width=250)
     st.header("Species")
     name_id_list = []
     for t in db["c2t"][wid]:
