@@ -2,22 +2,14 @@
 import base64
 
 import streamlit as st
-from rdkit import Chem
-from rdkit.Chem.Draw import rdMolDraw2D
 
-from chemistry_helpers import molecule_svg
 from processing_common import load_all_data
+from ui_common import on_all_pages
 
 st.set_page_config(page_title="LOTUS taxon search", page_icon=":lotus:", layout="wide")
+on_all_pages()
 
 params = st.experimental_get_query_params()
-
-
-def link_svg(link, svg):
-    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = r'<a href="%s"><img src="data:image/svg+xml;base64,%s"/></a>' % (link, b64)
-    st.write(html, unsafe_allow_html=True)
-
 
 @st.cache_resource(ttl=3600)
 def load_data():
@@ -55,19 +47,16 @@ if query != "" and len(query) > 2:
 else:
     st.write("Please enter a query longer than 2 characters.")
 matches = sorted(matches)
+
 for match in matches:
     for i in taxa[match]:
-        if i in t2c:
-            with st.expander(f"{match} - {len(t2c[i])} compound(s)", expanded=False):
-                st.markdown(f"[Wikidata page of {match}](https://www.wikidata.org/entity/Q{i})")
-                cs = st.columns(3)
-                for idx, j in enumerate(t2c[i]):
-                    with cs[idx % 3]:
-                        link_svg(f"/Molecule_taxa?id={j}&type=structure", molecule_svg(compounds[j]))
-                        st.markdown(f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})")
-                        taxa_count = len(c2t[j])
-                        if taxa_count == 1:
-                            st.markdown(f"[Compound only found in this taxon](/Molecule_taxa?id={j}&type=structure)")
-                        else:
-                            st.markdown(f"[Found in {taxa_count} taxa](/Molecule_taxa?id={j}&type=structure)")
-                        st.divider()
+        if i in db["t2c"]:
+            matching_compounds = set(db["t2c"][i])
+        else:
+            matching_compounds = set()
+        if i in db["taxa_childs"]:
+            for parent in db["taxa_childs"][i]:
+                if parent in db["t2c"]:
+                    for compound in db["t2c"][parent]:
+                        matching_compounds.add(compound)
+        st.markdown(f"[{match} - {len(matching_compounds)} compound(s)](/taxon?wid={i}&type=taxon)")

@@ -1,7 +1,7 @@
 import multiprocessing
 from pathlib import Path
 import time
-from update import download_couples_referenced, download_smiles, download_taxa, generate_structure_database
+from update import download_couples_referenced, download_smiles, download_taxa, generate_database
 
 start = time.time()
 DATA_PATH = Path("data")
@@ -10,7 +10,7 @@ tasks = [
     ["couples_referenced", download_couples_referenced.run],
     ["smiles", download_smiles.run],
     ["taxa", download_taxa.run],
-    ["generate_structure_database", generate_structure_database.run]
+    ["generate_database", generate_database.run]
 ]
 
 

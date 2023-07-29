@@ -3,15 +3,19 @@ import streamlit.components.v1 as components
 
 from chemistry_helpers import molecule_svg
 from processing_common import load_all_data
+from ui_common import on_all_pages
 
 params = st.experimental_get_query_params()
 
 st.set_page_config(page_title="LOTUS Structure Info", page_icon=":lotus:", layout="wide",
                    initial_sidebar_state="auto", menu_items=None)
+on_all_pages()
+
 
 @st.cache_resource(ttl=3600)
 def load_data():
     return load_all_data()
+
 
 db = load_data()
 

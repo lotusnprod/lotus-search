@@ -4,14 +4,15 @@ import time
 import streamlit as st
 from bjonnh_streamlit_ketcher import st_ketcher
 from rdkit import Chem, DataStructs
-from rdkit.Chem.Draw import rdMolDraw2D
 
 from chemistry_helpers import molecule_png
 from processing_common import fingerprint, load_all_data, standardize
+from ui_common import on_all_pages
 
 start = time.time()
 st.set_page_config(page_title="LOTUS Structure Search", page_icon=":lotus:", layout="wide",
                    initial_sidebar_state="auto", menu_items=None)
+on_all_pages()
 
 
 @st.cache_resource(ttl=3600)
@@ -35,6 +36,7 @@ def ss_search(fp, mol) -> list[tuple[int, float]]:
         out.append((j, DataStructs.TanimotoSimilarity(fp, db["sim_fps"][j])))
     return out
 
+
 def tsv(scores):
     out = "Wikidata link\tSimilarity\tSmiles\n"
     for score in scores:
@@ -42,6 +44,7 @@ def tsv(scores):
         smiles = db["smileses"][score[0]]
         out += f"http://www.wikidata.org/entity/Q{wid}\t{score[1]}\t{smiles}\n"
     return out
+
 
 st.title("LOTUS searcher")
 
@@ -117,7 +120,7 @@ if query:
                 cc1.markdown(f"[Wikidata page](http://www.wikidata.org/entity/Q{wid})")
                 if int(wid) in db["c2t"]:
                     taxa_count = len(db["c2t"][int(wid)])
-                    cc1.markdown(f"[Found in {taxa_count} taxa](/Molecule_taxa?id={wid}&type=structure)")
+                    cc1.markdown(f"[Found in {taxa_count} taxa](/molecule?id={wid}&type=structure)")
                 if cc2.button("Load in editor", key=result[0]):
                     st.session_state["input_query"] = m
                     st.experimental_rerun()
@@ -125,5 +128,4 @@ if query:
                 st.progress(result[1], text="Tanimoto similarity: {:.2f}".format(result[1]))
 
     except Exception as e:
-        raise e
-        st.error(f"Your molecule is likely invalid.")
+        st.error("Your molecule is likely invalid.")
