@@ -2,8 +2,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from chemistry_helpers import molecule_svg
+from model import DataModel
 from processing_common import load_all_data
-from ui_common import on_all_pages
+from ui_common import get_url_parameter, on_all_pages
 
 params = st.experimental_get_query_params()
 
@@ -13,39 +14,31 @@ on_all_pages()
 
 
 @st.cache_resource(ttl=3600)
-def load_data():
-    return load_all_data()
+def data_model():
+    return DataModel(load_all_data())
 
 
-db = load_data()
+dm = data_model()
 
-id = None
-wid = None
-try:
-    if "id" in params and "type" in params:
-        if params["type"][0] == "structure":
-            if len(params["id"]) > 0:
-                wid = int(params["id"][0])
-                id = db["links"].index(str(wid))
-except Exception as e:
-    id = None
-    wid = None
+wid = get_url_parameter("id", "structure")
 
-if id is not None and wid is not None:
-    m = db["smileses"][id]
+if wid is not None:
+    st.header(f"Q{wid}")
+
+    m = dm.get_compound_smiles_from_wid(wid)
     st.image(molecule_svg(m, width=250), use_column_width="always", width=250)
-    st.header("Species")
+    c1, c2 = st.columns(2)
+    c1.markdown(f"[Load in structure editor](/Structure_search?id={wid}&type=structure)")
+    c2.markdown(f"[Go to the Wikidata page](http://www.wikidata.org/entity/Q{wid})")
+    st.header("Found in species")
     name_id_list = []
-    for t in db["c2t"][wid]:
-        name = db["taxa_name"][t]
+    for t in dm.get_taxa_containing_compound(wid):
+        name = dm.get_taxon_name_from_wid(t)
         name_id_list.append([name, t])
     name_id_list = sorted(name_id_list, key=lambda x: x[0])
     for name, wid_tax in name_id_list:
-        st.markdown(f"[{name}](/Taxon_search?id={wid_tax})")
+        st.markdown(f"[{name}](/taxon?wid={wid_tax}&type=taxon)")
     st.header("Wikidata")
     st.write("You can find a lot more information on the page of this compound on Wikidata.")
-    st.markdown(f"[Go to the wikidata page](http://www.wikidata.org/entity/Q{wid})")
+    st.markdown(f"[Go to the Wikidata page](http://www.wikidata.org/entity/Q{wid})")
     components.iframe(f"https://www.wikidata.org/entity/Q{wid}", scrolling=True, height=500)
-    if id in db["c2t"]:
-        taxa_count = len(db["c2t"][id])
-        st.markdown(f"Found in {taxa_count} taxa")

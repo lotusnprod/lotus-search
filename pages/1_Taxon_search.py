@@ -3,60 +3,42 @@ import base64
 
 import streamlit as st
 
+from model import DataModel
 from processing_common import load_all_data
-from ui_common import on_all_pages
+from ui_common import get_url_parameter, on_all_pages
 
 st.set_page_config(page_title="LOTUS taxon search", page_icon=":lotus:", layout="wide")
 on_all_pages()
 
-params = st.experimental_get_query_params()
-
 @st.cache_resource(ttl=3600)
-def load_data():
-    return load_all_data()
+def data_model():
+    return DataModel(load_all_data())
 
 
-db = load_data()
+dm = data_model()
 
-wid = None
-if "id" in params:
-    if len(params["id"]) > 0:
-        try:
-            wid = int(params["id"][0])
-        except Exception as e:
-            wid = None
+wid = get_url_parameter("id", "taxon")
 
-taxa = db["taxa"]
-compounds = db["compounds"]
-t2c = db["t2c"]
-c2t = db["c2t"]
-ccount = db["ccount"]
-st.write("We have **{}** taxa 🍀 and **{}** compounds 🫧 and **{}** couples 🏩.".format(len(taxa), len(compounds), ccount))
+st.write("We have **{}** taxa 🍀 and **{}** compounds 🫧 and **{}** couples 🏩.".format(dm.num_taxa(),
+                                                                                     dm.num_compounds(),
+                                                                                     dm.num_couples()))
 
 if "taxon" not in st.session_state and wid is not None:
-    if wid in db["taxa_name"]:
-        st.session_state["taxon"] = db["taxa_name"][wid]
+    name = dm.get_taxon_name_from_wid(wid)
+    if name is not None:
+        st.session_state["taxon"] = name
 
 query = st.text_input("Enter the name or part of the name of your taxa of interest", key="taxon")
 matches = []
-query = query.lower()
+
 if query != "" and len(query) > 2:
-    for taxon in taxa.keys():
-        if query in taxon.lower():
-            matches.append(taxon)
+    matches.extend(dm.get_taxa_with_name_containing(query))
 else:
     st.write("Please enter a query longer than 2 characters.")
 matches = sorted(matches)
 
 for match in matches:
-    for i in taxa[match]:
-        if i in db["t2c"]:
-            matching_compounds = set(db["t2c"][i])
-        else:
-            matching_compounds = set()
-        if i in db["taxa_childs"]:
-            for parent in db["taxa_childs"][i]:
-                if parent in db["t2c"]:
-                    for compound in db["t2c"][parent]:
-                        matching_compounds.add(compound)
-        st.markdown(f"[{match} - {len(matching_compounds)} compound(s)](/taxon?wid={i}&type=taxon)")
+    name = dm.get_taxon_name_from_wid(match)
+    matching_compounds = dm.get_compounds_of_taxon(match)
+
+    st.markdown(f"[{name} - {len(matching_compounds)} compound(s)](/taxon?wid={match}&type=taxon)")

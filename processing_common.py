@@ -20,31 +20,16 @@ def fingerprint(mol):
 
 # Memory is cheap!
 def load_all_data():
-    compounds = {}
-
-    with open("./data/smiles.csv", "r") as f:
-        reader = csv.reader(f)
-        next(reader)
-        for x in reader:
-            c, smi, cano = x
-            if smi == "":
-                smi = cano
-            compounds[int(c)] = smi
-
     mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
     fps = rdSubstructLibrary.PatternHolder()
 
     with open("./data/database.pkl", "rb") as f:
         data = pickle.load(f)
+
     for idx in range(len(data["sub_fps"])):
         mols.AddSmiles(data["smileses_clean"][idx])
         fps.AddFingerprint(data["sub_fps"][idx])
 
     data["library"] = rdSubstructLibrary.SubstructLibrary(mols, fps)
 
-    data["taxa_name"] = {}
-    for taxa_name in data["taxa"].keys():
-        for i in data["taxa"][taxa_name]:
-            data["taxa_name"][i] = taxa_name
-    data["compounds"] = compounds
     return data

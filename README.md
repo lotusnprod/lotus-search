@@ -1,6 +1,6 @@
 This application is available on [Nprod.net](https://search.nprod.net/)
 
-The code of this is at: https://github.com/lotusnprod/lotus-text-search
+The code of this is at: https://github.com/lotusnprod/lotus-search
 
 The dataset is from the [LOTUS](https://lotus.nprod.net/) database and [Wikidata](https://www.wikidata.org).
 
@@ -11,10 +11,9 @@ And [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?
 
 [Rdkit](https://www.rdkit.org) is used for the molecule massaging.
 
-To run it yourself, the source is on [GitHub](https://github.com/lotusnprod/lotus-mol-search):
+To run it yourself, the source is on [GitHub](https://github.com/lotusnprod/lotus-search):
 - Install and run poetry update
-- Run each of the download_* files (takes <20s each)
-- Run `generate_database.py`    (a few minutes)
+- Run `update.py` (takes a few minutes)
 - Run `streamlit run Home.py`   (almost instant)
 
 ## **Me**
@@ -35,4 +34,4 @@ it comes with no warranty or support whatsoever.
 
 ## **License and legalese**
 
-https://raw.githubusercontent.com/lotusnprod/lotus-text-search/main/LICENSE
+https://raw.githubusercontent.com/lotusnprod/lotus-search/main/LICENSE

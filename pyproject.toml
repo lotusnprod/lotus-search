@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
-streamlit-nightly = "^1.25.1.dev20230726"
+streamlit = "^1.25.0"
 rdkit = "^2023.3.2"
 bjonnh-streamlit-ketcher = {version = "^0.0.4", source = "test"}
 
