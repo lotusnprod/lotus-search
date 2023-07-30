@@ -41,8 +41,16 @@ SELECT ?rank ?rankLabel WHERE {
 """
 
 
-def run(root: Path) -> None:
+def run(root: Path, retry: int = 5) -> None:
     t = remove_wd_entity_prefix(wd_sparql_to_csv(query_taxa))
+    if "java.util.concurrent.TimeoutException" in t:
+        if retry > 0:
+            print("  Failed to download taxonomy step 1, retrying...")
+            run(root, retry-1)
+            return
+        else:
+            raise TimeoutError("Failed to download taxonomy step 1 tum tum tum....")
+
 
     list_of_couples = [x.strip().split(",") for x in t.split("\n")[1:] if x != ""]
     taxon_direct_parents = {}
@@ -77,7 +85,13 @@ def run(root: Path) -> None:
     print(f" Found {len(taxon_direct_parents)} taxa")
 
     t = remove_wd_entity_prefix(wd_sparql_to_csv(query_final))
-    parents = {}
+    if "java.util.concurrent.TimeoutException" in t:
+        if retry > 0:
+            print("  Failed to download taxonomy step 2, retrying...")
+            run(root, retry-1)
+            return
+        else:
+            raise TimeoutError("Failed to download taxonomy step 2 tum tum tum....")
 
     reader = csv.reader(StringIO(t))
     reader.__next__()

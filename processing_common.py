@@ -1,9 +1,9 @@
-import csv
+import io
 import pickle
 
-from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, rdSubstructLibrary
 from rdkit.Chem.MolStandardize import rdMolStandardize
+
 fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 uncharger = rdMolStandardize.Uncharger()
 
@@ -18,18 +18,12 @@ def standardize(mol):
 def fingerprint(mol):
     return fpgen.GetFingerprint(mol)
 
+
 # Memory is cheap!
 def load_all_data():
-    mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
-    fps = rdSubstructLibrary.PatternHolder()
-
     with open("./data/database.pkl", "rb") as f:
         data = pickle.load(f)
-
-    for idx in range(len(data["sub_fps"])):
-        mols.AddSmiles(data["smileses_clean"][idx])
-        fps.AddFingerprint(data["sub_fps"][idx])
-
-    data["library"] = rdSubstructLibrary.SubstructLibrary(mols, fps)
-
+    new_lib = rdSubstructLibrary.SubstructLibrary()
+    new_lib.InitFromStream(io.BytesIO(data["compound_library"]))
+    data["compound_library"] = new_lib
     return data

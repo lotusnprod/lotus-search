@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import time
+import traceback
 
 import streamlit as st
 from bjonnh_streamlit_ketcher import st_ketcher
@@ -20,8 +21,11 @@ on_all_pages()
 def data_model():
     return DataModel(load_all_data())
 
+if "ignore_id" in st.session_state and st.session_state["ignore_id"]:
+    wid = None
+else:
+    wid = get_url_parameter("id", "structure")
 
-wid = get_url_parameter("id", "structure")
 
 dm = data_model()
 
@@ -32,8 +36,8 @@ def search(fp: bytes) -> list[tuple[int, float]]:
 
 
 @st.cache_data(ttl=3600)
-def ss_search(fp: bytes, mol) -> list[tuple[int, float]]:
-    return dm.compound_search_substructure(fp, mol)
+def ss_search(fp: bytes, mol, chirality: bool) -> list[tuple[int, float]]:
+    return dm.compound_search_substructure(fp, mol, chirality)
 
 
 def tsv(scores):
@@ -73,7 +77,11 @@ if c4.button("Quinine"):
     st.experimental_rerun()
 
 query = st_ketcher(st.session_state["input_query"])
-ss_mode = st.checkbox("Sub-structure search")
+c1, c2 = st.columns(2)
+ss_mode = c1.checkbox("Sub-structure search")
+if ss_mode:
+    chirality = c2.checkbox("Respect chirality (careful in some cases it fails)")
+
 if query:
     try:
         # Sometimes ketcher gives really invalid smiles like with theobromine
@@ -82,7 +90,7 @@ if query:
         fp = fingerprint(mol)
 
         if ss_mode:
-            scores = ss_search(fp, mol)
+            scores = ss_search(fp, mol, chirality)
         else:
             scores = search(fp)
 
@@ -108,17 +116,17 @@ if query:
             if c2.checkbox("I want to download them all and I understand it can be really slow"):
                 scores_dl = scores_sorted
 
-        c1.download_button(f"Download {len(scores_dl)} compounds as TSV", tsv(scores_dl), "results.tsv", "text/tab-separated-values")
+        c1.download_button(f"Download {len(scores_dl)} compounds as TSV", tsv(scores_dl), "results.tsv",
+                           "text/tab-separated-values")
 
         cs = st.columns(4)
         for idx, result in enumerate(scores):
             with cs[idx % 4]:
-                iid, score = result
-                iid = int(iid)
+                wid, score = result
+                wid = int(wid)
                 st.divider()
-                m = dm.get_compound_smiles_from_iid(iid)
+                m = dm.get_compound_smiles_from_wid(wid)  ## TODO Switch to mol
                 st.image(molecule_png(m), use_column_width="always", width=250)
-                wid = dm.get_compound_wid_from_id(iid)
 
                 cc1, cc2 = st.columns(2)
                 cc1.markdown(f"[Wikidata page](http://www.wikidata.org/entity/Q{wid})")
@@ -127,12 +135,14 @@ if query:
                 if taxa_count > 0:
                     cc1.markdown(f"[Found in {taxa_count} taxa](/molecule?id={wid}&type=structure)")
 
-                if cc2.button("Load in editor", key=iid):
+                if cc2.button("Load in editor", key=f"load_{wid}_{idx}"):
                     st.session_state["input_query"] = m
+                    st.session_state["ignore_id"] = True
                     st.experimental_rerun()
 
                 st.progress(score, text=f"Tanimoto similarity: {score:.2f}")
 
     except Exception as e:
         print(f"Got an exception with entry {query} and exception {e}")
+        print(traceback.format_exc())
         st.error("Your molecule is likely invalid.")

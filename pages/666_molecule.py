@@ -25,7 +25,7 @@ wid = get_url_parameter("id", "structure")
 if wid is not None:
     st.header(f"Q{wid}")
 
-    m = dm.get_compound_smiles_from_wid(wid)
+    m = dm.get_compound_smiles_from_wid(wid)  ## TODO Switch to mol
     st.image(molecule_svg(m, width=250), use_column_width="always", width=250)
     c1, c2 = st.columns(2)
     c1.markdown(f"[Load in structure editor](/Structure_search?id={wid}&type=structure)")

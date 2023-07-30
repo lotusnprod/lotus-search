@@ -12,7 +12,7 @@ class DataModel:
         return len(self.db["taxonomy_names"])
 
     def num_compounds(self):
-        return len(self.db["smileses"])
+        return len(self.db["compound_smiles"])
 
     def num_couples(self):
         return len(self.db["c2t"])
@@ -44,32 +44,38 @@ class DataModel:
 
     def get_compound_smiles_from_iid(self, iid: int) -> str | None:
         try:
-            return self.db["smileses"][iid]
-        except:
-            print("Impossible to find a compound with wid={wid} cid={cid}")
+            return self.db["compound_smiles"][iid]
+        except IndexError:
+            print("Impossible to find a compound with iid={iid}")
             return None
 
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
-        if wid not in self.db["compound_wid_to_id"]:
+        if wid not in self.db["compound_wid"]:
             return None
-        cid = self.db["compound_wid_to_id"][wid]
+        cid = self.db["compound_wid"].index(wid)
+
         return self.get_compound_smiles_from_iid(cid)
 
     def compound_search(self, fp: bytes) -> list[tuple[int, float]]:
-        results = DataStructs.BulkTanimotoSimilarity(fp, self.db["sim_fps"])
-        return [(j, score) for j, score in enumerate(results)]
+        scores = DataStructs.BulkTanimotoSimilarity(fp, self.db["compound_sim_fps"])
+        return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
 
-    def compound_search_substructure(self, fp: bytes, mol: Any) -> list[tuple[int, float]]:
+    def compound_search_substructure(self, fp: bytes, mol: Any, chirality: bool) -> list[tuple[int, float]]:
         out = []
-        for j in self.db["library"].GetMatches(mol, numThreads=-1, maxResults=-1):
-            out.append((j, DataStructs.TanimotoSimilarity(fp, self.db["sim_fps"][j])))
+        iids = self.db["compound_library"].GetMatches(mol, numThreads=-1, maxResults=-1, useQueryQueryMatches=True,
+                                                            useChirality=chirality)
+
+        new_keys = [self.db["compound_wid"][iid] for iid in iids]
+        for iid, wid in zip(iids, new_keys):
+            out.append((wid, DataStructs.TanimotoSimilarity(fp, self.db["compound_sim_fps"][iid])))
         return out
 
     def compound_get_tsv_from_scores(self, scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
+        iids = {score[0]: self.db["compound_wid"].index(score[0]) for score in scores}
         for score in scores:
-            wid = self.db["compound_id_to_wid"][score[0]]
-            smiles = self.db["smileses"][score[0]]
+            wid = score[0]
+            smiles = self.db["compound_smiles"][iids[score[0]]]
             out += f"http://www.wikidata.org/entity/Q{wid}\t{score[1]}\t{smiles}\n"
         return out
 

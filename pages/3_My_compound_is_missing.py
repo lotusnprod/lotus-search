@@ -125,7 +125,6 @@ else:
         if uploaded_file is not None:
 
             if st.button("Send"):
-                # To convert to a string based IO:
                 stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
                 basename = f"contributions/{time.time()}_{uuid.uuid4()}"
                 with open(f"{basename}.xsv", "w") as f:

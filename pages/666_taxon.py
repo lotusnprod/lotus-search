@@ -82,7 +82,7 @@ if wid is not None:
     cs = st.columns(3)
     for idx, j in enumerate(displayed):
         with cs[idx % 3]:
-            link_svg(f"/molecule?id={j}&type=structure", molecule_svg(dm.get_compound_smiles_from_wid(j)))
+            link_svg(f"/molecule?id={j}&type=structure", molecule_svg(dm.get_compound_smiles_from_wid(j)))  ## TODO switch to mol
             st.markdown(f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})")
             st.markdown(f"[Load in structure editor](/Structure_search?id={j}&type=structure)")
             taxa_count = dm.get_number_of_taxa_containing_compound(j)

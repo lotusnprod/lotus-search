@@ -9,14 +9,13 @@
 
 | key                            | type                            | content                                                           |
 |--------------------------------|---------------------------------|-------------------------------------------------------------------|
-| smileses                       | list[str]                       | Array of smiles strings                                           |
-| sim_fps                        | list[bytes]                     | Similarity fingerprints                                           |
-| sub_fps                        | list[bytes]                     | Substructure fingerprints                                         |
+| compound_smiles                | list[str]                       | Array of smiles strings                                           |
+| compound_wid                   | list[int]                       | Array of cids                                                     |
+| compound_sim_fps               | list[bytes]                     | Similarity fingerprints                                           |
+| compound_library               | bytes                           | The RDKit library                                                 |
 | t2c                            | dict[tid, set[cid]]             | All compounds from taxon tid                                      |
 | c2t                            | dict[cid, set[tid]]             | All taxa containg compound cid                                    |
 | tc2r                           | dict[tuple[tid, cid], set[rid]] | References of couple tid/cid                                      |
-| compound_wid_to_id             | dict[cid, iid]                  | Translation of wids into iids                                     |
-| compound_id_to_wid             | dict[iid, cid]                  | Translation of iids into cids                                     |
 | taxonomy_direct_parents        | dict[tid, set[tid]]             | Direct taxonomic parents                                          |
 | taxonomy_names                 | dict[tid, str]                  | Name of taxon tid                                                 |
 | taxonomy_ranks                 | dict[tid, rank_id]              | Rank of taxon tid                                                 |

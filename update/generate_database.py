@@ -6,6 +6,7 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from rdkit import Chem
+from rdkit.Chem import rdSubstructLibrary
 
 from processing_common import fingerprint, standardize
 
@@ -42,27 +43,26 @@ def run(root: Path) -> None:
 
     max_workers = multiprocessing.cpu_count()
 
+    mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
+    fps = rdSubstructLibrary.PatternHolder()
+    props = rdSubstructLibrary.KeyFromPropHolder()
+
+    library = rdSubstructLibrary.SubstructLibrary(mols, fps, props)
+
     p_smileses = []
-    p_smileses_clean = []
     p_sim_fps = []
-    p_sub_fps = []
     p_links = []
-    compound_wid_to_id = {}
-    compound_id_to_wid = {}
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         results = executor.map(process_smiles, enumerate(smileses), chunksize=1000)
         for result in results:
             if result is not None:
                 mid, smiles, smiles_clean, sim_fp, sub_fp = result
+                mols.AddSmiles(smiles_clean)
+                fps.AddFingerprint(sub_fp)
                 p_smileses.append(smiles)
-                p_smileses_clean.append(smiles_clean)
                 p_sim_fps.append(sim_fp)
-                p_sub_fps.append(sub_fp)
                 p_links.append(links[mid])
-    for iid, wid in enumerate(p_links):
-        compound_wid_to_id[wid] = iid
-        compound_id_to_wid[iid] = wid
 
     t2c = {}
     c2t = {}
@@ -84,17 +84,15 @@ def run(root: Path) -> None:
             t2c[it].add(ic)
             c2t[ic].add(it)
             tc2r[(it, ic)] = r
-
+    print("Finished generating")
     database = {
-        "smileses": p_smileses,
-        "smileses_clean": p_smileses_clean,
-        "sim_fps": p_sim_fps,
-        "sub_fps": p_sub_fps,
+        "compound_smiles": p_smileses,
+        "compound_wid": p_links,
+        "compound_sim_fps": p_sim_fps,
+        "compound_library": library.Serialize(),
         "t2c": t2c,
         "c2t": c2t,
-        "tc2r": tc2r,
-        "compound_wid_to_id": compound_wid_to_id,
-        "compound_id_to_wid": compound_id_to_wid,
+        "tc2r": tc2r
     }
 
     with open(root / "database_taxo.pkl", "rb") as f:
