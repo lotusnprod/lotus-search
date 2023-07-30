@@ -33,7 +33,9 @@ on_all_pages()
 
 
 def tsv(compounds: list[int]) -> str:
-    return "smiles\n"+"\n".join([dm.get_compound_smiles_from_wid(j) or "" for j in compounds])
+    l = dm.get_compound_smiles_from_list_of_wid(compounds)
+    print("Got the list")
+    return "smiles\n"+"\n".join(l)
 
 
 if wid is not None:

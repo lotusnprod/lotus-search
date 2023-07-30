@@ -26,4 +26,6 @@ def load_all_data():
     new_lib = rdSubstructLibrary.SubstructLibrary()
     new_lib.InitFromStream(io.BytesIO(data["compound_library"]))
     data["compound_library"] = new_lib
+
+    data["compound_id"] = {i[1]: i[0] for i in enumerate(data["compound_wid"])}
     return data

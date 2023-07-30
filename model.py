@@ -36,25 +36,19 @@ class DataModel:
         return self.db["taxonomy_ranks_names"][wid]
 
     ### Compoundonomy
-    def get_compound_wid_from_id(self, iid: int) -> int | None:
-        try:
-            return self.db["compound_id_to_wid"][iid]
-        except ValueError:
-            return None
-
-    def get_compound_smiles_from_iid(self, iid: int) -> str | None:
-        try:
-            return self.db["compound_smiles"][iid]
-        except IndexError:
-            print("Impossible to find a compound with iid={iid}")
-            return None
-
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
-        if wid not in self.db["compound_wid"]:
-            return None
-        cid = self.db["compound_wid"].index(wid)
 
-        return self.get_compound_smiles_from_iid(cid)
+        try:
+            cid = self.db["compound_wid"].index(wid)
+            return self.db["compound_smiles"][cid]
+        except (IndexError, ValueError):
+            print(f"Impossible to find a compound with wid={wid}")
+            return None
+
+    def get_compound_smiles_from_list_of_wid(self, wid: list[int]) -> list[str]:
+        ids = [self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]]
+        llen = self.db["compound_smiles"]
+        return [self.db["compound_smiles"][i] for i in ids if i >= 0 and i < len(llen)]
 
     def compound_search(self, fp: bytes) -> list[tuple[int, float]]:
         scores = DataStructs.BulkTanimotoSimilarity(fp, self.db["compound_sim_fps"])
@@ -63,7 +57,7 @@ class DataModel:
     def compound_search_substructure(self, fp: bytes, mol: Any, chirality: bool) -> list[tuple[int, float]]:
         out = []
         iids = self.db["compound_library"].GetMatches(mol, numThreads=-1, maxResults=-1, useQueryQueryMatches=True,
-                                                            useChirality=chirality)
+                                                      useChirality=chirality)
 
         new_keys = [self.db["compound_wid"][iid] for iid in iids]
         for iid, wid in zip(iids, new_keys):
