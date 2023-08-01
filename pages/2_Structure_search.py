@@ -40,7 +40,8 @@ def tsv(scores):
 
 st.title("LOTUS structure search")
 
-st.write("Choose an example, or draw a molecule below")
+st.write("Choose an example, or draw a molecule below.")
+st.write("You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` for caffeine).")
 c1, c2, c3, c4 = st.columns(4)
 
 amarogentin = "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
