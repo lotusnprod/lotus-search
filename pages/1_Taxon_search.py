@@ -3,17 +3,13 @@ import base64
 
 import streamlit as st
 
+from config import TTL_DATA_CACHE
 from model import DataModel
 from processing_common import load_all_data
-from ui_common import get_url_parameter, on_all_pages
+from ui_common import data_model, get_url_parameter, on_all_pages
 
 st.set_page_config(page_title="LOTUS taxon search", page_icon=":lotus:", layout="wide")
 on_all_pages()
-
-@st.cache_resource(ttl=3600)
-def data_model():
-    return DataModel(load_all_data())
-
 
 dm = data_model()
 

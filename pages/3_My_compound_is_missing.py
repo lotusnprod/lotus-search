@@ -10,20 +10,13 @@ import streamlit as st
 from bjonnh_streamlit_ketcher import st_ketcher
 
 from chemistry_helpers import molecule_svg
-from model import DataModel
-from processing_common import load_all_data
-from ui_common import on_all_pages
+from ui_common import data_model, on_all_pages
 
 st.set_page_config(page_title="LOTUS Contribution", page_icon=":lotus:", layout="wide",
                    initial_sidebar_state="auto", menu_items=None)
 on_all_pages()
 
 CONTRIBUTIONS_PATH = Path("./contributions/")
-
-
-@st.cache_resource(ttl=3600)
-def data_model():
-    return DataModel(load_all_data())
 
 
 dm = data_model()

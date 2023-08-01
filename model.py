@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from typing import Any
 
-from rdkit import Chem, DataStructs
+from rdkit import DataStructs
 
 
 class DataModel:

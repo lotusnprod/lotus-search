@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from chemistry_helpers import molecule_svg
+from config import TTL_DATA_CACHE
 from model import DataModel
 from processing_common import load_all_data
 from ui_common import get_url_parameter, on_all_pages
@@ -13,7 +14,7 @@ st.set_page_config(page_title="LOTUS Structure Info", page_icon=":lotus:", layou
 on_all_pages()
 
 
-@st.cache_resource(ttl=3600)
+@st.cache_resource(ttl=TTL_DATA_CACHE)
 def data_model():
     return DataModel(load_all_data())
 

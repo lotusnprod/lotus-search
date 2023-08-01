@@ -3,6 +3,14 @@ import base64
 import streamlit as st
 from streamlit.source_util import get_pages
 
+from config import TTL_DATA_CACHE
+from model import DataModel
+from processing_common import load_all_data
+
+
+@st.cache_resource(ttl=TTL_DATA_CACHE, max_entries=1)
+def data_model():
+    return DataModel(load_all_data())
 
 def hide_666_pages():
     main_script_path_str = "."

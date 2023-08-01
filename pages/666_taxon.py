@@ -1,18 +1,9 @@
 import streamlit as st
 
 from chemistry_helpers import molecule_svg
-from model import DataModel
-from processing_common import load_all_data
-from ui_common import link_svg, on_all_pages
+from ui_common import data_model, link_svg, on_all_pages
 from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
 params = st.experimental_get_query_params()
-
-
-
-@st.cache_resource(ttl=3600)
-def data_model():
-    return DataModel(load_all_data())
-
 
 dm = data_model()
 

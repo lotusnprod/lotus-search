@@ -7,9 +7,8 @@ from bjonnh_streamlit_ketcher import st_ketcher
 from rdkit import Chem
 
 from chemistry_helpers import molecule_png
-from model import DataModel
-from processing_common import fingerprint, load_all_data, standardize
-from ui_common import get_url_parameter, on_all_pages
+from processing_common import fingerprint, standardize
+from ui_common import data_model, get_url_parameter, on_all_pages
 
 start = time.time()
 st.set_page_config(page_title="LOTUS Structure Search", page_icon=":lotus:", layout="wide",
@@ -17,15 +16,10 @@ st.set_page_config(page_title="LOTUS Structure Search", page_icon=":lotus:", lay
 on_all_pages()
 
 
-@st.cache_resource(ttl=3600)
-def data_model():
-    return DataModel(load_all_data())
-
 if "ignore_id" in st.session_state and st.session_state["ignore_id"]:
     wid = None
 else:
     wid = get_url_parameter("id", "structure")
-
 
 dm = data_model()
 
