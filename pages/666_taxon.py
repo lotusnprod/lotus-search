@@ -1,22 +1,16 @@
 import streamlit as st
 
 from chemistry_helpers import molecule_svg
-from ui_common import data_model, link_svg, on_all_pages
+from ui_common import data_model, get_url_parameter, link_svg, on_all_pages
 from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
 params = st.experimental_get_query_params()
 
 dm = data_model()
 
-wid = None
-name = ""
-try:
-    if "wid" in params and "type" in params:
-        if params["type"][0] == "taxon":
-            if len(params["wid"]) > 0:
-                wid = int(params["wid"][0])
-                name = dm.get_taxon_name_from_wid(wid)
-except Exception as e:
-    wid = None
+wid = get_url_parameter("wid", "taxon")
+if wid is not None:
+    name = dm.get_taxon_name_from_wid(wid)
+
 get_script_run_ctx()._set_page_config_allowed = True  ## We can we only got the parameters
 st.set_page_config(page_title=f"LOTUS Taxon Info - {name}", page_icon=":lotus:", layout="wide",
                    initial_sidebar_state="auto", menu_items=None)
@@ -24,9 +18,8 @@ on_all_pages()
 
 
 def tsv(compounds: list[int]) -> str:
-    l = dm.get_compound_smiles_from_list_of_wid(compounds)
-    print("Got the list")
-    return "smiles\n"+"\n".join(l)
+    smileses = dm.get_compound_smiles_from_list_of_wid(compounds)
+    return "smiles\n"+"\n".join(smileses)
 
 
 if wid is not None:
