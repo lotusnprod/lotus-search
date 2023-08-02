@@ -11,6 +11,7 @@ requests = "^2.31.0"
 streamlit = "^1.25.0"
 rdkit = "^2023.3.2"
 bjonnh-streamlit-ketcher = {version = "^0.0.4", source = "test"}
+sqlalchemy = "^2.0.19"
 
 
 [build-system]
