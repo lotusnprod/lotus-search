@@ -8,4 +8,4 @@ RUN mkdir /app
 RUN adduser --system --no-create-home nonroot
 USER nonroot
 WORKDIR /app
-CMD ["streamlit", "run", "/app/Home.py"]
+CMD ["streamlit", "run", "--server.fileWatcherType=none", "/app/Home.py"]
