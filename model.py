@@ -1,12 +1,15 @@
 from collections.abc import Iterable
 from typing import Any
-
+from processing_common import load_all_data
 from rdkit import DataStructs
 
 
 class DataModel:
-    def __init__(self, db):
-        self.db = db
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(DataModel, cls).__new__(cls)
+            cls.instance.db = load_all_data()
+        return cls.instance
 
     def num_taxa(self):
         return len(self.db["taxonomy_names"])
