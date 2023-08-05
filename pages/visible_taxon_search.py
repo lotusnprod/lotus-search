@@ -1,10 +1,10 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dash_table, dcc
+from dash import Input, Output, callback, dash_table
 
 from model import DataModel
 
-dash.register_page(__name__, name="Taxon search", top_nav=True, path="/taxon/search", order=1)
+dash.register_page(__name__, name="Taxon search", top_nav=True, path="/taxa/search", order=1)
 
 
 data = DataModel()
@@ -39,7 +39,7 @@ def update_table(value):
         safe_name = name.replace("[", "").replace("]", "")
         output.append(
             {
-                "Taxon": f"[{safe_name}](/taxon?wid={match})",
+                "Taxon": f"[{safe_name}](/taxon/{match})",
                 "Compounds": len(matching_compounds),
             }
         )

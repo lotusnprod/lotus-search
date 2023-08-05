@@ -4,6 +4,8 @@ from dash import Dash
 
 from model import DataModel
 
+dash._dash_renderer._set_react_version("18.2.0")
+
 data = DataModel()
 
 app = Dash(__name__,

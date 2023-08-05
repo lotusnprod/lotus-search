@@ -22,6 +22,10 @@ class DataModel:
 
     ### Taxonomy
     def get_taxon_name_from_wid(self, wid: int) -> str | None:
+        try:
+            wid = int(wid)
+        except ValueError:
+            return None
         if wid not in self.db["taxonomy_names"]:
             return None
         return self.db["taxonomy_names"][wid]
@@ -103,6 +107,10 @@ class DataModel:
         return len(self.db["c2t"][wid])
 
     def get_ranks_string(self, wid: int) -> str:
+        try:
+            wid = int(wid)
+        except ValueError:
+            return None
         if wid in self.db["taxonomy_ranks"]:
             i_ranks = self.db["taxonomy_ranks"][wid]
             n_ranks = [self.get_rank_name_from_wid(int(it)) for it in i_ranks]

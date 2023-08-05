@@ -16,10 +16,17 @@ To run it yourself, the source is on [GitHub](https://github.com/lotusnprod/lotu
 - Run `update.py` (takes a few minutes)
 - Run `streamlit run Home.py`   (almost instant)
 
-## **Me**
+## **Authors**
+
+### Jonathan Bisson
 
 - Personal website: https://www.bjonnh.net
 - You can find me on mastodon too(t): https://mastodon.social/@bjonnh
+
+### Adriano Rutz
+
+- Personal website: https://adafede.github.io/
+- And on mastodon: https://mastodon.online/@adafede
 
 ## **Data safety**
 
