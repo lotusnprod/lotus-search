@@ -1,0 +1,33 @@
+{
+  "src/ts/components/PlotlyDashKetcher.tsx": {
+    "displayName": "PlotlyDashKetcher",
+    "description": "",
+    "props": {
+      "id": {
+        "description": "Unique ID to identify this component in Dash callbacks.",
+        "required": false,
+        "type": {
+          "name": "string",
+          "raw": "string"
+        }
+      },
+      "molecule": {
+        "description": "",
+        "required": false,
+        "type": {
+          "name": "string",
+          "raw": "string"
+        }
+      },
+      "setProps": {
+        "description": "Update props to trigger callbacks.",
+        "required": true,
+        "type": {
+          "name": "func",
+          "raw": "(props: Record<string, any>) => void"
+        }
+      }
+    },
+    "isContext": false
+  }
+}
