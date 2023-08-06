@@ -1,8 +1,11 @@
 import dash
 import dash_bootstrap_components as dbc
+import plotly
 from dash import Dash
 
 from model import DataModel
+
+plotly.io.json.config.default_engine = 'orjson'
 
 dash._dash_renderer._set_react_version("18.2.0")
 

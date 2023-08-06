@@ -46,7 +46,7 @@ class DataModel:
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
 
         try:
-            cid = self.db["compound_wid"].index(wid)
+            cid = self.db["compound_id"][wid]
             return self.db["compound_smiles"][cid]
         except (IndexError, ValueError):
             print(f"Impossible to find a compound with wid={wid}")
@@ -71,13 +71,12 @@ class DataModel:
             out.append((wid, DataStructs.TanimotoSimilarity(fp, self.db["compound_sim_fps"][iid])))
         return out
 
-    def compound_get_tsv_from_scores(self, scores) -> str:
+    def compound_get_tsv_from_scores(self, wids, scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
-        iids = {score[0]: self.db["compound_wid"].index(score[0]) for score in scores}
-        for score in scores:
-            wid = score[0]
-            smiles = self.db["compound_smiles"][iids[score[0]]]
-            out += f"http://www.wikidata.org/entity/Q{wid}\t{score[1]}\t{smiles}\n"
+        for idx, score in enumerate(scores):
+            wid = wids[idx]
+            smiles = self.db["compound_smiles"][self.db["compound_id"][wid]]
+            out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
     ### Taxonomy to compoundonomy

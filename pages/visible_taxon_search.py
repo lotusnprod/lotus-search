@@ -6,21 +6,7 @@ from model import DataModel
 
 dash.register_page(__name__, name="Taxon search", top_nav=True, path="/taxa/search", order=1)
 
-
 data = DataModel()
-
-
-def layout():
-    return dbc.Container([
-        dbc.Input(id='input-on-submit', type='text', value=''),
-        dash_table.DataTable(data=None, page_size=15, id='taxon-list',
-                             sort_action='native', filter_action='native',
-                             columns=[
-                                 {'name': 'Taxon', 'id': 'Taxon', 'type': 'text', 'presentation': 'markdown'},
-                                 {'name': 'Compounds', 'id': 'Compounds'},
-                             ],
-                             )
-    ])
 
 
 @callback(
@@ -45,3 +31,24 @@ def update_table(value):
         )
 
     return sorted(output, key=lambda x: x["Taxon"])
+
+
+def layout():
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([dbc.Label("Search for taxon name containing:")])]),
+        dbc.Row([
+            dbc.Col([dbc.Input(id='input-on-submit', type='text', value='')
+                     ])])
+        ,
+        dbc.Row([dbc.Col([dbc.Label(" ")])]),
+        dbc.Row([
+        dash_table.DataTable(data=None, page_size=15, id='taxon-list',
+                             sort_action='native', filter_action='native',
+                             columns=[
+                                 {'name': 'Taxon', 'id': 'Taxon', 'type': 'text', 'presentation': 'markdown'},
+                                 {'name': 'Compounds', 'id': 'Compounds'},
+                             ],
+                             )
+        ])
+    ])

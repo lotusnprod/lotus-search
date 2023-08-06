@@ -1,11 +1,12 @@
 import math
-from urllib.parse import quote
+from typing import Any
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dcc, html
+from dash import Input, Output, callback, dcc
 
-from chemistry_helpers import molecule_svg
+from config import PAGE_SIZE
+from dash_common import generate_compounds_cards
 from model import DataModel
 
 dm = DataModel()
@@ -35,48 +36,14 @@ dash.register_page(__name__, name="Taxon information",
     [Input("pagination", "active_page"),
      Input("matching-ids", "data")],
 )
-def compound_cards(active_page: int, data: list[int]):
-    cards = []
-    if active_page is None:
-        active_page = 1
+def compound_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
+    return generate_compounds_cards(active_page, data)
 
-    displayed = data["matching_compounds"][100 * (active_page - 1):100 * active_page]
-    data_dl = displayed
-    # if len(matching_compounds) >= 100:
-    #     if c2.checkbox("I want to download them all and I understand it can be really slow"):
-    #         data_dl = matching_compounds
-    #
-    # c1.download_button(f"Download {len(data_dl)} smiles as TSV", tsv(data_dl),
-    #                    f"Compounds from {name.replace('.', '')}.tsv",
-    #                    "text/tab-separated-values")
-
-    for idx, j in enumerate(displayed):
-        img = molecule_svg(dm.get_compound_smiles_from_wid(j))
-        img_data = f"data:image/svg+xml,{quote(img)}"
-        taxa_count = dm.get_number_of_taxa_containing_compound(j)
-        card = dbc.Card([
-            dbc.CardImg(src=img_data, top=True),
-            dbc.CardBody(
-                [
-                    html.H4(f"Q{j}", className="card-title"),
-                    html.P(
-                        f"Found in {taxa_count} {'taxa' if taxa_count > 1 else 'taxon'}",
-                        className="card-text",
-                    ),
-                    dcc.Markdown(f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})"),
-                    dbc.Button("Compound page", color="primary", href=f"/molecule/{j}"),
-                ]
-            ),
-        ],
-            style={"width": "18rem"}, )
-        cards.append(card)
-
-    return [*cards]
 
 @callback(
     Output("download", "data"),
     [Input("btn-download", "n_clicks"),
-    Input("matching-ids", "data")],
+     Input("matching-ids", "data")],
     prevent_initial_call=True,
 )
 def func(n_clicks, data):
@@ -134,10 +101,12 @@ def layout(wid: int):
         dbc.Row([
             dbc.Col([dbc.Alert(warning, color="primary")]),
             dbc.Col([dbc.Button("Download SMILES", id="btn-download")])
-            ]),
+        ]),
         dcc.Download(id="download"),
         dbc.Row([
-            dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / 100), fully_expanded=False, size="sm"),
+            dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / PAGE_SIZE), fully_expanded=False, size="sm"),
         ]),
-        dbc.Row(id="cards"),
+        dbc.Spinner(id="loading-compounds-tsv",
+                    children=[
+                        dbc.Row(id="cards")]),
     ])

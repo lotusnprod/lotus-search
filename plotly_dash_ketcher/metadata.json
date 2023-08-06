@@ -19,6 +19,14 @@
           "raw": "string"
         }
       },
+      "buttonLabel": {
+        "description": "",
+        "required": false,
+        "type": {
+          "name": "string",
+          "raw": "string"
+        }
+      },
       "setProps": {
         "description": "Update props to trigger callbacks.",
         "required": true,
