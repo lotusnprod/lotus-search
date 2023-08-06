@@ -8,22 +8,15 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
-streamlit = "^1.25.0"
 rdkit = "^2023.3.2"
-bjonnh-streamlit-ketcher = {version = "^0.0.4", source = "test"}
 sqlalchemy = "^2.0.19"
 dash = "^2.11.1"
 pandas = "^2.0.3"
 dash-bootstrap-components = "^1.4.2"
 flask-caching = "^2.0.2"
 orjson = "^3.9.2"
+gunicorn = "^21.2.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-
-[[tool.poetry.source]]
-name = "test"
-url = "https://test.pypi.org/simple/"
-priority = "explicit"

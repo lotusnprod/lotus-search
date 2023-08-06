@@ -8,4 +8,4 @@ RUN mkdir /app
 RUN adduser --system --no-create-home nonroot
 USER nonroot
 WORKDIR /app
-CMD ["streamlit", "run", "--server.fileWatcherType=none", "/app/Home.py"]
+CMD [ "gunicorn", "--workers=2", "--threads=1", "-b 0.0.0.0:8502", "main:server"]

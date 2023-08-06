@@ -49,19 +49,19 @@ def get_matching_ids(query: str,
 
 
 @callback(
-    Output('chirality-cb', 'disabled'),
-    Input('substructure-cb', 'value')
+    Output("chirality-cb", "style"),
+    Input("substructure-cb", "value")
 )
 def disable_chirality(value):
-    return not value
+    return {"display": "block" if value else "none"}
 
 
 @callback(
-    Output('similarity-slider', 'disabled'),
-    Input('substructure-cb', 'value')
+    Output("similarity-row", "style"),
+    Input("substructure-cb", "value")
 )
 def disable_similarity(value):
-    return value
+    return {"display": "none" if value else "block"}
 
 
 @callback(
@@ -81,6 +81,8 @@ def download_compounds(n_clicks, data):
     Output("structure-search-data", "data"),
     Output("structure-search-results", "children"),
     Output("pagination-compound-search", "max_value"),
+    Output("pagination-compound-search", "style"),
+    Output("btn-download-compounds", "style"),
     Output("warning-compound-search", "children"),
     [Input("ketcher", "molecule"),
      Input("substructure-cb", "value"),
@@ -102,9 +104,12 @@ def search_compound_cards(molecule: str,
         warning = f"No matching compounds found"
     data["matching_compounds"] = [score[0] for score in scores]
     data["scores"] = [score[1] for score in scores]
+    style_pagination = {"display": "none" if n_scores == 0 else "flex"}
+    style_btn = {"display": "none" if n_scores == 0 else "block"}
     return (data,
             generate_compounds_cards(active_page, data),
             math.ceil(len(scores) / PAGE_SIZE),
+            style_pagination, style_btn,
             warning)
 
 
@@ -120,16 +125,15 @@ def layout():
                 dbc.Checkbox(id='substructure-cb', value=False, label='Substructure search'),
             ]),
             dbc.Col([
-                dbc.Checkbox(id='chirality-cb', value=False, disabled=True,
+                dbc.Checkbox(id='chirality-cb', value=False,
                              label='Chirality search (has defects)'),
             ])
         ]),
-        dbc.Row([
+        dbc.Row(id="similarity-row", children=[
             dbc.Label("Similarity level"),
             dbc.Col([
-                dcc.Slider(id="similarity-slider",
-                           min=0, max=1, step=0.01, marks=None, value=0.8)
-            ])
+                dcc.Slider(id="similarity-slider", min=0, max=1,  value=0.8)
+            ]),
         ]),
         dbc.Row([
             dbc.Col([dbc.Alert(id="warning-compound-search", color="primary")]),

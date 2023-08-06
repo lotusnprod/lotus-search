@@ -2,6 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 import plotly
 from dash import Dash
+from flask import Flask
 
 from model import DataModel
 
@@ -11,8 +12,10 @@ dash._dash_renderer._set_react_version("18.2.0")
 
 data = DataModel()
 
+server = Flask(__name__)
 app = Dash(__name__,
-           external_stylesheets=[dbc.themes.CERULEAN],
+           server=server,
+           external_stylesheets=[dbc.themes.FLATLY],
            use_pages=True,
            suppress_callback_exceptions=True)
 
@@ -29,5 +32,6 @@ app.layout = dbc.Container([
     navbar,
     dash.page_container
 ])
-if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+
+if __name__=='__main__':
+     app.run_server()
