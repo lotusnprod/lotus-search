@@ -4,19 +4,19 @@ The code of this is at: https://github.com/lotusnprod/lotus-search
 
 The dataset is from the [LOTUS](https://lotus.nprod.net/) database and [Wikidata](https://www.wikidata.org).
 
-[Adriano Rutz](https://adafede.github.io/), is the one that pushed me into that, we are both part of the team behind LOTUS.
-
-It is using [Streamlit](https://streamlit.io)  for its web ui.
-And [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=blog.streamlit.io) for the molecule editor.
+It is using [Dash](https://dash.plotly.com/) for its web ui.
+And [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=search.nprod.net) for the molecule editor.
 
 [Rdkit](https://www.rdkit.org) is used for the molecule massaging.
 
 To run it yourself, the source is on [GitHub](https://github.com/lotusnprod/lotus-search):
 - Install and run poetry update
 - Run `update.py` (takes a few minutes)
-- Run `streamlit run Home.py`   (almost instant)
+- Run `python main.py`   (almost instant)
 
 ## **Authors**
+
+[Adriano Rutz](https://adafede.github.io/), is the one that pushed me into that, we are both part of the team behind LOTUS.
 
 ### Jonathan Bisson
 
