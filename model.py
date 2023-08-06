@@ -1,7 +1,18 @@
+import logging
 from collections.abc import Iterable
 from typing import Any
-from processing_common import load_all_data
+
+import requests
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
+
 from rdkit import DataStructs
+
+from processing_common import load_all_data
 
 
 class DataModel:
@@ -41,6 +52,25 @@ class DataModel:
         if wid not in self.db["taxonomy_ranks_names"]:
             return None
         return self.db["taxonomy_ranks_names"][wid]
+
+    def resolve_taxon(self, query: str) -> Any:
+        query = {
+            "nameStrings": [query],
+            "withVernaculars": False,
+            "withCapitalization": True,
+            "withAllMatches": True,
+        }
+        print(f"Querying GN resolver... {query}")
+
+        try:
+            response = requests.post("https://verifier.globalnames.org/api/v1/verifications",
+                                     json=query,
+                                     headers={"Content-Type": "application/json"})
+        except:
+            print("Impossible to connect to GN resolver")
+            return None
+        print(response.json())
+        return response.json()
 
     ### Compoundonomy
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:

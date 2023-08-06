@@ -2,3 +2,4 @@
 data
 contributions
 **/secrets.toml
+/api/napapi/*.sqlite3
