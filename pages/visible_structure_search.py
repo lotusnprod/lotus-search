@@ -3,25 +3,15 @@ import math
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, callback, dcc
-from rdkit import Chem
 
 import plotly_dash_ketcher
 from config import PAGE_SIZE
 from dash_common import generate_compounds_cards
 from model import DataModel
-from processing_common import fingerprint, standardize
 
 dash.register_page(__name__, name="Structure search", top_nav=True, path="/structures/search", order=2)
 
 dm = DataModel()
-
-
-def search(fp: bytes) -> list[tuple[int, float]]:
-    return dm.compound_search(fp)
-
-
-def ss_search(fp: bytes, mol, chirality: bool) -> list[tuple[int, float]]:
-    return dm.compound_search_substructure(fp, mol, chirality)
 
 
 def get_matching_ids(query: str,
@@ -30,14 +20,12 @@ def get_matching_ids(query: str,
     if query:
         try:
             # Sometimes ketcher gives really invalid smiles like with theobromine
-            mol = standardize(Chem.MolFromSmiles(query))
-
-            fp = fingerprint(mol)
+            # TODO move all that in the model
 
             if ss_mode:
-                scores = ss_search(fp, mol, chirality)
+                scores = dm.compound_search_substructure(query, chirality)
             else:
-                scores = search(fp)
+                scores = dm.compound_search(query)
                 scores = [score for score in scores if score[1] >= level]
 
             scores_sorted = sorted(scores, reverse=True, key=lambda x: x[1])
@@ -107,7 +95,7 @@ def search_compound_cards(molecule: str,
     style_pagination = {"display": "none" if n_scores == 0 else "flex"}
     style_btn = {"display": "none" if n_scores == 0 else "block"}
     return (data,
-            generate_compounds_cards(active_page, data),
+            generate_compounds_cards(active_page, data, molecule),
             math.ceil(len(scores) / PAGE_SIZE),
             style_pagination, style_btn,
             warning)

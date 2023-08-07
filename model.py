@@ -10,9 +10,9 @@ requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 
-from rdkit import DataStructs
+from rdkit import Chem, DataStructs
 
-from processing_common import load_all_data
+from processing_common import fingerprint, load_all_data, standardize
 
 
 class DataModel:
@@ -85,20 +85,49 @@ class DataModel:
     def get_compound_smiles_from_list_of_wid(self, wid: list[int]) -> list[str]:
         ids = [self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]]
         llen = self.db["compound_smiles"]
-        return [self.db["compound_smiles"][i] for i in ids if i >= 0 and i < len(llen)]
+        return [self.db["compound_smiles"][i] for i in ids if 0 <= i < len(llen)]
 
-    def compound_search(self, fp: bytes) -> list[tuple[int, float]]:
-        scores = DataStructs.BulkTanimotoSimilarity(fp, self.db["compound_sim_fps"])
+    def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[Any, Any, bool]:
+        explicit_h = "[H]" in query
+        p = Chem.SmilesParserParams()
+        p.removeHs = not explicit_h
+        mol = Chem.MolFromSmiles(query, p)
+
+        if not explicit_h:
+            mol = standardize(mol)
+
+        fp = fingerprint(mol)
+        return mol, fp, explicit_h
+
+    def compound_search(self, query: str) -> list[tuple[int, float]]:
+        mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
+
+        if explicit_h:
+            db = self.db["compound_sim_h_fps"]
+        else:
+            db = self.db["compound_sim_fps"]
+        scores = DataStructs.BulkTanimotoSimilarity(fp, db)
         return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
 
-    def compound_search_substructure(self, fp: bytes, mol: Any, chirality: bool) -> list[tuple[int, float]]:
-        out = []
-        iids = self.db["compound_library"].GetMatches(mol, numThreads=-1, maxResults=-1, useQueryQueryMatches=True,
-                                                      useChirality=chirality)
+
+    def compound_search_substructure(self, query: str,
+                                     chirality: bool) -> list[tuple[int, float]]:
+        mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
+
+        if explicit_h:
+            db = self.db["compound_library_h"]
+            fp_db = self.db["compound_sim_h_fps"]
+        else:
+            db = self.db["compound_library"]
+            fp_db = self.db["compound_sim_fps"]
+
+        iids = db.GetMatches(mol, numThreads=-1, maxResults=-1, useQueryQueryMatches=True,
+                             useChirality=chirality)
 
         new_keys = [self.db["compound_wid"][iid] for iid in iids]
+        out = []
         for iid, wid in zip(iids, new_keys):
-            out.append((wid, DataStructs.TanimotoSimilarity(fp, self.db["compound_sim_fps"][iid])))
+            out.append((wid, DataStructs.TanimotoSimilarity(fp, fp_db[iid])))
         return out
 
     def compound_get_tsv_from_scores(self, wids, scores) -> str:
@@ -110,7 +139,7 @@ class DataModel:
         return out
 
     ### Taxonomy to compoundonomy
-    def get_compounds_of_taxon(self, wid: int, recursive: bool = True) -> set[int]:
+    def get_compounds_of_taxon(self, wid: int, recursive: bool = True) -> list[int]:
         if wid in self.db["t2c"]:
             matching_compounds = set(self.db["t2c"][wid])
         else:
@@ -123,7 +152,7 @@ class DataModel:
                         for compound in self.db["t2c"][parent]:
                             matching_compounds.add(compound)
 
-        return matching_compounds
+        return list(matching_compounds)
 
     def get_taxa_containing_compound(self, wid: int) -> set[int]:
         if wid in self.db["c2t"]:
@@ -147,3 +176,17 @@ class DataModel:
         else:
             ranks = ""
         return ranks
+
+    def get_taxonomic_tree(self, wid: int) -> list[tuple[int, int]]:
+        if wid not in self.db["taxonomy_direct_parents"]:
+            return []
+        parent_taxa = self.db["taxonomy_direct_parents"][wid]
+        tree = []
+        for parent in parent_taxa:
+            tree.append([parent, 1])
+            if parent in self.db["taxonomy_parents_with_distance"]:
+                for relative in self.db["taxonomy_parents_with_distance"][parent]:
+                    distance = self.db["taxonomy_parents_with_distance"][parent][relative]
+                    tree.append([relative, distance])
+        tree = sorted(tree, key=lambda x: x[1])
+        return tree

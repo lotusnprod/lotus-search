@@ -18,8 +18,8 @@ cache = Cache(get_app().server, config={
 
 
 @cache.memoize(timeout=3600)
-def get_svg_of_wid(j: int) -> str:
-    return molecule_svg(dm.get_compound_smiles_from_wid(j))
+def get_svg_of_wid(j: int, molecule: str | None) -> str:
+    return molecule_svg(dm.get_compound_smiles_from_wid(j), molecule)
 
 
 @cache.memoize(timeout=3600)
@@ -27,7 +27,7 @@ def get_number_of_taxa_for_compound(j: int) -> int:
     return dm.get_number_of_taxa_containing_compound(j)
 
 
-def generate_compounds_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
+def generate_compounds_cards(active_page: int, data: dict[str, Any], molecule: str | None = None) -> list[dbc.Card]:
     cards = []
     if active_page is None:
         active_page = 1
@@ -48,7 +48,8 @@ def generate_compounds_cards(active_page: int, data: dict[str, Any]) -> list[dbc
                              value=int(scores[idx] * 100),
                              max=100.0)
             )))
-        img = get_svg_of_wid(j)
+
+        img = get_svg_of_wid(j, molecule)
         img_data = f"data:image/svg+xml,{quote(img)}"
         taxa_count = get_number_of_taxa_for_compound(j)
         card = dbc.Card([

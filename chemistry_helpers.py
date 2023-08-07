@@ -2,18 +2,20 @@ from rdkit import Chem
 from rdkit.Chem.Draw import rdMolDraw2D
 
 
-def mol_from_smiles(smiles):
-    return Chem.MolFromSmiles(smiles)
-
-
-def molecule_svg(smiles, width=250):
-    mol = mol_from_smiles(smiles)
+def molecule_svg(smiles, molecule: str | None, width=250):
+    mol = Chem.MolFromSmiles(smiles)
     d2d = rdMolDraw2D.MolDraw2DSVG(width, width)
-    d2d.DrawMolecule(mol)
+    if molecule is not None:
+        explicit_h = molecule is None or "[H]" in molecule
+        p = Chem.SmilesParserParams()
+        p.removeHs = not explicit_h
+        if explicit_h:
+            mol = Chem.AddHs(mol)
+        highlight_atoms = mol.GetSubstructMatch(Chem.MolFromSmiles(molecule, p))
+        draw_options = d2d.drawOptions()
+        draw_options.setHighlightColour((0.1, .9, .9, .8))
+        d2d.DrawMolecule(mol, highlightAtoms=highlight_atoms)
+    else:
+        d2d.DrawMolecule(mol)
     d2d.FinishDrawing()
     return d2d.GetDrawingText()
-
-
-def molecule_png(smiles, width=600):
-    mol = mol_from_smiles(smiles)
-    return Chem.Draw.MolToImage(mol, size=(width, width))

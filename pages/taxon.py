@@ -63,17 +63,11 @@ def layout(wid: int):
     parent_ranks = dm.get_ranks_string(wid)
 
     taxonomic_info = ""
-    if wid in dm.db["taxonomy_direct_parents"]:
+
+    tree = dm.get_taxonomic_tree(wid)
+
+    if len(tree) > 0:
         markdown = ""
-        parent_taxa = dm.db["taxonomy_direct_parents"][wid]
-        tree = []
-        for parent in parent_taxa:
-            tree.append([parent, 1])
-            if parent in dm.db["taxonomy_parents_with_distance"]:
-                for relative in dm.db["taxonomy_parents_with_distance"][parent]:
-                    distance = dm.db["taxonomy_parents_with_distance"][parent][relative]
-                    tree.append([relative, distance])
-        tree = sorted(tree, key=lambda x: x[1])
         for parent in tree:
             ranks = dm.get_ranks_string(parent[0])
 
@@ -83,7 +77,6 @@ def layout(wid: int):
         taxonomic_info = markdown.strip("> ")
 
     matching_compounds = dm.get_compounds_of_taxon(wid)
-    matching_compounds = list(matching_compounds)
     matching_compounds.sort()
     nb_matches = len(matching_compounds)
 
@@ -106,7 +99,5 @@ def layout(wid: int):
         dbc.Row([
             dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / PAGE_SIZE), fully_expanded=False, size="sm"),
         ]),
-        dbc.Spinner(id="loading-compounds-tsv",
-                    children=[
-                        dbc.Row(id="cards")]),
+        dbc.Spinner(id="loading-compounds-tsv", children=[dbc.Row(id="cards")]),
     ])

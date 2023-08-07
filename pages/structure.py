@@ -12,10 +12,8 @@ dm = DataModel()
 
 def title(wid=None):
     if wid is not None:
-        try:
-            return f"LOTUS - Q{wid}"
-        except:
-            pass
+        return f"LOTUS - Q{wid}"
+
     return "LOTUS"
 
 
@@ -53,11 +51,12 @@ def layout(wid: int):
             ]),
             dbc.Row([dbc.Alert(warning, color="primary")]),
             dbc.Row([dash_table.DataTable(data=table, page_size=15, id='taxon-list-compound',
-                                 sort_action='native', filter_action='native',
-                                 columns=[
-                                     {'name': 'Taxon', 'id': 'Taxon', 'type': 'text', 'presentation': 'markdown'},
-                                 ],
-                                 )])
+                                          sort_action='native', filter_action='native',
+                                          columns=[
+                                              {'name': 'Taxon', 'id': 'Taxon', 'type': 'text',
+                                               'presentation': 'markdown'},
+                                          ],
+                                          )])
         ]),
 
     ])
