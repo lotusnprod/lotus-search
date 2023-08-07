@@ -51,13 +51,13 @@ def layout(name: str = ""):
         ]),
         dbc.Row([dbc.Col([dbc.Label(" ")])]),
         dbc.Row([
-        dash_table.DataTable(data=None, page_size=15, id="taxon-list",
-                             sort_action="native", filter_action="native",
-                             columns=[
-                                 {"name": "Taxon", "id": "Taxon", "type": "text", "presentation": "markdown"},
-                                 {"name": "Rank ", "id": "Rank"},
-                                 {"name": "Compounds", "id": "Compounds"},
-                             ],
-                             )
+            dash_table.DataTable(data=None, page_size=15, id="taxon-list",
+                                 sort_action="native", filter_action="native",
+                                 columns=[
+                                     {"name": "Taxon", "id": "Taxon", "type": "text", "presentation": "markdown"},
+                                     {"name": "Rank ", "id": "Rank"},
+                                     {"name": "Compounds", "id": "Compounds"},
+                                 ],
+                                 )
         ])
     ])
