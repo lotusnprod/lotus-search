@@ -1,32 +1,35 @@
-This application is available on [Nprod.net](https://search.nprod.net/)
+This application is available on [Nprod.net](https://search.nprod.net)
 
-The code of this is at: https://github.com/lotusnprod/lotus-search
+The dataset is from the [LOTUS](https://lotus.nprod.net) initiative and [Wikidata](https://www.wikidata.org).
 
-The dataset is from the [LOTUS](https://lotus.nprod.net/) database and [Wikidata](https://www.wikidata.org).
+It is using:
+- [Dash](https://dash.plotly.com) for its web ui.
+- [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=search.nprod.net) for the molecule editor.
+- [Rdkit](https://www.rdkit.org) for the molecule massaging.
 
-It is using [Dash](https://dash.plotly.com/) for its web ui.
-And [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=search.nprod.net) for the molecule editor.
-
-[Rdkit](https://www.rdkit.org) is used for the molecule massaging.
-
-To run it yourself, the source is on [GitHub](https://github.com/lotusnprod/lotus-search):
-- Install and run poetry update
+To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
+- Install and run poetry
+  - If you do not have poetry installed:
+    - `curl -sSL https://install.python-poetry.org | python3 -`
+    - `poetry self update && poetry update`
+  - Else:
+    - `poetry install`
 - Run `update.py` (takes a few minutes)
-- Run `python main.py`   (almost instant)
+- Run `python main.py` (almost instant)
 
 ## **Authors**
 
-[Adriano Rutz](https://adafede.github.io/), is the one that pushed me into that, we are both part of the team behind LOTUS.
+[Adriano Rutz](https://adafede.github.io), is the one that pushed me into that, we are both part of the team behind LOTUS.
 
 ### Jonathan Bisson
 
-- Personal website: https://www.bjonnh.net
-- You can find me on mastodon too(t): https://mastodon.social/@bjonnh
+- Personal website: <https://www.bjonnh.net>
+- You can find me on mastodon too(t): <https://mastodon.social/@bjonnh>
 
 ### Adriano Rutz
 
-- Personal website: https://adafede.github.io/
-- And on mastodon: https://mastodon.online/@adafede
+- Personal website: <https://adafede.github.io>
+- And on mastodon: <https://mastodon.online/@adafede>
 
 ## **Data safety**
 
@@ -41,4 +44,4 @@ it comes with no warranty or support whatsoever.
 
 ## **License and legalese**
 
-https://raw.githubusercontent.com/lotusnprod/lotus-search/main/LICENSE
+<https://raw.githubusercontent.com/lotusnprod/lotus-search/main/LICENSE>
