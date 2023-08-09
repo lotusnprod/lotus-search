@@ -14,7 +14,7 @@ To run it yourself, the source is available at: <https://github.com/lotusnprod/l
     - `poetry self update && poetry update`
   - Else:
     - `poetry install`
-- Run `update.py` (takes a few minutes)
+- Run `python update.py` (takes a few minutes)
 - Run `python main.py` (almost instant)
 
 ## **Authors**
