@@ -37,18 +37,17 @@ def update_table(value):
 def layout(name: str = ""):
     return dbc.Container([
         dbc.Row([
-            dbc.Col([dbc.Label("Search for taxon name containing:")])]),
-        dbc.Row([
-            dbc.Col([dbc.Input(id="input-on-submit", type="text", value=name)
-                     ])])
-        ,
-        dbc.Row([
             dbc.Alert(dcc.Markdown("""
             Type a part of the name of the organism you are looking for, for example *ana lutea* will match **Gentiana lutea**.
             
             If you do not find your organism name, use the [Taxon resolver](/taxon_resolver) as it may have a new accepted name"""),
                       color="success")
         ]),
+        dbc.Row([
+            dbc.Col([dbc.Label("Search for taxon name containing:")])]),
+        dbc.Row([
+            dbc.Col([dbc.Input(id="input-on-submit", type="text", value=name)
+                     ])]),
         dbc.Row([dbc.Col([dbc.Label(" ")])]),
         dbc.Row([
             dash_table.DataTable(data=None, page_size=15, id="taxon-list",

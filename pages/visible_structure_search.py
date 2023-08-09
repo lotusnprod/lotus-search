@@ -103,6 +103,15 @@ def search_compound_cards(molecule: str,
 
 def layout():
     return dbc.Container([
+        dbc.Row([
+            dbc.Alert(
+                dcc.Markdown(
+                    """
+Draw a molecule (or substructure) below.
+You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` for caffeine).
+                    """),
+                color="success")
+        ]),
         dcc.Store(id='structure-search-data', data={
             "matching_compounds": [],
             "scores": []
