@@ -6,12 +6,19 @@ from pathlib import Path
 from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
 
 query_taxa = """
-SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WHERE {
+SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
+  SELECT DISTINCT ?taxon WHERE {
     ?compound wdt:P703 ?taxon.
-    ?taxon wdt:P171 ?parent;
-           wdt:P105 ?taxon_rank;
-           wdt:P225 ?taxon_name.
   }
+  # LIMIT 1000 # Test
+} AS %taxa WHERE {
+  SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WHERE { 
+    INCLUDE %taxa
+            ?taxon wdt:P171 ?parent;
+            wdt:P105 ?taxon_rank;
+            wdt:P225 ?taxon_name.
+  }
+}
 """
 
 query_final = """
