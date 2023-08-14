@@ -7,17 +7,17 @@ It is using:
 - [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=search.nprod.net) for the molecule editor.
 - [Rdkit](https://www.rdkit.org) for the molecule massaging.
 
+## Use
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
-- Install and run poetry
+- Install dependencies using poetry
   - If you do not have poetry installed:
     - `curl -sSL https://install.python-poetry.org | python3 -`
-    - `poetry self update && poetry update`
-  - Else:
-    - `poetry install`
+  - Then:
+    - `poetry self update && poetry update && poetry install`
 - Run `python update.py` (takes a few minutes)
 - Run `python main.py` (almost instant)
 
-## **Authors**
+## Authors
 
 [Adriano Rutz](https://adafede.github.io), is the one that pushed me into that, we are both part of the team behind LOTUS.
 
@@ -31,7 +31,7 @@ To run it yourself, the source is available at: <https://github.com/lotusnprod/l
 - Personal website: <https://adafede.github.io>
 - And on mastodon: <https://mastodon.online/@adafede>
 
-## **Data safety**
+## Data safety
 
 Your molecules are never stored unless they make our service crash. 
 
@@ -42,6 +42,6 @@ Also, this is an experimental tool meant to test things,
 you're not supposed to rely on it for anything important, and
 it comes with no warranty or support whatsoever.
 
-## **License and legalese**
+## License and legalese
 
 <https://raw.githubusercontent.com/lotusnprod/lotus-search/main/LICENSE>
