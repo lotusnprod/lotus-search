@@ -1,13 +1,16 @@
+## Description
+
 This application is available on [Nprod.net](https://search.nprod.net)
 
 The dataset is from the [LOTUS](https://lotus.nprod.net) initiative and [Wikidata](https://www.wikidata.org).
 
-It is using:
+## Requirements
+
 - [Dash](https://dash.plotly.com) for its web ui.
 - [EPAM's Ketcher](https://lifescience.opensource.epam.com/ketcher/index.html?ref=search.nprod.net) for the molecule editor.
 - [Rdkit](https://www.rdkit.org) for the molecule massaging.
 
-## Use
+## Install & use
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
 - Install dependencies using poetry
   - If you do not have poetry installed:
