@@ -18,7 +18,7 @@ cache = Cache(get_app().server, config={
 
 
 @cache.memoize(timeout=3600)
-def get_svg_of_wid(j: int, molecule: str | None) -> str:
+def get_svg_of_wid(j: int, molecule: str | None = None) -> str:
     return molecule_svg(dm.get_compound_smiles_from_wid(j), molecule)
 
 
