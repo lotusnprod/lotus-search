@@ -1,37 +1,89 @@
-import dash
-import dash_bootstrap_components as dbc
-import plotly
-from dash import Dash
-from flask import Flask
+from typing import Annotated
 
-from model import DataModel
+from fastapi import FastAPI, Query
+from fastapi.middleware.wsgi import WSGIMiddleware
+from dash_app import app as dashboard1
+from fastapi_versioning import VersionedFastAPI, version
 
-plotly.io.json.config.default_engine = 'orjson'
+description = """
+LOTUS API helps you do awesome stuff. 🚀
 
-dash._dash_renderer._set_react_version("18.2.0")
+## Items
 
-data = DataModel()
+You can **read items**.
 
-server = Flask(__name__)
-app = Dash(__name__,
-           server=server,
-           external_stylesheets=[dbc.themes.FLATLY],
-           use_pages=True,
-           suppress_callback_exceptions=True)
+## Users
 
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink(page["name"], href=page["path"], active="exact"))
-        for page in dash.page_registry.values()
-        if page["order"] >= 0
-    ],
-    brand="Lotus", brand_href="/", color="primary", dark=True,
-)
+You will be able to:
 
-app.layout = dbc.Container([
-    navbar,
-    dash.page_container
-])
+* **Create users** (_not implemented_).
+* **Read users** (_not implemented_).
+"""
 
-if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=False, use_reloader=False)
+# from pydantic import BaseModel
+
+
+# class Item(BaseModel):
+#     name: str
+#     description: str | None = None
+#     price: float
+#     tax: float | None = None
+
+
+app = FastAPI(
+    title="LOTUS FastAPI",
+    description=description,
+    summary="An awesome way to access natural products related data.",
+    # contact={
+    #     "name": "Deadpoolio the Amazing",
+    #     "url": "http://x-force.example.com/contact/",
+    #     "email": "dp@x-force.example.com",
+    # },
+    # license_info={
+    #     "name": "Apache 2.0",
+    #     "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    # },
+        )
+
+@app.get("/items/")
+@version(1, 0)
+async def read_items(
+    q: Annotated[
+        str | None,
+        Query(
+            alias="item-query",
+            title="Query string",
+            description="Query string for the items to search in the database that have a good match",
+            min_length=3,
+            max_length=50,
+            pattern="^fixedquery$"
+            ),
+    ] = None
+):
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
+
+@app.get("/items/{item_id}")
+@version(1, 0)
+async def read_item(item_id: str, q: str | None = None, short: bool = False):
+    item = {"item_id": item_id}
+    if q:
+        item.update({"q": q})
+    if not short:
+        item.update(
+            {"description": "This is an amazing item that has a long description"}
+        )
+    return item
+
+
+# @app.post("/items/")
+# async def create_item(item: Item):
+#     return item
+
+
+app = VersionedFastAPI(app, enable_latest=True)
+
+app.mount("", WSGIMiddleware(dashboard1.server))
