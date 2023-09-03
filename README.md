@@ -18,7 +18,7 @@ To run it yourself, the source is available at: <https://github.com/lotusnprod/l
   - Then:
     - `poetry self update && poetry update && poetry install`
 - Run `python update.py` (takes a few minutes)
-- Run `python main.py` (almost instant)
+- Run `uvicorn main:app --reload` (almost instant)
 
 ## Authors
 
