@@ -35,6 +35,7 @@ class StructureCountResult(BaseModel):
 
 class StructureResult(BaseModel):
     structure_id: List[int]
+    structure_smiles: List[str]
     description: str
 
 class TaxonCountResult(BaseModel):
@@ -89,15 +90,19 @@ async def read_structures(
 @app.get("/structures/{structure_id}")
 @version(1, 0)
 async def read_structure(structure_id: str, q: str | None = None, short: bool = False) -> StructureResult:
-    ## COMMENT (AR): Find how to access SMILES, InChIKeys, InChIs, names?
-    results = {"structure_id": structure_id}
-    if q:
-        results.update({"q": q})
-    if not short:
-        results.update(
-            {"description": "This is an amazing item that has a long description"}
-        )
-    return StructureResult(structure_id=results["structure_id"], description=results["description"])
+    ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
+    results =  list(dm.compound_search(structure_id))
+    ## COMMENT (AR): Throwing out score for now, quite dirty
+    results_filtered = [id for id, score in results if score == 1]
+    # if q:
+    #     results.update({"q": q})
+    # if not short:
+    #     results.update(
+    #         {"description": "This is an amazing item that has a long description"}
+    #     )
+    structure_smileses = dm.get_compound_smiles_from_list_of_wid(results_filtered)
+    desc = "Structures matching the query"
+    return StructureResult(structure_id=results_filtered, structure_smiles=structure_smileses, description=desc)
 
 @app.get("/taxa/")
 @version(1, 0)
@@ -131,6 +136,7 @@ async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -
     #     results.update(
     #         {"description": "This is an amazing item that has a long description"}
     #     )
+    ## COMMENT (AR): Have a list variant as for the structures?
     ## COMMENT (AR): Make it work with children taxa
     taxon_names = []
     for wid in results:

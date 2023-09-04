@@ -99,6 +99,9 @@ class DataModel:
         fp = fingerprint(mol)
         return mol, fp, explicit_h
 
+    ## COMMENT (AR): Should we rename this to compound_search_from_smiles
+    ## and have same for InChI and co and then wrap them to a `compound_search` 
+    ## with inchi = "InChI=1S/" in query ...
     def compound_search(self, query: str) -> list[tuple[int, float]]:
         mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
 
