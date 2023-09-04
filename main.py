@@ -2,15 +2,22 @@ from typing import Annotated
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.wsgi import WSGIMiddleware
-from dash_app import app as dashboard1
 from fastapi_versioning import VersionedFastAPI, version
+from dash_app import app as dashboard1
+from model import DataModel
 
 description = """
 LOTUS API helps you do awesome stuff. 🚀
 
 ## Items
 
-You can **read items**.
+### Structures
+
+You can **read structures**.
+
+### Taxa
+
+You can **read taxa**.
 
 ## Users
 
@@ -29,6 +36,7 @@ You will be able to:
 #     price: float
 #     tax: float | None = None
 
+dm = DataModel()
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -45,9 +53,9 @@ app = FastAPI(
     # },
         )
 
-@app.get("/items/")
+@app.get("/structures/")
 @version(1, 0)
-async def read_items(
+async def read_structures(
     q: Annotated[
         str | None,
         Query(
@@ -60,16 +68,16 @@ async def read_items(
             ),
     ] = None
 ):
-    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    results = dm.num_compounds()
     if q:
         results.update({"q": q})
     return results
 
 
-@app.get("/items/{item_id}")
+@app.get("/structures/{structure_id}")
 @version(1, 0)
-async def read_item(item_id: str, q: str | None = None, short: bool = False):
-    item = {"item_id": item_id}
+async def read_structure(structure_id: str, q: str | None = None, short: bool = False):
+    item = {"structure_id": structure_id}
     if q:
         item.update({"q": q})
     if not short:
@@ -78,6 +86,38 @@ async def read_item(item_id: str, q: str | None = None, short: bool = False):
         )
     return item
 
+@app.get("/taxa/")
+@version(1, 0)
+async def read_taxa(
+    q: Annotated[
+        str | None,
+        Query(
+            alias="item-query",
+            title="Query string",
+            description="Query string for the items to search in the database that have a good match",
+            min_length=3,
+            max_length=50,
+            pattern="^fixedquery$"
+            ),
+    ] = None
+):
+    results = dm.num_taxa()
+    if q:
+        results.update({"q": q})
+    return results
+
+
+@app.get("/taxa/{taxon_id}")
+@version(1, 0)
+async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False):
+    item = {"taxon_id": taxon_id}
+    if q:
+        item.update({"q": q})
+    if not short:
+        item.update(
+            {"description": "This is an amazing item that has a long description"}
+        )
+    return item
 
 # @app.post("/items/")
 # async def create_item(item: Item):
