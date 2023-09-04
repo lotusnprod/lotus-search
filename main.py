@@ -1,8 +1,9 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi_versioning import VersionedFastAPI, version
+from pydantic import BaseModel
 from dash_app import app as dashboard1
 from model import DataModel
 
@@ -27,14 +28,24 @@ You will be able to:
 * **Read users** (_not implemented_).
 """
 
-# from pydantic import BaseModel
 
+class StructureCountResult(BaseModel):
+    structure_count: int
+    description: str
 
-# class Item(BaseModel):
-#     name: str
-#     description: str | None = None
-#     price: float
-#     tax: float | None = None
+class StructureResult(BaseModel):
+    structure_id: List[int]
+    description: str
+
+class TaxonCountResult(BaseModel):
+    taxon_count: int
+    description: str
+
+class TaxonResult(BaseModel):
+    taxon_id: List[int]
+    taxon_name: List[str]
+    description: str
+
 
 dm = DataModel()
 
@@ -67,24 +78,26 @@ async def read_structures(
             pattern="^fixedquery$"
             ),
     ] = None
-):
+) -> StructureCountResult:
     results = dm.num_compounds()
+    desc = "Number of structures matching the query"
     if q:
         results.update({"q": q})
-    return results
+    return StructureCountResult(structure_count=results, description=desc)
 
 
 @app.get("/structures/{structure_id}")
 @version(1, 0)
-async def read_structure(structure_id: str, q: str | None = None, short: bool = False):
-    item = {"structure_id": structure_id}
+async def read_structure(structure_id: str, q: str | None = None, short: bool = False) -> StructureResult:
+    ## COMMENT (AR): Find how to access SMILES, InChIKeys, InChIs, names?
+    results = {"structure_id": structure_id}
     if q:
-        item.update({"q": q})
+        results.update({"q": q})
     if not short:
-        item.update(
+        results.update(
             {"description": "This is an amazing item that has a long description"}
         )
-    return item
+    return StructureResult(structure_id=results["structure_id"], description=results["description"])
 
 @app.get("/taxa/")
 @version(1, 0)
@@ -100,24 +113,32 @@ async def read_taxa(
             pattern="^fixedquery$"
             ),
     ] = None
-):
+) -> TaxonCountResult:
     results = dm.num_taxa()
+    desc = "Number of taxa matching the query"
     if q:
         results.update({"q": q})
-    return results
+    return TaxonCountResult(taxon_count=results, description=desc)
 
 
 @app.get("/taxa/{taxon_id}")
 @version(1, 0)
-async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False):
-    item = {"taxon_id": taxon_id}
-    if q:
-        item.update({"q": q})
-    if not short:
-        item.update(
-            {"description": "This is an amazing item that has a long description"}
-        )
-    return item
+async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -> TaxonResult:
+    results =  list(dm.get_taxa_with_name_containing(taxon_id))
+    # if q:
+    #     results.update({"q": q})
+    # if not short:
+    #     results.update(
+    #         {"description": "This is an amazing item that has a long description"}
+    #     )
+    ## COMMENT (AR): Make it work with children taxa
+    taxon_names = []
+    for wid in results:
+        taxon_name = dm.get_taxon_name_from_wid(wid)
+        if taxon_name is not None:
+            taxon_names.append(taxon_name)
+    desc = "Taxa matching the query"
+    return TaxonResult(taxon_id=results, taxon_name=taxon_names, description=desc)
 
 # @app.post("/items/")
 # async def create_item(item: Item):
