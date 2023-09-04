@@ -1,0 +1,22 @@
+openapi: 3.1.0
+info:
+  title: LOTUS API Specification
+  description: LOTUS API Specification
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'https://search.nprod.net/api'
+
+paths:
+  /organism:
+    $ref: './paths/organism/search.yaml'
+  /compound:
+    $ref: './paths/compound/search.yaml'
+components:
+  schemas:
+    organism:
+        $ref: "./schemas/organism.yaml"
+    compound:
+        $ref: "./schemas/compound.yaml"

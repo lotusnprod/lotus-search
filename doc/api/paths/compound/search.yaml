@@ -1,0 +1,49 @@
+post:
+  operationId: getCompoundByStructure
+  security: []
+  summary: |
+    Search compounds by structure
+  description: |
+    Search compounds by structure given a MOL file. Additional parameters allow to specify the kind of search (sub structure/exact) and the parameters)
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            molecule:
+              type: string
+              example: C1=CC=CC=C1
+              description: |
+                A MOL file or SMILES of the structure of the compound or part of it.
+            substructure_search:
+              type: boolean
+              example: false
+              description: |
+                Search by substructure
+            similarity_level:
+              type: number
+              example: 0.8
+              description: |
+                Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+  responses:
+    '200':
+      description: At least one compound was found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/compound.yaml'
+    '404':
+      description: No compound matching the given structure exists
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No compound matching the given structure exists

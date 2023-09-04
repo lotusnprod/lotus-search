@@ -1,0 +1,45 @@
+post:
+  operationId: getOrganismByName
+  security: []
+  summary: |
+    Search organisms by name
+  description: |
+    Search organisms by name. The search is case-insensitive and will return all organisms whose name contains the given string.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              # The mistake is on purpose
+              example: "Gentiana luteha"
+              description: |
+                The name searched (can be partial and slightly incorrect)
+            with_compounds:
+              type: boolean
+              example: true
+              description: |
+                Whether to include the number of compounds associated with each organism
+  responses:
+    '200':
+      description: At least one organism was found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/organism.yaml'
+    '404':
+      description: No organism matching the given name exists
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No organism matching the given name exists

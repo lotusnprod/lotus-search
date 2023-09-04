@@ -1,0 +1,26 @@
+type: object
+required:
+  - name
+  - wid
+  - rank
+properties:
+  name:
+    type: string
+    example: "Gentiana lutea"
+    description: |
+      The accepted name of the organism
+  wid:
+    type: string
+    example: "Q158572"
+    description: |
+      The Wikidata id of the organism
+  rank:
+    type: string
+    example: "species"
+    description: |
+      The taxonomic rank of the organism
+  compounds:
+    type: integer
+    example: 112
+    description: |
+      The number of compounds associated with the organism

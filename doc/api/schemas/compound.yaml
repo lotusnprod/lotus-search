@@ -1,0 +1,25 @@
+type: object
+required:
+  - wid
+  - structure
+properties:
+  structure:
+    type: string
+    example: "C1=CC=CC=C1"
+    description: |
+      The structure of the compound as SMILES
+  wid:
+    type: string
+    example: "Q2270"
+    description: |
+      The Wikidata id of the compound
+  taxa:
+    type: integer
+    example: 12
+    description: |
+      The number of taxa associated with the compound
+  similarity:
+    type: number
+    example: 1.00
+    description: |
+      The similarity of the compound with the query structure. 1.0 if exact searches

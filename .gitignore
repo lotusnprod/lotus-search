@@ -2,4 +2,6 @@
 data
 contributions
 **/secrets.toml
-/api/napapi/*.sqlite3
+/django_api/napapi/db.sqlite3
+/doc/api/dist
+
