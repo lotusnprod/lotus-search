@@ -1,10 +1,10 @@
 post:
-  operationId: getCompoundByStructure
+  operationId: getStructureByStructure
   security: []
   summary: |
-    Search compounds by structure
+    Search structures by structure matching
   description: |
-    Search compounds by structure given a MOL file. Additional parameters allow to specify the kind of search (sub structure/exact) and the parameters)
+    Search structures by structure matching given a SMILES. Additional parameters allow to specify the kind of search (sub structure/exact) and the parameters)
   requestBody:
     description: Query
     required: true
@@ -17,7 +17,7 @@ post:
               type: string
               example: C1=CC=CC=C1
               description: |
-                A MOL file or SMILES of the structure of the compound or part of it.
+                A MOL file or SMILES of the structure of the structure or part of it.
             substructure_search:
               type: boolean
               example: false
@@ -30,15 +30,15 @@ post:
                 Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
   responses:
     '200':
-      description: At least one compound was found
+      description: At least one structure was found
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: '../../schemas/compound.yaml'
+              $ref: '../../schemas/structure_with_similarity_and_taxa_count.yaml'
     '404':
-      description: No compound matching the given structure exists
+      description: No structure matching the given structure exists
       content:
           application/json:
               schema:
@@ -46,4 +46,4 @@ post:
                 properties:
                     message:
                       type: string
-                      example: No compound matching the given structure exists
+                      example: No structure matching the given structure exists

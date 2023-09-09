@@ -1,10 +1,10 @@
 post:
-  operationId: getOrganismByName
+  operationId: getTaxaByName
   security: []
   summary: |
-    Search organisms by name
+    Search taxa by name
   description: |
-    Search organisms by name. The search is case-insensitive and will return all organisms whose name contains the given string.
+    Search taxa by name. The search is case-insensitive and will return all taxa whose name contains the given string.
   requestBody:
     description: Query
     required: true
@@ -23,18 +23,18 @@ post:
               type: boolean
               example: true
               description: |
-                Whether to include the number of compounds associated with each organism
+                Whether to include the number of compounds associated with each taxon
   responses:
     '200':
-      description: At least one organism was found
+      description: At least one taxon was found
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: '../../schemas/organism.yaml'
+              $ref: '../../schemas/taxon_with_structure_count.yaml'
     '404':
-      description: No organism matching the given name exists
+      description: No taxon matching the given name exists
       content:
           application/json:
               schema:
@@ -42,4 +42,4 @@ post:
                 properties:
                     message:
                       type: string
-                      example: No organism matching the given name exists
+                      example: No taxon matching the given name exists

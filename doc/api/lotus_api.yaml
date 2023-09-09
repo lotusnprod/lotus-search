@@ -10,13 +10,17 @@ servers:
   - url: 'https://search.nprod.net/api'
 
 paths:
-  /organism:
-    $ref: './paths/organism/search.yaml'
-  /compound:
-    $ref: './paths/compound/search.yaml'
+  /taxas:
+    $ref: './paths/taxa/search.yaml'
+  /taxas/{wid}:
+    $ref: './paths/taxa/get.yaml'
+  /structures:
+    $ref: './paths/structures/search.yaml'
+  /structures/{wid}:
+    $ref: './paths/structures/get.yaml'
 components:
   schemas:
-    organism:
-        $ref: "./schemas/organism.yaml"
-    compound:
-        $ref: "./schemas/compound.yaml"
+    taxa:
+        $ref: "./schemas/taxon.yaml"
+    structure:
+        $ref: "./schemas/structure.yaml"

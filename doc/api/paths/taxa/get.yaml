@@ -1,0 +1,33 @@
+get:
+  operationId: getOrganismById
+  security: []
+  summary: |
+    Get a taxon by WID
+  description: |
+    Get a taxon by WID
+  parameters:
+    - name: wid
+      in: path
+      description: |
+        The WID of the taxon
+      required: true
+      schema:
+        type: string
+        example: Q2270
+  responses:
+    '200':
+      description: At least one taxon was found
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/taxon.yaml'
+    '404':
+      description: No taxon matching this id exists
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No taxon matching this id exists

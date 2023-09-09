@@ -1,0 +1,14 @@
+type: object
+required:
+  - name
+  - wid
+  - rank
+allOf:
+  - $ref: './taxon.yaml'
+  - type: object
+    properties:
+      structures:
+        type: integer
+        example: 112
+        description: |
+          The number of structures associated with the taxon

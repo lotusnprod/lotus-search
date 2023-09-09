@@ -1,0 +1,18 @@
+type: object
+required:
+  - wid
+  - structure
+allOf:
+  - $ref: './structure.yaml'
+  - type: object
+    properties:
+      taxa:
+        type: integer
+        example: 12
+        description: |
+          The number of taxa associated with the structure
+      similarity:
+        type: number
+        example: 1.00
+        description: |
+          The similarity of the structure with the query structure. 1.0 if exact searches

@@ -65,7 +65,7 @@ app = FastAPI(
     # },
         )
 
-@app.get("/structures/")
+@app.get("/structures/")  # Should be POST
 @version(1, 0)
 async def read_structures(
     q: Annotated[
@@ -87,7 +87,7 @@ async def read_structures(
     return StructureCountResult(structure_count=results, description=desc)
 
 
-@app.get("/structures/{structure_id}")
+@app.get("/structures/{structure_id}") # call the id WID?
 @version(1, 0)
 async def read_structure(structure_id: str, q: str | None = None, short: bool = False) -> StructureResult:
     ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
@@ -104,7 +104,7 @@ async def read_structure(structure_id: str, q: str | None = None, short: bool = 
     desc = "Structures matching the query"
     return StructureResult(structure_id=results_filtered, structure_smiles=structure_smileses, description=desc)
 
-@app.get("/taxa/")
+@app.get("/taxa/")  ## Should be POST
 @version(1, 0)
 async def read_taxa(
     q: Annotated[
@@ -126,10 +126,10 @@ async def read_taxa(
     return TaxonCountResult(taxon_count=results, description=desc)
 
 
-@app.get("/taxa/{taxon_id}")
+@app.get("/taxa/{taxon_id}")  # call the id WID?
 @version(1, 0)
 async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -> TaxonResult:
-    results =  list(dm.get_taxa_with_name_containing(taxon_id))
+    results = list(dm.get_taxa_with_name_containing(taxon_id))
     # if q:
     #     results.update({"q": q})
     # if not short:
@@ -146,6 +146,9 @@ async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -
     desc = "Taxa matching the query"
     return TaxonResult(taxon_id=results, taxon_name=taxon_names, description=desc)
 
+
+# The API should not be able to create items, only read them.
+# We can have another API or authentication later for that
 # @app.post("/items/")
 # async def create_item(item: Item):
 #     return item

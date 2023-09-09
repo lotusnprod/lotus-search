@@ -1,0 +1,33 @@
+get:
+  operationId: getStructureById
+  security: []
+  summary: |
+    Get a structure by WID
+  description: |
+    Get a structure by WID
+  parameters:
+    - name: wid
+      in: path
+      description: |
+        The WID of the structure
+      required: true
+      schema:
+        type: string
+        example: Q2270
+  responses:
+    '200':
+      description: At least one structure was found
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/structure.yaml'
+    '404':
+      description: No structure matching this id exists
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No structure matching this id exists
