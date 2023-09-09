@@ -1,18 +1,17 @@
-import logging
 from collections.abc import Iterable
+import logging
+from processing_common import fingerprint, load_all_data, standardize
+from rdkit import Chem, DataStructs
+import requests
 from typing import Any
 
-import requests
 
 logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
+log = logging.getLogger()
+log.setLevel(logging.WARNING)
 requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
+requests_log.setLevel(logging.WARNING)
 requests_log.propagate = True
-
-from rdkit import Chem, DataStructs
-
-from processing_common import fingerprint, load_all_data, standardize
 
 
 class DataModel:
@@ -60,16 +59,16 @@ class DataModel:
             "withCapitalization": True,
             "withAllMatches": True,
         }
-        print(f"Querying GN resolver... {query}")
+        log.debug(f"Querying GN resolver... {query}")
 
         try:
             response = requests.post("https://verifier.globalnames.org/api/v1/verifications",
                                      json=query,
                                      headers={"Content-Type": "application/json"})
-        except:
-            print("Impossible to connect to GN resolver")
+        except Exception as e:
+            log.error(f"Impossible to connect to GN resolver {e}.")
             return None
-        print(response.json())
+        log.debug(response.json())
         return response.json()
 
     ### Compoundonomy
@@ -79,7 +78,7 @@ class DataModel:
             cid = self.db["compound_id"][wid]
             return self.db["compound_smiles"][cid]
         except (IndexError, ValueError):
-            print(f"Impossible to find a compound with wid={wid}")
+            log.warning(f"Impossible to find a compound with wid={wid}")
             return None
 
     def get_compound_smiles_from_list_of_wid(self, wid: list[int]) -> list[str]:
@@ -111,7 +110,6 @@ class DataModel:
             db = self.db["compound_sim_fps"]
         scores = DataStructs.BulkTanimotoSimilarity(fp, db)
         return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
-
 
     def compound_search_substructure(self, query: str,
                                      chirality: bool) -> list[tuple[int, float]]:
