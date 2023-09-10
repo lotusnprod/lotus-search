@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated, Dict, List
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.wsgi import WSGIMiddleware
@@ -29,28 +29,21 @@ You will be able to:
 """
 
 
-class StructureCountResult(BaseModel):
-    structure_count: int
-    description: str
-
-class StructureInfo(BaseModel):
+class StructureDict(BaseModel):
     structure_id: List[int]
     structure_smiles: List[str]
 
 class StructureResult(BaseModel):
-    structure_info: StructureInfo
+    results: StructureDict
+    count: int
     description: str
-
-class TaxonCountResult(BaseModel):
-    taxon_count: int
-    description: str
-
-class TaxonInfo(BaseModel):
-    taxon_id: List[int]
-    taxon_name: List[str]
+    
+class TaxonDict(BaseModel):
+    taxon: Dict
 
 class TaxonResult(BaseModel):
-    taxon_info: TaxonInfo
+    results: TaxonDict
+    count: int
     description: str
 
 
@@ -85,17 +78,22 @@ async def read_structures(
             pattern="^fixedquery$"
             ),
     ] = None
-) -> StructureCountResult:
-    results = dm.num_compounds()
-    desc = "Number of structures matching the query"
+) -> StructureResult:
+    desc = "Structures matching the query"
+    results = dm.get_compounds()
     if q:
         results.update({"q": q})
-    return StructureCountResult(structure_count=results, description=desc)
+    ## For dev
+    results = results[:500]
+    smiles = dm.get_compound_smiles_from_list_of_wid(results)
+
+    return StructureResult(results=StructureDict(structure_id=results, structure_smiles=smiles), description=desc, count = len(results))
 
 
 @app.get("/structures/{structure_query}") # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/structures/CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC)
 @version(1, 0)
 async def read_structure(structure_query: str, q: str | None = None, short: bool = False) -> StructureResult:
+    desc = "Structures matching the query"
     ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
     ids =  list(dm.compound_search(structure_query))
     ## COMMENT (AR): Throwing out score for now, quite dirty
@@ -107,8 +105,8 @@ async def read_structure(structure_query: str, q: str | None = None, short: bool
     #         {"description": "This is an amazing item that has a long description"}
     #     )
     structure_smileses = dm.get_compound_smiles_from_list_of_wid(ids_filtered)
-    desc = "Structures matching the query"
-    return StructureResult(structure_info=StructureInfo(structure_id=ids_filtered, structure_smiles=structure_smileses), description=desc)
+
+    return StructureResult(results=StructureDict(structure_id=ids_filtered, structure_smiles=structure_smileses), description=desc, count = len(ids_filtered))
 
 @app.get("/taxa/")  ## Should be POST
 @version(1, 0)
@@ -124,17 +122,21 @@ async def read_taxa(
             pattern="^fixedquery$"
             ),
     ] = None
-) -> TaxonCountResult:
-    results = dm.num_taxa()
-    desc = "Number of taxa matching the query"
+) -> TaxonResult:
+    desc = "Taxa matching the query"
+    results = dm.get_taxa()
     if q:
         results.update({"q": q})
-    return TaxonCountResult(taxon_count=results, description=desc)
+    ## For dev
+    results = dict(list(results.items())[:500])
+
+    return TaxonResult(results=TaxonDict(taxon=results), description=desc, count = len(results))
 
 
 @app.get("/taxa/{taxon_query}")  # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/taxa/gentiano)
 @version(1, 0)
 async def read_taxon(taxon_query: str, q: str | None = None, short: bool = False) -> TaxonResult:
+    desc = "Taxa matching the query"
     ids = list(dm.get_taxa_with_name_containing(taxon_query))
     # if q:
     #     results.update({"q": q})
@@ -149,8 +151,9 @@ async def read_taxon(taxon_query: str, q: str | None = None, short: bool = False
         taxon_name = dm.get_taxon_name_from_wid(wid)
         if taxon_name is not None:
             taxon_names.append(taxon_name)
-    desc = "Taxa matching the query"
-    return TaxonResult(taxon_info=TaxonInfo(taxon_id=ids, taxon_name=taxon_names), description=desc)
+    results = dict(zip(ids, taxon_names))
+
+    return TaxonResult(results=TaxonDict(taxon=results), description=desc, count = len(results))
 
 
 # The API should not be able to create items, only read them.
