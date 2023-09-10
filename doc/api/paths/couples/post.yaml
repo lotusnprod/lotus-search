@@ -1,0 +1,55 @@
+post:
+  operationId: searchCouples
+  security: []
+  summary: |
+    Search couples using parameters
+  description: |
+    Search couples using parameters
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            molecule:
+              type: string
+              example: C1=CC=CC=C1
+              description: |
+                A MOL file or SMILES of the structure of the structure or part of it.
+            substructure_search:
+              type: boolean
+              example: false
+              description: |
+                Search by substructure
+            similarity_level:
+              type: number
+              example: 0.8
+              description: |
+                Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+            name:
+              type: string
+              # The mistake is on purpose
+              example: "Gentiana luteha"
+              description: |
+                The name searched (can be partial and slightly incorrect)
+  responses:
+    '200':
+      description: At least one couple matching the given query was found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/TODO.yaml'
+    '404':
+      description: No couple matching the given query could be found
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No couple matching the given query could be found

@@ -1,0 +1,36 @@
+type: object
+required:
+  - wid_s ## not ideal
+  - structure
+  - name
+  - wid_t ## not ideal
+  - rank  
+properties:
+  structure:
+    type: object
+    properties:
+      smiles:
+        type: string
+        example: "C1=CC=CC=C1"
+        description: |
+          The structure of the structure as SMILES
+  wid_s:
+    type: string
+    example: "Q2270"
+    description: |
+      The Wikidata id of the structure
+  name:
+    type: string
+    example: "Gentiana lutea"
+    description: |
+      The accepted name of the taxon
+  wid_t:
+    type: string
+    example: "Q158572"
+    description: |
+      The Wikidata id of the taxon
+  rank:
+    type: string
+    example: "species"
+    description: |
+      The taxonomic rank of the taxon

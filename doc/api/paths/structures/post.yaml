@@ -1,8 +1,8 @@
 post:
-  operationId: searchStructuresByStructure
+  operationId: searchStructures
   security: []
   summary: |
-    Search structures by structure matching
+    Search structures using parameters
   description: |
     Search structures by structure matching given a SMILES. Additional parameters allow to specify the kind of search (sub structure/exact) and the parameters)
   requestBody:
@@ -30,7 +30,7 @@ post:
                 Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
   responses:
     '200':
-      description: At least one structure matching the given structure was found
+      description: At least one structure matching the given query was found
       content:
         application/json:
           schema:
@@ -38,7 +38,7 @@ post:
             items:
               $ref: '../../schemas/structure_with_similarity_and_taxa_count.yaml'
     '404':
-      description: No structure matching the given structure could be found
+      description: No structure matching the given query could be found
       content:
           application/json:
               schema:
@@ -46,4 +46,4 @@ post:
                 properties:
                     message:
                       type: string
-                      example: No structure matching the given structure could be found
+                      example: No structure matching the given query could be found

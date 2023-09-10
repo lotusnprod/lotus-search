@@ -1,2 +1,6 @@
-organism:
-  $ref: "./organism.yaml"
+couple:
+  $ref: "./couple.yaml"
+structure:
+  $ref: "./structure.yaml"
+taxon:
+  $ref: "./taxon.yaml"

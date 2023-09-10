@@ -10,17 +10,24 @@ servers:
   - url: 'https://search.nprod.net/api'
 
 paths:
-  /taxas:
-    $ref: './paths/taxa/search.yaml'
-  /taxas/{wid}:
-    $ref: './paths/taxa/get.yaml'
+  /couples:
+    $ref: './paths/couples/post.yaml'
+  /couples/{wid}:
+    $ref: './paths/couples/get.yaml'
   /structures:
-    $ref: './paths/structures/search.yaml'
+    $ref: './paths/structures/post.yaml'
   /structures/{wid}:
     $ref: './paths/structures/get.yaml'
+  /taxa:
+    $ref: './paths/taxa/post.yaml'
+  /taxa/{wid}:
+    $ref: './paths/taxa/get.yaml'
 components:
   schemas:
+    couple:
+        $ref: "./schemas/couple.yaml"
+    structures:
+        $ref: "./schemas/structure.yaml"
     taxa:
         $ref: "./schemas/taxon.yaml"
-    structure:
-        $ref: "./schemas/structure.yaml"
+    
