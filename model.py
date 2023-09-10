@@ -34,6 +34,9 @@ class DataModel:
     def get_taxa(self) -> int:
         return self.db["taxonomy_names"]
 
+    def get_taxon_name_from_list_of_wid(self, wid: list[int]) -> list[str]:
+        return [self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]]
+
     def get_taxon_name_from_wid(self, wid: int) -> str | None:
         try:
             wid = int(wid)
@@ -42,10 +45,6 @@ class DataModel:
         if wid not in self.db["taxonomy_names"]:
             return None
         return self.db["taxonomy_names"][wid]
-
-    ## TODO
-    # def get_taxon_name_fromlist_of_wid
-
 
     def get_taxa_with_name_containing(self, query: str) -> Iterable[int]:
         query = query.lower()

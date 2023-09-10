@@ -28,6 +28,15 @@ You will be able to:
 * **Read users** (_not implemented_).
 """
 
+class CoupleDict(BaseModel):
+    structure_id: List[int]
+    structure_smiles: List[str]
+    taxon: Dict
+
+class CoupleResult(BaseModel):
+    results: CoupleDict
+    count: int
+    description: str
 
 class StructureDict(BaseModel):
     structure_id: List[int]
@@ -63,6 +72,32 @@ app = FastAPI(
     #     "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     # },
         )
+
+@app.get("/couples/")  # Should be POST
+@version(1, 0)
+async def read_couples(
+    q: Annotated[
+        str | None,
+        Query(
+            alias="item-query",
+            title="Query string",
+            description="Query string for the items to search in the database that have a good match",
+            min_length=3,
+            max_length=50,
+            pattern="^fixedquery$"
+            ),
+    ] = None
+) -> CoupleResult:
+    desc = "Couples matching the query"
+    ## TODO
+    return CoupleResult(results=CoupleDict(structure_id=results, structure_smiles=smiles), description=desc, count = len(results))
+
+
+@app.get("/couples/{couples_query}") # no example for now
+@version(1, 0)
+async def read_couples(couple_query: str, q: str | None = None, short: bool = False) -> CoupleResult:
+    ## TODO
+    return CoupleResult(results=CoupleDict(), description=desc, count = len(ids_filtered))
 
 @app.get("/structures/")  # Should be POST
 @version(1, 0)
@@ -100,10 +135,6 @@ async def read_structure(structure_query: str, q: str | None = None, short: bool
     ids_filtered = [id for id, score in ids if score == 1]
     # if q:
     #     results.update({"q": q})
-    # if not short:
-    #     results.update(
-    #         {"description": "This is an amazing item that has a long description"}
-    #     )
     structure_smileses = dm.get_compound_smiles_from_list_of_wid(ids_filtered)
 
     return StructureResult(results=StructureDict(structure_id=ids_filtered, structure_smiles=structure_smileses), description=desc, count = len(ids_filtered))
@@ -140,17 +171,7 @@ async def read_taxon(taxon_query: str, q: str | None = None, short: bool = False
     ids = list(dm.get_taxa_with_name_containing(taxon_query))
     # if q:
     #     results.update({"q": q})
-    # if not short:
-    #     results.update(
-    #         {"description": "This is an amazing item that has a long description"}
-    #     )
-    ## COMMENT (AR): Have a list variant as for the structures?
-    ## COMMENT (AR): Make it work with children taxa
-    taxon_names = []
-    for wid in ids:
-        taxon_name = dm.get_taxon_name_from_wid(wid)
-        if taxon_name is not None:
-            taxon_names.append(taxon_name)
+    taxon_names = dm.get_taxon_name_from_list_of_wid(ids)
     results = dict(zip(ids, taxon_names))
 
     return TaxonResult(results=TaxonDict(taxon=results), description=desc, count = len(results))
