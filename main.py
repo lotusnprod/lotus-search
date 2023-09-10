@@ -33,18 +33,24 @@ class StructureCountResult(BaseModel):
     structure_count: int
     description: str
 
-class StructureResult(BaseModel):
+class StructureInfo(BaseModel):
     structure_id: List[int]
     structure_smiles: List[str]
+
+class StructureResult(BaseModel):
+    structure_info: StructureInfo
     description: str
 
 class TaxonCountResult(BaseModel):
     taxon_count: int
     description: str
 
-class TaxonResult(BaseModel):
+class TaxonInfo(BaseModel):
     taxon_id: List[int]
     taxon_name: List[str]
+
+class TaxonResult(BaseModel):
+    taxon_info: TaxonInfo
     description: str
 
 
@@ -91,18 +97,18 @@ async def read_structures(
 @version(1, 0)
 async def read_structure(structure_id: str, q: str | None = None, short: bool = False) -> StructureResult:
     ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
-    results =  list(dm.compound_search(structure_id))
+    ids =  list(dm.compound_search(structure_id))
     ## COMMENT (AR): Throwing out score for now, quite dirty
-    results_filtered = [id for id, score in results if score == 1]
+    ids_filtered = [id for id, score in ids if score == 1]
     # if q:
     #     results.update({"q": q})
     # if not short:
     #     results.update(
     #         {"description": "This is an amazing item that has a long description"}
     #     )
-    structure_smileses = dm.get_compound_smiles_from_list_of_wid(results_filtered)
+    structure_smileses = dm.get_compound_smiles_from_list_of_wid(ids_filtered)
     desc = "Structures matching the query"
-    return StructureResult(structure_id=results_filtered, structure_smiles=structure_smileses, description=desc)
+    return StructureResult(structure_info=StructureInfo(structure_id=ids_filtered, structure_smiles=structure_smileses), description=desc)
 
 @app.get("/taxa/")  ## Should be POST
 @version(1, 0)
@@ -129,7 +135,7 @@ async def read_taxa(
 @app.get("/taxa/{taxon_id}")  # call the id WID?
 @version(1, 0)
 async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -> TaxonResult:
-    results = list(dm.get_taxa_with_name_containing(taxon_id))
+    ids = list(dm.get_taxa_with_name_containing(taxon_id))
     # if q:
     #     results.update({"q": q})
     # if not short:
@@ -139,12 +145,12 @@ async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -
     ## COMMENT (AR): Have a list variant as for the structures?
     ## COMMENT (AR): Make it work with children taxa
     taxon_names = []
-    for wid in results:
+    for wid in ids:
         taxon_name = dm.get_taxon_name_from_wid(wid)
         if taxon_name is not None:
             taxon_names.append(taxon_name)
     desc = "Taxa matching the query"
-    return TaxonResult(taxon_id=results, taxon_name=taxon_names, description=desc)
+    return TaxonResult(taxon_info=TaxonInfo(taxon_id=ids, taxon_name=taxon_names), description=desc)
 
 
 # The API should not be able to create items, only read them.
