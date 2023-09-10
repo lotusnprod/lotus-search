@@ -31,6 +31,9 @@ class DataModel:
         return len(self.db["c2t"])
 
     ### Taxonomy
+    def get_taxa(self) -> int:
+        return self.db["taxonomy_names"]
+
     def get_taxon_name_from_wid(self, wid: int) -> str | None:
         try:
             wid = int(wid)
@@ -76,6 +79,9 @@ class DataModel:
         return response.json()
 
     ### Compoundonomy
+    def get_compounds(self) -> int:
+        return self.db["compound_wid"]
+
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
 
         try:
