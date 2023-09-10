@@ -93,11 +93,11 @@ async def read_structures(
     return StructureCountResult(structure_count=results, description=desc)
 
 
-@app.get("/structures/{structure_id}") # call the id WID?
+@app.get("/structures/{structure_query}") # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/structures/CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC)
 @version(1, 0)
-async def read_structure(structure_id: str, q: str | None = None, short: bool = False) -> StructureResult:
+async def read_structure(structure_query: str, q: str | None = None, short: bool = False) -> StructureResult:
     ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
-    ids =  list(dm.compound_search(structure_id))
+    ids =  list(dm.compound_search(structure_query))
     ## COMMENT (AR): Throwing out score for now, quite dirty
     ids_filtered = [id for id, score in ids if score == 1]
     # if q:
@@ -132,10 +132,10 @@ async def read_taxa(
     return TaxonCountResult(taxon_count=results, description=desc)
 
 
-@app.get("/taxa/{taxon_id}")  # call the id WID?
+@app.get("/taxa/{taxon_query}")  # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/taxa/gentiano)
 @version(1, 0)
-async def read_taxon(taxon_id: str, q: str | None = None, short: bool = False) -> TaxonResult:
-    ids = list(dm.get_taxa_with_name_containing(taxon_id))
+async def read_taxon(taxon_query: str, q: str | None = None, short: bool = False) -> TaxonResult:
+    ids = list(dm.get_taxa_with_name_containing(taxon_query))
     # if q:
     #     results.update({"q": q})
     # if not short:

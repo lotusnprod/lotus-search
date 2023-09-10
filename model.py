@@ -40,6 +40,10 @@ class DataModel:
             return None
         return self.db["taxonomy_names"][wid]
 
+    ## TODO
+    # def get_taxon_name_fromlist_of_wid
+
+
     def get_taxa_with_name_containing(self, query: str) -> Iterable[int]:
         query = query.lower()
 
@@ -75,7 +79,7 @@ class DataModel:
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
 
         try:
-            cid = self.db["compound_id"][wid]
+            cid = self.db["compound_id"][wid] # ambiguous with PubChem CID?
             return self.db["compound_smiles"][cid]
         except (IndexError, ValueError):
             log.warning(f"Impossible to find a compound with wid={wid}")
