@@ -1,28 +1,28 @@
 get:
-  operationId: getStructureById
+  operationId: getStructureByWid
   security: []
   summary: |
-    Get a structure by WID
+    Get a structure by Wikidata id
   description: |
-    Get a structure by WID
+    Get a structure by Wikidata id
   parameters:
     - name: wid
       in: path
       description: |
-        The WID of the structure
+        The Wikidata id of the structure
       required: true
       schema:
         type: string
         example: Q2270
   responses:
     '200':
-      description: At least one structure was found
+      description: At least one structure matching the given Wikidata id was found
       content:
         application/json:
           schema:
             $ref: '../../schemas/structure.yaml'
     '404':
-      description: No structure matching this id exists
+      description: No structure matching the given Wikidata id could be found
       content:
           application/json:
               schema:
@@ -30,4 +30,4 @@ get:
                 properties:
                     message:
                       type: string
-                      example: No structure matching this id exists
+                      example: No structure matching the given Wikidata id could be found

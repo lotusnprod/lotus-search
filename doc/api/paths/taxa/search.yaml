@@ -1,10 +1,10 @@
 post:
-  operationId: getTaxaByName
+  operationId: searchTaxaByName
   security: []
   summary: |
-    Search taxa by name
+    Search taxa by name matching
   description: |
-    Search taxa by name. The search is case-insensitive and will return all taxa whose name contains the given string.
+    Search taxa by name matching. The search is case-insensitive and will return all taxa whose name contains the given string.
   requestBody:
     description: Query
     required: true
@@ -26,7 +26,7 @@ post:
                 Whether to include the number of compounds associated with each taxon
   responses:
     '200':
-      description: At least one taxon was found
+      description: At least one taxon matching the given name was found
       content:
         application/json:
           schema:
@@ -34,7 +34,7 @@ post:
             items:
               $ref: '../../schemas/taxon_with_structure_count.yaml'
     '404':
-      description: No taxon matching the given name exists
+      description: No taxon matching the given name could be found
       content:
           application/json:
               schema:
@@ -42,4 +42,4 @@ post:
                 properties:
                     message:
                       type: string
-                      example: No taxon matching the given name exists
+                      example: No taxon matching the given name could be found

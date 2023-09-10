@@ -25,4 +25,4 @@ properties:
     type: number
     example: 1.00
     description: |
-      The similarity of the structure with the query structure. 1.0 if exact searches
+      The similarity of the structure with the query structure. 1.0 if exact search
