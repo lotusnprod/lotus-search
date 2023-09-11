@@ -57,31 +57,53 @@ app = FastAPI(
 @app.post("/couples/")
 @version(1, 0)
 async def create_couples(
-    q: Annotated[
-        str | None,
+    structure_wid: Annotated[
+        int | None,
         Query(
-            alias="query",
-            title="Query string",
-            description="Query string for the items to search in the database that have a good match"
+            alias="structure_wid",
+            description="Wikidata identifier of the structure (without the Q).",
+            example="3613679",
             # min_length=3,
             # max_length=50,
             # pattern="^fixedquery$"
             ),
-    ] = None
+    ] = None,
 ) -> CoupleResult:
     desc = "Couples matching the query"
     ## TODO
-    return CoupleResult(results=CoupleDict(structure_id=results, structure_smiles=smiles), description=desc, count = len(results))
+    return CoupleResult(results=CoupleDict(structure_id=results, structure_smiles=smiles, taxon=results), description=desc, count = len(results))
 
 @app.post("/structures/")
 @version(1, 0)
 async def create_structures(
-    q: Annotated[
+    structure_wid: Annotated[
+        int | None,
+        Query(
+            alias="structure_wid",
+            description="Wikidata identifier of the structure (without the Q).",
+            example="3613679",
+            # min_length=3,
+            # max_length=50,
+            # pattern="^fixedquery$"
+            ),
+    ] = None,
+    molecule: Annotated[
         str | None,
         Query(
-            alias="query",
-            title="Query string",
-            description="Query string for the items to search in the database that have a good match"
+            alias="molecule",
+            description="A MOL file or SMILES of the structure of the structure or part of it.",
+            example="C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O",
+            # min_length=3,
+            # max_length=50,
+            # pattern="^fixedquery$"
+            ),
+    ] = None,
+    similarity_level: Annotated[
+        str | None,
+        Query(
+            alias="similarity_level",
+            description="Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.",
+            example="0.8"
             # min_length=3,
             # max_length=50,
             # pattern="^fixedquery$"
@@ -90,10 +112,13 @@ async def create_structures(
 ) -> StructureResult:
     desc = "Structures matching the query"
     results = dm.get_compounds()
-    if q:
-        ids =  list(dm.compound_search(q))
-        ## COMMENT (AR): Throwing out score for now, quite dirty
-        results = [id for id, score in ids if score == 1]
+    if molecule:
+        ids =  list(dm.compound_search(molecule))
+        results = [id for id in ids]
+        if similarity_level:
+            results = [id for id, score in ids if score >= float(similarity_level)]
+    if structure_wid:
+        results = [x for x in results if x == structure_wid]
     ## For dev
     results = results[:500]
     smiles = dm.get_compound_smiles_from_list_of_wid(results)
