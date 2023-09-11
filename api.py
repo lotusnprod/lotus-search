@@ -6,24 +6,7 @@ from pydantic import BaseModel
 from model import DataModel
 
 description = """
-LOTUS API helps you do awesome stuff. 🚀
-
-## Items
-
-### Structures
-
-You can **read structures**.
-
-### Taxa
-
-You can **read taxa**.
-
-## Users
-
-You will be able to:
-
-* **Create users** (_not implemented_).
-* **Read users** (_not implemented_).
+LOTUSFast API helps you do awesome stuff. 🚀
 """
 
 class CoupleDict(BaseModel):
