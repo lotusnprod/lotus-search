@@ -99,7 +99,7 @@ async def create_structures(
             ),
     ] = None,
     similarity_level: Annotated[
-        str | None,
+        float | None,
         Query(
             alias="similarity_level",
             description="Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.",
@@ -116,7 +116,7 @@ async def create_structures(
         ids =  list(dm.compound_search(molecule))
         results = [id for id in ids]
         if similarity_level:
-            results = [id for id, score in ids if score >= float(similarity_level)]
+            results = [id for id, score in ids if score >= similarity_level]
     if structure_wid:
         results = [x for x in results if x == structure_wid]
     ## For dev
