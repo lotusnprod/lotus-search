@@ -4,7 +4,7 @@ post:
   summary: |
     Search couples using parameters
   description: |
-    Search couples using parameters
+    Search couples using parameters. Additional parameters allow to specify the kind of search and the parameters.
   requestBody:
     description: Query
     required: true
@@ -13,27 +13,57 @@ post:
         schema:
           type: object
           properties:
+            #' Structures.
+            structure_wid:
+              description: |
+                Wikidata identifier of the structure (without the Q).
+              default: ~
+              example: 2079986
+              type: integer
+
             molecule:
-              type: string
-              example: C1=CC=CC=C1
               description: |
                 A MOL file or SMILES of the structure of the structure or part of it.
+              default: ~
+              example: C1=CC=CC=C1
+              type: string
+
             substructure_search:
-              type: boolean
-              example: false
               description: |
                 Search by substructure
+              default: false
+              example: false
+              type: boolean
+
             similarity_level:
-              type: number
-              example: 0.8
               description: |
                 Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
-            name:
-              type: string
-              # The mistake is on purpose
-              example: "Gentiana luteha"
+              default: 1
+              example: 0.8
+              type: number
+
+            #' Taxa.
+            taxon_wid:
+              description: |
+                Wikidata identifier of the taxon (without the Q).
+              default: ~
+              example: 158572
+              type: integer
+            taxon_name:
               description: |
                 The name searched (can be partial and slightly incorrect)
+              default: ~
+              # The mistake is on purpose
+              example: "Gentiana luteha"
+              type: string
+
+            # taxon_children:
+            #   description: |
+            #     Whether to include the children of the taxon
+            #   default: true
+            #   example: true
+            #   type: boolean
+
   responses:
     '200':
       description: At least one couple matching the given query was found
@@ -42,7 +72,7 @@ post:
           schema:
             type: array
             items:
-              $ref: '../../schemas/TODO.yaml'
+              $ref: '../../schemas/couple.yaml'
     '404':
       description: No couple matching the given query could be found
       content:

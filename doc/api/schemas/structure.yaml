@@ -1,28 +1,53 @@
 type: object
-required:
-  - wid
-  - structure
+required: []
 properties:
-  structure:
-    type: object
-    properties:
-      smiles:
-        type: string
-        example: "C1=CC=CC=C1"
-        description: |
-          The structure of the structure as SMILES
-  wid:
-    type: string
-    example: "Q2270"
+  #' Structures.
+  structure_wid:
     description: |
-      The Wikidata id of the structure
-  taxa:
+      Wikidata identifier of the structure (without the Q).
+    default: ~
+    example: 2079986
     type: integer
-    example: 12
+
+  molecule:
     description: |
-      The number of taxa associated with the structure
-  similarity:
+      A MOL file or SMILES of the structure of the structure or part of it.
+    default: ~
+    example: C1=CC=CC=C1
+    type: string
+
+  substructure_search:
+    description: |
+      Search by substructure
+    default: false
+    example: false
+    type: boolean
+
+  similarity_level:
+    description: |
+      Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+    default: 1
+    example: 0.8
     type: number
-    example: 1.00
+
+  #' Taxa.
+  taxon_wid:
     description: |
-      The similarity of the structure with the query structure. 1.0 if exact search
+      Wikidata identifier of the taxon (without the Q).
+    default: ~
+    example: 158572
+    type: integer
+  taxon_name:
+    description: |
+      The name searched (can be partial and slightly incorrect)
+    default: ~
+    # The mistake is on purpose
+    example: "Gentiana luteha"
+    type: string
+
+  # taxon_children:
+  #   description: |
+  #     Whether to include the children of the taxon
+  #   default: true
+  #   example: true
+  #   type: boolean

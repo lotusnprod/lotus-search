@@ -4,7 +4,7 @@ post:
   summary: |
     Search taxa using parameters
   description: |
-    Search taxa using parameters. The search is case-insensitive and will return all taxa whose name contains the given string (and eventual additional parameters).
+    Search taxa using parameters. Additional parameters allow to specify the kind of search and the parameters.
   requestBody:
     description: Query
     required: true
@@ -13,17 +13,57 @@ post:
         schema:
           type: object
           properties:
-            name:
+            #' Structures.
+            structure_wid:
+              description: |
+                Wikidata identifier of the structure (without the Q).
+              default: ~
+              example: 2079986
+              type: integer
+
+            molecule:
+              description: |
+                A MOL file or SMILES of the structure of the structure or part of it.
+              default: ~
+              example: C1=CC=CC=C1
               type: string
-              # The mistake is on purpose
-              example: "Gentiana luteha"
+
+            substructure_search:
+              description: |
+                Search by substructure
+              default: false
+              example: false
+              type: boolean
+
+            similarity_level:
+              description: |
+                Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+              default: 1
+              example: 0.8
+              type: number
+
+            #' Taxa.
+            taxon_wid:
+              description: |
+                Wikidata identifier of the taxon (without the Q).
+              default: ~
+              example: 158572
+              type: integer
+            taxon_name:
               description: |
                 The name searched (can be partial and slightly incorrect)
-            with_compounds:
-              type: boolean
-              example: true
-              description: |
-                Whether to include the number of compounds associated with each taxon
+              default: ~
+              # The mistake is on purpose
+              example: "Gentiana luteha"
+              type: string
+
+            # taxon_children:
+            #   description: |
+            #     Whether to include the children of the taxon
+            #   default: true
+            #   example: true
+            #   type: boolean
+
   responses:
     '200':
       description: At least one taxon matching the given query was found
@@ -32,7 +72,7 @@ post:
           schema:
             type: array
             items:
-              $ref: '../../schemas/taxon_with_structure_count.yaml'
+              $ref: '../../schemas/taxon.yaml'
     '404':
       description: No taxon matching the given query could be found
       content:

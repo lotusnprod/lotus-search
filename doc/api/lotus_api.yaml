@@ -12,16 +12,10 @@ servers:
 paths:
   /couples:
     $ref: './paths/couples/post.yaml'
-  /couples/{wid}:
-    $ref: './paths/couples/get.yaml'
   /structures:
     $ref: './paths/structures/post.yaml'
-  /structures/{wid}:
-    $ref: './paths/structures/get.yaml'
   /taxa:
     $ref: './paths/taxa/post.yaml'
-  /taxa/{wid}:
-    $ref: './paths/taxa/get.yaml'
 components:
   schemas:
     couple:
