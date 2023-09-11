@@ -73,9 +73,9 @@ app = FastAPI(
     # },
         )
 
-@app.get("/couples/")  # Should be POST
+@app.post("/couples/")
 @version(1, 0)
-async def read_couples(
+async def create_couples(
     q: Annotated[
         str | None,
         Query(
@@ -93,15 +93,15 @@ async def read_couples(
     return CoupleResult(results=CoupleDict(structure_id=results, structure_smiles=smiles), description=desc, count = len(results))
 
 
-@app.get("/couples/{couples_query}") # no example for now
+@app.post("/couples/{couples_query}") # no example for now
 @version(1, 0)
-async def read_couples(couple_query: str, q: str | None = None, short: bool = False) -> CoupleResult:
+async def create_couples(couple_query: str, q: str | None = None) -> CoupleResult:
     ## TODO
     return CoupleResult(results=CoupleDict(), description=desc, count = len(ids_filtered))
 
-@app.get("/structures/")  # Should be POST
+@app.post("/structures/")
 @version(1, 0)
-async def read_structures(
+async def create_structures(
     q: Annotated[
         str | None,
         Query(
@@ -125,9 +125,9 @@ async def read_structures(
     return StructureResult(results=StructureDict(structure_id=results, structure_smiles=smiles), description=desc, count = len(results))
 
 
-@app.get("/structures/{structure_query}") # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/structures/CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC)
+@app.post("/structures/{structure_query}") # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/structures/CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC)
 @version(1, 0)
-async def read_structure(structure_query: str, q: str | None = None, short: bool = False) -> StructureResult:
+async def create_structure(structure_query: str, q: str | None = None) -> StructureResult:
     desc = "Structures matching the query"
     ## COMMENT (AR): Make it work for SMILES, InChIKeys, InChIs, names?
     ids =  list(dm.compound_search(structure_query))
@@ -139,9 +139,9 @@ async def read_structure(structure_query: str, q: str | None = None, short: bool
 
     return StructureResult(results=StructureDict(structure_id=ids_filtered, structure_smiles=structure_smileses), description=desc, count = len(ids_filtered))
 
-@app.get("/taxa/")  ## Should be POST
+@app.post("/taxa/")
 @version(1, 0)
-async def read_taxa(
+async def create_taxa(
     q: Annotated[
         str | None,
         Query(
@@ -164,9 +164,9 @@ async def read_taxa(
     return TaxonResult(results=TaxonDict(taxon=results), description=desc, count = len(results))
 
 
-@app.get("/taxa/{taxon_query}")  # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/taxa/gentiano)
+@app.post("/taxa/{taxon_query}")  # call the id WID? -> No, no ID is intended here, renamed it (example: http://127.0.0.1:8000/v1_0/taxa/gentiano)
 @version(1, 0)
-async def read_taxon(taxon_query: str, q: str | None = None, short: bool = False) -> TaxonResult:
+async def create_taxon(taxon_query: str, q: str | None = None) -> TaxonResult:
     desc = "Taxa matching the query"
     ids = list(dm.get_taxa_with_name_containing(taxon_query))
     # if q:
