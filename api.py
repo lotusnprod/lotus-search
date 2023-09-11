@@ -96,6 +96,17 @@ async def create_structures(
             # min_length=3,
             # max_length=50,
             # pattern="^fixedquery$"
+        ),
+    ] = None,
+        substructure_search: Annotated[
+            bool | None,
+            Query(
+                alias="substructure_search",
+                description="Search by substructure.",
+                example="false"
+            # min_length=3,
+            # max_length=50,
+            # pattern="^fixedquery$"
             ),
     ] = None,
     similarity_level: Annotated[
@@ -113,10 +124,9 @@ async def create_structures(
     desc = "Structures matching the query"
     results = dm.get_compounds()
     if molecule:
-        ids =  list(dm.compound_search(molecule))
-        results = [id for id in ids]
-        if similarity_level:
-            results = [id for id, score in ids if score >= similarity_level]
+        ids =  list(dm.compound_search(molecule)) if not substructure_search else list(dm.compound_search_substructure(molecule))
+        results = [id for id, score in ids if score == 1] if not substructure_search and not similarity_level else [id for id, score in ids if
+                                                                                        score >= similarity_level]
     if structure_wid:
         results = [x for x in results if x == structure_wid]
     ## For dev

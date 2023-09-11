@@ -121,7 +121,7 @@ class DataModel:
         return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
 
     def compound_search_substructure(self, query: str,
-                                     chirality: bool) -> list[tuple[int, float]]:
+                                     chirality: bool = False) -> list[tuple[int, float]]:
         mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
 
         if explicit_h:
