@@ -62,8 +62,7 @@ def create_main(
             score >= similarity_level]
     if structure_wid:
         structures = [x for x in structures if x == structure_wid]
-    ## TODO ADD
-    # get_taxa_containing_compound
+    tax_from_str = [item for wid in structures for item in dm.get_taxa_containing_compound(wid)]
 
     ## Taxal part
     taxa = dm.get_taxa()
@@ -75,8 +74,11 @@ def create_main(
         taxa = dict(zip(ids, taxon_names))
     if taxon_wid:
         taxa = {key: value for key, value in taxa.items() if key == taxon_wid}
-    ## TODO ADD
-    ## get_compounds_of_taxon    
+    str_from_tax = [item for wid in taxa for item in dm.get_compounds_of_taxon(wid)]
+
+    ## Filter both ways
+    structures = [value for value in structures if value in str_from_tax]
+    taxa = {key: value for key, value in taxa.items() if key in tax_from_str}
 
     ## For dev
     structures = structures[:500]
