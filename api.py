@@ -3,21 +3,12 @@ from typing import Annotated, Dict, List
 from fastapi import FastAPI, Query
 from fastapi_versioning import VersionedFastAPI, version
 from pydantic import BaseModel
+
 from model import DataModel
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
-
-class CoupleDict(BaseModel):
-    structure_id: List[int]
-    structure_smiles: List[str]
-    taxon: Dict
-
-class CoupleResult(BaseModel):
-    results: CoupleDict
-    count: int
-    description: str
 
 class StructureDict(BaseModel):
     structure_id: List[int]
@@ -36,6 +27,70 @@ class TaxonResult(BaseModel):
     count: int
     description: str
 
+
+class CoupleDict(BaseModel):
+    structures: StructureDict
+    taxa: TaxonDict
+
+
+class CoupleResult(BaseModel):
+    results: CoupleDict
+    count: int
+    description: str
+
+
+class MainResult(BaseModel):
+    results_couples: CoupleDict
+    results_structures: StructureDict
+    results_taxa: TaxonDict
+
+
+def create_main(
+        dm: DataModel,
+        structure_wid: int = None,
+        molecule: str = None,
+        substructure_search: bool = None,
+        similarity_level: float = None,
+        taxon_wid: int = None,
+        taxon_name: str = None
+) -> MainResult:
+    
+    ## Structural part
+    structures = dm.get_compounds()
+    if molecule:
+        ids = list(dm.compound_search(molecule)) if not substructure_search else list(
+            dm.compound_search_substructure(molecule))
+        structures = [id for id, score in ids if score == 1] if not substructure_search and not similarity_level else [
+            id for id, score in ids if
+            score >= similarity_level]
+    if structure_wid:
+        structures = [x for x in structures if x == structure_wid]
+    ## For dev
+    structures = structures[:500]
+    smiles = dm.get_compound_smiles_from_list_of_wid(structures)
+
+    ## Taxal part
+    taxa = dm.get_taxa()
+    if taxon_name:
+        ids = list(dm.get_taxa_with_name_containing(taxon_name))
+        taxon_names = dm.get_taxon_name_from_list_of_wid(ids)
+        taxa = dict(zip(ids, taxon_names))
+
+    if taxon_wid:
+        taxa = {key: value for key, value in taxa.items() if key == taxon_wid}
+    ## For dev
+    taxa = dict(list(taxa.items())[:500])
+
+    ## Couple part
+    ## TODO
+    
+    ## Final
+    s = StructureDict(structure_id=structures, structure_smiles=smiles)
+    t = TaxonDict(taxon=taxa)
+    ## TODO
+    c = CoupleDict(structures=s, taxa=t)
+
+    return MainResult(results_couples=c, results_structures=s, results_taxa=t)
 
 dm = DataModel()
 
@@ -124,9 +179,18 @@ async def create_couples(
             ),
     ] = None
 ) -> CoupleResult:
-    desc = "Couples matching the query"
-    ## TODO
-    return CoupleResult(results=CoupleDict(structure_id=couples, structure_smiles=smiles, taxon=taxa), description=desc, count = len(couples))
+    results = create_main(
+        dm=dm,
+        structure_wid=structure_wid,
+        molecule=molecule,
+        substructure_search=substructure_search,
+        similarity_level=similarity_level,
+        taxon_wid=taxon_wid,
+        taxon_name=taxon_name)
+
+    return CoupleResult(results=results.results_couples,
+                        description="Couples matching the query",
+                        count=len(results.results_couples.structures.structure_id))
 
 @app.post("/structures/")
 @version(1, 0)
@@ -198,20 +262,18 @@ async def create_structures(
             ),
     ] = None
 ) -> StructureResult:
-    desc = "Structures matching the query"
-    ## TODO add taxal filtering
-    structures = dm.get_compounds()
-    if molecule:
-        ids =  list(dm.compound_search(molecule)) if not substructure_search else list(dm.compound_search_substructure(molecule))
-        structures = [id for id, score in ids if score == 1] if not substructure_search and not similarity_level else [id for id, score in ids if
-                                                                                        score >= similarity_level]
-    if structure_wid:
-        structures = [x for x in structures if x == structure_wid]
-    ## For dev
-    structures = structures[:500]
-    smiles = dm.get_compound_smiles_from_list_of_wid(structures)
+    results = create_main(
+        dm=dm,
+        structure_wid=structure_wid,
+        molecule=molecule,
+        substructure_search=substructure_search,
+        similarity_level=similarity_level,
+        taxon_wid=taxon_wid,
+        taxon_name=taxon_name)
 
-    return StructureResult(results=StructureDict(structure_id=structures, structure_smiles=smiles), description=desc, count = len(structures))
+    return StructureResult(results=results.results_structures,
+                           description="Structures matching the query",
+                           count=len(results.results_structures.structure_id))
 
 @app.post("/taxa/")
 @version(1, 0)
@@ -283,19 +345,17 @@ async def create_taxa(
             ),
     ] = None
 ) -> TaxonResult:
-    desc = "Taxa matching the query"
-    ## TODO add structural filtering
-    taxa = dm.get_taxa()
-    if taxon_name:
-        ids = list(dm.get_taxa_with_name_containing(taxon_name))
-        taxon_names = dm.get_taxon_name_from_list_of_wid(ids)
-        taxa = dict(zip(ids, taxon_names))
+    results = create_main(
+        dm=dm,
+        structure_wid=structure_wid,
+        molecule=molecule,
+        substructure_search=substructure_search,
+        similarity_level=similarity_level,
+        taxon_wid=taxon_wid,
+        taxon_name=taxon_name)
 
-    if taxon_wid:
-        taxa = {key: value for key, value in taxa.items() if key == taxon_wid}
-    ## For dev
-    taxa = dict(list(taxa.items())[:500])
-
-    return TaxonResult(results=TaxonDict(taxon=taxa), description=desc, count = len(taxa))
+    return TaxonResult(results=results.results_taxa,
+                       description="Taxa matching the query",
+                       count=len(results.results_taxa.taxon.items()))
 
 app = VersionedFastAPI(app, enable_latest=True)
