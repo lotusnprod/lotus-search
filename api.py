@@ -1,6 +1,6 @@
-from typing import Annotated, Dict, List
+from typing import Dict, List
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 from pydantic import BaseModel
 
@@ -9,6 +9,15 @@ from model import DataModel
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
+
+
+class Item(BaseModel):
+    structure_wid: int | None = None  # 3613679
+    molecule: str | None = None  # "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
+    substructure_search: bool | None = None  # False
+    similarity_level: float | None = None  # 0.8
+    taxon_wid: int | None = None  # 158572
+    taxon_name: str | None = None  # "Gentiana lutea"
 
 class StructureDict(BaseModel):
     structure_id: List[int]
@@ -28,8 +37,7 @@ class TaxonResult(BaseModel):
     description: str
 
 class CoupleDict(BaseModel):
-    structures: StructureDict
-    taxa: TaxonDict
+    couple: Dict
 
 class CoupleResult(BaseModel):
     results: CoupleDict
@@ -69,6 +77,7 @@ def create_main(
     ## TODO ADD
     # get_taxonomic_tree
     if taxon_name:
+        ## Not using resolve_taxon for now
         ids = list(dm.get_taxa_with_name_containing(taxon_name))
         taxon_names = dm.get_taxon_name_from_list_of_wid(ids)
         taxa = dict(zip(ids, taxon_names))
@@ -85,11 +94,15 @@ def create_main(
     smiles = dm.get_compound_smiles_from_list_of_wid(structures)
     taxa = dict(list(taxa.items())[:500])
 
+    ## Couples part
+    couples = {wid: [] for wid in taxa for item in dm.get_compounds_of_taxon(wid)}
+    for wid, item in [(wid, item) for wid in taxa for item in dm.get_compounds_of_taxon(wid)]:
+        couples[wid].append(item)
+
     ## Final
     s = StructureDict(structure_id=structures, structure_smiles=smiles)
     t = TaxonDict(taxon=taxa)
-    ## TODO
-    c = CoupleDict(structures=s, taxa=t)
+    c = CoupleDict(couple=couples)
 
     return MainResult(results_couples=c, results_structures=s, results_taxa=t)
 
@@ -112,165 +125,31 @@ app = FastAPI(
 
 @app.post("/couples/")
 @version(1, 0)
-async def create_couples(
-    structure_wid: Annotated[
-        int | None,
-        Query(
-            alias="structure_wid",
-            description="Wikidata identifier of the structure (without the Q).",
-            example="3613679",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    molecule: Annotated[
-        str | None,
-        Query(
-            alias="molecule",
-            description="A MOL file or SMILES of the structure of the structure or part of it.",
-            example="C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-        ),
-    ] = None,
-        substructure_search: Annotated[
-            bool | None,
-            Query(
-                alias="substructure_search",
-                description="Search by substructure.",
-                example="false"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    similarity_level: Annotated[
-        float | None,
-        Query(
-            alias="similarity_level",
-            description="Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.",
-            example="0.8"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_wid: Annotated[
-        int | None,
-        Query(
-            alias="taxon_wid",
-            description="Wikidata identifier of the taxon (without the Q).",
-            example="158572",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_name: Annotated[
-        str | None,
-        Query(
-            alias="taxon_name",
-            description="The name searched (can be partial and slightly incorrect).",
-            example="Gentiana lutea"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None
-) -> CoupleResult:
+async def create_couples(item: Item) -> CoupleResult:
     results = create_main(
         dm=dm,
-        structure_wid=structure_wid,
-        molecule=molecule,
-        substructure_search=substructure_search,
-        similarity_level=similarity_level,
-        taxon_wid=taxon_wid,
-        taxon_name=taxon_name)
+        structure_wid=item.structure_wid,
+        molecule=item.molecule,
+        substructure_search=item.substructure_search,
+        similarity_level=item.similarity_level,
+        taxon_wid=item.taxon_wid,
+        taxon_name=item.taxon_name)
 
     return CoupleResult(results=results.results_couples,
                         description="Couples matching the query",
-                        count=len(results.results_couples.structures.structure_id))
+                        count=sum(len(items) for items in results.results_couples.couple.values()))
 
 @app.post("/structures/")
 @version(1, 0)
-async def create_structures(
-    structure_wid: Annotated[
-        int | None,
-        Query(
-            alias="structure_wid",
-            description="Wikidata identifier of the structure (without the Q).",
-            example="3613679",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    molecule: Annotated[
-        str | None,
-        Query(
-            alias="molecule",
-            description="A MOL file or SMILES of the structure of the structure or part of it.",
-            example="C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-        ),
-    ] = None,
-        substructure_search: Annotated[
-            bool | None,
-            Query(
-                alias="substructure_search",
-                description="Search by substructure.",
-                example="false"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    similarity_level: Annotated[
-        float | None,
-        Query(
-            alias="similarity_level",
-            description="Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.",
-            example="0.8"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_wid: Annotated[
-        int | None,
-        Query(
-            alias="taxon_wid",
-            description="Wikidata identifier of the taxon (without the Q).",
-            example="158572",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_name: Annotated[
-        str | None,
-        Query(
-            alias="taxon_name",
-            description="The name searched (can be partial and slightly incorrect).",
-            example="Gentiana lutea"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None
-) -> StructureResult:
+async def create_structures(item: Item) -> StructureResult:
     results = create_main(
         dm=dm,
-        structure_wid=structure_wid,
-        molecule=molecule,
-        substructure_search=substructure_search,
-        similarity_level=similarity_level,
-        taxon_wid=taxon_wid,
-        taxon_name=taxon_name)
+        structure_wid=item.structure_wid,
+        molecule=item.molecule,
+        substructure_search=item.substructure_search,
+        similarity_level=item.similarity_level,
+        taxon_wid=item.taxon_wid,
+        taxon_name=item.taxon_name)
 
     return StructureResult(results=results.results_structures,
                            description="Structures matching the query",
@@ -278,82 +157,15 @@ async def create_structures(
 
 @app.post("/taxa/")
 @version(1, 0)
-async def create_taxa(
-        structure_wid: Annotated[
-        int | None,
-        Query(
-            alias="structure_wid",
-            description="Wikidata identifier of the structure (without the Q).",
-            example="3613679",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    molecule: Annotated[
-        str | None,
-        Query(
-            alias="molecule",
-            description="A MOL file or SMILES of the structure of the structure or part of it.",
-            example="C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-        ),
-    ] = None,
-        substructure_search: Annotated[
-            bool | None,
-            Query(
-                alias="substructure_search",
-                description="Search by substructure.",
-                example="false"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    similarity_level: Annotated[
-        float | None,
-        Query(
-            alias="similarity_level",
-            description="Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.",
-            example="0.8"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_wid: Annotated[
-        int | None,
-        Query(
-            alias="taxon_wid",
-            description="Wikidata identifier of the taxon (without the Q).",
-            example="158572",
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None,
-    taxon_name: Annotated[
-        str | None,
-        Query(
-            alias="taxon_name",
-            description="The name searched (can be partial and slightly incorrect).",
-            example="Gentiana lutea"
-            # min_length=3,
-            # max_length=50,
-            # pattern="^fixedquery$"
-            ),
-    ] = None
-) -> TaxonResult:
+async def create_taxa(item: Item) -> TaxonResult:
     results = create_main(
         dm=dm,
-        structure_wid=structure_wid,
-        molecule=molecule,
-        substructure_search=substructure_search,
-        similarity_level=similarity_level,
-        taxon_wid=taxon_wid,
-        taxon_name=taxon_name)
+        structure_wid=item.structure_wid,
+        molecule=item.molecule,
+        substructure_search=item.substructure_search,
+        similarity_level=item.similarity_level,
+        taxon_wid=item.taxon_wid,
+        taxon_name=item.taxon_name)
 
     return TaxonResult(results=results.results_taxa,
                        description="Taxa matching the query",
