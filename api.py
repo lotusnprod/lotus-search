@@ -27,17 +27,14 @@ class TaxonResult(BaseModel):
     count: int
     description: str
 
-
 class CoupleDict(BaseModel):
     structures: StructureDict
     taxa: TaxonDict
-
 
 class CoupleResult(BaseModel):
     results: CoupleDict
     count: int
     description: str
-
 
 class MainResult(BaseModel):
     results_couples: CoupleDict
@@ -65,25 +62,27 @@ def create_main(
             score >= similarity_level]
     if structure_wid:
         structures = [x for x in structures if x == structure_wid]
-    ## For dev
-    structures = structures[:500]
-    smiles = dm.get_compound_smiles_from_list_of_wid(structures)
+    ## TODO ADD
+    # get_taxa_containing_compound
 
     ## Taxal part
     taxa = dm.get_taxa()
+    ## TODO ADD
+    # get_taxonomic_tree
     if taxon_name:
         ids = list(dm.get_taxa_with_name_containing(taxon_name))
         taxon_names = dm.get_taxon_name_from_list_of_wid(ids)
         taxa = dict(zip(ids, taxon_names))
-
     if taxon_wid:
         taxa = {key: value for key, value in taxa.items() if key == taxon_wid}
+    ## TODO ADD
+    ## get_compounds_of_taxon    
+
     ## For dev
+    structures = structures[:500]
+    smiles = dm.get_compound_smiles_from_list_of_wid(structures)
     taxa = dict(list(taxa.items())[:500])
 
-    ## Couple part
-    ## TODO
-    
     ## Final
     s = StructureDict(structure_id=structures, structure_smiles=smiles)
     t = TaxonDict(taxon=taxa)
