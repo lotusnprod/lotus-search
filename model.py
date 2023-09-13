@@ -31,11 +31,14 @@ class DataModel:
         return len(self.db["c2t"])
 
     ### Taxonomy
-    def get_taxa(self) -> int:
+    def get_taxa(self) -> dict[int, str]:  ### AR: You have all the types in data_structures.md this is not a int
         return self.db["taxonomy_names"]
 
     def get_taxon_name_from_list_of_wid(self, wid: list[int]) -> list[str]:
         return [self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]]
+
+    def get_dict_of_wid_to_taxon_name(self, wid: Iterable[int]) -> dict[int, str]:
+        return {w: self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]}
 
     def get_taxon_name_from_wid(self, wid: int) -> str | None:
         try:
@@ -78,7 +81,7 @@ class DataModel:
         return response.json()
 
     ### Compoundonomy
-    def get_compounds(self) -> int:
+    def get_compounds(self) -> dict[int, int]:
         return self.db["compound_wid"]
 
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
@@ -94,6 +97,11 @@ class DataModel:
         ids = [self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]]
         llen = self.db["compound_smiles"]
         return [self.db["compound_smiles"][i] for i in ids if 0 <= i < len(llen)]
+
+    def get_dict_of_wid_to_smiles(self, wid: Iterable[int]) -> dict[int, str]:
+        ids = {w: self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]}
+        llen = self.db["compound_smiles"]
+        return {wid: self.db["compound_smiles"][i] for wid, i in ids.items() if 0 <= i < len(llen)}
 
     def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[Any, Any, bool]:
         explicit_h = "[H]" in query
