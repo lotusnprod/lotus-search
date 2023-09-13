@@ -1,9 +1,10 @@
 from collections.abc import Iterable
 import logging
 from processing_common import fingerprint, load_all_data, standardize
+from pydantic import BaseModel
 from rdkit import Chem, DataStructs
 import requests
-from typing import Any
+from typing import Any, List
 
 
 logging.basicConfig()
@@ -12,6 +13,15 @@ log.setLevel(logging.WARNING)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.WARNING)
 requests_log.propagate = True
+
+class StructureInfo(BaseModel):
+    structure_id: List[int]
+    structure_smiles: List[str]
+
+
+class TaxonInfo(BaseModel):
+    taxon_id: List[int]
+    taxon_name: List[str]
 
 
 class DataModel:

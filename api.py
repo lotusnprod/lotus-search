@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 from pydantic import BaseModel
-from model import DataModel
+from model import DataModel, StructureInfo, TaxonInfo
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
@@ -9,22 +9,36 @@ LOTUSFast API helps you do awesome stuff. 🚀
 
 
 class Item(BaseModel):
-    structure_wid: int | None = None  # 3613679
-    molecule: str | None = None  # "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
-    substructure_search: bool | None = None  # False
-    similarity_level: float = 1.0  # exact if not given
-    taxon_wid: int | None = None  # 158572
-    taxon_name: str | None = None  # "Gentiana lutea"
+    structure_wid: int | None = None
+    molecule: str | None = None
+    substructure_search: bool | None = None
+    similarity_level: float = 1.0
+    taxon_wid: int | None = None
+    taxon_name: str | None = None
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "structure_wid": "3613679",
+                    "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                    "substructure_search": True,
+                    "similarity_level": 0.8,
+                    "taxon_wid": 158572,
+                    "taxon_name": "Gentiana lutea"
+                }
+            ]
+        }
+    }
 
 
 class StructureResult(BaseModel):
-    results: dict[int, str]  # AR: Later you change this str by a StructureInfo (just make the method in the model)
+    results: StructureInfo
     count: int
     description: str
 
 
 class TaxonResult(BaseModel):
-    results: dict[int, str]  # AR: Later you change this str by a TaxonInfo (just make the method in the model)
+    results: TaxonInfo
     count: int
     description: str
 
@@ -146,7 +160,7 @@ async def create_structures(item: Item) -> StructureResult:
     # We want the intersection of both (and we can do the same for the references later)
     matching_structures = matching_structures_by_structure & matching_structures_by_taxon
 
-    return StructureResult(results=dm.get_dict_of_wid_to_smiles(matching_structures),
+    return StructureResult(results=StructureInfo(dm.get_dict_of_wid_to_smiles(matching_structures)),
                            description="Structures matching the query",
                            count=len(matching_structures))
 
@@ -163,7 +177,7 @@ async def create_taxa(item: Item) -> TaxonResult:
     # We want the intersection of both (and we can do the same for the references later)
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
-    return TaxonResult(results=dm.get_dict_of_wid_to_taxon_name(matching_taxa),
+    return TaxonResult(results=TaxonInfo(dm.get_dict_of_wid_to_taxon_name(matching_taxa)),
                        description="Taxa matching the query",
                        count=len(matching_taxa))
 
