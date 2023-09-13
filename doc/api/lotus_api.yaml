@@ -91,7 +91,6 @@ components:
             additionalProperties:
               type: integer
             type: object
-          type: array
           title: Results
         count:
           type: integer
@@ -110,7 +109,6 @@ components:
         detail:
           items:
             $ref: "#/components/schemas/ValidationError"
-          type: array
           title: Detail
       type: object
       title: HTTPValidationError
@@ -159,12 +157,10 @@ components:
         structure_id:
           items:
             type: integer
-          type: array
           title: Structure Id
         structure_smiles:
           items:
             type: string
-          type: array
           title: Structure Smiles
       type: object
       required:
@@ -192,12 +188,10 @@ components:
         taxon_id:
           items:
             type: integer
-          type: array
           title: Taxon Id
         taxon_name:
           items:
             type: string
-          type: array
           title: Taxon Name
       type: object
       required:
@@ -227,7 +221,6 @@ components:
             anyOf:
             - type: string
             - type: integer
-          type: array
           title: Location
         msg:
           type: string
