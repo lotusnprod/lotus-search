@@ -104,7 +104,7 @@ app = FastAPI(
 
 @app.post("/couples")
 @version(1, 0)
-async def create_couples(item: Item) -> CoupleResult:
+async def search_couples(item: Item) -> CoupleResult:
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
     couples = set()
@@ -125,7 +125,7 @@ async def create_couples(item: Item) -> CoupleResult:
 
 @app.post("/structures")
 @version(1, 0)
-async def create_structures(item: Item) -> StructureResult:
+async def search_structures(item: Item) -> StructureResult:
     # We want the set of all the structures that match a query, or the specific structure given
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(dm, item)
     # We want the set of all the molecules found in the given taxa
@@ -143,7 +143,7 @@ async def create_structures(item: Item) -> StructureResult:
 
 @app.post("/taxa")
 @version(1, 0)
-async def create_taxa(item: Item) -> TaxonResult:
+async def search_taxa(item: Item) -> TaxonResult:
     # We want the set of all the taxa matching the query
     matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
 
