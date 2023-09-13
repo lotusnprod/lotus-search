@@ -7,7 +7,7 @@ description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
-## TODO Add security and license
+## TODO Add security
 
 class Item(BaseModel):
     structure_wid: int | None = None
@@ -126,9 +126,23 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     return out
 
 
-app = FastAPI(title="LOTUS FastAPI", description=description,
-              summary="An awesome way to access natural products related data.")
-
+app = FastAPI(
+    title="LOTUS FastAPI", 
+    description=description,
+    summary="An awesome way to access natural products related data.",
+    version="1.0",
+    # TODO
+    # terms_of_service="http://example.com/terms/",
+    # contact={
+    #     "name": "Deadpoolio the Amazing",
+    #     "url": "http://x-force.example.com/contact/",
+    #     "email": "dp@x-force.example.com",
+    # },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    }
+    )
 
 @app.post("/couples")
 @version(1, 0)
