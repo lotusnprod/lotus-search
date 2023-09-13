@@ -4,8 +4,6 @@ from processing_common import fingerprint, load_all_data, standardize
 from pydantic import BaseModel
 from rdkit import Chem, DataStructs
 import requests
-from typing import Any, List
-
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -14,14 +12,65 @@ requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.WARNING)
 requests_log.propagate = True
 
-class StructureInfo(BaseModel):
-    structure_id: List[int]
-    structure_smiles: List[str]
 
+class Item(BaseModel):
+    structure_wid: int | None = None
+    molecule: str | None = None
+    substructure_search: bool | None = None
+    similarity_level: float = 1.0
+    taxon_wid: int | None = None
+    taxon_name: str | None = None
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "structure_wid": "3613679",
+                    "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                    "substructure_search": True,
+                    "similarity_level": 0.8,
+                    "taxon_wid": 158572,
+                    "taxon_name": "Gentiana lutea"
+                }
+            ]
+        }
+    }
+
+class ReferenceInfo(BaseModel):
+    doi: str
+    title: str
+
+class ReferenceResult(BaseModel):
+    ids: list[int]
+    infos: dict[int, ReferenceInfo]
+    count: int
+    description: str
+
+class StructureInfo(BaseModel):
+    smiles: str
+
+class StructureResult(BaseModel):
+    ids: list[int]
+    infos: dict[int, StructureInfo]
+    count: int
+    description: str
 
 class TaxonInfo(BaseModel):
-    taxon_id: List[int]
-    taxon_name: List[str]
+    name: str
+
+class TaxonResult(BaseModel):
+    ids: list[int]
+    infos: dict[int, TaxonInfo]
+    count: int
+    description: str
+
+
+class CoupleResult(BaseModel):
+    ids: list[dict]
+    # infos_r: dict[int, ReferenceInfo]
+    infos_s: dict[int, StructureInfo]
+    infos_t: dict[int, TaxonInfo]
+    count: int
+    description: str
 
 
 class DataModel:
@@ -71,7 +120,7 @@ class DataModel:
             return None
         return self.db["taxonomy_ranks_names"][wid]
 
-    def resolve_taxon(self, query: str) -> Any:
+    def resolve_taxon(self, query: str) -> any:
         query = {
             "nameStrings": [query],
             "withVernaculars": False,
@@ -113,7 +162,7 @@ class DataModel:
         llen = self.db["compound_smiles"]
         return {wid: self.db["compound_smiles"][i] for wid, i in ids.items() if 0 <= i < len(llen)}
 
-    def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[Any, Any, bool]:
+    def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
         p.removeHs = not explicit_h

@@ -1,54 +1,12 @@
 from fastapi import FastAPI
 from fastapi_versioning import VersionedFastAPI, version
-from pydantic import BaseModel
-from model import DataModel, StructureInfo, TaxonInfo
+from model import DataModel, Item, ReferenceInfo, StructureInfo, TaxonInfo, ReferenceResult, StructureResult, TaxonResult, CoupleResult
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
 ## TODO Add security
-
-class Item(BaseModel):
-    structure_wid: int | None = None
-    molecule: str | None = None
-    substructure_search: bool | None = None
-    similarity_level: float = 1.0
-    taxon_wid: int | None = None
-    taxon_name: str | None = None
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "structure_wid": "3613679",
-                    "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-                    "substructure_search": True,
-                    "similarity_level": 0.8,
-                    "taxon_wid": 158572,
-                    "taxon_name": "Gentiana lutea"
-                }
-            ]
-        }
-    }
-
-
-class StructureResult(BaseModel):
-    results: StructureInfo
-    count: int
-    description: str
-
-
-class TaxonResult(BaseModel):
-    results: TaxonInfo
-    count: int
-    description: str
-
-
-class CoupleResult(BaseModel):
-    results: list[dict[str, int]]
-    count: int
-    description: str
-
 
 dm = DataModel()
 # Should likely move in the data model if that's used all the time
@@ -155,13 +113,14 @@ async def create_couples(item: Item) -> CoupleResult:
         structures = dm.get_compounds_of_taxon(taxon)
         # Same thing could add recursive here, and we should rename this to get_structures_of_taxon
         # To add reference, just add it to the 'if' here
-        couples.update({(taxon, structure) for structure in structures if structure in selected_structures})
+        couples.update({(structure, taxon) for structure in structures if structure in selected_structures})
 
-    # AR: Left as an exercise to add taxon name or molecule details or what not
-    # Maybe to not resolve by default, and let them do the complex query if they need to?
-    # Not everybody need names and that make everything much slower
-    return CoupleResult(results=[{"taxon_wid": taxon, "structure_wid": structure} for taxon, structure in couples],
-                        description="Couples matching the query", count=len(couples))
+    return CoupleResult(
+        ids=[{"s": structure, "t": taxon} for structure, taxon in couples],
+        infos_s={wid:StructureInfo(smiles=value) for wid, value in dm.get_dict_of_wid_to_smiles([first_value for first_value, _  in couples]).items()},
+        infos_t={wid:TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name([second_value for _, second_value in couples]).items()},
+        description="Couples matching the query",
+        count=len(couples))
 
 
 @app.post("/structures")
@@ -174,10 +133,12 @@ async def create_structures(item: Item) -> StructureResult:
 
     # We want the intersection of both (and we can do the same for the references later)
     matching_structures = matching_structures_by_structure & matching_structures_by_taxon
-
-    return StructureResult(results=StructureInfo(dm.get_dict_of_wid_to_smiles(matching_structures)),
-                           description="Structures matching the query",
-                           count=len(matching_structures))
+    return StructureResult(
+        ids=matching_structures,
+        infos={wid:StructureInfo(smiles=value) for wid, value in dm.get_dict_of_wid_to_smiles(matching_structures).items()},
+        description="Structures matching the query",
+        count=len(matching_structures)
+        )
 
 
 @app.post("/taxa")
@@ -192,8 +153,11 @@ async def create_taxa(item: Item) -> TaxonResult:
     # We want the intersection of both (and we can do the same for the references later)
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
-    return TaxonResult(results=TaxonInfo(dm.get_dict_of_wid_to_taxon_name(matching_taxa)),
-                       description="Taxa matching the query",
-                       count=len(matching_taxa))
+    return TaxonResult(
+        ids = matching_taxa,
+        infos={wid:TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()},
+        description="Taxa matching the query",
+        count=len(matching_taxa)
+        )
 
 app = VersionedFastAPI(app, enable_latest=True)
