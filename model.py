@@ -31,7 +31,7 @@ class DataModel:
         return len(self.db["c2t"])
 
     ### Taxonomy
-    def get_taxa(self) -> dict[int, str]:  ### AR: You have all the types in data_structures.md this is not a int
+    def get_taxa(self) -> dict[int, str]:
         return self.db["taxonomy_names"]
 
     def get_taxon_name_from_list_of_wid(self, wid: list[int]) -> list[str]:
