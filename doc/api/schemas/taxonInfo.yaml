@@ -1,0 +1,7 @@
+title: TaxonInfo
+type: object
+required: []
+properties:
+  name:
+    title: Name
+    type: string

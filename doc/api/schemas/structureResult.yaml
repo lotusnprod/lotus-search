@@ -1,0 +1,21 @@
+title: StructureResult
+type: object
+required:
+  - ids
+  - infos
+  - count
+  - description
+properties:
+  ids:
+    title: Ids
+    type: array
+  infos:
+    title: Infos
+    type: object
+    # $ref: "./schemas/structureInfo.yaml"
+  count:
+    title: Count
+    type: integer
+  description:
+    title: Description
+    type: string

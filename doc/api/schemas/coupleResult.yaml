@@ -1,0 +1,31 @@
+title: CoupleResult
+type: object
+required:
+  - ids
+  # - infos_r
+  - infos_s
+  - infos_t
+  - count
+  - description
+properties:
+  ids:
+    title: Ids
+    type: array
+  infos_r:
+    title: Infos References
+    type: object
+    # $ref: "./referenceInfo.yaml"
+  infos_s:
+    title: Infos Structures
+    type: object
+    # $ref: "./structureInfo.yaml"
+  infos_t:
+    title: Infos Taxa
+    type: object
+    # $ref: "./taxonInfo.yaml"
+  count:
+    title: Count
+    type: integer
+  description:
+    title: Description
+    type: string

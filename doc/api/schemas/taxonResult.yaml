@@ -1,0 +1,21 @@
+title: TaxonResult
+type: object
+required:
+  - ids
+  - infos
+  - count
+  - description
+properties:
+  ids:
+    title: Ids
+    type: array
+  infos:
+    title: Infos
+    type: object
+    # $ref: "./schemas/taxonInfo.yaml"
+  count:
+    title: Count
+    type: integer
+  description:
+    title: Description
+    type: string

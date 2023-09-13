@@ -1,0 +1,34 @@
+post:
+  operationId: search_taxa
+  security: []
+  summary: |
+    Search taxa using parameters
+  description: |
+    Search taxa using parameters. Additional parameters allow to specify the kind of search and the parameters.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/item.yaml"
+
+  responses:
+    '200':
+      description: At least one taxon matching the given search could be found
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/taxonResult.yaml'
+    '404':
+      description: No taxon matching the given search could be found
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No taxon matching the given search could be found

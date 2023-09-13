@@ -5,232 +5,34 @@ info:
   description: "\nLOTUSFast API helps you do awesome stuff. \U0001F680\n"
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  version: '1.0'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+  version: "1.0"
 servers:
 - url: "https://search.nprod.net/v1_0"
 paths:
   /couples:
-    post:
-      summary: Create Couples
-      operationId: create_couples_couples_post
-      security: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Item"
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CoupleResult"
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+    $ref: "./paths/couples/post.yaml"
   /structures:
-    post:
-      summary: Create Structures
-      operationId: create_structures_structures_post
-      security: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Item"
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StructureResult"
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+    $ref: "./paths/structures/post.yaml"
   /taxa:
-    post:
-      summary: Create Taxa
-      operationId: create_taxa_taxa_post
-      security: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Item"
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TaxonResult"
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+    $ref: "./paths/taxa/post.yaml"
 components:
   schemas:
     CoupleResult:
-      properties:
-        results:
-          items:
-            additionalProperties:
-              type: integer
-            type: object
-          title: Results
-        count:
-          type: integer
-          title: Count
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - results
-      - count
-      - description
-      title: CoupleResult
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: "#/components/schemas/ValidationError"
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      $ref: "./schemas/coupleResult.yaml"
     Item:
-      properties:
-        structure_wid:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Structure Wid
-        molecule:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Molecule
-        substructure_search:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Substructure Search
-        similarity_level:
-          type: number
-          title: Similarity Level
-          default: 1
-        taxon_wid:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Taxon Wid
-        taxon_name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Taxon Name
-      type: object
-      title: Item
-      examples:
-      - molecule: C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O
-        similarity_level: 0.8
-        structure_wid: '3613679'
-        substructure_search: true
-        taxon_name: Gentiana lutea
-        taxon_wid: 158572
-    StructureInfo:
-      properties:
-        structure_id:
-          items:
-            type: integer
-          title: Structure Id
-        structure_smiles:
-          items:
-            type: string
-          title: Structure Smiles
-      type: object
-      required:
-      - structure_id
-      - structure_smiles
-      title: StructureInfo
+      $ref: "./schemas/item.yaml"
+    # ReferenceInfo:
+    #   $ref: "./schemas/referenceInfo.yaml"
+    ReferenceResult:
+      $ref: "./schemas/referenceResult.yaml"
+    # StructureInfo:
+    #   $ref: "./schemas/structureInfo.yaml"
     StructureResult:
-      properties:
-        results:
-          $ref: "#/components/schemas/StructureInfo"
-        count:
-          type: integer
-          title: Count
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - results
-      - count
-      - description
-      title: StructureResult
-    TaxonInfo:
-      properties:
-        taxon_id:
-          items:
-            type: integer
-          title: Taxon Id
-        taxon_name:
-          items:
-            type: string
-          title: Taxon Name
-      type: object
-      required:
-      - taxon_id
-      - taxon_name
-      title: TaxonInfo
+      $ref: "./schemas/structureResult.yaml"
+    # TaxonInfo:
+    #   $ref: "./schemas/taxonInfo.yaml"
     TaxonResult:
-      properties:
-        results:
-          $ref: "#/components/schemas/TaxonInfo"
-        count:
-          type: integer
-          title: Count
-        description:
-          type: string
-          title: Description
-      type: object
-      required:
-      - results
-      - count
-      - description
-      title: TaxonResult
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      $ref: "./schemas/taxonResult.yaml"
+    HTTPValidationError:
+      $ref: "./schemas/validationError.yaml"

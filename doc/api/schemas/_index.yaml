@@ -1,0 +1,20 @@
+coupleInfo:
+  $ref: "./coupleInfo.yaml"
+coupleResult:
+  $ref: "./coupleResult.yaml"
+item:
+  $ref: "./item.yaml"
+referenceInfo:
+  $ref: "./referenceInfo.yaml"
+referenceResult:
+  $ref: "./referenceResult.yaml"
+structureInfo:
+  $ref: "./structureInfo.yaml"
+structureResult:
+  $ref: "./structureResult.yaml"
+taxonInfo:
+  $ref: "./taxonInfo.yaml"
+taxonResult:
+  $ref: "./taxonResult.yaml"
+validationError:
+  $ref: "./validationError.yaml"
