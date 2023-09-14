@@ -1,18 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
-from model import DataModel, Item, ReferenceInfo, StructureInfo, TaxonInfo, ReferenceResult, StructureResult, TaxonResult, CoupleResult
+
+from model import CoupleResult, DataModel, Item, StructureInfo, StructureResult, TaxonInfo, TaxonResult
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
-
-## TODO Add security
 
 dm = DataModel()
 # Should likely move in the data model if that's used all the time
 all_structures = set(dm.get_compounds())
 all_taxa = dm.get_taxa()
 
+app = FastAPI(
+    title="LOTUS FastAPI",
+    description=description,
+    summary="An awesome way to access natural products related data.",
+    version="1.0",
+    # TODO
+    # terms_of_service="http://example.com/terms/",
+    # contact={
+    #     "name": "Deadpoolio the Amazing",
+    #     "url": "http://x-force.example.com/contact/",
+    #     "email": "dp@x-force.example.com",
+    # },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    }
+)
 
 def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
@@ -26,15 +42,17 @@ def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) ->
         else:
             if item.molecule:
                 if item.substructure_search:
-                    results = dm.compound_search_substructure(item.molecule)
-                    structures = {_id for _id, _ in results}
-                    if structures is None:
-                        structures = all_structures
+                    try:
+                        results = dm.compound_search_substructure(item.molecule)
+                        structures = {_id for _id, _ in results}
+                    except ValueError:
+                        raise HTTPException(status_code=500, detail=f"The structure given is invalid: {item.molecule}")
                 else:
-                    results = dm.compound_search(item.molecule)
-                    structures = {_id for _id, score in results if score >= item.similarity_level}
-                    if structures is None:
-                        structures = all_structures
+                    try:
+                        results = dm.compound_search(item.molecule)
+                        structures = {_id for _id, score in results if score >= item.similarity_level}
+                    except ValueError:
+                        raise HTTPException(status_code=500, detail=f"The structure given is invalid: {item.molecule}")
             else:
                 structures = all_structures
 
@@ -84,41 +102,29 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     return out
 
 
-app = FastAPI(
-    title="LOTUS FastAPI", 
-    description=description,
-    summary="An awesome way to access natural products related data.",
-    version="1.0",
-    # TODO
-    # terms_of_service="http://example.com/terms/",
-    # contact={
-    #     "name": "Deadpoolio the Amazing",
-    #     "url": "http://x-force.example.com/contact/",
-    #     "email": "dp@x-force.example.com",
-    # },
-    license_info={
-        "name": "Apache 2.0",
-        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
-    }
-    )
-
 @app.post("/couples")
 @version(1, 0)
 async def search_couples(item: Item) -> CoupleResult:
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
-    couples = set()
 
-    for taxon in selected_taxa:
-        structures = dm.get_compounds_of_taxon(taxon)
-        # Same thing could add recursive here, and we should rename this to get_structures_of_taxon
-        # To add reference, just add it to the 'if' here
-        couples.update({(structure, taxon) for structure in structures if structure in selected_structures})
+    compounds_of_selected_taxa = {
+        taxon: dm.get_compounds_of_taxon(taxon) for taxon in selected_taxa
+    }
+
+    couples = {
+        (structure, taxon)
+        for taxon, structures in compounds_of_selected_taxa.items()
+        for structure in structures
+        if structure in selected_structures
+    }
 
     return CoupleResult(
-        ids=[{"s": structure, "t": taxon} for structure, taxon in couples],
-        infos_s={wid:StructureInfo(smiles=value) for wid, value in dm.get_dict_of_wid_to_smiles([first_value for first_value, _  in couples]).items()},
-        infos_t={wid:TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name([second_value for _, second_value in couples]).items()},
+        ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
+        structures={wid: StructureInfo(smiles=value) for wid, value in
+                    dm.get_dict_of_wid_to_smiles([first_value for first_value, _ in couples]).items()},
+        taxa={wid: TaxonInfo(name=value) for wid, value in
+              dm.get_dict_of_wid_to_taxon_name([taxon_name for _, taxon_name in couples]).items()},
         description="Couples matching the query",
         count=len(couples))
 
@@ -135,10 +141,11 @@ async def search_structures(item: Item) -> StructureResult:
     matching_structures = matching_structures_by_structure & matching_structures_by_taxon
     return StructureResult(
         ids=matching_structures,
-        infos={wid:StructureInfo(smiles=value) for wid, value in dm.get_dict_of_wid_to_smiles(matching_structures).items()},
+        structures={wid: StructureInfo(smiles=value) for wid, value in
+                    dm.get_dict_of_wid_to_smiles(matching_structures).items()},
         description="Structures matching the query",
         count=len(matching_structures)
-        )
+    )
 
 
 @app.post("/taxa")
@@ -154,10 +161,10 @@ async def search_taxa(item: Item) -> TaxonResult:
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
     return TaxonResult(
-        ids = matching_taxa,
-        infos={wid:TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()},
+        ids=matching_taxa,
+        infos={wid: TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()},
         description="Taxa matching the query",
         count=len(matching_taxa)
-        )
+    )
 
 app = VersionedFastAPI(app, enable_latest=True)

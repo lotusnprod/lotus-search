@@ -3,23 +3,32 @@ type: object
 required:
   - ids
   # - infos_r
-  - infos_s
-  - infos_t
+  - structures
+  - taxa
   - count
   - description
 properties:
   ids:
     title: Ids
     type: array
-  infos_r:
+    items:
+      type: object
+      properties:
+        structure:
+          type: integer
+          example: 105136550
+        taxon:
+          type: integer
+          example: 2697797
+  references:
     title: Infos References
     type: object
     # $ref: "./referenceInfo.yaml"
-  infos_s:
+  structures:
     title: Infos Structures
     type: object
     # $ref: "./structureInfo.yaml"
-  infos_t:
+  taxa:
     title: Infos Taxa
     type: object
     # $ref: "./taxonInfo.yaml"

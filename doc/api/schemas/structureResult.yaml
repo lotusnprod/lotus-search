@@ -9,7 +9,7 @@ properties:
   ids:
     title: Ids
     type: array
-  infos:
+  structures:
     title: Infos
     type: object
     # $ref: "./schemas/structureInfo.yaml"

@@ -41,7 +41,7 @@ class ReferenceInfo(BaseModel):
 
 class ReferenceResult(BaseModel):
     ids: list[int]
-    infos: dict[int, ReferenceInfo]
+    references: dict[int, ReferenceInfo]
     count: int
     description: str
 
@@ -50,7 +50,7 @@ class StructureInfo(BaseModel):
 
 class StructureResult(BaseModel):
     ids: list[int]
-    infos: dict[int, StructureInfo]
+    structures: dict[int, StructureInfo]
     count: int
     description: str
 
@@ -59,16 +59,19 @@ class TaxonInfo(BaseModel):
 
 class TaxonResult(BaseModel):
     ids: list[int]
-    infos: dict[int, TaxonInfo]
+    taxa: dict[int, TaxonInfo]
     count: int
     description: str
 
+class CoupleIds(BaseModel):
+    structure: int
+    taxon: int
 
 class CoupleResult(BaseModel):
-    ids: list[dict]
+    ids: list[CoupleIds]
     # infos_r: dict[int, ReferenceInfo]
-    infos_s: dict[int, StructureInfo]
-    infos_t: dict[int, TaxonInfo]
+    structures: dict[int, StructureInfo]
+    taxa: dict[int, TaxonInfo]
     count: int
     description: str
 
