@@ -12,6 +12,8 @@ servers:
 paths:
   /couples:
     $ref: "./paths/couples/post.yaml"
+  /references:
+    $ref: "./paths/references/post.yaml"
   /structures:
     $ref: "./paths/structures/post.yaml"
   /taxa:

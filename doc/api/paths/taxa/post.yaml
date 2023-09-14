@@ -19,9 +19,7 @@ post:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../../schemas/taxonResult.yaml'
+            $ref: '../../schemas/taxonResult.yaml'
     '404':
       description: No taxon matching the given search could be found
       content:

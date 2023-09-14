@@ -2,6 +2,9 @@ title: Item
 type: object
 required: []
 properties:
+  #' References.
+  # TODO
+  
   #' Structures.
   structure_wid:
     description: |

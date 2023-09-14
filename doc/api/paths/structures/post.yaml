@@ -19,9 +19,7 @@ post:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../../schemas/structureResult.yaml'
+            $ref: '../../schemas/structureResult.yaml'
     '404':
       description: No structure matching the given query search be found
       content:
@@ -32,3 +30,13 @@ post:
                     message:
                       type: string
                       example: No structure matching the given search could be found
+    '500':
+      description: The structure given is invalid
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: The structure given is invalid

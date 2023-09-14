@@ -1,19 +1,17 @@
-coupleInfo:
-  $ref: "./coupleInfo.yaml"
 coupleResult:
   $ref: "./coupleResult.yaml"
 item:
   $ref: "./item.yaml"
-referenceInfo:
-  $ref: "./referenceInfo.yaml"
+references:
+  $ref: "./references.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
-structureInfo:
-  $ref: "./structureInfo.yaml"
+structures:
+  $ref: "./structures.yaml"
 structureResult:
   $ref: "./structureResult.yaml"
-taxonInfo:
-  $ref: "./taxonInfo.yaml"
+taxa:
+  $ref: "./taxa.yaml"
 taxonResult:
   $ref: "./taxonResult.yaml"
 validationError:

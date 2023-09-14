@@ -24,7 +24,7 @@ class Item(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "structure_wid": "3613679",
+                    "structure_wid": "27151406",
                     "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
                     "substructure_search": True,
                     "similarity_level": 0.8,

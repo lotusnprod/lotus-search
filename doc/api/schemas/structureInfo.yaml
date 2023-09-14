@@ -1,7 +1,0 @@
-title: StructureInfo
-type: object
-required: []
-properties:
-  structure_smiles:
-    title: Structure SMILES
-    type: string

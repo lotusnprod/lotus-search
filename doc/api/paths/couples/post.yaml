@@ -19,9 +19,7 @@ post:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../../schemas/coupleResult.yaml'
+            $ref: '../../schemas/coupleResult.yaml'
     '404':
       description: No couple matching the given search could be found
       content:
