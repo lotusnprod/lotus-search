@@ -35,4 +35,4 @@ jobs:
       - name: Run update script if cache miss
         if: steps.cache-db.outputs.cache-hit != 'true'
         run: |
-          poetry run update.py
+          poetry run ./update.py
