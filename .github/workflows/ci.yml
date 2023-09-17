@@ -35,6 +35,7 @@ jobs:
       - name: Run update script if cache miss
         if: steps.cache-db.outputs.cache-hit != 'true'
         run: |
+          chmod +x ./update.py
           poetry run ./update.py
       - name: Clean up unnecessary files
         if: always()
