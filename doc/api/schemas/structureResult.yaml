@@ -1,0 +1,30 @@
+title: StructureResult
+type: object
+properties:
+  ids:
+    title: IDs
+    description: |
+      IDs
+    type: array
+    example: [27151406]
+  structures:
+    title: Structures
+    description: |
+      Structures
+    type: object
+    properties:
+      ids: 
+        type: integer
+        example: 27151406
+      structures:
+        $ref: "./structures.yaml"
+  count:
+    title: Count
+    description: |
+      Count
+    type: integer
+  description:
+    title: Description
+    description: |
+      Description
+    type: string

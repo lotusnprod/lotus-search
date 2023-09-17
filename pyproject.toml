@@ -1,25 +1,29 @@
 [tool.poetry]
 name = "lotus_search"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+dash = "^2.11.1"
+dash-bootstrap-components = "^1.4.2"
+fastapi = "^0.103.1"
+fastapi-versioning = "^0.10.0"
+flask-caching = "^2.0.2"
+gunicorn = "^21.2.0"
+orjson = "^3.9.2"
+pandas = "^2.0.3"
+pydantic = "^2.3.0"
 requests = "^2.31.0"
-streamlit = "^1.25.0"
 rdkit = "^2023.3.2"
-bjonnh-streamlit-ketcher = {version = "^0.0.4", source = "test"}
 sqlalchemy = "^2.0.19"
+uvicorn = "^0.23.2"
 
+[tool.poetry.scripts]
+start = "app:main"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-
-[[tool.poetry.source]]
-name = "test"
-url = "https://test.pypi.org/simple/"
-priority = "explicit"

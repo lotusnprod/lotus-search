@@ -13,6 +13,8 @@
 | compound_wid                   | list[int]                       | Array of cids                                                     |
 | compound_sim_fps               | list[bytes]                     | Similarity fingerprints                                           |
 | compound_library               | bytes                           | The RDKit library                                                 |
+| compound_sim_h_fps             | list[bytes]                     | Similarity fingerprints (with explicit Hs)                        |
+| compound_library_h             | bytes                           | The RDKit library (with explicit Hs)                              |
 | t2c                            | dict[tid, set[cid]]             | All compounds from taxon tid                                      |
 | c2t                            | dict[cid, set[tid]]             | All taxa containg compound cid                                    |
 | tc2r                           | dict[tuple[tid, cid], set[rid]] | References of couple tid/cid                                      |

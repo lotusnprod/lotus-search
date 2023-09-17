@@ -1,0 +1,32 @@
+post:
+  operationId: search_references
+  security: []
+  summary: |
+    Search references using parameters
+  description: |
+    Search references using parameters. Additional parameters allow to specify the kind of search and the parameters.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/item.yaml"
+
+  responses:
+    '200':
+      description: At least one reference matching the given search could be found
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/referenceResult.yaml'
+    '404':
+      description: No reference matching the given search could be found
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No reference matching the given search could be found

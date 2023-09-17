@@ -1,0 +1,57 @@
+title: Item
+type: object
+required: []
+properties:
+  #' References.
+  # TODO
+  
+  #' Structures.
+  structure_wid:
+    description: |
+      Wikidata identifier of the structure (without the Q).
+    default: ~
+    example: 3613679
+    type: integer
+
+  molecule:
+    description: |
+      A MOL file or SMILES of the structure of the structure or part of it.
+    default: ~
+    example: "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
+    type: string
+
+  substructure_search:
+    description: |
+      Search by substructure.
+    default: false
+    example: false
+    type: boolean
+
+  similarity_level:
+    description: |
+      Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+    default: 1.0
+    example: 0.8
+    type: number
+
+  #' Taxa.
+  taxon_wid:
+    description: |
+      Wikidata identifier of the taxon (without the Q).
+    default: ~
+    example: 158572
+    type: integer
+  taxon_name:
+    description: |
+      The name searched (can be partial and slightly incorrect).
+    default: ~
+    # The mistake is on purpose
+    example: "Gentiana luteha"
+    type: string
+
+  # taxon_children:
+  #   description: |
+  #     Whether to include the children of the taxon.
+  #   default: true
+  #   example: true
+  #   type: boolean

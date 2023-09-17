@@ -20,7 +20,10 @@ def process_smiles(inp):
         if smol is not None:
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
-            return (nid, smiles, smiles_clean, sim_fp, sub_fp)
+            smol_h = Chem.AddHs(smol)
+            sim_fp_h = fingerprint(smol_h)
+            sub_fp_h = Chem.PatternFingerprint(smol_h)
+            return nid, smiles, smiles_clean, sim_fp, sub_fp, smol_h.ToBinary(), sim_fp_h, sub_fp_h
         else:
             return None
     except:
@@ -45,23 +48,35 @@ def run(root: Path) -> None:
 
     mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
     fps = rdSubstructLibrary.PatternHolder()
-    props = rdSubstructLibrary.KeyFromPropHolder()
 
-    library = rdSubstructLibrary.SubstructLibrary(mols, fps, props)
+    library = rdSubstructLibrary.SubstructLibrary(mols, fps)
+
+    mols_h = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
+    fps_h = rdSubstructLibrary.PatternHolder()
+
+    library_h = rdSubstructLibrary.SubstructLibrary(mols_h, fps_h)
 
     p_smileses = []
     p_sim_fps = []
+    p_sim_h_fps = []
     p_links = []
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         results = executor.map(process_smiles, enumerate(smileses), chunksize=1000)
         for result in results:
             if result is not None:
-                mid, smiles, smiles_clean, sim_fp, sub_fp = result
+                mid, smiles, smiles_clean, sim_fp, sub_fp, mol_h, sim_fp_h, sub_fp_h = result
+
+                mols_h.AddMol(Chem.Mol(mol_h))
+                fps_h.AddFingerprint(sub_fp_h)
+                p_sim_h_fps.append(sim_fp_h)
+
                 mols.AddSmiles(smiles_clean)
                 fps.AddFingerprint(sub_fp)
-                p_smileses.append(smiles)
                 p_sim_fps.append(sim_fp)
+
+                p_smileses.append(smiles)
+
                 p_links.append(links[mid])
 
     t2c = {}
@@ -89,7 +104,9 @@ def run(root: Path) -> None:
         "compound_smiles": p_smileses,
         "compound_wid": p_links,
         "compound_sim_fps": p_sim_fps,
+        "compound_sim_h_fps": p_sim_h_fps,
         "compound_library": library.Serialize(),
+        "compound_library_h": library_h.Serialize(),
         "t2c": t2c,
         "c2t": c2t,
         "tc2r": tc2r
@@ -97,6 +114,7 @@ def run(root: Path) -> None:
 
     with open(root / "database_taxo.pkl", "rb") as f:
         database.update(pickle.load(f))
-
+    print("Finished integrating taxo")
     with open(root / "database.pkl", "wb") as f:
         pickle.dump(database, f)
+    print("Finished dumping")

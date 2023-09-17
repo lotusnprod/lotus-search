@@ -1,0 +1,63 @@
+title: CoupleResult
+type: object
+properties:
+  ids:
+    title: IDs
+    description: |
+      IDs
+    type: array
+    items:
+      type: object
+      properties:
+        reference:
+          type: integer
+          example: 44488598
+        structure:
+          type: integer
+          example: 27151406
+        taxon:
+          type: integer
+          example: 158572
+  references:
+    title: References
+    description: |
+      References
+    type: object
+    properties:
+      ids:
+        type: integer
+        example: 44488598
+      references:
+        $ref: "./references.yaml"
+  structures:
+    title: Structures
+    description: |
+      Structures
+    type: object
+    properties:
+      ids: 
+        type: integer
+        example: 27151406
+      structures:
+        $ref: "./structures.yaml"
+  taxa:
+    title: Taxa
+    description: |
+      Taxa
+    type: object
+    properties:
+      ids: 
+        type: integer
+        example: 158572
+      taxa:
+        $ref: "./taxa.yaml"
+  count:
+    title: Count
+    description: |
+      Count
+    type: integer
+  description:
+    title: Description
+    description: |
+      Description
+    type: string

@@ -1,0 +1,42 @@
+post:
+  operationId: search_structures
+  security: []
+  summary: |
+    Search structures using parameters
+  description: |
+    Search structures. Additional parameters allow to specify the kind of search and the parameters.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/item.yaml"
+
+  responses:
+    '200':
+      description: At least one structure matching the given search could be found
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/structureResult.yaml'
+    '404':
+      description: No structure matching the given query search be found
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No structure matching the given search could be found
+    '500':
+      description: The structure given is invalid
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: The structure given is invalid

@@ -1,0 +1,18 @@
+coupleResult:
+  $ref: "./coupleResult.yaml"
+item:
+  $ref: "./item.yaml"
+references:
+  $ref: "./references.yaml"
+referenceResult:
+  $ref: "./referenceResult.yaml"
+structures:
+  $ref: "./structures.yaml"
+structureResult:
+  $ref: "./structureResult.yaml"
+taxa:
+  $ref: "./taxa.yaml"
+taxonResult:
+  $ref: "./taxonResult.yaml"
+validationError:
+  $ref: "./validationError.yaml"

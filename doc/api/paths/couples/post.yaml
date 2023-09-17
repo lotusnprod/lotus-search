@@ -1,0 +1,32 @@
+post:
+  operationId: search_couples
+  security: []
+  summary: |
+    Search couples using parameters
+  description: |
+    Search couples using parameters. Additional parameters allow to specify the kind of search and the parameters.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/item.yaml"
+
+  responses:
+    '200':
+      description: At least one couple matching the given search could be found
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/coupleResult.yaml'
+    '404':
+      description: No couple matching the given search could be found
+      content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: No couple matching the given search could be found

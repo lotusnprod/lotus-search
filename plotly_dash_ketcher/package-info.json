@@ -1,0 +1,47 @@
+{
+  "name": "plotly_dash_ketcher",
+  "version": "1.0.0",
+  "description": "A wrapper for EPAM's ketcher",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lotusnprod/plotly-dash-ketcher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lotusnprod/plotly-dash-ketcher/issues"
+  },
+  "homepage": "https://github.com/lotusnprod/plotly-dash-ketcher",
+  "scripts": {
+    "build:js::dev": "webpack --mode development",
+    "build:js": "webpack",
+    "build:backends": "dash-generate-components ./src/ts/components plotly_dash_ketcher -p package-info.json --r-prefix '' --jl-prefix '' --ignore \\.test\\.",
+    "build": "npm run build:js && npm run build:backends",
+    "watch": "npm run build:js::dev -- --watch"
+  },
+  "dependencies": {
+    "ketcher-react": "^2.11.0",
+    "ketcher-standalone": "^2.11.0",
+    "process": "^0.11.10"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.39",
+    "css-loader": "^6.7.1",
+    "npm-run-all": "^4.1.5",
+    "ramda": "^0.28.0",
+    "react": "18.2.0",
+    "react-docgen": "^5.4.0",
+    "react-dom": "^18.2.0",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.9",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "author": "Jonathan Bisson <bjonnh-npm@bjonnh.net>",
+  "license": "MIT"
+}

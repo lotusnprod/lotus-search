@@ -1,0 +1,40 @@
+---
+openapi: 3.1.0
+info:
+  title: LOTUS FastAPI
+  description: "\nLOTUSFast API helps you do awesome stuff. \U0001F680\n"
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+  version: "1.0"
+servers:
+- url: "https://search.nprod.net/v1_0"
+paths:
+  /couples:
+    $ref: "./paths/couples/post.yaml"
+  /references:
+    $ref: "./paths/references/post.yaml"
+  /structures:
+    $ref: "./paths/structures/post.yaml"
+  /taxa:
+    $ref: "./paths/taxa/post.yaml"
+components:
+  schemas:
+    CoupleResult:
+      $ref: "./schemas/coupleResult.yaml"
+    Item:
+      $ref: "./schemas/item.yaml"
+    # ReferenceInfo:
+    #   $ref: "./schemas/referenceInfo.yaml"
+    ReferenceResult:
+      $ref: "./schemas/referenceResult.yaml"
+    # StructureInfo:
+    #   $ref: "./schemas/structureInfo.yaml"
+    StructureResult:
+      $ref: "./schemas/structureResult.yaml"
+    # TaxonInfo:
+    #   $ref: "./schemas/taxonInfo.yaml"
+    TaxonResult:
+      $ref: "./schemas/taxonResult.yaml"
+    HTTPValidationError:
+      $ref: "./schemas/validationError.yaml"
