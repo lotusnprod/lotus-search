@@ -2,10 +2,9 @@ import math
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dcc
-
 import plotly_dash_ketcher
 from config import PAGE_SIZE
+from dash import Input, Output, callback, dcc
 from dash_common import generate_compounds_cards
 from model import DataModel
 
@@ -129,7 +128,7 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
         dbc.Row(id="similarity-row", children=[
             dbc.Label("Similarity level"),
             dbc.Col([
-                dcc.Slider(id="similarity-slider", min=0, max=1,  value=0.8)
+                dcc.Slider(id="similarity-slider", min=0, max=1, value=0.8)
             ]),
         ]),
         dbc.Row([

@@ -1,8 +1,8 @@
 from __future__ import print_function as _
 
+import json
 import os as _os
 import sys as _sys
-import json
 
 import dash as _dash
 
@@ -34,12 +34,12 @@ _js_dist.extend(
     [
         {
             'relative_package_path': 'plotly_dash_ketcher.js',
-    
+
             'namespace': package_name
         },
         {
             'relative_package_path': 'plotly_dash_ketcher.js.map',
-    
+
             'namespace': package_name,
             'dynamic': True
         }
@@ -47,7 +47,6 @@ _js_dist.extend(
 )
 
 _css_dist = []
-
 
 for _component in __all__:
     setattr(locals()[_component], '_js_dist', _js_dist)

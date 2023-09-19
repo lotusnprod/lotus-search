@@ -1,9 +1,11 @@
-from collections.abc import Iterable
 import logging
-from processing_common import fingerprint, load_all_data, standardize
+from collections.abc import Iterable
+
+import requests
 from pydantic import BaseModel
 from rdkit import Chem, DataStructs
-import requests
+
+from processing_common import fingerprint, load_all_data, standardize
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -35,9 +37,11 @@ class Item(BaseModel):
         }
     }
 
+
 class ReferenceInfo(BaseModel):
     doi: str
     title: str
+
 
 class ReferenceResult(BaseModel):
     ids: list[int]
@@ -45,8 +49,10 @@ class ReferenceResult(BaseModel):
     count: int
     description: str
 
+
 class StructureInfo(BaseModel):
     smiles: str
+
 
 class StructureResult(BaseModel):
     ids: list[int]
@@ -54,8 +60,10 @@ class StructureResult(BaseModel):
     count: int
     description: str
 
+
 class TaxonInfo(BaseModel):
     name: str
+
 
 class TaxonResult(BaseModel):
     ids: list[int]
@@ -63,9 +71,11 @@ class TaxonResult(BaseModel):
     count: int
     description: str
 
+
 class CoupleIds(BaseModel):
     structure: int
     taxon: int
+
 
 class CoupleResult(BaseModel):
     ids: list[CoupleIds]
@@ -149,7 +159,7 @@ class DataModel:
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
 
         try:
-            cid = self.db["compound_id"][wid] # ambiguous with PubChem CID?
+            cid = self.db["compound_id"][wid]  # ambiguous with PubChem CID?
             return self.db["compound_smiles"][cid]
         except (IndexError, ValueError):
             log.warning(f"Impossible to find a compound with wid={wid}")

@@ -30,6 +30,7 @@ app = FastAPI(
     }
 )
 
+
 def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
     if item.molecule is None and item.structure_wid is None:
@@ -166,5 +167,6 @@ async def search_taxa(item: Item) -> TaxonResult:
         description="Taxa matching the query",
         count=len(matching_taxa)
     )
+
 
 app = VersionedFastAPI(app, enable_latest=True)

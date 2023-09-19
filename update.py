@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import multiprocessing
-from pathlib import Path
 import time
+from pathlib import Path
+
 from update import download_couples_referenced, download_smiles, download_taxonomy_parenting, generate_database
 
 start = time.time()

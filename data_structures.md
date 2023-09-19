@@ -6,7 +6,6 @@
 - **rid** (int): reference id (wikidata id)
 - **rank_id** (int): taxonomic rank id (wikidata id)
 
-
 | key                            | type                            | content                                                           |
 |--------------------------------|---------------------------------|-------------------------------------------------------------------|
 | compound_smiles                | list[str]                       | Array of smiles strings                                           |

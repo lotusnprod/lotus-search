@@ -4,7 +4,6 @@ from urllib.parse import quote
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
-
 from model import DataModel
 
 dash.register_page(__name__, name="Taxon resolver", top_nav=True, path="/taxon_resolver", order=70)
@@ -66,6 +65,7 @@ def search_taxon(query: str, n_clicks: int, n_submit: int) -> Any:
         print(data)
         return [], dcc.Markdown(f"Error while parsing, please retry. ({e})")
 
+
 def layout():
     return dbc.Container([
         dbc.Row([
@@ -85,7 +85,7 @@ It does not support vernacular names (E.g. tomato) so you will need to use the s
                 dbc.Col([dbc.Label("Search for taxon:", html_for="input-on-submit-taxon-resolver")])]),
             dbc.Row([
                 dbc.Col([dbc.Input(id="input-on-submit-taxon-resolver", type="text", value="")])]),
-            ], id="taxon-resolver-form"),
+        ], id="taxon-resolver-form"),
         dbc.Row([
             dbc.Col([
                 dbc.Button(id="submit-button-taxon-resolver", children="Search", color="primary")
