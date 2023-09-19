@@ -3,9 +3,8 @@ from typing import Any
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dcc
-
 from config import PAGE_SIZE
+from dash import Input, Output, callback, dcc
 from dash_common import generate_compounds_cards
 from model import DataModel
 
@@ -97,7 +96,8 @@ def layout(wid: int):
         ]),
         dcc.Download(id="download"),
         dbc.Row([
-            dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / PAGE_SIZE), fully_expanded=False, size="sm"),
+            dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / PAGE_SIZE), fully_expanded=False,
+                           size="sm"),
         ]),
         dbc.Spinner(id="loading-compounds-tsv", children=[dbc.Row(id="cards")]),
     ])

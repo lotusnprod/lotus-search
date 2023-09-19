@@ -1,6 +1,7 @@
 This is the API documentation
 
 You can see a web version of it with:
+
 ```shell
 make serve
 ```

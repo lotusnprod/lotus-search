@@ -8,7 +8,7 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
   version: "1.0"
 servers:
-- url: "https://search.nprod.net/v1_0"
+  - url: "https://search.nprod.net/v1_0"
 paths:
   /couples:
     $ref: "./paths/couples/post.yaml"
