@@ -2,7 +2,7 @@ from rdkit import Chem
 from rdkit.Chem.Draw import rdMolDraw2D
 
 
-def molecule_svg(smiles, molecule: str | None, width=250):
+def molecule_svg(smiles: str, molecule: str | None, width:int=250):
     mol = Chem.MolFromSmiles(smiles)
     d2d = rdMolDraw2D.MolDraw2DSVG(width, width)
     if molecule is not None:
