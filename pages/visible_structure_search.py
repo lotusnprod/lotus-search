@@ -59,7 +59,7 @@ def disable_similarity(value):
 )
 def download_compounds(n_clicks, data):
     if dash.ctx.triggered_id == "btn-download-compounds":
-        filename = f"compounds.tsv"
+        filename = "compounds.tsv"
         return dict(content=dm.compound_get_tsv_from_scores(data["matching_compounds"], data["scores"]),
                     filename=filename)
 
@@ -88,7 +88,7 @@ def search_compound_cards(molecule: str,
     if n_scores > 0:
         warning = f"Found {n_scores} matching compounds"
     else:
-        warning = f"No matching compounds found"
+        warning = "No matching compounds found"
     data["matching_compounds"] = [score[0] for score in scores]
     data["scores"] = [score[1] for score in scores]
     style_pagination = {"display": "none" if n_scores == 0 else "flex"}

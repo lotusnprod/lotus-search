@@ -34,9 +34,9 @@ def search_taxon(query: str, n_clicks: int, n_submit: int) -> Any:
     outputs = []
     try:
         if "names" not in data:
-            print(f"Error while parsing GN data")
+            print("Error while parsing GN data")
             print(data)
-            return [], dcc.Markdown(f"Error while parsing, please retry.")
+            return [], dcc.Markdown("Error while parsing, please retry.")
         if len(data["names"]) == 0:
             return [], dcc.Markdown(f"Sorry no match found for {query}.")
         for n in data["names"]:
