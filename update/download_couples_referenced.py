@@ -8,7 +8,8 @@ def run(root: Path, retry: int = 3) -> None:
     query = """
     SELECT DISTINCT ?compound ?taxon ?reference WHERE {
       ?compound p:P703 ?statement;
-        wdt:P233 ?canonical_smiles.
+        # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
+        wdt:P235 [].
       ?statement ps:P703 ?taxon;
         (prov:wasDerivedFrom/pr:P248) ?reference.
     }

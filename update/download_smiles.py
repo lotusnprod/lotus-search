@@ -8,7 +8,15 @@ def run(root: Path, retry: int = 3) -> None:
     query = """
     SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
         ?structure wdt:P703 ?taxon;
-                   wdt:P233 ?canonical_smiles.
+          # Using InChIKey (P235) to recognize chemicals. 
+          # Could also be
+          # P31 wd:Q113145171 `type of a chemical entity`
+          # P31 wd:Q59199015 `group of stereoisomers`
+          wdt:P235 [].
+        # All P2017 should also have P233 but some of them are not complete.
+        OPTIONAL {
+            ?structure wdt:P233 ?canonical_smiles.
+        }           
         OPTIONAL {
             ?structure wdt:P2017 ?structure_smiles.
         }
