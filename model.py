@@ -31,7 +31,7 @@ class Item(BaseModel):
                     "substructure_search": True,
                     "similarity_level": 0.8,
                     "taxon_wid": 158572,
-                    "taxon_name": "Gentiana lutea"
+                    "taxon_name": "Gentiana lutea",
                 }
             ]
         }
@@ -88,7 +88,7 @@ class CoupleResult(BaseModel):
 
 class DataModel:
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(DataModel, cls).__new__(cls)
             cls.instance.db = load_all_data()
         return cls.instance
@@ -107,10 +107,16 @@ class DataModel:
         return self.db["taxonomy_names"]
 
     def get_taxon_name_from_list_of_wid(self, wid: list[int]) -> list[str]:
-        return [self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]]
+        return [
+            self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]
+        ]
 
     def get_dict_of_wid_to_taxon_name(self, wid: Iterable[int]) -> dict[int, str]:
-        return {w: self.db["taxonomy_names"][w] for w in wid if w in self.db["taxonomy_names"]}
+        return {
+            w: self.db["taxonomy_names"][w]
+            for w in wid
+            if w in self.db["taxonomy_names"]
+        }
 
     def get_taxon_name_from_wid(self, wid: int) -> str | None:
         try:
@@ -143,9 +149,11 @@ class DataModel:
         log.debug(f"Querying GN resolver... {query}")
 
         try:
-            response = requests.post("https://verifier.globalnames.org/api/v1/verifications",
-                                     json=query,
-                                     headers={"Content-Type": "application/json"})
+            response = requests.post(
+                "https://verifier.globalnames.org/api/v1/verifications",
+                json=query,
+                headers={"Content-Type": "application/json"},
+            )
         except Exception as e:
             log.error(f"Impossible to connect to GN resolver {e}.")
             return None
@@ -157,7 +165,6 @@ class DataModel:
         return self.db["compound_wid"]
 
     def get_compound_smiles_from_wid(self, wid: int) -> str | None:
-
         try:
             cid = self.db["compound_id"][wid]  # ambiguous with PubChem CID?
             return self.db["compound_smiles"][cid]
@@ -173,7 +180,11 @@ class DataModel:
     def get_dict_of_wid_to_smiles(self, wid: Iterable[int]) -> dict[int, str]:
         ids = {w: self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]}
         llen = self.db["compound_smiles"]
-        return {wid: self.db["compound_smiles"][i] for wid, i in ids.items() if 0 <= i < len(llen)}
+        return {
+            wid: self.db["compound_smiles"][i]
+            for wid, i in ids.items()
+            if 0 <= i < len(llen)
+        }
 
     def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
@@ -188,7 +199,7 @@ class DataModel:
         return mol, fp, explicit_h
 
     ## COMMENT (AR): Should we rename this to compound_search_from_smiles
-    ## and have same for InChI and co and then wrap them to a `compound_search` 
+    ## and have same for InChI and co and then wrap them to a `compound_search`
     ## with inchi = "InChI=1S/" in query ...
     def compound_search(self, query: str) -> list[tuple[int, float]]:
         mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
@@ -200,8 +211,9 @@ class DataModel:
         scores = DataStructs.BulkTanimotoSimilarity(fp, db)
         return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
 
-    def compound_search_substructure(self, query: str,
-                                     chirality: bool = False) -> list[tuple[int, float]]:
+    def compound_search_substructure(
+        self, query: str, chirality: bool = False
+    ) -> list[tuple[int, float]]:
         mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
 
         if explicit_h:
@@ -211,8 +223,13 @@ class DataModel:
             db = self.db["compound_library"]
             fp_db = self.db["compound_sim_fps"]
 
-        iids = db.GetMatches(mol, numThreads=-1, maxResults=-1, useQueryQueryMatches=True,
-                             useChirality=chirality)
+        iids = db.GetMatches(
+            mol,
+            numThreads=-1,
+            maxResults=-1,
+            useQueryQueryMatches=True,
+            useChirality=chirality,
+        )
 
         new_keys = [self.db["compound_wid"][iid] for iid in iids]
         out = []
@@ -276,7 +293,9 @@ class DataModel:
             tree.append([parent, 1])
             if parent in self.db["taxonomy_parents_with_distance"]:
                 for relative in self.db["taxonomy_parents_with_distance"][parent]:
-                    distance = self.db["taxonomy_parents_with_distance"][parent][relative]
+                    distance = self.db["taxonomy_parents_with_distance"][parent][
+                        relative
+                    ]
                     tree.append([relative, distance])
         tree = sorted(tree, key=lambda x: x[1])
         return tree

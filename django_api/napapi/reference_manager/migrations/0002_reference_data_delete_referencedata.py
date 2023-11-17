@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reference_manager', '0001_initial'),
+        ("reference_manager", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reference',
-            name='data',
+            model_name="reference",
+            name="data",
             field=models.JSONField(default=None),
             preserve_default=False,
         ),
         migrations.DeleteModel(
-            name='ReferenceData',
+            name="ReferenceData",
         ),
     ]

@@ -4,7 +4,9 @@ from dash import Input, Output, callback, dash_table, dcc
 
 from model import DataModel
 
-dash.register_page(__name__, name="Taxon search", top_nav=True, path="/taxa/search", order=1)
+dash.register_page(
+    __name__, name="Taxon search", top_nav=True, path="/taxa/search", order=1
+)
 
 data = DataModel()
 
@@ -35,28 +37,46 @@ def update_table(value):
 
 
 def layout(name: str = ""):
-    return dbc.Container([
-        dbc.Row([
-            dbc.Alert(dcc.Markdown("""
+    return dbc.Container(
+        [
+            dbc.Row(
+                [
+                    dbc.Alert(
+                        dcc.Markdown(
+                            """
             Type a part of the name of the organism you are looking for, for example *ana lutea* will match **Gentiana lutea**.
             
-            If you do not find your organism name, use the [Taxon resolver](/taxon_resolver) as it may have a new accepted name"""),
-                      color="success")
-        ]),
-        dbc.Row([
-            dbc.Col([dbc.Label("Search for taxon name containing:")])]),
-        dbc.Row([
-            dbc.Col([dbc.Input(id="input-on-submit", type="text", value=name)
-                     ])]),
-        dbc.Row([dbc.Col([dbc.Label(" ")])]),
-        dbc.Row([
-            dash_table.DataTable(data=None, page_size=15, id="taxon-list",
-                                 sort_action="native", filter_action="native",
-                                 columns=[
-                                     {"name": "Taxon", "id": "Taxon", "type": "text", "presentation": "markdown"},
-                                     {"name": "Rank ", "id": "Rank"},
-                                     {"name": "Compounds", "id": "Compounds"},
-                                 ],
-                                 )
-        ])
-    ])
+            If you do not find your organism name, use the [Taxon resolver](/taxon_resolver) as it may have a new accepted name"""
+                        ),
+                        color="success",
+                    )
+                ]
+            ),
+            dbc.Row([dbc.Col([dbc.Label("Search for taxon name containing:")])]),
+            dbc.Row(
+                [dbc.Col([dbc.Input(id="input-on-submit", type="text", value=name)])]
+            ),
+            dbc.Row([dbc.Col([dbc.Label(" ")])]),
+            dbc.Row(
+                [
+                    dash_table.DataTable(
+                        data=None,
+                        page_size=15,
+                        id="taxon-list",
+                        sort_action="native",
+                        filter_action="native",
+                        columns=[
+                            {
+                                "name": "Taxon",
+                                "id": "Taxon",
+                                "type": "text",
+                                "presentation": "markdown",
+                            },
+                            {"name": "Rank ", "id": "Rank"},
+                            {"name": "Compounds", "id": "Compounds"},
+                        ],
+                    )
+                ]
+            ),
+        ]
+    )

@@ -4,21 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reference_manager', '0002_reference_data_delete_referencedata'),
+        ("reference_manager", "0002_reference_data_delete_referencedata"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reference',
-            name='id',
-            field=models.BigAutoField(auto_created=True, default=None, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="reference",
+            name="id",
+            field=models.BigAutoField(
+                auto_created=True,
+                default=None,
+                primary_key=True,
+                serialize=False,
+                verbose_name="ID",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='reference',
-            name='wid',
+            model_name="reference",
+            name="wid",
             field=models.IntegerField(db_index=True, unique=True),
         ),
     ]

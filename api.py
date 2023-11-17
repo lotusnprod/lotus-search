@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
 
-from model import CoupleResult, DataModel, Item, StructureInfo, StructureResult, TaxonInfo, TaxonResult
+from model import (CoupleResult, DataModel, Item, StructureInfo,
+                   StructureResult, TaxonInfo, TaxonResult)
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
@@ -27,11 +28,13 @@ app = FastAPI(
     license_info={
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
-    }
+    },
 )
 
 
-def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_structures_from_structure_in_item(
+    dm: DataModel, item: Item
+) -> set[int]:
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
     if item.molecule is None and item.structure_wid is None:
         return all_structures
@@ -47,13 +50,23 @@ def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) ->
                         results = dm.compound_search_substructure(item.molecule)
                         structures = {_id for _id, _ in results}
                     except ValueError:
-                        raise HTTPException(status_code=500, detail=f"The structure given is invalid: {item.molecule}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"The structure given is invalid: {item.molecule}",
+                        )
                 else:
                     try:
                         results = dm.compound_search(item.molecule)
-                        structures = {_id for _id, score in results if score >= item.similarity_level}
+                        structures = {
+                            _id
+                            for _id, score in results
+                            if score >= item.similarity_level
+                        }
                     except ValueError:
-                        raise HTTPException(status_code=500, detail=f"The structure given is invalid: {item.molecule}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"The structure given is invalid: {item.molecule}",
+                        )
             else:
                 structures = all_structures
 
@@ -122,30 +135,45 @@ async def search_couples(item: Item) -> CoupleResult:
 
     return CoupleResult(
         ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
-        structures={wid: StructureInfo(smiles=value) for wid, value in
-                    dm.get_dict_of_wid_to_smiles([first_value for first_value, _ in couples]).items()},
-        taxa={wid: TaxonInfo(name=value) for wid, value in
-              dm.get_dict_of_wid_to_taxon_name([taxon_name for _, taxon_name in couples]).items()},
+        structures={
+            wid: StructureInfo(smiles=value)
+            for wid, value in dm.get_dict_of_wid_to_smiles(
+                [first_value for first_value, _ in couples]
+            ).items()
+        },
+        taxa={
+            wid: TaxonInfo(name=value)
+            for wid, value in dm.get_dict_of_wid_to_taxon_name(
+                [taxon_name for _, taxon_name in couples]
+            ).items()
+        },
         description="Couples matching the query",
-        count=len(couples))
+        count=len(couples),
+    )
 
 
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(item: Item) -> StructureResult:
     # We want the set of all the structures that match a query, or the specific structure given
-    matching_structures_by_structure = get_matching_structures_from_structure_in_item(dm, item)
+    matching_structures_by_structure = get_matching_structures_from_structure_in_item(
+        dm, item
+    )
     # We want the set of all the molecules found in the given taxa
     matching_structures_by_taxon = get_matching_structures_from_taxon_in_item(dm, item)
 
     # We want the intersection of both (and we can do the same for the references later)
-    matching_structures = matching_structures_by_structure & matching_structures_by_taxon
+    matching_structures = (
+        matching_structures_by_structure & matching_structures_by_taxon
+    )
     return StructureResult(
         ids=matching_structures,
-        structures={wid: StructureInfo(smiles=value) for wid, value in
-                    dm.get_dict_of_wid_to_smiles(matching_structures).items()},
+        structures={
+            wid: StructureInfo(smiles=value)
+            for wid, value in dm.get_dict_of_wid_to_smiles(matching_structures).items()
+        },
         description="Structures matching the query",
-        count=len(matching_structures)
+        count=len(matching_structures),
     )
 
 
@@ -163,9 +191,12 @@ async def search_taxa(item: Item) -> TaxonResult:
 
     return TaxonResult(
         ids=matching_taxa,
-        infos={wid: TaxonInfo(name=value) for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()},
+        infos={
+            wid: TaxonInfo(name=value)
+            for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
+        },
         description="Taxa matching the query",
-        count=len(matching_taxa)
+        count=len(matching_taxa),
     )
 
 

@@ -2,7 +2,7 @@ from rdkit import Chem
 from rdkit.Chem.Draw import rdMolDraw2D
 
 
-def molecule_svg(smiles: str, molecule: str | None, width:int=250):
+def molecule_svg(smiles: str, molecule: str | None, width: int = 250):
     mol = Chem.MolFromSmiles(smiles)
     d2d = rdMolDraw2D.MolDraw2DSVG(width, width)
     if molecule is not None:
@@ -13,7 +13,7 @@ def molecule_svg(smiles: str, molecule: str | None, width:int=250):
             mol = Chem.AddHs(mol)
         highlight_atoms = mol.GetSubstructMatch(Chem.MolFromSmiles(molecule, p))
         draw_options = d2d.drawOptions()
-        draw_options.setHighlightColour((0.1, .9, .9, .8))
+        draw_options.setHighlightColour((0.1, 0.9, 0.9, 0.8))
         d2d.DrawMolecule(mol, highlightAtoms=highlight_atoms)
     else:
         d2d.DrawMolecule(mol)

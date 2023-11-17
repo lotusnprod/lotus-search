@@ -23,7 +23,16 @@ def process_smiles(inp):
             smol_h = Chem.AddHs(smol)
             sim_fp_h = fingerprint(smol_h)
             sub_fp_h = Chem.PatternFingerprint(smol_h)
-            return nid, smiles, smiles_clean, sim_fp, sub_fp, smol_h.ToBinary(), sim_fp_h, sub_fp_h
+            return (
+                nid,
+                smiles,
+                smiles_clean,
+                sim_fp,
+                sub_fp,
+                smol_h.ToBinary(),
+                sim_fp_h,
+                sub_fp_h,
+            )
         else:
             return None
     except:
@@ -65,7 +74,16 @@ def run(root: Path) -> None:
         results = executor.map(process_smiles, enumerate(smileses), chunksize=1000)
         for result in results:
             if result is not None:
-                mid, smiles, smiles_clean, sim_fp, sub_fp, mol_h, sim_fp_h, sub_fp_h = result
+                (
+                    mid,
+                    smiles,
+                    smiles_clean,
+                    sim_fp,
+                    sub_fp,
+                    mol_h,
+                    sim_fp_h,
+                    sub_fp_h,
+                ) = result
 
                 mols_h.AddMol(Chem.Mol(mol_h))
                 fps_h.AddFingerprint(sub_fp_h)
@@ -109,7 +127,7 @@ def run(root: Path) -> None:
         "compound_library_h": library_h.Serialize(),
         "t2c": t2c,
         "c2t": c2t,
-        "tc2r": tc2r
+        "tc2r": tc2r,
     }
 
     with open(root / "database_taxo.pkl", "rb") as f:

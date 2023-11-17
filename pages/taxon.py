@@ -3,8 +3,9 @@ from typing import Any
 
 import dash
 import dash_bootstrap_components as dbc
-from config import PAGE_SIZE
 from dash import Input, Output, callback, dcc
+
+from config import PAGE_SIZE
 from dash_common import generate_compounds_cards
 from model import DataModel
 
@@ -25,15 +26,19 @@ def tsv(compounds: list[int]) -> str:
     return "smiles\n" + "\n".join(smileses)
 
 
-dash.register_page(__name__, name="Taxon information",
-                   top_nav=True, order=-1, path_template="/taxon/<wid>",
-                   title=title)
+dash.register_page(
+    __name__,
+    name="Taxon information",
+    top_nav=True,
+    order=-1,
+    path_template="/taxon/<wid>",
+    title=title,
+)
 
 
 @callback(
     Output("cards", "children"),
-    [Input("pagination", "active_page"),
-     Input("matching-ids", "data")],
+    [Input("pagination", "active_page"), Input("matching-ids", "data")],
 )
 def compound_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
     return generate_compounds_cards(active_page, data)
@@ -41,8 +46,7 @@ def compound_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
 
 @callback(
     Output("download", "data"),
-    [Input("btn-download", "n_clicks"),
-     Input("matching-ids", "data")],
+    [Input("btn-download", "n_clicks"), Input("matching-ids", "data")],
     prevent_initial_call=True,
 )
 def func(n_clicks, data):
@@ -81,23 +85,42 @@ def layout(wid: int):
 
     warning = f"Found {nb_matches} compounds"
 
-    return dbc.Container([
-        dcc.Store(id='matching-ids', data={"matching_compounds": matching_compounds,
-                                           "taxon_name": taxon_name}),
-        dbc.Row([
-            dash.html.H1(f"{taxon_name}{parent_ranks}"),
-            dcc.Markdown(taxonomic_info),
-            dash.html.Hr(),
-            dcc.Markdown(f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})"),
-        ]),
-        dbc.Row([
-            dbc.Col([dbc.Alert(warning, color="primary")]),
-            dbc.Col([dbc.Button("Download SMILES", id="btn-download")])
-        ]),
-        dcc.Download(id="download"),
-        dbc.Row([
-            dbc.Pagination(id="pagination", max_value=math.ceil(nb_matches / PAGE_SIZE), fully_expanded=False,
-                           size="sm"),
-        ]),
-        dbc.Spinner(id="loading-compounds-tsv", children=[dbc.Row(id="cards")]),
-    ])
+    return dbc.Container(
+        [
+            dcc.Store(
+                id="matching-ids",
+                data={
+                    "matching_compounds": matching_compounds,
+                    "taxon_name": taxon_name,
+                },
+            ),
+            dbc.Row(
+                [
+                    dash.html.H1(f"{taxon_name}{parent_ranks}"),
+                    dcc.Markdown(taxonomic_info),
+                    dash.html.Hr(),
+                    dcc.Markdown(
+                        f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})"
+                    ),
+                ]
+            ),
+            dbc.Row(
+                [
+                    dbc.Col([dbc.Alert(warning, color="primary")]),
+                    dbc.Col([dbc.Button("Download SMILES", id="btn-download")]),
+                ]
+            ),
+            dcc.Download(id="download"),
+            dbc.Row(
+                [
+                    dbc.Pagination(
+                        id="pagination",
+                        max_value=math.ceil(nb_matches / PAGE_SIZE),
+                        fully_expanded=False,
+                        size="sm",
+                    ),
+                ]
+            ),
+            dbc.Spinner(id="loading-compounds-tsv", children=[dbc.Row(id="cards")]),
+        ]
+    )

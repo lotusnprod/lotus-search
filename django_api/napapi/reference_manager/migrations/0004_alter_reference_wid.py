@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reference_manager', '0003_reference_id_alter_reference_wid'),
+        ("reference_manager", "0003_reference_id_alter_reference_wid"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reference',
-            name='wid',
-            field=models.IntegerField(blank=True, db_index=True, null=True, unique=True),
+            model_name="reference",
+            name="wid",
+            field=models.IntegerField(
+                blank=True, db_index=True, null=True, unique=True
+            ),
         ),
     ]

@@ -3,6 +3,7 @@ name = "lotus_search"
 version = "0.1.2"
 description = ""
 authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>"]
+packages = [{include = "*.py", from = ""}]
 readme = "README.md"
 
 [tool.poetry.dependencies]

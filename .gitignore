@@ -1,4 +1,6 @@
+.coverage
 .idea
+.tox
 data
 contributions
 **/secrets.toml

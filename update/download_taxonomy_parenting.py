@@ -53,11 +53,10 @@ def run(root: Path, retry: int = 5) -> None:
     if "java.util.concurrent.TimeoutException" in t:
         if retry > 0:
             print("  Failed to download taxonomy step 1, retrying...")
-            run(root, retry-1)
+            run(root, retry - 1)
             return
         else:
             raise TimeoutError("Failed to download taxonomy step 1 tum tum tum....")
-
 
     list_of_couples = [x.strip().split(",") for x in t.split("\n")[1:] if x != ""]
     taxon_direct_parents = {}
@@ -95,7 +94,7 @@ def run(root: Path, retry: int = 5) -> None:
     if "java.util.concurrent.TimeoutException" in t:
         if retry > 0:
             print("  Failed to download taxonomy step 2, retrying...")
-            run(root, retry-1)
+            run(root, retry - 1)
             return
         else:
             raise TimeoutError("Failed to download taxonomy step 2 tum tum tum....")
@@ -103,7 +102,15 @@ def run(root: Path, retry: int = 5) -> None:
     reader = csv.reader(StringIO(t))
     reader.__next__()
     for line in reader:
-        taxon_id, taxon_name, taxon_rank_id, relative_id, relative_name, relative_rank, distance = line
+        (
+            taxon_id,
+            taxon_name,
+            taxon_rank_id,
+            relative_id,
+            relative_name,
+            relative_rank,
+            distance,
+        ) = line
         taxon_id = int(taxon_id)
         relative_id = int(relative_id)
         taxon_rank_id = int(taxon_rank_id)
@@ -151,7 +158,7 @@ def run(root: Path, retry: int = 5) -> None:
         "taxonomy_ranks": taxon_ranks,
         "taxonomy_children": taxon_children,
         "taxonomy_parents_with_distance": taxon_parents_with_distance,
-        "taxonomy_ranks_names": ranks_names
+        "taxonomy_ranks_names": ranks_names,
     }
 
     with open(root / "database_taxo.pkl", "wb") as f:

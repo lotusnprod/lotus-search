@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+
 from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
 
 
@@ -27,11 +28,10 @@ def run(root: Path, retry: int = 3) -> None:
     if "java.util.concurrent.TimeoutException" in t:
         if retry > 0:
             print("  Failed to download smiles, retrying...")
-            run(root, retry-1)
+            run(root, retry - 1)
             return
         else:
             raise TimeoutError("Failed to download smiles tum tum tum....")
-
 
     with open(root / "smiles.csv", "w") as f:
         f.write(remove_wd_entity_prefix(t))

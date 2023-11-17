@@ -4,13 +4,14 @@ import streamlit as st
 from rdkit import Chem
 from rdkit.Chem.Draw import rdMolDraw2D
 
+
 @st.cache_data
-def mol_from_smiles(smiles:str):
+def mol_from_smiles(smiles: str):
     return Chem.MolFromSmiles(smiles)
 
 
 @st.cache_data
-def molecule_svg(smiles:str, width:int=250):
+def molecule_svg(smiles: str, width: int = 250):
     mol = mol_from_smiles(smiles)
     if mol is not None:
         d2d = rdMolDraw2D.MolDraw2DSVG(width, width)

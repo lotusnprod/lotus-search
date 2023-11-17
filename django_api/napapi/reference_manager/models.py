@@ -1,9 +1,8 @@
 import json
 
-from django.db import models
 import requests
 from django.conf import settings
-
+from django.db import models
 
 
 class Reference(models.Model):
@@ -24,10 +23,16 @@ class Reference(models.Model):
               wd:Q%WID% wdt:P31 ?article_type ; 
                          ?p ?o.
             }
-            """.replace("%WID%", str(wid))
-        result = json.loads(requests.get(settings.WD_URL,
-                            params={'query': query},
-                            headers={'Accept': 'application/json'}).text)
+            """.replace(
+            "%WID%", str(wid)
+        )
+        result = json.loads(
+            requests.get(
+                settings.WD_URL,
+                params={"query": query},
+                headers={"Accept": "application/json"},
+            ).text
+        )
 
         data = {}
 
