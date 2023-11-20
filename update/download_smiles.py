@@ -8,12 +8,13 @@ from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
 def run(root: Path, retry: int = 3) -> None:
     query = """
     SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
-        ?structure wdt:P703 ?taxon;
-          # Using InChIKey (P235) to recognize chemicals. 
-          # Could also be
-          # P31 wd:Q113145171 `type of a chemical entity`
-          # P31 wd:Q59199015 `group of stereoisomers`
-          wdt:P235 [].
+        # Using InChIKey (P235) to recognize chemicals. 
+        # Could also be
+        # P31 wd:Q113145171 `type of a chemical entity`
+        # P31 wd:Q59199015 `group of stereoisomers`
+        ?structure wdt:P235 [].
+        ?structure wdt:P703 ?taxon.
+          
         # All P2017 should also have P233 but some of them are not complete.
         OPTIONAL {
             ?structure wdt:P233 ?canonical_smiles.
