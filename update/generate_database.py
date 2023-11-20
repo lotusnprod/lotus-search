@@ -130,6 +130,8 @@ def run(root: Path) -> None:
         "tc2r": tc2r,
     }
 
+    # TODO references
+
     with open(root / "database_taxo.pkl", "rb") as f:
         database.update(pickle.load(f))
     print("Finished integrating taxo")
