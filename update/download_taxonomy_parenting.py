@@ -58,6 +58,8 @@ def run(root: Path, retry: int = 5) -> None:
         else:
             raise TimeoutError("Failed to download taxonomy step 1 tum tum tum....")
 
+    # TODO This part is sensitive to vandalism if someone introduces "," in taxon name.
+    # Could be let this way to force cleaning, or not.
     list_of_couples = [x.strip().split(",") for x in t.split("\n")[1:] if x != ""]
     taxon_direct_parents = {}
     taxon_names = {}
