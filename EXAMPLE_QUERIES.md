@@ -10,13 +10,13 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 
 ## Taxa
 
-### Get all the taxa with gent in their name producing a compound with chlorine in it
+### Get all the taxa with gent in their name producing a structure with chlorine in it
 
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/taxa -d '{"molecule":"Cl", "substructure_search": true, "taxon_name":"gent"}'
 ```
 
-### Get all the taxa producing chlorinated compounds
+### Get all the taxa producing chlorinated structures
 
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/taxa -d '{"molecule":"Cl", "substructure_search": true}'
@@ -24,7 +24,7 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 
 ## Couples
 
-### Get all the couples that contain that specific compound and that have taxus in the organism name
+### Get all the couples that contain that specific structure and that have taxus in the organism name
 
 Careful that's taxus anywhere in the name, so you'll get Cephalotaxus as well!
 
