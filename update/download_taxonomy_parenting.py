@@ -3,7 +3,7 @@ import pickle
 from io import StringIO
 from pathlib import Path
 
-from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
+from update.common import remove_wd_entity_prefix, wd_sparql_to_csv, QLEVER_URL
 
 query_taxa = """
 SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
