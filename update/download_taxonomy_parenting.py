@@ -47,6 +47,14 @@ SELECT ?rank ?rankLabel WHERE {
 }
 """
 
+query_all_taxa = """
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?taxon ?taxon_name WHERE {
+  ?taxon wdt:P31 wd:Q16521;
+    wdt:P225 ?taxon_name.
+}
+"""
 
 def run(root: Path, retry: int = 5) -> None:
     t = remove_wd_entity_prefix(wd_sparql_to_csv(query_taxa))
@@ -154,9 +162,14 @@ def run(root: Path, retry: int = 5) -> None:
     for line in reader:
         ranks_names[int(line[0])] = line[1]
 
+    t = remove_wd_entity_prefix(wd_sparql_to_csv(query_all_taxa,QLEVER_URL)) # Times out on normal WDQS
+    reader = csv.reader(StringIO(t))
+    reader.__next__()
+    dict_all_taxa = {i[0]: i[1] for i in reader}
+
     database = {
         "taxonomy_direct_parents": taxon_direct_parents,
-        "taxonomy_names": taxon_names,
+        "taxonomy_names": dict_all_taxa,
         "taxonomy_ranks": taxon_ranks,
         "taxonomy_children": taxon_children,
         "taxonomy_parents_with_distance": taxon_parents_with_distance,
@@ -165,3 +178,6 @@ def run(root: Path, retry: int = 5) -> None:
 
     with open(root / "database_taxo.pkl", "wb") as f:
         pickle.dump(database, f)
+
+if __name__ == "__main__":
+    run(Path("data"))
