@@ -36,3 +36,7 @@ def run(root: Path, retry: int = 3) -> None:
 
     with open(root / "smiles.csv", "w") as f:
         f.write(remove_wd_entity_prefix(t))
+
+
+if __name__ == "__main__":
+    run(Path("data"))

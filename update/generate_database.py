@@ -138,3 +138,7 @@ def run(root: Path) -> None:
     with open(root / "database.pkl", "wb") as f:
         pickle.dump(database, f)
     print("Finished dumping")
+
+
+if __name__ == "__main__":
+    run(Path("data"))
