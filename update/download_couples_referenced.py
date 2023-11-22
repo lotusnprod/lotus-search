@@ -7,10 +7,10 @@ from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
 
 def run(root: Path, retry: int = 3) -> None:
     query = """
-    SELECT DISTINCT ?compound ?taxon ?reference WHERE {    
+    SELECT DISTINCT ?structure ?taxon ?reference WHERE {    
       # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
-      ?compound wdt:P235 [].
-      ?compound p:P703 ?statement.
+      ?structure wdt:P235 [].
+      ?structure p:P703 ?statement.
       ?statement ps:P703 ?taxon;
         (prov:wasDerivedFrom/pr:P248) ?reference.
     }

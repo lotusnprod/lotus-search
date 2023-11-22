@@ -96,8 +96,8 @@ class DataModel:
     def num_taxa(self):
         return len(self.db["taxonomy_names"])
 
-    def num_compounds(self):
-        return len(self.db["compound_smiles"])
+    def num_structures(self):
+        return len(self.db["structure_smiles"])
 
     def num_couples(self):
         return len(self.db["c2t"])
@@ -160,33 +160,33 @@ class DataModel:
         log.debug(response.json())
         return response.json()
 
-    ### Compoundonomy
-    def get_compounds(self) -> dict[int, int]:
-        return self.db["compound_wid"]
+    ### structureonomy
+    def get_structures(self) -> dict[int, int]:
+        return self.db["structure_wid"]
 
-    def get_compound_smiles_from_wid(self, wid: int) -> str | None:
+    def get_structure_smiles_from_wid(self, wid: int) -> str | None:
         try:
-            cid = self.db["compound_id"][wid]  # ambiguous with PubChem CID?
-            return self.db["compound_smiles"][cid]
+            cid = self.db["structure_id"][wid]  # ambiguous with PubChem CID?
+            return self.db["structure_smiles"][cid]
         except (IndexError, ValueError):
-            log.warning(f"Impossible to find a compound with wid={wid}")
+            log.warning(f"Impossible to find a structure with wid={wid}")
             return None
 
-    def get_compound_smiles_from_list_of_wid(self, wid: list[int]) -> list[str]:
-        ids = [self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]]
-        llen = self.db["compound_smiles"]
-        return [self.db["compound_smiles"][i] for i in ids if 0 <= i < len(llen)]
+    def get_structure_smiles_from_list_of_wid(self, wid: list[int]) -> list[str]:
+        ids = [self.db["structure_id"][w] for w in wid if w in self.db["structure_id"]]
+        llen = self.db["structure_smiles"]
+        return [self.db["structure_smiles"][i] for i in ids if 0 <= i < len(llen)]
 
     def get_dict_of_wid_to_smiles(self, wid: Iterable[int]) -> dict[int, str]:
-        ids = {w: self.db["compound_id"][w] for w in wid if w in self.db["compound_id"]}
-        llen = self.db["compound_smiles"]
+        ids = {w: self.db["structure_id"][w] for w in wid if w in self.db["structure_id"]}
+        llen = self.db["structure_smiles"]
         return {
-            wid: self.db["compound_smiles"][i]
+            wid: self.db["structure_smiles"][i]
             for wid, i in ids.items()
             if 0 <= i < len(llen)
         }
 
-    def compound_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
+    def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
         p.removeHs = not explicit_h
@@ -198,30 +198,30 @@ class DataModel:
         fp = fingerprint(mol)
         return mol, fp, explicit_h
 
-    ## COMMENT (AR): Should we rename this to compound_search_from_smiles
-    ## and have same for InChI and co and then wrap them to a `compound_search`
+    ## COMMENT (AR): Should we rename this to structure_search_from_smiles
+    ## and have same for InChI and co and then wrap them to a `structure_search`
     ## with inchi = "InChI=1S/" in query ...
-    def compound_search(self, query: str) -> list[tuple[int, float]]:
-        mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
+    def structure_search(self, query: str) -> list[tuple[int, float]]:
+        mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
 
         if explicit_h:
-            db = self.db["compound_sim_h_fps"]
+            db = self.db["structure_sim_h_fps"]
         else:
-            db = self.db["compound_sim_fps"]
+            db = self.db["structure_sim_fps"]
         scores = DataStructs.BulkTanimotoSimilarity(fp, db)
-        return [(wid, score) for wid, score in zip(self.db["compound_wid"], scores)]
+        return [(wid, score) for wid, score in zip(self.db["structure_wid"], scores)]
 
-    def compound_search_substructure(
+    def structure_search_substructure(
         self, query: str, chirality: bool = False
     ) -> list[tuple[int, float]]:
-        mol, fp, explicit_h = self.compound_get_mol_fp_and_explicit(query)
+        mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
 
         if explicit_h:
-            db = self.db["compound_library_h"]
-            fp_db = self.db["compound_sim_h_fps"]
+            db = self.db["structure_library_h"]
+            fp_db = self.db["structure_sim_h_fps"]
         else:
-            db = self.db["compound_library"]
-            fp_db = self.db["compound_sim_fps"]
+            db = self.db["structure_library"]
+            fp_db = self.db["structure_sim_fps"]
 
         iids = db.GetMatches(
             mol,
@@ -231,42 +231,42 @@ class DataModel:
             useChirality=chirality,
         )
 
-        new_keys = [self.db["compound_wid"][iid] for iid in iids]
+        new_keys = [self.db["structure_wid"][iid] for iid in iids]
         out = []
         for iid, wid in zip(iids, new_keys):
             out.append((wid, DataStructs.TanimotoSimilarity(fp, fp_db[iid])))
         return out
 
-    def compound_get_tsv_from_scores(self, wids, scores) -> str:
+    def structure_get_tsv_from_scores(self, wids, scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
         for idx, score in enumerate(scores):
             wid = wids[idx]
-            smiles = self.db["compound_smiles"][self.db["compound_id"][wid]]
+            smiles = self.db["structure_smiles"][self.db["structure_id"][wid]]
             out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
-    ### Taxonomy to compoundonomy
-    def get_compounds_of_taxon(self, wid: int, recursive: bool = True) -> list[int]:
+    ### Taxonomy to structureonomy
+    def get_structures_of_taxon(self, wid: int, recursive: bool = True) -> list[int]:
         if wid in self.db["t2c"]:
-            matching_compounds = set(self.db["t2c"][wid])
+            matching_structures = set(self.db["t2c"][wid])
         else:
-            matching_compounds = set()
+            matching_structures = set()
 
         if recursive:
             if wid in self.db["taxonomy_children"]:
                 for parent in self.db["taxonomy_children"][wid]:
                     if parent in self.db["t2c"]:
-                        for compound in self.db["t2c"][parent]:
-                            matching_compounds.add(compound)
+                        for structure in self.db["t2c"][parent]:
+                            matching_structures.add(structure)
 
-        return list(matching_compounds)
+        return list(matching_structures)
 
-    def get_taxa_containing_compound(self, wid: int) -> set[int]:
+    def get_taxa_containing_structure(self, wid: int) -> set[int]:
         if wid in self.db["c2t"]:
             return self.db["c2t"][wid]
         return set()
 
-    def get_number_of_taxa_containing_compound(self, wid: int) -> int:
+    def get_number_of_taxa_containing_structure(self, wid: int) -> int:
         if wid not in self.db["c2t"]:
             return 0
         return len(self.db["c2t"][wid])

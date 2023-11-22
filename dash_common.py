@@ -22,15 +22,15 @@ cache = Cache(
 
 @cache.memoize(timeout=3600)
 def get_svg_of_wid(j: int, molecule: str | None = None) -> str:
-    return molecule_svg(dm.get_compound_smiles_from_wid(j), molecule)
+    return molecule_svg(dm.get_structure_smiles_from_wid(j), molecule)
 
 
 @cache.memoize(timeout=3600)
-def get_number_of_taxa_for_compound(j: int) -> int:
-    return dm.get_number_of_taxa_containing_compound(j)
+def get_number_of_taxa_for_structure(j: int) -> int:
+    return dm.get_number_of_taxa_containing_structure(j)
 
 
-def generate_compounds_cards(
+def generate_structures_cards(
     active_page: int, data: dict[str, Any], molecule: str | None = None
 ) -> list[dbc.Card]:
     cards = []
@@ -39,7 +39,7 @@ def generate_compounds_cards(
 
     scores_mode = "scores" in data
 
-    displayed = data["matching_compounds"][
+    displayed = data["matching_structures"][
         PAGE_SIZE * (active_page - 1) : PAGE_SIZE * active_page
     ]
 
@@ -62,7 +62,7 @@ def generate_compounds_cards(
 
         img = get_svg_of_wid(j, molecule)
         img_data = f"data:image/svg+xml,{quote(img)}"
-        taxa_count = get_number_of_taxa_for_compound(j)
+        taxa_count = get_number_of_taxa_for_structure(j)
         card = dbc.Card(
             [
                 dbc.CardImg(src=img_data, top=True),
@@ -74,10 +74,10 @@ def generate_compounds_cards(
                             className="card-text",
                         ),
                         dcc.Markdown(
-                            f"[Wikidata page of compound](https://www.wikidata.org/entity/Q{j})"
+                            f"[Wikidata page of structure](https://www.wikidata.org/entity/Q{j})"
                         ),
                         dbc.Button(
-                            "Compound page", color="primary", href=f"/structure/{j}"
+                            "structure page", color="primary", href=f"/structure/{j}"
                         ),
                         *extras,
                     ]

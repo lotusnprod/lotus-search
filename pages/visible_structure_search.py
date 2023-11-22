@@ -6,7 +6,7 @@ from dash import Input, Output, callback, dcc
 
 import plotly_dash_ketcher
 from config import PAGE_SIZE
-from dash_common import generate_compounds_cards
+from dash_common import generate_structures_cards
 from model import DataModel
 
 dash.register_page(
@@ -25,9 +25,9 @@ def get_matching_ids(
             # TODO move all that in the model
 
             if ss_mode:
-                scores = dm.compound_search_substructure(query, chirality)
+                scores = dm.structure_search_substructure(query, chirality)
             else:
-                scores = dm.compound_search(query)
+                scores = dm.structure_search(query)
                 scores = [score for score in scores if score[1] >= level]
 
             scores_sorted = sorted(scores, reverse=True, key=lambda x: x[1])
@@ -49,19 +49,19 @@ def disable_similarity(value):
 
 
 @callback(
-    Output("download-compounds", "data"),
+    Output("download-structures", "data"),
     [
-        Input("btn-download-compounds", "n_clicks"),
+        Input("btn-download-structures", "n_clicks"),
         Input("structure-search-data", "data"),
     ],
     prevent_initial_call=True,
 )
-def download_compounds(n_clicks, data):
-    if dash.ctx.triggered_id == "btn-download-compounds":
-        filename = "compounds.tsv"
+def download_structures(n_clicks, data):
+    if dash.ctx.triggered_id == "btn-download-structures":
+        filename = "structures.tsv"
         return dict(
-            content=dm.compound_get_tsv_from_scores(
-                data["matching_compounds"], data["scores"]
+            content=dm.structure_get_tsv_from_scores(
+                data["matching_structures"], data["scores"]
             ),
             filename=filename,
         )
@@ -70,35 +70,35 @@ def download_compounds(n_clicks, data):
 @callback(
     Output("structure-search-data", "data"),
     Output("structure-search-results", "children"),
-    Output("pagination-compound-search", "max_value"),
-    Output("pagination-compound-search", "style"),
-    Output("btn-download-compounds", "style"),
-    Output("warning-compound-search", "children"),
+    Output("pagination-structure-search", "max_value"),
+    Output("pagination-structure-search", "style"),
+    Output("btn-download-structures", "style"),
+    Output("warning-structure-search", "children"),
     [
         Input("ketcher", "molecule"),
         Input("substructure-cb", "value"),
         Input("chirality-cb", "value"),
         Input("similarity-slider", "value"),
-        Input("pagination-compound-search", "active_page"),
+        Input("pagination-structure-search", "active_page"),
     ],
 )
-def search_compound_cards(
+def search_structure_cards(
     molecule: str, ss_mode: bool, chirality: bool, similarity: float, active_page: int
 ):
     data = {}
     scores = get_matching_ids(molecule, ss_mode, chirality, similarity)
     n_scores = len(scores)
     if n_scores > 0:
-        warning = f"Found {n_scores} matching compounds"
+        warning = f"Found {n_scores} matching structures"
     else:
-        warning = "No matching compounds found"
-    data["matching_compounds"] = [score[0] for score in scores]
+        warning = "No matching structures found"
+    data["matching_structures"] = [score[0] for score in scores]
     data["scores"] = [score[1] for score in scores]
     style_pagination = {"display": "none" if n_scores == 0 else "flex"}
     style_btn = {"display": "none" if n_scores == 0 else "block"}
     return (
         data,
-        generate_compounds_cards(active_page, data, molecule),
+        generate_structures_cards(active_page, data, molecule),
         math.ceil(len(scores) / PAGE_SIZE),
         style_pagination,
         style_btn,
@@ -124,7 +124,7 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
             ),
             dcc.Store(
                 id="structure-search-data",
-                data={"matching_compounds": [], "scores": []},
+                data={"matching_structures": [], "scores": []},
             ),
             plotly_dash_ketcher.PlotlyDashKetcher(id="ketcher", buttonLabel="Search"),
             dbc.Row(
@@ -160,19 +160,19 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
             ),
             dbc.Row(
                 [
-                    dbc.Col([dbc.Alert(id="warning-compound-search", color="primary")]),
-                    dbc.Col(dbc.Button("Download SMILES", id="btn-download-compounds")),
+                    dbc.Col([dbc.Alert(id="warning-structure-search", color="primary")]),
+                    dbc.Col(dbc.Button("Download SMILES", id="btn-download-structures")),
                 ]
             ),
             dbc.Spinner(
-                id="loading-compounds-tsv",
-                children=[dcc.Download(id="download-compounds")],
+                id="loading-structures-tsv",
+                children=[dcc.Download(id="download-structures")],
             ),
             dbc.Row(
                 [
                     dbc.Col(
                         dbc.Pagination(
-                            id="pagination-compound-search",
+                            id="pagination-structure-search",
                             max_value=1,
                             fully_expanded=False,
                             size="lg",
@@ -183,7 +183,7 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
                 ]
             ),
             dbc.Spinner(
-                id="loading-compounds-search",
+                id="loading-structures-search",
                 children=[dbc.Row(id="structure-search-results")],
             ),
         ]

@@ -19,7 +19,7 @@ def title(wid=None):
 
 dash.register_page(
     __name__,
-    name="Compound information",
+    name="Structure information",
     top_nav=True,
     order=-1,
     path_template="/structure/<wid>",
@@ -39,7 +39,7 @@ def layout(wid: int):
     img_data = f"data:image/svg+xml,{quote(img)}"
 
     name_id_list = []
-    for t in dm.get_taxa_containing_compound(wid):
+    for t in dm.get_taxa_containing_structure(wid):
         name = dm.get_taxon_name_from_wid(t)
         name_id_list.append([name, t])
     name_id_list = sorted(name_id_list, key=lambda x: x[0])
@@ -66,7 +66,7 @@ def layout(wid: int):
                             dash_table.DataTable(
                                 data=table,
                                 page_size=15,
-                                id="taxon-list-compound",
+                                id="taxon-list-structure",
                                 sort_action="native",
                                 filter_action="native",
                                 columns=[

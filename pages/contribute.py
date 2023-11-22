@@ -215,7 +215,7 @@ tab2_content = dbc.Card(
             dcc.Markdown(
                 """You are even more awesome!
 
-So if you have way too many compounds to add, you can send us directly a TSV or CSV file with the following three columns:
+So if you have way too many structures to add, you can send us directly a TSV or CSV file with the following three columns:
 
 **smiles** , **organism** , **reference**
 
@@ -285,8 +285,8 @@ def layout():
                 [
                     dbc.Tabs(
                         [
-                            dbc.Tab(tab1_content, label="I have a single compound"),
-                            dbc.Tab(tab2_content, label="I have multiple compounds"),
+                            dbc.Tab(tab1_content, label="I have a single structure"),
+                            dbc.Tab(tab2_content, label="I have multiple structures"),
                         ]
                     )
                 ]

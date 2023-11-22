@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, callback, dcc
 
 from config import PAGE_SIZE
-from dash_common import generate_compounds_cards
+from dash_common import generate_structures_cards
 from model import DataModel
 
 dm = DataModel()
@@ -21,8 +21,8 @@ def title(wid=None):
     return "LOTUS"
 
 
-def tsv(compounds: list[int]) -> str:
-    smileses = dm.get_compound_smiles_from_list_of_wid(compounds)
+def tsv(structures: list[int]) -> str:
+    smileses = dm.get_structure_smiles_from_list_of_wid(structures)
     return "smiles\n" + "\n".join(smileses)
 
 
@@ -40,8 +40,8 @@ dash.register_page(
     Output("cards", "children"),
     [Input("pagination", "active_page"), Input("matching-ids", "data")],
 )
-def compound_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
-    return generate_compounds_cards(active_page, data)
+def structure_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
+    return generate_structures_cards(active_page, data)
 
 
 @callback(
@@ -50,8 +50,8 @@ def compound_cards(active_page: int, data: dict[str, Any]) -> list[dbc.Card]:
     prevent_initial_call=True,
 )
 def func(n_clicks, data):
-    filename = f"compounds_of_{data['taxon_name'].replace('.', '')}.tsv"
-    return dict(content=tsv(data["matching_compounds"]), filename=filename)
+    filename = f"structures_of_{data['taxon_name'].replace('.', '')}.tsv"
+    return dict(content=tsv(data["matching_structures"]), filename=filename)
 
 
 def layout(wid: int):
@@ -79,18 +79,18 @@ def layout(wid: int):
                 markdown += f"[{tax_name}{ranks}](/taxon/{parent[0]}) > "
         taxonomic_info = markdown.strip("> ")
 
-    matching_compounds = dm.get_compounds_of_taxon(wid)
-    matching_compounds.sort()
-    nb_matches = len(matching_compounds)
+    matching_structures = dm.get_structures_of_taxon(wid)
+    matching_structures.sort()
+    nb_matches = len(matching_structures)
 
-    warning = f"Found {nb_matches} compounds"
+    warning = f"Found {nb_matches} structures"
 
     return dbc.Container(
         [
             dcc.Store(
                 id="matching-ids",
                 data={
-                    "matching_compounds": matching_compounds,
+                    "matching_structures": matching_structures,
                     "taxon_name": taxon_name,
                 },
             ),
@@ -121,6 +121,6 @@ def layout(wid: int):
                     ),
                 ]
             ),
-            dbc.Spinner(id="loading-compounds-tsv", children=[dbc.Row(id="cards")]),
+            dbc.Spinner(id="loading-structures-tsv", children=[dbc.Row(id="cards")]),
         ]
     )

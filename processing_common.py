@@ -25,12 +25,12 @@ def load_all_data():
         data = pickle.load(f)
     new_lib = rdSubstructLibrary.SubstructLibrary()
     new_lib_h = rdSubstructLibrary.SubstructLibrary()
-    with io.BytesIO(data["compound_library"]) as i:
+    with io.BytesIO(data["structure_library"]) as i:
         new_lib.InitFromStream(i)
-    with io.BytesIO(data["compound_library_h"]) as i:
+    with io.BytesIO(data["structure_library_h"]) as i:
         new_lib_h.InitFromStream(i)
-    data["compound_library"] = new_lib
-    data["compound_library_h"] = new_lib_h
+    data["structure_library"] = new_lib
+    data["structure_library_h"] = new_lib_h
 
-    data["compound_id"] = {i[1]: i[0] for i in enumerate(data["compound_wid"])}
+    data["structure_id"] = {i[1]: i[0] for i in enumerate(data["structure_wid"])}
     return data

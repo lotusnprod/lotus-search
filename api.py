@@ -10,7 +10,7 @@ LOTUSFast API helps you do awesome stuff. 🚀
 
 dm = DataModel()
 # Should likely move in the data model if that's used all the time
-all_structures = set(dm.get_compounds())
+all_structures = set(dm.get_structures())
 all_taxa = dm.get_taxa()
 
 app = FastAPI(
@@ -52,7 +52,7 @@ def get_matching_structures_from_structure_in_item(
             if item.molecule:
                 if item.substructure_search:
                     try:
-                        results = dm.compound_search_substructure(item.molecule)
+                        results = dm.structure_search_substructure(item.molecule)
                         structures = {_id for _id, _ in results}
                     except ValueError:
                         raise HTTPException(
@@ -61,7 +61,7 @@ def get_matching_structures_from_structure_in_item(
                         )
                 else:
                     try:
-                        results = dm.compound_search(item.molecule)
+                        results = dm.structure_search(item.molecule)
                         structures = {
                             _id
                             for _id, score in results
@@ -102,10 +102,10 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    # We could have a parameter "recursive" in the query to have all the compounds from the parents too
+    # We could have a parameter "recursive" in the query to have all the structures from the parents too
     out = set()
     for taxon in taxa:
-        out.update(dm.get_compounds_of_taxon(taxon))
+        out.update(dm.get_structures_of_taxon(taxon))
 
     return out
 
@@ -116,7 +116,7 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
 
     out = set()
     for structure in structures:
-        out.update(dm.get_taxa_containing_compound(structure))
+        out.update(dm.get_taxa_containing_structure(structure))
 
     return out
 
@@ -127,13 +127,13 @@ async def search_couples(item: Item) -> CoupleResult:
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    compounds_of_selected_taxa = {
-        taxon: dm.get_compounds_of_taxon(taxon) for taxon in selected_taxa
+    structures_of_selected_taxa = {
+        taxon: dm.get_structures_of_taxon(taxon) for taxon in selected_taxa
     }
 
     couples = {
         (structure, taxon)
-        for taxon, structures in compounds_of_selected_taxa.items()
+        for taxon, structures in structures_of_selected_taxa.items()
         for structure in structures
         if structure in selected_structures
     }

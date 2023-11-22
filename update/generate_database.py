@@ -119,12 +119,12 @@ def run(root: Path) -> None:
             tc2r[(it, ic)] = r
     print("Finished generating")
     database = {
-        "compound_smiles": p_smileses,
-        "compound_wid": p_links,
-        "compound_sim_fps": p_sim_fps,
-        "compound_sim_h_fps": p_sim_h_fps,
-        "compound_library": library.Serialize(),
-        "compound_library_h": library_h.Serialize(),
+        "structure_smiles": p_smileses,
+        "structure_wid": p_links,
+        "structure_sim_fps": p_sim_fps,
+        "structure_sim_h_fps": p_sim_h_fps,
+        "structure_library": library.Serialize(),
+        "structure_library_h": library_h.Serialize(),
         "t2c": t2c,
         "c2t": c2t,
         "tc2r": tc2r,

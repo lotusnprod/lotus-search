@@ -10,8 +10,8 @@ def run(root: Path, retry: int = 3) -> None:
     SELECT DISTINCT ?reference ?reference_doi WITH {
       SELECT DISTINCT ?reference WHERE {
         # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
-        ?compound wdt:P235 [].
-        ?compound p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
+        ?structure wdt:P235 [].
+        ?structure p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
       }
       # LIMIT 1000 # Test
     } AS %refs WHERE {

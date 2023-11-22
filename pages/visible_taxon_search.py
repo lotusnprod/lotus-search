@@ -23,13 +23,13 @@ def update_table(value):
     output = []
     for match in data.get_taxa_with_name_containing(value):
         name = data.get_taxon_name_from_wid(match)
-        matching_compounds = data.get_compounds_of_taxon(match)
+        matching_structures = data.get_structures_of_taxon(match)
         safe_name = name.replace("[", "").replace("]", "")
         output.append(
             {
                 "Taxon": f"[{safe_name}](/taxon/{match})",
                 "Rank": data.get_ranks_string(match),
-                "Compounds": len(matching_compounds),
+                "structures": len(matching_structures),
             }
         )
 
@@ -73,7 +73,7 @@ def layout(name: str = ""):
                                 "presentation": "markdown",
                             },
                             {"name": "Rank ", "id": "Rank"},
-                            {"name": "Compounds", "id": "Compounds"},
+                            {"name": "structures", "id": "structures"},
                         ],
                     )
                 ]

@@ -8,7 +8,7 @@ from update.common import remove_wd_entity_prefix, wd_sparql_to_csv
 query_taxa = """
 SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
   SELECT DISTINCT ?taxon WHERE {
-    ?compound wdt:P703 ?taxon.
+    [] wdt:P703 ?taxon.
   }
   # LIMIT 1000 # Test
 } AS %taxa WHERE {
@@ -24,7 +24,7 @@ SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
 query_final = """
 SELECT ?taxon ?taxon_name ?taxon_rank ?relative ?relative_name ?relative_rank ?distance WITH {
   SELECT DISTINCT ?taxon WHERE {
-    ?compound wdt:P703 ?subtax.
+    [] wdt:P703 ?subtax.
     ?subtax wdt:P171 ?taxon.
   }
 } AS %taxa WHERE {
