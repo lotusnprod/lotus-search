@@ -178,7 +178,9 @@ class DataModel:
         return [self.db["structure_smiles"][i] for i in ids if 0 <= i < len(llen)]
 
     def get_dict_of_wid_to_smiles(self, wid: Iterable[int]) -> dict[int, str]:
-        ids = {w: self.db["structure_id"][w] for w in wid if w in self.db["structure_id"]}
+        ids = {
+            w: self.db["structure_id"][w] for w in wid if w in self.db["structure_id"]
+        }
         llen = self.db["structure_smiles"]
         return {
             wid: self.db["structure_smiles"][i]

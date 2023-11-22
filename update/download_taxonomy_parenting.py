@@ -3,7 +3,7 @@ import pickle
 from io import StringIO
 from pathlib import Path
 
-from update.common import remove_wd_entity_prefix, wd_sparql_to_csv, QLEVER_URL
+from update.common import QLEVER_URL, remove_wd_entity_prefix, wd_sparql_to_csv
 
 query_taxa = """
 SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
@@ -55,6 +55,7 @@ SELECT ?taxon ?taxon_name WHERE {
     wdt:P225 ?taxon_name.
 }
 """
+
 
 def run(root: Path, retry: int = 5) -> None:
     t = remove_wd_entity_prefix(wd_sparql_to_csv(query_taxa))
@@ -162,7 +163,9 @@ def run(root: Path, retry: int = 5) -> None:
     for line in reader:
         ranks_names[int(line[0])] = line[1]
 
-    t = remove_wd_entity_prefix(wd_sparql_to_csv(query_all_taxa,QLEVER_URL)) # Times out on normal WDQS
+    t = remove_wd_entity_prefix(
+        wd_sparql_to_csv(query_all_taxa, QLEVER_URL)
+    )  # Times out on normal WDQS
     reader = csv.reader(StringIO(t))
     reader.__next__()
     dict_all_taxa = {i[0]: i[1] for i in reader}
@@ -178,6 +181,7 @@ def run(root: Path, retry: int = 5) -> None:
 
     with open(root / "database_taxo.pkl", "wb") as f:
         pickle.dump(database, f)
+
 
 if __name__ == "__main__":
     run(Path("data"))

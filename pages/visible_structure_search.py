@@ -160,8 +160,12 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
             ),
             dbc.Row(
                 [
-                    dbc.Col([dbc.Alert(id="warning-structure-search", color="primary")]),
-                    dbc.Col(dbc.Button("Download SMILES", id="btn-download-structures")),
+                    dbc.Col(
+                        [dbc.Alert(id="warning-structure-search", color="primary")]
+                    ),
+                    dbc.Col(
+                        dbc.Button("Download SMILES", id="btn-download-structures")
+                    ),
                 ]
             ),
             dbc.Spinner(

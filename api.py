@@ -40,9 +40,9 @@ def get_matching_structures_from_structure_in_item(
         return all_structures
     elif item.molecule and item.structure_wid:
         raise HTTPException(
-                            status_code=500,
-                            detail=f"You cannot provide both 'molecule' and 'structure_wid'",
-                        )
+            status_code=500,
+            detail=f"You cannot provide both 'molecule' and 'structure_wid'",
+        )
     else:
         # This needs to be explained in the API doc
         if item.structure_wid:
