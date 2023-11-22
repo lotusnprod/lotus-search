@@ -4,7 +4,8 @@ import time
 from pathlib import Path
 
 from update import (download_couples_referenced, download_doi, download_smiles,
-                    download_taxonomy_parenting, generate_database)
+                    download_taxonomy_parenting, generate_database,
+                    generate_database_chemo)
 
 start = time.time()
 DATA_PATH = Path("data")
@@ -14,6 +15,7 @@ tasks = [
     ["doi", download_doi.run],
     ["smiles", download_smiles.run],
     ["taxonomy_parenting", download_taxonomy_parenting.run],
+    ["generate_database_chemo", generate_database_chemo.run],
     ["generate_database", generate_database.run],
 ]
 
