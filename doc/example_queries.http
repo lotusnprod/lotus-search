@@ -3,19 +3,33 @@
 #  -H 'accept: application/json'
 #  -H 'Content-Type: application/json'
 #  -d '{
-#  "molecule": "CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC ",
-#  "similarity_level": 1,
-#  "substructure_search": false}'
+#  "molecule": "CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC",
 POST http://127.0.0.1:5000/v1_0/structures
 accept: application/json
 Content-Type: application/json
 
 {
-  "molecule": "CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC ",
-  "similarity_level": 1,
-  "substructure_search": false
+  "molecule": "CC1C=C(C(=O)C2(C1CC3C4(C2C(=O)C(=C(C4CC(=O)O3)C)OC)C)C)OC"
 }
 
 ###
 
+# curl -X 'POST'
+#
+#  'http://127.0.0.1:5000/v1_0/taxa'
+#
+#  -H 'accept: application/json'
+#  -H 'Content-Type: application/json'
+#  -d '{
+#  "taxon_name": "Gentianopsis"
+#}'
+POST http://127.0.0.1:5000/v1_0/taxa
+accept: application/json
+Content-Type: application/json
+
+{
+  "taxon_name": "Gentianopsis"
+}
+
+###
 
