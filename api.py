@@ -38,6 +38,11 @@ def get_matching_structures_from_structure_in_item(
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
     if item.molecule is None and item.structure_wid is None:
         return all_structures
+    elif item.molecule and item.structure_wid:
+        raise HTTPException(
+                            status_code=500,
+                            detail=f"You cannot provide both 'molecule' and 'structure_wid'",
+                        )
     else:
         # This needs to be explained in the API doc
         if item.structure_wid:
