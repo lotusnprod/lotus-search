@@ -55,6 +55,7 @@ def run(root: Path) -> None:
 
     max_workers = multiprocessing.cpu_count()
 
+    # TODO SMILES end up in something called "mols"?
     mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
     fps = rdSubstructLibrary.PatternHolder()
 
