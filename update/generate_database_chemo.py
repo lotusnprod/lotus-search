@@ -132,6 +132,15 @@ def run(root: Path) -> None:
         "tc2r": tc2r,
     }
 
+    print(f"Exporting {len(mols_h)} to SDF...takes long")
+    # TODO Add additional metadata in the SDF if needed. Rawer as raw for now
+    with Chem.SDWriter("data/lotus.sdf") as w:
+        for i in range(len(mols_h)):
+            mol = mols_h.GetMol(i)
+            if mol is not None:
+                w.write(mol)
+    print("Finished exporting")
+
     with open(root / "database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
     print("Finished dumping")
