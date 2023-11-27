@@ -168,7 +168,7 @@ def run(root: Path, retry: int = 5) -> None:
     )  # Times out on normal WDQS
     reader = csv.reader(StringIO(t))
     reader.__next__()
-    dict_all_taxa = {i[0]: i[1] for i in reader}
+    dict_all_taxa: dict = {i[0]: i[1] for i in reader}
 
     database = {
         "taxonomy_direct_parents": taxon_direct_parents,
