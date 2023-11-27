@@ -193,10 +193,12 @@ async def search_taxa(item: Item) -> TaxonResult:
 
     # We want the intersection of both (and we can do the same for the references later)
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
+    print(matching_taxa)
+    print(dm.get_dict_of_wid_to_taxon_name(matching_taxa))
 
     return TaxonResult(
         ids=matching_taxa,
-        infos={
+        taxa={
             wid: TaxonInfo(name=value)
             for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
         },
