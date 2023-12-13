@@ -36,12 +36,12 @@ def get_matching_structures_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
-    if item.molecule is None and item.structure_wid is None:
+    if item.structure is None and item.structure_wid is None:
         return all_structures
-    elif item.molecule and item.structure_wid:
+    elif item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
-            detail=f"You cannot provide both 'molecule' and 'structure_wid'",
+            detail=f"You cannot provide both 'structure' and 'structure_wid'",
         )
     else:
         # This needs to be explained in the API doc
@@ -49,19 +49,19 @@ def get_matching_structures_from_structure_in_item(
             if item.structure_wid in all_structures:
                 return {item.structure_wid}
         else:
-            if item.molecule:
+            if item.structure:
                 if item.substructure_search:
                     try:
-                        results = dm.structure_search_substructure(item.molecule)
+                        results = dm.structure_search_substructure(item.structure)
                         structures = {_id for _id, _ in results}
                     except ValueError:
                         raise HTTPException(
                             status_code=500,
-                            detail=f"The structure given is invalid: {item.molecule}",
+                            detail=f"The structure given is invalid: {item.structure}",
                         )
                 else:
                     try:
-                        results = dm.structure_search(item.molecule)
+                        results = dm.structure_search(item.structure)
                         structures = {
                             _id
                             for _id, score in results
@@ -70,7 +70,7 @@ def get_matching_structures_from_structure_in_item(
                     except ValueError:
                         raise HTTPException(
                             status_code=500,
-                            detail=f"The structure given is invalid: {item.molecule}",
+                            detail=f"The structure given is invalid: {item.structure}",
                         )
             else:
                 structures = all_structures
@@ -78,10 +78,10 @@ def get_matching_structures_from_structure_in_item(
             return structures
 
 
-def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
-    """Returns all_taxa if the item do not filter by taxon, else returns the WID of matching taxa"""
+def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+    """Returns all_taxa if the item do not filter by taxon, else returns the WID of matching taxa or None if no taxa requested"""
     if item.taxon_wid is None and item.taxon_name is None:
-        return all_taxa
+        return None
     else:
         # This needs to be explained in the API doc
         if item.taxon_wid:
@@ -101,6 +101,9 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
 def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
+
+    if taxa is None:
+        return None
 
     # We could have a parameter "recursive" in the query to have all the structures from the parents too
     out = set()
@@ -164,13 +167,18 @@ async def search_structures(item: Item) -> StructureResult:
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(
         dm, item
     )
-    # We want the set of all the molecules found in the given taxa
+    # We want the set of all the structures found in the given taxa
     matching_structures_by_taxon = get_matching_structures_from_taxon_in_item(dm, item)
 
     # We want the intersection of both (and we can do the same for the references later)
-    matching_structures = (
-        matching_structures_by_structure & matching_structures_by_taxon
-    )
+    # But if one of the sets is fully empty
+    if matching_structures_by_taxon is None:
+        matching_structures = matching_structures_by_structure
+    else:
+      matching_structures = (
+          matching_structures_by_structure & matching_structures_by_taxon
+      )
+
     return StructureResult(
         ids=matching_structures,
         structures={
@@ -188,13 +196,11 @@ async def search_taxa(item: Item) -> TaxonResult:
     # We want the set of all the taxa matching the query
     matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    # We want the set of all the taxa which have molecules matching the query
+    # We want the set of all the taxa which have structures matching the query
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
 
     # We want the intersection of both (and we can do the same for the references later)
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
-    print(matching_taxa)
-    print(dm.get_dict_of_wid_to_taxon_name(matching_taxa))
 
     return TaxonResult(
         ids=matching_taxa,

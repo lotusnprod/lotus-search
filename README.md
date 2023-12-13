@@ -13,6 +13,17 @@ The dataset is from the [LOTUS](https://lotus.nprod.net) initiative and [Wikidat
 
 ## Install & use
 
+### The docker compose way (recommended)
+
+```shell
+docker-compose run -it backend python update.py
+docker-compose up
+```
+
+The web server is then available on <http://localhost:3000> and the API on <http://localhost:5000>.
+
+### The manual way
+
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
 
 - Install dependencies using poetry

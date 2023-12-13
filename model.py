@@ -17,7 +17,7 @@ requests_log.propagate = True
 
 class Item(BaseModel):
     structure_wid: int | None = None
-    molecule: str | None = None
+    structure: str | None = None
     substructure_search: bool | None = None
     similarity_level: float = 1.0
     taxon_wid: int | None = None
@@ -27,7 +27,7 @@ class Item(BaseModel):
             "examples": [
                 {
                     "structure_wid": "27151406",
-                    "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                    "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
                     "substructure_search": True,
                     "similarity_level": 0.8,
                     "taxon_wid": 158572,
