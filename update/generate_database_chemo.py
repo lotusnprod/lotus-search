@@ -11,6 +11,13 @@ from rdkit.Chem import rdSubstructLibrary
 from processing_common import fingerprint, standardize
 
 
+def process_smol_and_wid(smol_and_wid):
+    sdf_blocks = []
+    for smol, wid in smol_and_wid:
+        sdf_blocks.append((wid, Chem.MolToMolBlock(smol)))
+    return sdf_blocks
+
+
 def process_smiles(inp):
     try:
         nid, smiles = inp
@@ -26,6 +33,7 @@ def process_smiles(inp):
             return (
                 nid,
                 smiles,
+                smol,
                 smiles_clean,
                 sim_fp,
                 sub_fp,
@@ -38,6 +46,15 @@ def process_smiles(inp):
     except:
         print("Failed to process", smiles)
         return None
+
+
+def write_mols_to_sdf(sdf_blocks):
+    with Chem.SDWriter("data/lotus.sdf") as w:
+        for wid, sdf_block in sdf_blocks:
+            mol = Chem.MolFromMolBlock(sdf_block)
+            if mol:
+                mol.SetProp("WID", str(wid))
+                w.write(mol)
 
 
 def run(root: Path) -> None:
@@ -66,6 +83,7 @@ def run(root: Path) -> None:
     library_h = rdSubstructLibrary.SubstructLibrary(mols_h, fps_h)
 
     p_smileses = []
+    p_smols = []
     p_sim_fps = []
     p_sim_h_fps = []
     p_links = []
@@ -77,6 +95,7 @@ def run(root: Path) -> None:
                 (
                     mid,
                     smiles,
+                    smol,
                     smiles_clean,
                     sim_fp,
                     sub_fp,
@@ -93,6 +112,7 @@ def run(root: Path) -> None:
                 fps.AddFingerprint(sub_fp)
                 p_sim_fps.append(sim_fp)
 
+                p_smols.append(smol)
                 p_smileses.append(smiles)
 
                 p_links.append(links[mid])
@@ -131,13 +151,14 @@ def run(root: Path) -> None:
         "tc2r": tc2r,
     }
 
-    print(f"Exporting {len(mols_h)} to SDF...takes long")
-    # TODO Add additional metadata in the SDF if needed. Rawer as raw for now
-    with Chem.SDWriter("data/lotus.sdf") as w:
-        for i in range(len(mols_h)):
-            mol = mols_h.GetMol(i)
-            if mol is not None:
-                w.write(mol)
+    smols_and_wids = list(zip(p_smols, p_links))
+
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        chunks = [smols_and_wids[i:i + 1000] for i in range(0, len(smols_and_wids), 1000)]
+        sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
+        sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]
+        write_mols_to_sdf(sdf_blocks)
+
     print("Finished exporting")
 
     with open(root / "database_chemo.pkl", "wb") as f:
