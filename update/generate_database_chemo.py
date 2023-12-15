@@ -55,11 +55,10 @@ def run(root: Path) -> None:
 
     max_workers = multiprocessing.cpu_count()
 
-    # TODO SMILES end up in something called "mols"?
-    mols = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
+    smis = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
     fps = rdSubstructLibrary.PatternHolder()
 
-    library = rdSubstructLibrary.SubstructLibrary(mols, fps)
+    library = rdSubstructLibrary.SubstructLibrary(smis, fps)
 
     mols_h = rdSubstructLibrary.CachedTrustedSmilesMolHolder()
     fps_h = rdSubstructLibrary.PatternHolder()
@@ -90,7 +89,7 @@ def run(root: Path) -> None:
                 fps_h.AddFingerprint(sub_fp_h)
                 p_sim_h_fps.append(sim_fp_h)
 
-                mols.AddSmiles(smiles_clean)
+                smis.AddSmiles(smiles_clean)
                 fps.AddFingerprint(sub_fp)
                 p_sim_fps.append(sim_fp)
 
