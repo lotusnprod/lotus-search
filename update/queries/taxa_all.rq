@@ -1,0 +1,6 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?taxon ?taxon_name WHERE {
+  ?taxon wdt:P31 wd:Q16521;
+    wdt:P225 ?taxon_name.
+}

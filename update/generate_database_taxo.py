@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+import csv
+import pickle
+from io import StringIO
+
+
+def run() -> None:
+    with open("./data/taxa.csv", "r") as t:
+        # TODO This part is sensitive to vandalism if someone introduces "," in taxon name.
+        # Could be let this way to force cleaning, or not.
+        list_of_couples = [x.strip().split(",") for x in t.readlines()[1:] if x.strip() != ""]
+        taxon_direct_parents = {}
+        taxon_names = {}
+        taxon_ranks = {}
+        taxon_children = {}
+        taxon_parents_with_distance = {}
+        ranks_names = {}
+
+        for couple in list_of_couples:
+            taxon_id, taxon_name, taxon_rank_id, parent_id = couple
+            taxon_id = int(taxon_id)
+            parent_id = int(parent_id)
+            taxon_rank_id = int(taxon_rank_id)
+
+            if parent_id not in taxon_children:
+                taxon_children[parent_id] = set()
+            if taxon_id not in taxon_direct_parents:
+                taxon_direct_parents[taxon_id] = set()
+            if taxon_id not in taxon_names:
+                taxon_names[taxon_id] = taxon_name
+            if taxon_id not in taxon_ranks:
+                taxon_ranks[taxon_id] = set()
+            if taxon_id not in taxon_parents_with_distance:
+                taxon_parents_with_distance[taxon_id] = {}
+
+            taxon_direct_parents[taxon_id].add(parent_id)
+            taxon_children[parent_id].add(taxon_id)
+            taxon_parents_with_distance[taxon_id][parent_id] = 1
+            taxon_ranks[taxon_id].add(taxon_rank_id)
+
+        print(f" Found {len(taxon_direct_parents)} taxa")
+
+    reader = csv.reader(StringIO("./data/taxa_parents.csv"))
+    reader.__next__()
+    for line in reader:
+        (
+            taxon_id,
+            taxon_name,
+            taxon_rank_id,
+            relative_id,
+            relative_name,
+            relative_rank,
+            distance,
+        ) = line
+        taxon_id = int(taxon_id)
+        relative_id = int(relative_id)
+        taxon_rank_id = int(taxon_rank_id)
+        distance = int(distance)
+
+        if relative_id not in taxon_children:
+            taxon_children[relative_id] = set()
+        if taxon_id not in taxon_direct_parents:
+            taxon_direct_parents[taxon_id] = set()
+        if taxon_id not in taxon_names:
+            taxon_names[taxon_id] = taxon_name
+        if relative_id not in taxon_names:
+            taxon_names[relative_id] = relative_name
+        if taxon_id not in taxon_ranks:
+            taxon_ranks[taxon_id] = set()
+        if relative_id not in taxon_ranks:
+            taxon_ranks[relative_id] = set()
+        if taxon_id not in taxon_parents_with_distance:
+            taxon_parents_with_distance[taxon_id] = {}
+
+        if distance == 1:
+            taxon_direct_parents[taxon_id].add(relative_id)
+
+        taxon_children[relative_id].add(taxon_id)
+            # We also add the children of the ones above
+        if taxon_id in taxon_children:
+            for child_id in taxon_children[taxon_id]:
+                taxon_children[relative_id].add(child_id)
+
+        taxon_ranks[taxon_id].add(taxon_rank_id)
+
+        taxon_ranks[relative_id].add(relative_rank)
+
+        taxon_parents_with_distance[taxon_id][relative_id] = distance
+
+    reader = csv.reader(StringIO("./data/taxa_ranks.csv"))
+    reader.__next__()
+    for line in reader:
+        ranks_names[int(line[0])] = line[1]
+
+    reader = csv.reader(StringIO("./data/taxa_all.csv"))
+    reader.__next__()
+    dict_all_taxa: dict = {i[0]: i[1] for i in reader}
+
+    database = {
+        "taxonomy_direct_parents": taxon_direct_parents,
+        "taxonomy_names": dict_all_taxa,
+        "taxonomy_ranks": taxon_ranks,
+        "taxonomy_children": taxon_children,
+        "taxonomy_parents_with_distance": taxon_parents_with_distance,
+        "taxonomy_ranks_names": ranks_names,
+    }
+
+    with open("./data/database_taxo.pkl", "wb") as f:
+        pickle.dump(database, f)
+
+
+if __name__ == "__main__":
+    run()

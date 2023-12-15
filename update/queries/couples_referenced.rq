@@ -1,0 +1,7 @@
+SELECT DISTINCT ?structure ?taxon ?reference WHERE {    
+      # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
+      ?structure wdt:P235 [].
+      ?structure p:P703 ?statement.
+      ?statement ps:P703 ?taxon;
+        (prov:wasDerivedFrom/pr:P248) ?reference.
+    }

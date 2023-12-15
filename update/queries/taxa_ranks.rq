@@ -1,0 +1,4 @@
+SELECT ?rank ?rankLabel WHERE {
+    ?rank wdt:P31 wd:Q427626.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}

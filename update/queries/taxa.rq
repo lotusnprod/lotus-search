@@ -1,0 +1,13 @@
+SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WITH {
+  SELECT DISTINCT ?taxon WHERE {
+    [] wdt:P703 ?taxon.
+  }
+  # LIMIT 1000 # Test
+} AS %taxa WHERE {
+  SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?parent WHERE { 
+    INCLUDE %taxa
+            ?taxon wdt:P171 ?parent;
+            wdt:P105 ?taxon_rank;
+            wdt:P225 ?taxon_name.
+  }
+}

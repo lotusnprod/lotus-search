@@ -5,8 +5,8 @@ from update.common import run_query_to_csv
 
 def run() -> None:
     run_query_to_csv(
-        query_file="update/queries/couples_referenced.rq",
-        output_file="couples.csv"
+        query_file="update/queries/references.rq",
+        output_file="dois.csv"
         )
     
 

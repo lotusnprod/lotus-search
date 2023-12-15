@@ -3,7 +3,6 @@ import csv
 import multiprocessing
 import pickle
 from concurrent.futures import ProcessPoolExecutor
-from pathlib import Path
 
 from rdkit import Chem
 from rdkit.Chem import rdSubstructLibrary
@@ -49,7 +48,7 @@ def process_smiles(inp):
 
 
 def write_mols_to_sdf(sdf_blocks):
-    with Chem.SDWriter("data/lotus.sdf") as w:
+    with Chem.SDWriter("./data/lotus.sdf") as w:
         for wid, sdf_block in sdf_blocks:
             mol = Chem.MolFromMolBlock(sdf_block)
             if mol:
@@ -57,7 +56,7 @@ def write_mols_to_sdf(sdf_blocks):
                 w.write(mol)
 
 
-def run(root: Path) -> None:
+def run() -> None:
     smileses = []
     links = []
     with open("./data/smiles.csv", "r") as f:
@@ -161,10 +160,10 @@ def run(root: Path) -> None:
 
     print("Finished exporting")
 
-    with open(root / "database_chemo.pkl", "wb") as f:
+    with open("./data/database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
     print("Finished dumping")
 
 
 if __name__ == "__main__":
-    run(Path("data"))
+    run()
