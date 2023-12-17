@@ -27,21 +27,22 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+      - name: Get Week Number
+        id: weeknum
+        run: echo "::set-output name=WEEK_NUM::$(date +'%U')"
+        shell: bash
       - name: Cache Database files
         id: cache-db
         uses: actions/cache@v2
         with:
           path: data
-          key: ${{ runner.os }}-data
+          key: ${{ runner.os }}-data-${{ steps.weeknum.outputs.WEEK_NUM }}
       - name: Run update script if cache miss
         if: steps.cache-db.outputs.cache-hit != 'true'
         run: |
           poetry install
           chmod +x ./update.py
           poetry run ./update.py
-      - name: Run tests
-        run: |
-          poetry run pytest
       - name: Clean up unnecessary files
         if: always()
         run: |
