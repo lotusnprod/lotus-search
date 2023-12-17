@@ -29,11 +29,11 @@ jobs:
           virtualenvs-in-project: true
       - name: Get Year-Week Number
         id: yearweeknum
-        run: echo "::set-output name=YEAR_WEEK_NUM::$(date +'%Y-%U')"
+        run: echo "YEAR_WEEK_NUM=$(date +'%Y-%U')" >> $GITHUB_STATE
         shell: bash
       - name: Cache Database files
         id: cache-db
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: data
           key: ${{ runner.os }}-data-${{ steps.yearweeknum.outputs.YEAR_WEEK_NUM }}
