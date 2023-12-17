@@ -55,7 +55,7 @@ def process_smiles(inp):
 
 
 def write_mols_to_sdf(path: Path, sdf_blocks):
-    with Chem.SDWriter(path / "lotus.sdf") as w:
+    with Chem.SDWriter(str(path / "lotus.sdf")) as w:
         for wid, sdf_block in sdf_blocks:
             mol = Chem.MolFromMolBlock(sdf_block)
             if mol:
