@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
 import csv
+import logging
 import pickle
 from io import StringIO
+from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-def run() -> None:
-    with open("./data/taxa.csv", "r") as t:
-        # TODO This part is sensitive to vandalism if someone introduces "," in taxon name.
-        # Could be let this way to force cleaning, or not.
-        list_of_couples = [x.strip().split(",") for x in t.readlines()[1:] if x.strip() != ""]
-        taxon_direct_parents = {}
-        taxon_names = {}
-        taxon_ranks = {}
-        taxon_children = {}
-        taxon_parents_with_distance = {}
-        ranks_names = {}
+def run(path: Path) -> None:
+    taxon_direct_parents = {}
+    taxon_names = {}
+    taxon_ranks = {}
+    taxon_children = {}
+    taxon_parents_with_distance = {}
+    ranks_names = {}
 
-        for couple in list_of_couples:
-            taxon_id, taxon_name, taxon_rank_id, parent_id = couple
-            taxon_id = int(taxon_id)
-            parent_id = int(parent_id)
-            taxon_rank_id = int(taxon_rank_id)
+    with open(path / "taxa.csv", "r") as t:
+        reader = csv.DictReader(t)
+
+        for row in reader:
+            taxon_name = row["taxon_name"]
+            taxon_id = int(row["taxon"])
+            parent_id = int(row["parent"])
+            taxon_rank_id = int(row["taxon_rank"])
 
             if parent_id not in taxon_children:
                 taxon_children[parent_id] = set()
@@ -38,9 +41,9 @@ def run() -> None:
             taxon_parents_with_distance[taxon_id][parent_id] = 1
             taxon_ranks[taxon_id].add(taxon_rank_id)
 
-        print(f" Found {len(taxon_direct_parents)} taxa")
+        logging.info(f" Found {len(taxon_direct_parents)} taxa")
 
-    reader = csv.reader(StringIO("./data/taxa_parents.csv"))
+    reader = csv.reader(StringIO(str(path / "taxa_parents.csv")))
     reader.__next__()
     for line in reader:
         (
@@ -87,12 +90,12 @@ def run() -> None:
 
         taxon_parents_with_distance[taxon_id][relative_id] = distance
 
-    reader = csv.reader(StringIO("./data/taxa_ranks.csv"))
+    reader = csv.reader(StringIO(str(path / "taxa_ranks.csv")))
     reader.__next__()
     for line in reader:
         ranks_names[int(line[0])] = line[1]
 
-    reader = csv.reader(StringIO("./data/taxa_all.csv"))
+    reader = csv.reader(StringIO(str(path / "taxa_all.csv")))
     reader.__next__()
     dict_all_taxa: dict = {i[0]: i[1] for i in reader}
 
@@ -105,9 +108,9 @@ def run() -> None:
         "taxonomy_ranks_names": ranks_names,
     }
 
-    with open("./data/database_taxo.pkl", "wb") as f:
+    with open(path / "database_taxo.pkl", "wb") as f:
         pickle.dump(database, f)
 
 
 if __name__ == "__main__":
-    run()
+    run(Path("data"))

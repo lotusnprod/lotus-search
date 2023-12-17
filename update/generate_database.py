@@ -1,25 +1,28 @@
 #!/usr/bin/env python3
-import csv
+import logging
 import pickle
+from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-def run() -> None:
+def run(path: Path) -> None:
     database = {}
 
-    with open("./data/database_chemo.pkl", "rb") as f:
+    with open(path / "database_chemo.pkl", "rb") as f:
         database.update(pickle.load(f))
-    print("Finished integrating chemo")
+    logging.info("Finished integrating chemo")
 
-    with open("./data/database_taxo.pkl", "rb") as f:
+    with open(path / "database_taxo.pkl", "rb") as f:
         database.update(pickle.load(f))
-    print("Finished integrating taxo")
+    logging.info("Finished integrating taxo")
 
     # TODO references
 
-    with open("./data/database.pkl", "wb") as f:
+    with open(path / "database.pkl", "wb") as f:
         pickle.dump(database, f)
-    print("Finished dumping")
+    logging.info("Finished dumping")
 
 
 if __name__ == "__main__":
-    run()
+    run(Path("data"))

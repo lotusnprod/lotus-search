@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from update.generate_database_chemo import process_smiles, run
+from update import generate_database_chemo
 
 
 @patch("update.generate_database_chemo.ProcessPoolExecutor")
@@ -21,6 +21,7 @@ def test_run_generates_database(
             (
                 0,
                 "smiles",
+                "smol",
                 "smiles_clean",
                 "sim_fp",
                 "sub_fp",
@@ -30,7 +31,7 @@ def test_run_generates_database(
             )
         ]
     )
-    run(Path("."))
+    generate_database_chemo.run()
     assert mock_pickle_dump.call_count == 1
 
 
@@ -54,10 +55,11 @@ def test_process_smiles_returns_expected_result_on_success(
     mock_fingerprint.return_value = "sim_fp"
     mock_pattern_fp.return_value = "sub_fp"
     mock_mol.return_value.ToBinary.return_value = "mol_h"
-    result = process_smiles((0, "smiles"))
+    result = generate_database_chemo.process_smiles((0, "smiles"))
     assert result == (
         0,
         "smiles",
+        "smol",
         "smiles_clean",
         "sim_fp",
         "sub_fp",
@@ -68,5 +70,5 @@ def test_process_smiles_returns_expected_result_on_success(
 
 
 def test_process_smiles_returns_none_on_failure():
-    result = process_smiles((0, "invalid_smiles"))
+    result = generate_database_chemo.process_smiles((0, "invalid_smiles"))
     assert result is None

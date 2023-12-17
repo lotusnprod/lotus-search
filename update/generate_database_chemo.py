@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 import csv
+import logging
 import multiprocessing
 import pickle
 from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 
 from rdkit import Chem
 from rdkit.Chem import rdSubstructLibrary
+from rdkit import RDLogger
 
 from processing_common import fingerprint, standardize
+
+RDLogger.DisableLog('rdApp.*')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def process_smol_and_wid(smol_and_wid):
@@ -18,6 +24,7 @@ def process_smol_and_wid(smol_and_wid):
 
 
 def process_smiles(inp):
+    smiles = "Input to process_smiles is invalid"
     try:
         nid, smiles = inp
         mol = Chem.MolFromSmiles(smiles)
@@ -43,12 +50,12 @@ def process_smiles(inp):
         else:
             return None
     except:
-        print("Failed to process", smiles)
+        logging.error(f"Failed to process: {smiles}")
         return None
 
 
-def write_mols_to_sdf(sdf_blocks):
-    with Chem.SDWriter("./data/lotus.sdf") as w:
+def write_mols_to_sdf(path: Path, sdf_blocks):
+    with Chem.SDWriter(path / "lotus.sdf") as w:
         for wid, sdf_block in sdf_blocks:
             mol = Chem.MolFromMolBlock(sdf_block)
             if mol:
@@ -56,10 +63,10 @@ def write_mols_to_sdf(sdf_blocks):
                 w.write(mol)
 
 
-def run() -> None:
+def run(path: Path) -> None:
     smileses = []
     links = []
-    with open("./data/smiles.csv", "r") as f:
+    with open(path / "smiles.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
         for x in reader:
@@ -120,7 +127,9 @@ def run() -> None:
     c2t = {}
     tc2r = {}
 
-    with open("./data/couples.csv", "r") as f:
+    logging.info("Finished generating the libraries")
+
+    with open(path / "couples.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
         for x in reader:
@@ -136,7 +145,7 @@ def run() -> None:
             t2c[it].add(ic)
             c2t[ic].add(it)
             tc2r[(it, ic)] = r
-    print("Finished generating")
+    logging.info("Finished generating couples")
 
     database = {
         "structure_smiles": p_smileses,
@@ -156,14 +165,14 @@ def run() -> None:
         chunks = [smols_and_wids[i:i + 1000] for i in range(0, len(smols_and_wids), 1000)]
         sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
         sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]
-        write_mols_to_sdf(sdf_blocks)
+        write_mols_to_sdf(path, sdf_blocks)
 
-    print("Finished exporting")
+    logging.info("Finished exporting")
 
-    with open("./data/database_chemo.pkl", "wb") as f:
+    with open(path / "database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
-    print("Finished dumping")
+    logging.info("Finished dumping")
 
 
 if __name__ == "__main__":
-    run()
+    run(Path("data"))
