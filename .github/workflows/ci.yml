@@ -29,7 +29,7 @@ jobs:
           virtualenvs-in-project: true
       - name: Get Year-Week Number
         id: yearweeknum
-        run: echo "YEAR_WEEK_NUM=$(date +'%Y-%U')" >> $GITHUB_STATE
+        run: echo "YEAR_WEEK_NUM=$(date +'%Y-%U')" >> $GITHUB_OUTPUT
         shell: bash
       - name: Cache Database files
         id: cache-db
