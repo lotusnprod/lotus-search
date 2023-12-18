@@ -186,17 +186,18 @@ async def search_structures(item: Item) -> StructureResult:
 
     # We want the intersection of both (and we can do the same for the references later)
     # But if one of the sets is fully empty
-    if not matching_structures_by_taxon:
-        matching_structures = matching_structures_by_structure
-    else:
-        matching_structures = (
-            matching_structures_by_structure & matching_structures_by_taxon
-        )
+    matching_structures = (
+        matching_structures_by_structure & matching_structures_by_taxon
+        if matching_structures_by_structure and matching_structures_by_taxon
+        else matching_structures_by_structure or matching_structures_by_taxon
+    )
 
     if item.limit == 0:
         items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())
     else:
-        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())[: item.limit]
+        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())[
+            : item.limit
+        ]
 
     return StructureResult(
         ids=matching_structures,
@@ -217,15 +218,18 @@ async def search_taxa(item: Item) -> TaxonResult:
 
     # We want the intersection of both (and we can do the same for the references later)
     # But if one of the sets is fully empty
-    if not matching_taxa_by_structure:
-        matching_taxa = matching_taxa_by_taxon
-    else:
-        matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
+    matching_taxa = (
+        matching_taxa_by_taxon & matching_taxa_by_structure
+        if matching_taxa_by_taxon and matching_taxa_by_structure
+        else matching_taxa_by_taxon or matching_taxa_by_structure
+    )
 
     if item.limit == 0:
         items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())
     else:
-        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())[: item.limit]
+        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())[
+            : item.limit
+        ]
 
     return TaxonResult(
         ids=matching_taxa,

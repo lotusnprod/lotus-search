@@ -18,8 +18,6 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 
 ### Get all the taxa producing chlorinated structures
 
-#### TODO fix
-
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true}'
 ```
