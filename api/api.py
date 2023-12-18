@@ -41,9 +41,9 @@ app = FastAPI(
 def get_matching_structures_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
-    """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
+    """Returns the WID of matching structures."""
     if item.structure is None and item.structure_wid is None:
-        return dm.structures_set()
+        return None
     elif item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
@@ -85,9 +85,9 @@ def get_matching_structures_from_structure_in_item(
 
 
 def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
-    """Returns all_taxa if the item do not filter by taxon, else returns the WID of matching taxa or None if no taxa requested"""
+    """Returns the WID of matching taxa."""
     if item.taxon_wid is None and item.taxon_name is None:
-        return set(dm.get_taxa())
+        return None
     else:
         # This needs to be explained in the API doc
         if item.taxon_wid:
@@ -100,7 +100,6 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
                     taxa = dm.get_taxa()
             else:
                 taxa = dm.get_taxa()
-        print(taxa)
 
         return taxa
 
@@ -123,6 +122,9 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
 def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
     # We need to get all the matching structures
     structures = get_matching_structures_from_structure_in_item(dm, item)
+
+    if structures is None:
+        return None
 
     out = set()
     for structure in structures:
@@ -184,7 +186,7 @@ async def search_structures(item: Item) -> StructureResult:
 
     # We want the intersection of both (and we can do the same for the references later)
     # But if one of the sets is fully empty
-    if matching_structures_by_taxon is None:
+    if not matching_structures_by_taxon:
         matching_structures = matching_structures_by_structure
     else:
         matching_structures = (
@@ -214,7 +216,11 @@ async def search_taxa(item: Item) -> TaxonResult:
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
 
     # We want the intersection of both (and we can do the same for the references later)
-    matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
+    # But if one of the sets is fully empty
+    if not matching_taxa_by_structure:
+        matching_taxa = matching_taxa_by_taxon
+    else:
+        matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
     if item.limit == 0:
         items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())
