@@ -6,62 +6,17 @@ import pickle
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from rdkit import Chem, RDLogger
-from rdkit.Chem import rdSubstructLibrary
+from rdkit import RDLogger
+from rdkit.Chem import Mol, rdSubstructLibrary
 
-from chemistry_helpers import fingerprint, standardize
+from chemistry_helpers import (fingerprint, process_smiles,
+                               process_smol_and_wid, standardize,
+                               write_mols_to_sdf)
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
-
-
-def process_smol_and_wid(smol_and_wid):
-    sdf_blocks = []
-    for smol, wid in smol_and_wid:
-        sdf_blocks.append((wid, Chem.MolToMolBlock(smol)))
-    return sdf_blocks
-
-
-def process_smiles(inp):
-    smiles = "Input to process_smiles is invalid"
-    try:
-        nid, smiles = inp
-        mol = Chem.MolFromSmiles(smiles)
-        smol = standardize(mol)
-        smiles_clean = Chem.MolToSmiles(smol)
-        if smol is not None:
-            sim_fp = fingerprint(smol)
-            sub_fp = Chem.PatternFingerprint(smol)
-            smol_h = Chem.AddHs(smol)
-            sim_fp_h = fingerprint(smol_h)
-            sub_fp_h = Chem.PatternFingerprint(smol_h)
-            return (
-                nid,
-                smiles,
-                smol,
-                smiles_clean,
-                sim_fp,
-                sub_fp,
-                smol_h.ToBinary(),
-                sim_fp_h,
-                sub_fp_h,
-            )
-        else:
-            return None
-    except:
-        logging.error(f"Failed to process: {smiles}")
-        return None
-
-
-def write_mols_to_sdf(path: Path, sdf_blocks):
-    with Chem.SDWriter(str(path / "lotus.sdf")) as w:
-        for wid, sdf_block in sdf_blocks:
-            mol = Chem.MolFromMolBlock(sdf_block)
-            if mol:
-                mol.SetProp("WID", str(wid))
-                w.write(mol)
 
 
 def run(path: Path) -> None:
@@ -111,7 +66,7 @@ def run(path: Path) -> None:
                     sub_fp_h,
                 ) = result
 
-                mols_h.AddMol(Chem.Mol(mol_h))
+                mols_h.AddMol(Mol(mol_h))
                 fps_h.AddFingerprint(sub_fp_h)
                 p_sim_h_fps.append(sim_fp_h)
 
