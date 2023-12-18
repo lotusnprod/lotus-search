@@ -1,7 +1,7 @@
-import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dash_table, dcc
 
+import dash
+from dash import Input, Output, callback, dash_table, dcc
 from model import DataModel
 
 dash.register_page(

@@ -19,7 +19,9 @@ def list_tasks(tasks: list[Task]) -> None:
     print("")
 
 
-def run_tasks(tasks: list[Task], path: Path, only=str | None, stop=str | None, skip=str | None) -> None:
+def run_tasks(
+    tasks: list[Task], path: Path, only=str | None, stop=str | None, skip=str | None
+) -> None:
     start = time.time()
 
     with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:

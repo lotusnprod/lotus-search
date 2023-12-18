@@ -2,11 +2,11 @@ from typing import Any
 from urllib.parse import quote
 
 import dash_bootstrap_components as dbc
-from dash import dcc, get_app, html
+from dash_config import PAGE_SIZE
 from flask_caching import Cache
 
 from chemistry_helpers import molecule_svg
-from dash_config import PAGE_SIZE
+from dash import dcc, get_app, html
 from model import DataModel
 
 dm = DataModel()

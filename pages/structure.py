@@ -1,10 +1,10 @@
 from urllib.parse import quote
 
-import dash
 import dash_bootstrap_components as dbc
-from dash import dash_table, dcc, html
-
 from dash_common import get_svg_of_wid
+
+import dash
+from dash import dash_table, dcc, html
 from model import DataModel
 
 dm = DataModel()

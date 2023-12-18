@@ -2,11 +2,11 @@ import json
 import time
 import uuid
 
-import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, callback, dcc, html
 
+import dash
 import plotly_dash_ketcher
+from dash import Input, Output, State, callback, dcc, html
 from model import DataModel
 
 dm = DataModel()

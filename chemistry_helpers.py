@@ -3,6 +3,7 @@ from rdkit.Chem import rdFingerprintGenerator
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
+
 def molecule_svg(smiles: str, molecule: str | None, width: int = 250):
     mol = Chem.MolFromSmiles(smiles)
     d2d = rdMolDraw2D.MolDraw2DSVG(width, width)

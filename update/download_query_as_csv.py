@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 import logging
+import sys
 from pathlib import Path
 from time import sleep
 
 from update.common import WD_URL, remove_wd_entity_prefix, sparql_to_csv
-import sys
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-
-def run(path: Path, query_file: Path, output_file: Path,
-        retry: int = 2, url: str = WD_URL) -> None:
+def run(
+    path: Path, query_file: Path, output_file: Path, retry: int = 2, url: str = WD_URL
+) -> None:
     with open(query_file, "r") as qf:
         query = qf.read()
 
@@ -23,7 +25,9 @@ def run(path: Path, query_file: Path, output_file: Path,
             return
         else:
             if url != WD_URL:
-                logging.warning(f"Timeout for query from file {query_file} on url {url} retrying with {WD_URL}")
+                logging.warning(
+                    f"Timeout for query from file {query_file} on url {url} retrying with {WD_URL}"
+                )
                 sleep(20)
                 run(path, query_file, output_file, 2, WD_URL)
                 return

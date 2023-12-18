@@ -1,12 +1,12 @@
 import math
 
-import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dcc
-
-import plotly_dash_ketcher
-from dash_config import PAGE_SIZE
 from dash_common import generate_structures_cards
+from dash_config import PAGE_SIZE
+
+import dash
+import plotly_dash_ketcher
+from dash import Input, Output, callback, dcc
 from model import DataModel
 
 dash.register_page(

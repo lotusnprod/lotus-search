@@ -1,5 +1,6 @@
-import dash
 import dash_bootstrap_components as dbc
+
+import dash
 from dash import html
 
 dash.register_page(__name__, path="/", order=1)

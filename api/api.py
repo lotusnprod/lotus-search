@@ -1,12 +1,15 @@
+import logging
+
 from fastapi import FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
 
+from api.models import (CoupleResult, Item, StructureInfo, StructureResult,
+                        TaxonInfo, TaxonResult)
 from model import DataModel
-from api.models import CoupleResult, Item, StructureInfo, StructureResult, TaxonInfo, TaxonResult
 
-import logging
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 description = """
@@ -147,7 +150,7 @@ async def search_couples(item: Item) -> CoupleResult:
     if item.limit == 0:
         couples = list(couples)
     else:
-        couples = list(couples)[:item.limit]
+        couples = list(couples)[: item.limit]
 
     return CoupleResult(
         ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
@@ -183,21 +186,18 @@ async def search_structures(item: Item) -> StructureResult:
     if matching_structures_by_taxon is None:
         matching_structures = matching_structures_by_structure
     else:
-      matching_structures = (
-          matching_structures_by_structure & matching_structures_by_taxon
-      )
+        matching_structures = (
+            matching_structures_by_structure & matching_structures_by_taxon
+        )
 
     if item.limit == 0:
         items = dm.get_dict_of_wid_to_smiles(matching_structures).items()
     else:
-        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()[:item.limit]
+        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()[: item.limit]
 
     return StructureResult(
         ids=matching_structures,
-        structures={
-            wid: StructureInfo(smiles=value)
-            for wid, value in items
-        },
+        structures={wid: StructureInfo(smiles=value) for wid, value in items},
         description="Structures matching the query",
         count=len(matching_structures),
     )
@@ -218,14 +218,11 @@ async def search_taxa(item: Item) -> TaxonResult:
     if item.limit == 0:
         items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
     else:
-        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()[:item.limit]
+        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()[: item.limit]
 
     return TaxonResult(
         ids=matching_taxa,
-        taxa={
-            wid: TaxonInfo(name=value)
-            for wid, value in items
-        },
+        taxa={wid: TaxonInfo(name=value) for wid, value in items},
         description="Taxa matching the query",
         count=len(matching_taxa),
     )

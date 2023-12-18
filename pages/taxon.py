@@ -1,12 +1,12 @@
 import math
 from typing import Any
 
-import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, callback, dcc
-
-from dash_config import PAGE_SIZE
 from dash_common import generate_structures_cards
+from dash_config import PAGE_SIZE
+
+import dash
+from dash import Input, Output, callback, dcc
 from model import DataModel
 
 dm = DataModel()

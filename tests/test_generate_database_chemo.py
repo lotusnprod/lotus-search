@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, mock_open, patch
 import pytest
 
 from update import generate_database_chemo
+
 #
 #
 # @patch("update.generate_database_chemo.ProcessPoolExecutor")
@@ -69,6 +70,7 @@ from update import generate_database_chemo
 #     )
 #
 #
+
 
 def test_process_smiles_returns_none_on_failure():
     result = generate_database_chemo.process_smiles((0, "invalid_smiles"))

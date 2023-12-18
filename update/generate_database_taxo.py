@@ -4,7 +4,9 @@ import logging
 import pickle
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def run(path: Path) -> None:
@@ -80,7 +82,7 @@ def run(path: Path) -> None:
                 taxon_direct_parents[taxon_id].add(relative_id)
 
             taxon_children[relative_id].add(taxon_id)
-                # We also add the children of the ones above
+            # We also add the children of the ones above
             if taxon_id in taxon_children:
                 for child_id in taxon_children[taxon_id]:
                     taxon_children[relative_id].add(child_id)

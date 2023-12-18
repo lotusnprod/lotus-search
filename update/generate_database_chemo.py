@@ -6,14 +6,15 @@ import pickle
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from rdkit import Chem
+from rdkit import Chem, RDLogger
 from rdkit.Chem import rdSubstructLibrary
-from rdkit import RDLogger
 
 from chemistry_helpers import fingerprint, standardize
 
-RDLogger.DisableLog('rdApp.*')
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+RDLogger.DisableLog("rdApp.*")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def process_smol_and_wid(smol_and_wid):
@@ -163,7 +164,9 @@ def run(path: Path) -> None:
     smols_and_wids = list(zip(p_smols, p_links))
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        chunks = [smols_and_wids[i:i + 1000] for i in range(0, len(smols_and_wids), 1000)]
+        chunks = [
+            smols_and_wids[i : i + 1000] for i in range(0, len(smols_and_wids), 1000)
+        ]
         sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
         sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]
         write_mols_to_sdf(path, sdf_blocks)

@@ -14,16 +14,22 @@ class TestRunQueryToCSV:
         self.output_file = tmp_path / "output.csv"
 
     def test_retries_on_timeout(self):
-        with patch('update.download_query_as_csv.sparql_to_csv') as mock_sparql_to_csv:
-            mock_sparql_to_csv.side_effect = ['java.util.concurrent.TimeoutException', 'valid result']
+        with patch("update.download_query_as_csv.sparql_to_csv") as mock_sparql_to_csv:
+            mock_sparql_to_csv.side_effect = [
+                "java.util.concurrent.TimeoutException",
+                "valid result",
+            ]
             run(self.path, self.query_file, self.output_file)
             assert mock_sparql_to_csv.call_count == 2
-            assert self.output_file.read_text() == 'valid result'
+            assert self.output_file.read_text() == "valid result"
 
     def test_writes_expected_result(self):
-        with patch('update.download_query_as_csv.sparql_to_csv') as mock_sparql_to_csv, \
-             patch('update.download_query_as_csv.remove_wd_entity_prefix') as mock_remove_wd_entity_prefix:
-            mock_sparql_to_csv.return_value = 'valid result'
-            mock_remove_wd_entity_prefix.return_value = 'expected result'
+        with patch(
+            "update.download_query_as_csv.sparql_to_csv"
+        ) as mock_sparql_to_csv, patch(
+            "update.download_query_as_csv.remove_wd_entity_prefix"
+        ) as mock_remove_wd_entity_prefix:
+            mock_sparql_to_csv.return_value = "valid result"
+            mock_remove_wd_entity_prefix.return_value = "expected result"
             run(self.path, self.query_file, self.output_file)
-            assert self.output_file.read_text() == 'expected result'
+            assert self.output_file.read_text() == "expected result"

@@ -8,11 +8,26 @@ from tests.common import setup_from_fixture, teardown
 from update.config import TASKS
 from update.methods import run_tasks
 
-EXPECTED_KEYS_CHEMO = ["structure_smiles", "structure_wid", "structure_sim_fps",
-                       "structure_sim_h_fps", "structure_library", "structure_library_h", "structure_id",
-                       "t2c", "c2t", "tc2r"]
-EXPECTED_KEYS_TAXO = ["taxonomy_direct_parents", "taxonomy_names", "taxonomy_ranks",
-                      "taxonomy_children", "taxonomy_parents_with_distance", "taxonomy_ranks_names"]
+EXPECTED_KEYS_CHEMO = [
+    "structure_smiles",
+    "structure_wid",
+    "structure_sim_fps",
+    "structure_sim_h_fps",
+    "structure_library",
+    "structure_library_h",
+    "structure_id",
+    "t2c",
+    "c2t",
+    "tc2r",
+]
+EXPECTED_KEYS_TAXO = [
+    "taxonomy_direct_parents",
+    "taxonomy_names",
+    "taxonomy_ranks",
+    "taxonomy_children",
+    "taxonomy_parents_with_distance",
+    "taxonomy_ranks_names",
+]
 
 
 class TestUpdate:
@@ -52,8 +67,8 @@ class TestUpdate:
     def test_merge(self):
         with open(self.tmp_path / "database.pkl", "rb") as f:
             db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_TAXO+EXPECTED_KEYS_CHEMO)
-            for expected_key in EXPECTED_KEYS_TAXO+EXPECTED_KEYS_CHEMO:
+            assert len(db) == len(EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO)
+            for expected_key in EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO:
                 assert expected_key in db
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
             # For this one this is probably fine as we tested in the two others
