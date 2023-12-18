@@ -1,6 +1,6 @@
 import logging
 import time
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import Future, ProcessPoolExecutor
 from pathlib import Path
 
 from update.config import MAX_WORKERS
@@ -25,7 +25,7 @@ def run_tasks(
     start = time.time()
 
     with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = []
+        futures: list[Future[None]] = []
         current_group = tasks[0].group
 
         for task in tasks:
@@ -39,16 +39,16 @@ def run_tasks(
                 continue
 
             if current_group != task.group:
-                for future in futures:
-                    future.result()
+                for f in futures:
+                    f.result()
                 futures.clear()
 
             if current_group.parallel:
-                future = executor.submit(task.run, path)
+                future: Future[None] = executor.submit(task.run, path)
                 futures.append(future)
             else:
                 task.run(path)
 
-        for future in futures:
-            future.result()
+        for f in futures:
+            f.result()
     logging.info(f"Total execution time: {time.time() - start:.2f}s")

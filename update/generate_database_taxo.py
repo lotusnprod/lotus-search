@@ -10,12 +10,12 @@ logging.basicConfig(
 
 
 def run(path: Path) -> None:
-    taxon_direct_parents = {}
-    taxon_names = {}
-    taxon_ranks = {}
-    taxon_children = {}
-    taxon_parents_with_distance = {}
-    ranks_names = {}
+    taxon_direct_parents: dict[int, set[int]] = {}
+    taxon_names: dict[int, str] = {}
+    taxon_ranks: dict[int, set[int]] = {}
+    taxon_children: dict[int, set[int]] = {}
+    taxon_parents_with_distance: dict[int, dict[int, int]] = {}
+    ranks_names: dict[int, str] = {}
 
     with open(path / "taxa.csv", "r") as t:
         reader = csv.DictReader(t)
@@ -50,18 +50,15 @@ def run(path: Path) -> None:
         # Todo probably replace with a dict csv reader
         for line in reader:
             (
-                taxon_id,
-                taxon_name,
-                taxon_rank_id,
-                relative_id,
-                relative_name,
-                relative_rank,
-                distance,
+                int(taxon_id),
+                str(taxon_name),
+                int(taxon_rank_id),
+                int(relative_id),
+                str(relative_name),
+                # See https://www.wikidata.org/wiki/Q2576881
+                int(relative_rank_id),
+                int(distance),
             ) = line
-            taxon_id = int(taxon_id)
-            relative_id = int(relative_id)
-            taxon_rank_id = int(taxon_rank_id)
-            distance = int(distance)
 
             if relative_id not in taxon_children:
                 taxon_children[relative_id] = set()
@@ -89,7 +86,7 @@ def run(path: Path) -> None:
 
             taxon_ranks[taxon_id].add(taxon_rank_id)
 
-            taxon_ranks[relative_id].add(relative_rank)
+            taxon_ranks[relative_id].add(relative_rank_id)
 
             taxon_parents_with_distance[taxon_id][relative_id] = distance
 

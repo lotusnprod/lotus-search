@@ -124,9 +124,9 @@ def run(path: Path) -> None:
 
                 p_links.append(links[mid])
 
-    t2c = {}
-    c2t = {}
-    tc2r = {}
+    t2c: dict[int, set[int]] = {}
+    c2t: dict[int, set[int]] = {}
+    tc2r: dict[tuple, set[str]] = {}
 
     logging.info("Finished generating the libraries")
 
@@ -145,7 +145,7 @@ def run(path: Path) -> None:
                 tc2r[(it, ic)] = set()
             t2c[it].add(ic)
             c2t[ic].add(it)
-            tc2r[(it, ic)] = r
+            tc2r[(it, ic)] = set(r)
     logging.info("Finished generating couples")
 
     database = {
