@@ -74,10 +74,16 @@ class TestUpdate:
             # For this one this is probably fine as we tested in the two others
 
     def test_sdf(self):
-        with open(self.tmp_path / "lotus.sdf", "r") as f:
+        generated_sdf_path = self.tmp_path / "lotus.sdf"
+        fixture_sdf_path = "tests/fixtures/lotus.sdf"
+
+        with open(generated_sdf_path, "r") as f:
             sdf = f.read()
-            # If you need to update, set r to w below, and do fo.write(sdf)
-            # don't forget to remove it after
-            with open("tests/fixtures/lotus.sdf", "r") as fo:
-                sdf_fixture = fo.read()
-                assert sdf == sdf_fixture
+        # If you need to update, set r to w below, and do fo.write(sdf)
+        # don't forget to remove it after
+        with open(fixture_sdf_path, "r") as fo:
+            sdf_fixture = fo.read()
+
+        assert (
+            sdf == sdf_fixture
+        ), f"Content mismatch between {generated_sdf_path} and {fixture_sdf_path}"
