@@ -101,7 +101,7 @@ def run(path: Path) -> None:
 
     with open(path / "taxa_all.csv", "r") as f:
         reader = DictReader(f)
-        dict_all_taxa: dict = {row["taxon"]: row["taxon_name"] for row in reader}
+        dict_all_taxa: dict = {int(row["taxon"]): row["taxon_name"] for row in reader}
 
     database = {
         "taxonomy_direct_parents": taxon_direct_parents,

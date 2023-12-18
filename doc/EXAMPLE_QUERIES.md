@@ -5,7 +5,7 @@
 Careful that's taxus anywhere in the name, so you'll get Cephalotaxus as well!
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/structures -d '{"molecule":"Cl", "substructure_search": true, "taxon_name":"Taxus"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name":"Taxus"}'
 ```
 
 ## Taxa
@@ -13,13 +13,15 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the taxa with gent in their name producing a structure with chlorine in it
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/taxa -d '{"molecule":"Cl", "substructure_search": true, "taxon_name":"gent"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name":"Gent"}'
 ```
 
 ### Get all the taxa producing chlorinated structures
 
+#### TODO THIS ONE IS NOT WORKING ANYMORE (FIX IT)
+
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/taxa -d '{"molecule":"Cl", "substructure_search": true}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true}'
 ```
 
 ## Couples
@@ -29,5 +31,5 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 Careful that's taxus anywhere in the name, so you'll get Cephalotaxus as well!
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:8000/v1_0/couples -d '{"molecule":"O=C(OC1C(=C)C2CC3(O)CC(OC(=O)C)C(=C(C(OC(=O)C)C(OC(=O)C)C2(C)C(OC(=O)C)C1)C3(C)C)C)C=CC=4C=CC=CC4", "taxon_name":"tax"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"O=C(OC1C(=C)C2CC3(O)CC(OC(=O)C)C(=C(C(OC(=O)C)C(OC(=O)C)C2(C)C(OC(=O)C)C1)C3(C)C)C)C=CC=4C=CC=CC4", "taxon_name":"tax"}'
 ```

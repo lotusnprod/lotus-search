@@ -100,6 +100,7 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
                     taxa = dm.get_taxa()
             else:
                 taxa = dm.get_taxa()
+        print(taxa)
 
         return taxa
 
@@ -191,9 +192,9 @@ async def search_structures(item: Item) -> StructureResult:
         )
 
     if item.limit == 0:
-        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()
+        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())
     else:
-        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()[: item.limit]
+        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())[: item.limit]
 
     return StructureResult(
         ids=matching_structures,
@@ -216,9 +217,9 @@ async def search_taxa(item: Item) -> TaxonResult:
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
     if item.limit == 0:
-        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
+        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())
     else:
-        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()[: item.limit]
+        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())[: item.limit]
 
     return TaxonResult(
         ids=matching_taxa,
