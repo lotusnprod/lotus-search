@@ -87,7 +87,7 @@ def get_matching_structures_from_structure_in_item(
 def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns all_taxa if the item do not filter by taxon, else returns the WID of matching taxa or None if no taxa requested"""
     if item.taxon_wid is None and item.taxon_name is None:
-        return None
+        return set(dm.get_taxa())
     else:
         # This needs to be explained in the API doc
         if item.taxon_wid:
