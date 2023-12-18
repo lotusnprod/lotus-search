@@ -1,8 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
 
-from model import (CoupleResult, DataModel, Item, StructureInfo,
-                   StructureResult, TaxonInfo, TaxonResult)
+from model import DataModel
+from api.models import CoupleResult, Item, StructureInfo, StructureResult, TaxonInfo, TaxonResult
+
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
@@ -10,8 +15,6 @@ LOTUSFast API helps you do awesome stuff. 🚀
 
 dm = DataModel()
 # Should likely move in the data model if that's used all the time
-all_structures = set(dm.get_structures())
-all_taxa = dm.get_taxa()
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -37,7 +40,7 @@ def get_matching_structures_from_structure_in_item(
 ) -> set[int]:
     """Returns all_structures if the item do not filter by structure, else returns the WID of matching structures"""
     if item.structure is None and item.structure_wid is None:
-        return all_structures
+        return dm.structures_set()
     elif item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
@@ -46,7 +49,7 @@ def get_matching_structures_from_structure_in_item(
     else:
         # This needs to be explained in the API doc
         if item.structure_wid:
-            if item.structure_wid in all_structures:
+            if item.structure_wid in dm.structures_set():
                 return {item.structure_wid}
         else:
             if item.structure:
@@ -73,7 +76,7 @@ def get_matching_structures_from_structure_in_item(
                             detail=f"The structure given is invalid: {item.structure}",
                         )
             else:
-                structures = all_structures
+                structures = dm.structures_set()
 
             return structures
 
@@ -85,15 +88,15 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
     else:
         # This needs to be explained in the API doc
         if item.taxon_wid:
-            if item.taxon_wid in all_taxa:
+            if item.taxon_wid in dm.get_taxa():
                 return {item.taxon_wid}
         else:
             if item.taxon_name:
                 taxa = set(dm.get_taxa_with_name_containing(item.taxon_name))
                 if taxa is None:
-                    taxa = all_taxa
+                    taxa = dm.get_taxa()
             else:
-                taxa = all_taxa
+                taxa = dm.get_taxa()
 
         return taxa
 
@@ -141,6 +144,11 @@ async def search_couples(item: Item) -> CoupleResult:
         if structure in selected_structures
     }
 
+    if item.limit == 0:
+        couples = list(couples)
+    else:
+        couples = list(couples)[:item.limit]
+
     return CoupleResult(
         ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
         structures={
@@ -179,11 +187,16 @@ async def search_structures(item: Item) -> StructureResult:
           matching_structures_by_structure & matching_structures_by_taxon
       )
 
+    if item.limit == 0:
+        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()
+    else:
+        items = dm.get_dict_of_wid_to_smiles(matching_structures).items()[:item.limit]
+
     return StructureResult(
         ids=matching_structures,
         structures={
             wid: StructureInfo(smiles=value)
-            for wid, value in dm.get_dict_of_wid_to_smiles(matching_structures).items()
+            for wid, value in items
         },
         description="Structures matching the query",
         count=len(matching_structures),
@@ -202,11 +215,16 @@ async def search_taxa(item: Item) -> TaxonResult:
     # We want the intersection of both (and we can do the same for the references later)
     matching_taxa = matching_taxa_by_taxon & matching_taxa_by_structure
 
+    if item.limit == 0:
+        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
+    else:
+        items = dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()[:item.limit]
+
     return TaxonResult(
         ids=matching_taxa,
         taxa={
             wid: TaxonInfo(name=value)
-            for wid, value in dm.get_dict_of_wid_to_taxon_name(matching_taxa).items()
+            for wid, value in items
         },
         description="Taxa matching the query",
         count=len(matching_taxa),

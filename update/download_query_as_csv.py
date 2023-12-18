@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
 from pathlib import Path
+from time import sleep
 
 from update.common import WD_URL, remove_wd_entity_prefix, sparql_to_csv
 import sys
@@ -23,10 +24,11 @@ def run(path: Path, query_file: Path, output_file: Path,
         else:
             if url != WD_URL:
                 logging.warning(f"Timeout for query from file {query_file} on url {url} retrying with {WD_URL}")
+                sleep(20)
                 run(path, query_file, output_file, 2, WD_URL)
                 return
             logging.error(f"Timeout for query from file {query_file}")
-            raise TimeoutError(f"Failed to download query {query_file}....")
+            raise TimeoutError(f"Failed to download query {query_file}.... {t}")
 
     with open(path / output_file, "w") as f:
         f.write(remove_wd_entity_prefix(text=t))

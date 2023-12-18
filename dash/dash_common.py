@@ -6,7 +6,7 @@ from dash import dcc, get_app, html
 from flask_caching import Cache
 
 from chemistry_helpers import molecule_svg
-from config import PAGE_SIZE
+from dash_config import PAGE_SIZE
 from model import DataModel
 
 dm = DataModel()

@@ -5,7 +5,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, callback, dcc
 
-from config import PAGE_SIZE
+from dash_config import PAGE_SIZE
 from dash_common import generate_structures_cards
 from model import DataModel
 

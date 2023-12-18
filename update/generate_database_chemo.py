@@ -10,7 +10,7 @@ from rdkit import Chem
 from rdkit.Chem import rdSubstructLibrary
 from rdkit import RDLogger
 
-from processing_common import fingerprint, standardize
+from chemistry_helpers import fingerprint, standardize
 
 RDLogger.DisableLog('rdApp.*')
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -154,6 +154,7 @@ def run(path: Path) -> None:
         "structure_sim_h_fps": p_sim_h_fps,
         "structure_library": library.Serialize(),
         "structure_library_h": library_h.Serialize(),
+        "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
         "t2c": t2c,
         "c2t": c2t,
         "tc2r": tc2r,

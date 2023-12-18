@@ -1,0 +1,6 @@
+taxon,taxon_name,taxon_rank,relative,relative_name,relative_rank,distance
+1,Taxon 1,100,5,Taxon parent,99,1
+2,Taxon 2,100,5,Taxon parent,99,1
+3,Taxon 3 son of 2,100,2,Taxon 2,100,1
+3,Taxon 3 son of 2,100,5,Taxon parent,99,1
+4,Taxon 4,101,5,Taxon parent,99,1

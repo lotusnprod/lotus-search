@@ -1,6 +1,7 @@
 from rdkit import Chem
+from rdkit.Chem import rdFingerprintGenerator
 from rdkit.Chem.Draw import rdMolDraw2D
-
+from rdkit.Chem.MolStandardize import rdMolStandardize
 
 def molecule_svg(smiles: str, molecule: str | None, width: int = 250):
     mol = Chem.MolFromSmiles(smiles)
@@ -19,3 +20,18 @@ def molecule_svg(smiles: str, molecule: str | None, width: int = 250):
         d2d.DrawMolecule(mol)
     d2d.FinishDrawing()
     return d2d.GetDrawingText()
+
+
+def fingerprint(mol):
+    return fpgen.GetFingerprint(mol)
+
+
+def standardize(mol):
+    clean_mol = rdMolStandardize.Cleanup(mol)
+    bigger_clean = rdMolStandardize.FragmentParent(clean_mol)
+    bigger_clean = uncharger.uncharge(bigger_clean)
+    return bigger_clean
+
+
+fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+uncharger = rdMolStandardize.Uncharger()

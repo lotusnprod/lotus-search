@@ -1,4 +1,13 @@
+2023-12-17
+
+    - Refactor code
+    - Add delay when retrying queries
+    - Remove dead code and projects
+    - Added tests for the update script and fixtures
+    - Fixed a bug where CSVs for taxonomy weren't loaded
+
 2023-12-16
+
     - Fix tests
     - Refactor the download of CSVs
     - Parallelize the download of CSVs

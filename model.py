@@ -1,11 +1,15 @@
+import functools
+import io
 import logging
+import pickle
 from collections.abc import Iterable
+from pathlib import Path
 
 import requests
-from pydantic import BaseModel
 from rdkit import Chem, DataStructs
+from rdkit.Chem import rdSubstructLibrary
 
-from processing_common import fingerprint, load_all_data, standardize
+from chemistry_helpers import fingerprint, standardize
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -15,83 +19,28 @@ requests_log.setLevel(logging.WARNING)
 requests_log.propagate = True
 
 
-class Item(BaseModel):
-    structure_wid: int | None = None
-    structure: str | None = None
-    substructure_search: bool | None = None
-    similarity_level: float = 1.0
-    taxon_wid: int | None = None
-    taxon_name: str | None = None
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "structure_wid": "27151406",
-                    "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-                    "substructure_search": True,
-                    "similarity_level": 0.8,
-                    "taxon_wid": 158572,
-                    "taxon_name": "Gentiana lutea",
-                }
-            ]
-        }
-    }
-
-
-class ReferenceInfo(BaseModel):
-    doi: str
-    title: str
-
-
-class ReferenceResult(BaseModel):
-    ids: list[int]
-    references: dict[int, ReferenceInfo]
-    count: int
-    description: str
-
-
-class StructureInfo(BaseModel):
-    smiles: str
-
-
-class StructureResult(BaseModel):
-    ids: list[int]
-    structures: dict[int, StructureInfo]
-    count: int
-    description: str
-
-
-class TaxonInfo(BaseModel):
-    name: str
-
-
-class TaxonResult(BaseModel):
-    ids: list[int]
-    taxa: dict[int, TaxonInfo]
-    count: int
-    description: str
-
-
-class CoupleIds(BaseModel):
-    structure: int
-    taxon: int
-
-
-class CoupleResult(BaseModel):
-    ids: list[CoupleIds]
-    # infos_r: dict[int, ReferenceInfo]
-    structures: dict[int, StructureInfo]
-    taxa: dict[int, TaxonInfo]
-    count: int
-    description: str
-
-
 class DataModel:
-    def __new__(cls):
+    def __new__(cls, path: Path = Path("./data")):
+        # Each instance will be the same, it is all read-only
         if not hasattr(cls, "instance"):
             cls.instance = super(DataModel, cls).__new__(cls)
-            cls.instance.db = load_all_data()
+            cls.instance.db = cls.load_all_data(path)
         return cls.instance
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def load_all_data(cls, path: Path):
+        with open(path / "database.pkl", "rb") as f:
+            data = pickle.load(f)
+        new_lib = rdSubstructLibrary.SubstructLibrary()
+        new_lib_h = rdSubstructLibrary.SubstructLibrary()
+        with io.BytesIO(data["structure_library"]) as i:
+            new_lib.InitFromStream(i)
+        with io.BytesIO(data["structure_library_h"]) as i:
+            new_lib_h.InitFromStream(i)
+        data["structure_library"] = new_lib
+        data["structure_library_h"] = new_lib_h
+        return data
 
     def num_taxa(self):
         return len(self.db["taxonomy_names"])
@@ -103,6 +52,7 @@ class DataModel:
         return len(self.db["c2t"])
 
     ### Taxonomy
+    @functools.lru_cache(maxsize=None)
     def get_taxa(self) -> dict[int, str]:
         return self.db["taxonomy_names"]
 
@@ -161,8 +111,9 @@ class DataModel:
         return response.json()
 
     ### structureonomy
-    def get_structures(self) -> dict[int, int]:
-        return self.db["structure_wid"]
+    @functools.lru_cache(maxsize=None)
+    def structures_set(self) -> set[int]:
+        return set(self.db["structure_wid"])
 
     def get_structure_smiles_from_wid(self, wid: int) -> str | None:
         try:
@@ -292,12 +243,12 @@ class DataModel:
         parent_taxa = self.db["taxonomy_direct_parents"][wid]
         tree = []
         for parent in parent_taxa:
-            tree.append([parent, 1])
+            tree.append((parent, 1))
             if parent in self.db["taxonomy_parents_with_distance"]:
                 for relative in self.db["taxonomy_parents_with_distance"][parent]:
                     distance = self.db["taxonomy_parents_with_distance"][parent][
                         relative
                     ]
-                    tree.append([relative, distance])
+                    tree.append((relative, distance))
         tree = sorted(tree, key=lambda x: x[1])
         return tree

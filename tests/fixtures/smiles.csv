@@ -1,0 +1,5 @@
+structure,structure_smiles,canonical_smiles
+1,C[C@H](N)O,CC(N)O
+2,C[C@@H](N)O,CC(N)O
+3,,C
+4,,S
