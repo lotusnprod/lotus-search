@@ -15,7 +15,7 @@ def convert_to_int_safe(s: str):
         result = int(s)
         return result
     except ValueError:
-        print(f"Error: {s} is not a valid integer.")
+        logging.warning(f"{s} is not a valid integer.")
         return None
 
 
