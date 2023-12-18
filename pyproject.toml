@@ -2,7 +2,7 @@
 name = "lotus_search"
 version = "0.1.2"
 description = ""
-authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>", "Adriano Rutz <adriano.rutz@hotmail.com>"]
+authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>", "Adriano Rutz <adafede@gmail.com>"]
 packages = [{include = "*.py", from = ""}]
 readme = "README.md"
 

@@ -1,4 +1,8 @@
-2023-12-17
+# Changelog
+
+## Unreleased
+
+### 2023-12-17
 
     - Refactor code
     - Add delay when retrying queries
@@ -6,7 +10,7 @@
     - Added tests for the update script and fixtures
     - Fixed a bug where CSVs for taxonomy weren't loaded
 
-2023-12-16
+### 2023-12-16
 
     - Fix tests
     - Refactor the download of CSVs
@@ -19,3 +23,8 @@
         Where xxx can be a task or a group name
         Task/Groups descriptions can be listed with `--list`
     - Fix a potential abuse if taxon contains a comma in `generate_database_taxo.py`
+
+## Release
+
+### 0.1.2
+
