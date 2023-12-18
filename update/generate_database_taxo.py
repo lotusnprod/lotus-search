@@ -9,6 +9,16 @@ logging.basicConfig(
 )
 
 
+# See https://www.wikidata.org/wiki/Q2576881
+def convert_to_int_safe(s: str):
+    try:
+        result = int(s)
+        return result
+    except ValueError:
+        print(f"Error: {s} is not a valid integer.")
+        return None
+
+
 def run(path: Path) -> None:
     taxon_direct_parents: dict[int, set[int]] = {}
     taxon_names: dict[int, str] = {}
@@ -19,12 +29,11 @@ def run(path: Path) -> None:
 
     with open(path / "taxa.csv", "r") as t:
         reader = DictReader(t)
-
         for row in reader:
             taxon_name = row["taxon_name"]
-            taxon_id = int(row["taxon"])
-            parent_id = int(row["parent"])
-            taxon_rank_id = int(row["taxon_rank"])
+            taxon_id = convert_to_int_safe(row["taxon"])
+            parent_id = convert_to_int_safe(row["parent"])
+            taxon_rank_id = convert_to_int_safe(row["taxon_rank"])
 
             if parent_id not in taxon_children:
                 taxon_children[parent_id] = set()
@@ -46,18 +55,14 @@ def run(path: Path) -> None:
 
     with open(path / "taxa_parents.csv", "r") as f:
         reader = DictReader(f)
-        next(reader)
-        for line in reader:
-            (
-                int(taxon_id),
-                str(taxon_name),
-                int(taxon_rank_id),
-                int(relative_id),
-                str(relative_name),
-                # See https://www.wikidata.org/wiki/Q2576881
-                int(relative_rank_id),
-                int(distance),
-            ) = line
+        for row in reader:
+            taxon_id = convert_to_int_safe(row["taxon"])
+            taxon_name = str(row["taxon_name"])
+            taxon_rank_id = convert_to_int_safe(row["taxon_rank"])
+            relative_id = convert_to_int_safe(row["relative"])
+            relative_name = str(row["relative_name"])
+            relative_rank_id = convert_to_int_safe(row["relative_rank"])
+            distance = convert_to_int_safe(row["distance"])
 
             if relative_id not in taxon_children:
                 taxon_children[relative_id] = set()
@@ -91,14 +96,12 @@ def run(path: Path) -> None:
 
     with open(path / "taxa_ranks.csv", "r") as f:
         reader = DictReader(f)
-        next(reader)
-        for line in reader:
-            ranks_names[int(line[0])] = line[1]
+        for row in reader:
+            ranks_names[int(row["rank"])] = row["rankLabel"]
 
     with open(path / "taxa_all.csv", "r") as f:
         reader = DictReader(f)
-        next(reader)
-        dict_all_taxa: dict = {i[0]: i[1] for i in reader}
+        dict_all_taxa: dict = {row["taxon"]: row["taxon_name"] for row in reader}
 
     database = {
         "taxonomy_direct_parents": taxon_direct_parents,
