@@ -20,7 +20,7 @@ pydantic = "^2.5.1"
 requests = "^2.31.0"
 rdkit = "^2023.9.2"
 sqlalchemy = "^2.0.23"
-uvicorn = "^0.23.2"
+uvicorn = "^0.24.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
