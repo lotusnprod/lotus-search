@@ -81,7 +81,7 @@ def run(path: Path) -> None:
 
     t2c: dict[int, set[int]] = {}
     c2t: dict[int, set[int]] = {}
-    tc2r: dict[tuple, set[str]] = {}
+    tc2r: dict[tuple[int, int], set[str]] = {}
 
     logging.info("Finished generating the chemical libraries")
 

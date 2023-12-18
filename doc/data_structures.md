@@ -1,4 +1,4 @@
-# database.pkl
+## database.pkl
 
 - **iid** (int)ernal structure id (can change at any update)
 - **tid** (int): taxon id (wikidata id)
@@ -19,7 +19,7 @@
 | tc2r                           | dict[tuple[tid, cid], set[rid]] | References of couple tid/cid                                      |
 | taxonomy_direct_parents        | dict[tid, set[tid]]             | Direct taxonomic parents                                          |
 | taxonomy_names                 | dict[tid, str]                  | Name of taxon tid                                                 |
-| taxonomy_ranks                 | dict[tid, rank_id]              | Rank of taxon tid                                                 |
+| taxonomy_ranks                 | dict[tid, set[rank_id]]         | Rank of taxon tid                                                 |
 | taxonomy_children              | dict[tid, set[tid]]             | All the children of taxon tid                                     |
 | taxonomy_parents_with_distance | dict[tid, dict[tid, int]]       | All the parents of taxon tid with an arbitrary taxonomic distance |
 | taxonomy_ranks_names           | dict[tid, str]                  | Name of rank                                                      |
