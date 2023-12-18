@@ -128,7 +128,7 @@ def run(path: Path) -> None:
     c2t: dict[int, set[int]] = {}
     tc2r: dict[tuple, set[str]] = {}
 
-    logging.info("Finished generating the libraries")
+    logging.info("Finished generating the chemical libraries")
 
     with open(path / "couples.csv", "r") as f:
         reader = csv.reader(f)
