@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import csv
 import logging
 import pickle
+from csv import DictReader
 from pathlib import Path
 
 logging.basicConfig(
@@ -18,7 +18,7 @@ def run(path: Path) -> None:
     ranks_names: dict[int, str] = {}
 
     with open(path / "taxa.csv", "r") as t:
-        reader = csv.DictReader(t)
+        reader = DictReader(t)
 
         for row in reader:
             taxon_name = row["taxon_name"]
@@ -45,9 +45,8 @@ def run(path: Path) -> None:
         logging.info(f" Found {len(taxon_direct_parents)} taxa")
 
     with open(path / "taxa_parents.csv", "r") as f:
-        reader = csv.reader(f)
+        reader = DictReader(f)
         next(reader)
-        # Todo probably replace with a dict csv reader
         for line in reader:
             (
                 int(taxon_id),
@@ -91,13 +90,13 @@ def run(path: Path) -> None:
             taxon_parents_with_distance[taxon_id][relative_id] = distance
 
     with open(path / "taxa_ranks.csv", "r") as f:
-        reader = csv.reader(f)
+        reader = DictReader(f)
         next(reader)
         for line in reader:
             ranks_names[int(line[0])] = line[1]
 
     with open(path / "taxa_all.csv", "r") as f:
-        reader = csv.reader(f)
+        reader = DictReader(f)
         next(reader)
         dict_all_taxa: dict = {i[0]: i[1] for i in reader}
 
