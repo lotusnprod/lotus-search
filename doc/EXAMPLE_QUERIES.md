@@ -1,33 +1,55 @@
 ## Structures
 
-### Get all the molecules that contain a chlorine from every specie with taxus in the name
-
-Careful that's taxus anywhere in the name, so you'll get Cephalotaxus as well!
+### Get all the structures that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name":"Taxus"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+```
+
+### Get all chlorinated structures
+
+```shell
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true}'
 ```
 
 ## Taxa
 
-### Get all the taxa with gent in their name producing a structure with chlorine in it
+### Get all the taxa that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name":"Gent"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
 ```
 
-### Get all the taxa producing chlorinated structures
+### Get all the taxa where chlorinated structures are found in
 
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true}'
 ```
 
-## Couples
+## References
 
-### Get all the couples that contain that specific structure and that have taxus in the organism name
-
-Careful that's taxus anywhere in the name, so you'll get Cephalotaxus as well!
+### Get all the references that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"O=C(OC1C(=C)C2CC3(O)CC(OC(=O)C)C(=C(C(OC(=O)C)C(OC(=O)C)C2(C)C(OC(=O)C)C1)C3(C)C)C)C=CC=4C=CC=CC4", "taxon_name":"tax"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+```
+
+### Get all the references where chlorinated structures are found in
+
+```shell
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true}'
+```
+
+## Couples
+
+### Get all the couples that match the query
+
+```shell
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+```
+
+### Get all the couples with chlorine
+
+```shell
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true}'
 ```
