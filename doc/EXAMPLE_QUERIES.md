@@ -46,6 +46,12 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true}'
 ```
 
+### TODO This is working, remove later
+
+```shell
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d ' {"reference_wid":"44488598"}'
+```
+
 ## Couples
 
 ### Get all the couples that match the query
