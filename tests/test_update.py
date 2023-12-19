@@ -28,6 +28,9 @@ EXPECTED_KEYS_TAXO = [
     "taxonomy_parents_with_distance",
     "taxonomy_ranks_names",
 ]
+EXPECTED_KEYS_BIBLIO = [
+    "reference_doi",
+]
 
 
 class TestUpdate:
@@ -44,6 +47,7 @@ class TestUpdate:
     def test_pkls_exist(self):
         assert (self.tmp_path / "database_chemo.pkl").exists()
         assert (self.tmp_path / "database_taxo.pkl").exists()
+        assert (self.tmp_path / "database_biblio.pkl").exists()
         assert (self.tmp_path / "database.pkl").exists()
         assert (self.tmp_path / "lotus.sdf").exists()
 
@@ -64,11 +68,24 @@ class TestUpdate:
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
             # We likely want to test the content as well
 
+    def test_biblio(self):
+        with open(self.tmp_path / "database_biblio.pkl", "rb") as f:
+            db = pickle.load(f)
+            assert len(db) == len(EXPECTED_KEYS_BIBLIO)
+            for expected_key in EXPECTED_KEYS_BIBLIO:
+                assert expected_key in db
+                assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
+            # We likely want to test the content as well
+
     def test_merge(self):
         with open(self.tmp_path / "database.pkl", "rb") as f:
             db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO)
-            for expected_key in EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO:
+            assert len(db) == len(
+                EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
+            )
+            for expected_key in (
+                EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
+            ):
                 assert expected_key in db
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
             # For this one this is probably fine as we tested in the two others
