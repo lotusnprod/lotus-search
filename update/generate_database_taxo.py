@@ -96,8 +96,7 @@ def run(path: Path) -> None:
 
     with open(path / "taxa_ranks.csv", "r") as f:
         reader = DictReader(f)
-        for row in reader:
-            ranks_names[int(row["rank"])] = row["rankLabel"]
+        ranks_names: dict = {int(row["rank"]): row["rankLabel"] for row in reader}
 
     with open(path / "taxa_all.csv", "r") as f:
         reader = DictReader(f)
