@@ -8,6 +8,8 @@ class Item(BaseModel):
     similarity_level: float = 1.0
     taxon_wid: int | None = None
     taxon_name: str | None = None
+    reference_wid: int | None = None
+    reference_doi: str | None = None
     limit: int = 1000
     model_config = {
         "json_schema_extra": {
@@ -19,6 +21,8 @@ class Item(BaseModel):
                     "similarity_level": 0.8,
                     "taxon_wid": 158572,
                     "taxon_name": "Gentiana lutea",
+                    "reference_wid": 44488598,
+                    "reference_doi": "10.1080/1057563021000040466",
                     "limit": 1000,
                 }
             ]

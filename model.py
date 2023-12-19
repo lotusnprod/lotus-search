@@ -63,12 +63,12 @@ class DataModel:
         return self.db["taxonomy_names"]
 
     # TODO Not used
-    def get_taxon_name_from_list_of_tids(self, tids: list[int]) -> list[str]:
-        return [
-            self.db["taxonomy_names"][tid]
-            for tid in tids
-            if tid in self.db["taxonomy_names"]
-        ]
+    # def get_taxon_name_from_list_of_tids(self, tids: list[int]) -> list[str]:
+    #     return [
+    #         self.db["taxonomy_names"][tid]
+    #         for tid in tids
+    #         if tid in self.db["taxonomy_names"]
+    #     ]
 
     def get_dict_of_tid_to_taxon_name(self, tid: Iterable[int]) -> dict[int, str]:
         return {
@@ -93,7 +93,6 @@ class DataModel:
             if query in name.lower():
                 yield tid
 
-    # TODO Not used
     def get_rank_name_from_wid(self, wid: int) -> str | None:
         if wid not in self.db["taxonomy_ranks_names"]:
             return None
@@ -301,35 +300,72 @@ class DataModel:
             return 0
         return len(self.db["c2t"][sid])
 
-    ### WIP
-    # def get_structures_of_reference(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return list(matching_structures)
+    def get_structures_of_reference(self, rid: int) -> list[int]:
+        structures = [
+            sid for (tid, sid), rids in self.db["tc2r"].items() if rid in rids
+        ]
+        return structures
 
-    # def get_taxa_of_reference(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return list(matching_taxa)
+    def get_number_of_structures_of_reference(self, rid: int) -> list[int]:
+        structures = [
+            sid for (tid, sid), rids in self.db["tc2r"].items() if rid in rids
+        ]
+        return len(structures)
 
-    # def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
-    #     # TODO
-    #     return list(matching_couples)
+    def get_taxa_of_reference(self, rid: int) -> list[int]:
+        if rid in self.db["tc2r"]:
+            return self.db["tc2r"][rid]
+        return []
 
-    # def get_number_of_references_containing_couple(self, sid: int, tid: int) -> list[int]:
-    #     # TODO
-    #     return len(matching_couples)
+    def get_number_of_taxa_of_reference(self, rid: int) -> list[int]:
+        if rid in self.db["tc2r"]:
+            return len(self.db["tc2r"][rid])
+        return 0
 
-    # def get_references_containing_structure(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return list(matching_structures)
+    def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
+        key = (tid, sid)
+        if key in self.db["tc2r"]:
+            return list(self.db["tc2r"][key])
+        return []
 
-    # def get_number_of_references_containing_structure(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return len(matching_structures)
+    def get_number_of_references_containing_couple(self, sid: int, tid: int) -> int:
+        key = (tid, sid)
+        if key in self.db["tc2r"]:
+            return len(self.db["tc2r"][key])
+        return 0
 
-    # def get_references_containing_taxa(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return list(matching_taxa)
+    def get_references_containing_structure(self, sid: int) -> list[int]:
+        references = [
+            rid
+            for (tid, structure_id), rids in self.db["tc2r"].items()
+            if structure_id == sid
+            for rid in rids
+        ]
+        return references
 
-    # def get_number_of_references_containing_taxa(self, rid: int) -> list[int]:
-    #     # TODO
-    #     return len(matching_taxa)
+    def get_number_of_references_containing_structure(self, sid: int) -> int:
+        references = [
+            rid
+            for (tid, structure_id), rids in self.db["tc2r"].items()
+            if structure_id == sid
+            for rid in rids
+        ]
+        return len(references)
+
+    def get_references_containing_taxa(self, tid: int) -> list[int]:
+        references = [
+            rid
+            for (taxon_id, sid), rids in self.db["tc2r"].items()
+            if taxon_id == tid
+            for rid in rids
+        ]
+        return references
+
+    def get_number_of_references_containing_taxa(self, tid: int) -> int:
+        references = [
+            rid
+            for (taxon_id, sid), rids in self.db["tc2r"].items()
+            if taxon_id == tid
+            for rid in rids
+        ]
+        return len(references)

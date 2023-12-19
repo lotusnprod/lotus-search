@@ -3,8 +3,8 @@ import logging
 from fastapi import FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
 
-from api.models import (CoupleResult, Item, StructureInfo, StructureResult,
-                        TaxonInfo, TaxonResult)
+from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
+                        StructureInfo, StructureResult, TaxonInfo, TaxonResult)
 from model import DataModel
 
 logging.basicConfig(
@@ -141,6 +141,22 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     return out
 
 
+def get_matching_structures_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int]:
+    # We need to get all the matching references
+    references = get_matching_references_from_reference_in_item(dm, item)
+
+    if references is None:
+        return None
+
+    out = set()
+    for reference in references:
+        out.update(dm.get_structures_of_reference(reference))
+
+    return out
+
+
 def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
     # We need to get all the matching structures
     structures = get_matching_structures_from_structure_in_item(dm, item)
@@ -151,6 +167,20 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     out = set()
     for structure in structures:
         out.update(dm.get_taxa_containing_structure(structure))
+
+    return out
+
+
+def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int]:
+    # We need to get all the matching references
+    references = get_matching_references_from_reference_in_item(dm, item)
+
+    if references is None:
+        return None
+
+    out = set()
+    for reference in references:
+        out.update(dm.get_taxa_of_reference(references))
 
     return out
 
@@ -206,12 +236,22 @@ async def search_structures(item: Item) -> StructureResult:
     # We want the set of all the structures found in the given taxa
     matching_structures_by_taxon = get_matching_structures_from_taxon_in_item(dm, item)
 
-    # We want the intersection of both (and we can do the same for the references later)
-    # But if one of the sets is fully empty
+    # We want the set of all the structures found in the given references
+    matching_structures_by_reference = get_matching_structures_from_reference_in_item(
+        dm, item
+    )
+
+    # We want the intersection of everything
     matching_structures = (
-        matching_structures_by_structure & matching_structures_by_taxon
-        if matching_structures_by_structure and matching_structures_by_taxon
-        else matching_structures_by_structure or matching_structures_by_taxon
+        matching_structures_by_structure
+        & matching_structures_by_taxon
+        & matching_structures_by_reference
+        if matching_structures_by_structure
+        and matching_structures_by_taxon
+        and matching_structures_by_reference
+        else matching_structures_by_structure
+        or matching_structures_by_taxon
+        or matching_structures_by_reference
     )
 
     items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
@@ -223,7 +263,7 @@ async def search_structures(item: Item) -> StructureResult:
 
     return StructureResult(
         ids=matching_structures,
-        structures={wid: StructureInfo(smiles=value) for wid, value in items},
+        structures={sid: StructureInfo(smiles=value) for sid, value in items},
         description="Structures matching the query",
         count=len(matching_structures),
     )
@@ -238,63 +278,85 @@ async def search_taxa(item: Item) -> TaxonResult:
     # We want the set of all the taxa which have structures matching the query
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
 
-    # We want the intersection of both (and we can do the same for the references later)
-    # But if one of the sets is fully empty
+    # We want the set of all the structures found in the given references
+    matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
+
+    # We want the intersection of everything
     matching_taxa = (
-        matching_taxa_by_taxon & matching_taxa_by_structure
-        if matching_taxa_by_taxon and matching_taxa_by_structure
-        else matching_taxa_by_taxon or matching_taxa_by_structure
+        matching_taxa_by_structure & matching_taxa_by_taxon & matching_taxa_by_reference
+        if matching_taxa_by_structure
+        and matching_taxa_by_taxon
+        and matching_taxa_by_reference
+        else matching_taxa_by_structure
+        or matching_taxa_by_taxon
+        or matching_taxa_by_reference
     )
 
+    items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())
+
     if item.limit == 0:
-        items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())
+        items = items
     else:
-        items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())[
-            : item.limit
-        ]
+        items = items[: item.limit]
 
     return TaxonResult(
         ids=matching_taxa,
-        taxa={wid: TaxonInfo(name=value) for wid, value in items},
+        taxa={tid: TaxonInfo(name=value) for tid, value in items},
         description="Taxa matching the query",
         count=len(matching_taxa),
     )
 
 
-### WIP
-# @app.post("/references")
-# @version(1, 0)
-# async def search_references(item: Item) -> ReferenceResult:
-#     # We want the set of all the references matching the query
-#     matching_references_by_reference = get_matching_references_from_reference_in_item(dm, item)
+@app.post("/references")
+@version(1, 0)
+async def search_references(item: Item) -> ReferenceResult:
+    # We want the set of all the references matching the query
+    matching_references_by_reference = get_matching_references_from_reference_in_item(
+        dm, item
+    )
 
-#     # We want the set of all the references which have couples matching the query
-#     matching_references_by_couple = get_matching_taxa_from_couple_in_item(dm, item)
+    # We want the set of all the references which have couples matching the query
+    matching_references_by_couple = get_matching_references_from_couple_in_item(
+        dm, item
+    )
 
-#     # We want the set of all the references which have structures matching the query
-#     matching_references_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
+    # We want the set of all the references which have structures matching the query
+    matching_references_by_structure = get_matching_references_from_structure_in_item(
+        dm, item
+    )
 
-#     # We want the set of all the references which have taxa matching the query
-#     matching_references_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
+    # We want the set of all the references which have taxa matching the query
+    matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
 
-#     # We want the intersection of both (and we can do the same for the references later)
-#     # But if one of the sets is fully empty
-#     matching_references = (
-#         TODO
-#     )
+    # We want the intersection of everything
+    matching_references = (
+        matching_references_by_structure
+        & matching_references_by_taxon
+        & matching_references_by_reference
+        & matching_references_by_couple
+        if matching_references_by_structure
+        and matching_references_by_taxon
+        and matching_references_by_reference
+        and matching_references_by_couple
+        else matching_references_by_structure
+        or matching_references_by_taxon
+        or matching_references_by_reference
+        or matching_references_by_couple
+    )
 
-#     items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
+    items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
 
-#     if item.limit == 0:
-#         items = items
-#     else:
-#         items = items[: item.limit]
+    if item.limit == 0:
+        items = items
+    else:
+        items = items[: item.limit]
 
-#     return ReferenceResult(
-#         ids=matching_references,
-#         references={wid: ReferenceInfo(name=value) for wid, value in items},
-#         description="References matching the query",
-#         count=len(matching_references),
-#     )
+    return ReferenceResult(
+        ids=matching_references,
+        references={rid: ReferenceInfo(name=value) for rid, value in items},
+        description="References matching the query",
+        count=len(matching_references),
+    )
+
 
 app = VersionedFastAPI(app, enable_latest=True)
