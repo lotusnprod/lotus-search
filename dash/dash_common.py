@@ -22,7 +22,7 @@ cache = Cache(
 
 @cache.memoize(timeout=3600)
 def get_svg_of_wid(j: int, molecule: str | None = None) -> str:
-    return molecule_svg(dm.get_structure_smiles_from_wid(j), molecule)
+    return molecule_svg(dm.get_structure_smiles_from_sid(j), molecule)
 
 
 @cache.memoize(timeout=3600)

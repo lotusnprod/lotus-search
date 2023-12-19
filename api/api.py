@@ -181,13 +181,13 @@ async def search_couples(item: Item) -> CoupleResult:
         ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
         structures={
             wid: StructureInfo(smiles=value)
-            for wid, value in dm.get_dict_of_wid_to_smiles(
+            for wid, value in dm.get_dict_of_sid_to_smiles(
                 [first_value for first_value, _ in couples]
             ).items()
         },
         taxa={
             wid: TaxonInfo(name=value)
-            for wid, value in dm.get_dict_of_wid_to_taxon_name(
+            for wid, value in dm.get_dict_of_tid_to_taxon_name(
                 [taxon_name for _, taxon_name in couples]
             ).items()
         },
@@ -214,12 +214,12 @@ async def search_structures(item: Item) -> StructureResult:
         else matching_structures_by_structure or matching_structures_by_taxon
     )
 
+    items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
+
     if item.limit == 0:
-        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())
+        items = items
     else:
-        items = list(dm.get_dict_of_wid_to_smiles(matching_structures).items())[
-            : item.limit
-        ]
+        items = items[: item.limit]
 
     return StructureResult(
         ids=matching_structures,
@@ -247,9 +247,9 @@ async def search_taxa(item: Item) -> TaxonResult:
     )
 
     if item.limit == 0:
-        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())
+        items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())
     else:
-        items = list(dm.get_dict_of_wid_to_taxon_name(matching_taxa).items())[
+        items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())[
             : item.limit
         ]
 
@@ -283,12 +283,12 @@ async def search_taxa(item: Item) -> TaxonResult:
 #         TODO
 #     )
 
+#     items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
+
 #     if item.limit == 0:
-#         items = list(dm.get_dict_of_wid_to_ref_doi(matching_references).items())
+#         items = items
 #     else:
-#         items = list(dm.get_dict_of_wid_to_ref_doi(matching_references).items())[
-#             : item.limit
-#         ]
+#         items = items[: item.limit]
 
 #     return ReferenceResult(
 #         ids=matching_references,
