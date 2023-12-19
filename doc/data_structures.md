@@ -23,3 +23,4 @@
 | taxonomy_children              | dict[tid, set[tid]]             | All the children of taxon tid                                     |
 | taxonomy_parents_with_distance | dict[tid, dict[tid, int]]       | All the parents of taxon tid with an arbitrary taxonomic distance |
 | taxonomy_ranks_names           | dict[tid, str]                  | Name of rank                                                      |
+| reference_doi                  | dict[rid, str]                  | Reference DOI                                                     |

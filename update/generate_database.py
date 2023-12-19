@@ -19,7 +19,9 @@ def run(path: Path) -> None:
         database.update(pickle.load(f))
     logging.info("Finished integrating taxo")
 
-    # TODO references
+    with open(path / "database_biblio.pkl", "rb") as f:
+        database.update(pickle.load(f))
+    logging.info("Finished integrating biblio")
 
     with open(path / "database.pkl", "wb") as f:
         pickle.dump(database, f)

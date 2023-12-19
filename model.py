@@ -48,8 +48,14 @@ class DataModel:
     def num_structures(self):
         return len(self.db["structure_smiles"])
 
+    def num_references(self):
+        return len(self.db["reference_doi"])
+
     def num_couples(self):
         return len(self.db["c2t"])
+
+    def num_couples_ref(self):
+        return len(self.db["tc2r"])
 
     ### Taxonomy
     @functools.lru_cache(maxsize=None)
@@ -110,7 +116,36 @@ class DataModel:
         log.debug(response.json())
         return response.json()
 
-    ### structureonomy
+    def get_ranks_string(self, wid: int) -> str:
+        try:
+            wid = int(wid)
+        except ValueError:
+            return None
+        if wid in self.db["taxonomy_ranks"]:
+            i_ranks = self.db["taxonomy_ranks"][wid]
+            n_ranks = [self.get_rank_name_from_wid(int(it)) for it in i_ranks]
+            ranks = " (" + ", ".join(set(n_ranks)) + ")"
+        else:
+            ranks = ""
+        return ranks
+
+    def get_taxonomic_tree(self, wid: int) -> list[tuple[int, int]]:
+        if wid not in self.db["taxonomy_direct_parents"]:
+            return []
+        parent_taxa = self.db["taxonomy_direct_parents"][wid]
+        tree = []
+        for parent in parent_taxa:
+            tree.append((parent, 1))
+            if parent in self.db["taxonomy_parents_with_distance"]:
+                for relative in self.db["taxonomy_parents_with_distance"][parent]:
+                    distance = self.db["taxonomy_parents_with_distance"][parent][
+                        relative
+                    ]
+                    tree.append((relative, distance))
+        tree = sorted(tree, key=lambda x: x[1])
+        return tree
+
+    ### Structureonomy
     @functools.lru_cache(maxsize=None)
     def structures_set(self) -> set[int]:
         return set(self.db["structure_wid"])
@@ -198,7 +233,37 @@ class DataModel:
             out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
-    ### Taxonomy to structureonomy
+    ### Biblionomy
+    @functools.lru_cache(maxsize=None)
+    def get_refs(self) -> dict[int, str]:
+        return self.db["reference_doi"]
+
+    def get_ref_doi_from_list_of_wid(self, wid: list[int]) -> list[str]:
+        return [
+            self.db["reference_doi"][w] for w in wid if w in self.db["reference_doi"]
+        ]
+
+    def get_dict_of_wid_to_ref_doi(self, wid: Iterable[int]) -> dict[int, str]:
+        return {
+            w: self.db["reference_doi"][w] for w in wid if w in self.db["reference_doi"]
+        }
+
+    def get_ref_doi_from_wid(self, wid: int) -> str | None:
+        try:
+            wid = int(wid)
+        except ValueError:
+            return None
+        if wid not in self.db["reference_doi"]:
+            return None
+        return self.db["reference_doi"][wid]
+
+    # TODO not sure it is the best way to proceed
+    def get_references_with_doi(self, doi: str) -> Iterable[int]:
+        for wid, d in self.db["reference_doi"].items():
+            if doi == d:
+                yield d
+
+    ### Mixonomy
     def get_structures_of_taxon(self, wid: int, recursive: bool = True) -> list[int]:
         if wid in self.db["t2c"]:
             matching_structures = set(self.db["t2c"][wid])
@@ -214,6 +279,8 @@ class DataModel:
 
         return list(matching_structures)
 
+    # TODO add get_numbers_of_structures_of_taxon
+
     def get_taxa_containing_structure(self, wid: int) -> set[int]:
         if wid in self.db["c2t"]:
             return self.db["c2t"][wid]
@@ -224,31 +291,35 @@ class DataModel:
             return 0
         return len(self.db["c2t"][wid])
 
-    def get_ranks_string(self, wid: int) -> str:
-        try:
-            wid = int(wid)
-        except ValueError:
-            return None
-        if wid in self.db["taxonomy_ranks"]:
-            i_ranks = self.db["taxonomy_ranks"][wid]
-            n_ranks = [self.get_rank_name_from_wid(int(it)) for it in i_ranks]
-            ranks = " (" + ", ".join(set(n_ranks)) + ")"
-        else:
-            ranks = ""
-        return ranks
+    ### WIP
+    # def get_structures_of_reference(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return list(matching_structures)
 
-    def get_taxonomic_tree(self, wid: int) -> list[tuple[int, int]]:
-        if wid not in self.db["taxonomy_direct_parents"]:
-            return []
-        parent_taxa = self.db["taxonomy_direct_parents"][wid]
-        tree = []
-        for parent in parent_taxa:
-            tree.append((parent, 1))
-            if parent in self.db["taxonomy_parents_with_distance"]:
-                for relative in self.db["taxonomy_parents_with_distance"][parent]:
-                    distance = self.db["taxonomy_parents_with_distance"][parent][
-                        relative
-                    ]
-                    tree.append((relative, distance))
-        tree = sorted(tree, key=lambda x: x[1])
-        return tree
+    # def get_taxa_of_reference(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return list(matching_taxa)
+
+    # def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
+    #     # TODO
+    #     return list(matching_couples)
+
+    # def get_number_of_references_containing_couple(self, sid: int, tid: int) -> list[int]:
+    #     # TODO
+    #     return len(matching_couples)
+
+    # def get_references_containing_structure(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return list(matching_structures)
+
+    # def get_number_of_references_containing_structure(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return len(matching_structures)
+
+    # def get_references_containing_taxa(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return list(matching_taxa)
+
+    # def get_number_of_references_containing_taxa(self, wid: int) -> list[int]:
+    #     # TODO
+    #     return len(matching_taxa)

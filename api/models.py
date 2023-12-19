@@ -28,7 +28,6 @@ class Item(BaseModel):
 
 class ReferenceInfo(BaseModel):
     doi: str
-    title: str
 
 
 class ReferenceResult(BaseModel):

@@ -104,6 +104,28 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
         return taxa
 
 
+def get_matching_references_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
+    """Returns the WID of matching references."""
+    if item.reference_wid is None and item.reference_doi is None:
+        return None
+    else:
+        # This needs to be explained in the API doc
+        if item.reference_wid:
+            if item.reference_wid in dm.get_refs():
+                return {item.reference_wid}
+        else:
+            if item.reference_doi:
+                references = set(dm.get_references_with_doi(item.reference_doi))
+                if references is None:
+                    references = dm.get_refs()
+            else:
+                references = dm.get_refs()
+
+        return references
+
+
 def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
@@ -111,7 +133,7 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     if taxa is None:
         return None
 
-    # We could have a parameter "recursive" in the query to have all the structures from the parents too
+    # Set recursive=True to have all the structures from the parents too
     out = set()
     for taxon in taxa:
         out.update(dm.get_structures_of_taxon(taxon))
@@ -238,5 +260,41 @@ async def search_taxa(item: Item) -> TaxonResult:
         count=len(matching_taxa),
     )
 
+
+### WIP
+# @app.post("/references")
+# @version(1, 0)
+# async def search_references(item: Item) -> ReferenceResult:
+#     # We want the set of all the references matching the query
+#     matching_references_by_reference = get_matching_references_from_reference_in_item(dm, item)
+
+#     # We want the set of all the references which have couples matching the query
+#     matching_references_by_couple = get_matching_taxa_from_couple_in_item(dm, item)
+
+#     # We want the set of all the references which have structures matching the query
+#     matching_references_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
+
+#     # We want the set of all the references which have taxa matching the query
+#     matching_references_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
+
+#     # We want the intersection of both (and we can do the same for the references later)
+#     # But if one of the sets is fully empty
+#     matching_references = (
+#         TODO
+#     )
+
+#     if item.limit == 0:
+#         items = list(dm.get_dict_of_wid_to_ref_doi(matching_references).items())
+#     else:
+#         items = list(dm.get_dict_of_wid_to_ref_doi(matching_references).items())[
+#             : item.limit
+#         ]
+
+#     return ReferenceResult(
+#         ids=matching_references,
+#         references={wid: ReferenceInfo(name=value) for wid, value in items},
+#         description="References matching the query",
+#         count=len(matching_references),
+#     )
 
 app = VersionedFastAPI(app, enable_latest=True)
