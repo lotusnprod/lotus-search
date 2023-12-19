@@ -117,8 +117,8 @@ class DataModel:
 
     def get_structure_smiles_from_wid(self, wid: int) -> str | None:
         try:
-            cid = self.db["structure_id"][wid]  # ambiguous with PubChem CID?
-            return self.db["structure_smiles"][cid]
+            sid = self.db["structure_id"][wid]
+            return self.db["structure_smiles"][sid]
         except (IndexError, ValueError):
             log.warning(f"Impossible to find a structure with wid={wid}")
             return None
