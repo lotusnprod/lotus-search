@@ -191,13 +191,20 @@ async def search_couples(item: Item) -> CoupleResult:
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    structures_of_selected_taxa = {
-        taxon: dm.get_structures_of_taxon(taxon) for taxon in selected_taxa
-    }
+    structures_of_selected_taxa = (
+        {taxon: dm.get_structures_of_taxon(taxon) for taxon in selected_taxa}
+        if selected_taxa is not None
+        else {
+            taxon: dm.get_structures_of_taxon(taxon)
+            for structure in selected_structures
+            for taxon in dm.get_taxa_containing_structure(structure)
+        }
+    )
 
     couples = {
         (structure, taxon)
         for taxon, structures in structures_of_selected_taxa.items()
+        if selected_structures is not None
         for structure in structures
         if structure in selected_structures
     }
