@@ -5,7 +5,11 @@ from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
                         StructureInfo, StructureResult, TaxonInfo, TaxonResult)
-from api.queries import (get_matching_references_from_reference_in_item,
+from api.queries import (
+                         # get_matching_references_from_couple_in_item,
+                         get_matching_references_from_reference_in_item,
+                         get_matching_references_from_structure_in_item,
+                         get_matching_references_from_taxon_in_item,
                          get_matching_structures_from_reference_in_item,
                          get_matching_structures_from_structure_in_item,
                          get_matching_structures_from_taxon_in_item,
@@ -183,9 +187,9 @@ async def search_references(item: Item) -> ReferenceResult:
     )
 
     # We want the set of all the references which have couples matching the query
-    matching_references_by_couple = get_matching_references_from_couple_in_item(
-        dm, item
-    )
+    # matching_references_by_couple = get_matching_references_from_couple_in_item(
+    #     dm, item
+    # )
 
     # We want the set of all the references which have structures matching the query
     matching_references_by_structure = get_matching_references_from_structure_in_item(
@@ -200,18 +204,18 @@ async def search_references(item: Item) -> ReferenceResult:
         matching_references_by_structure
         & matching_references_by_taxon
         & matching_references_by_reference
-        & matching_references_by_couple
+        # & matching_references_by_couple
         if matching_references_by_structure
         and matching_references_by_taxon
         and matching_references_by_reference
-        and matching_references_by_couple
+        # and matching_references_by_couple
         else matching_references_by_structure
         or matching_references_by_taxon
         or matching_references_by_reference
-        or matching_references_by_couple
+        # or matching_references_by_couple
     )
 
-    items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
+    items = list(dm.get_dict_of_rid_to_ref_doi(matching_references).items())
 
     if item.limit == 0:
         items = items
@@ -220,7 +224,7 @@ async def search_references(item: Item) -> ReferenceResult:
 
     return ReferenceResult(
         ids=matching_references,
-        references={rid: ReferenceInfo(name=value) for rid, value in items},
+        references={rid: ReferenceInfo(doi=value) for rid, value in items},
         description="References matching the query",
         count=len(matching_references),
     )

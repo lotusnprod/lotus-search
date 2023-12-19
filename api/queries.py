@@ -9,6 +9,28 @@ logging.basicConfig(
 )
 
 
+def get_matching_references_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
+    """Returns the WID of matching references."""
+    if item.reference_wid is None and item.reference_doi is None:
+        return None
+    else:
+        # This needs to be explained in the API doc
+        if item.reference_wid:
+            if item.reference_wid in dm.get_references():
+                return {item.reference_wid}
+        else:
+            if item.reference_doi:
+                references = set(dm.get_references_with_doi(item.reference_doi))
+                if references is None:
+                    references = dm.get_references()
+            else:
+                references = dm.get_references()
+
+        return references
+
+
 def get_matching_structures_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
@@ -75,39 +97,58 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
         return taxa
 
 
-def get_matching_references_from_reference_in_item(
+# TODO WIP
+# def get_matching_references_from_couple_in_item(dm: DataModel, item: Item) -> set[int]:
+#     # We need to get all the matching taxa
+#     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
+#     # We need to get all the matching structures
+#     structures = get_matching_structures_from_structure_in_item(dm, item)
+
+#     if taxa is None:
+#         return None
+
+#     if structures is None:
+#         return None
+
+#     tax = set()
+#     for taxon in taxa:
+#         tax.update(dm.get_structures_of_taxon(taxon))
+
+#     stru = set()
+#     for structure in structures:
+#         stru.update(dm.get_references_containing_structure(structure))
+
+#     # TODO get couples and intersect
+
+#     return out
+
+
+def get_matching_references_from_structure_in_item(
     dm: DataModel, item: Item
-) -> set[int] | None:
-    """Returns the WID of matching references."""
-    if item.reference_wid is None and item.reference_doi is None:
+) -> set[int]:
+    # We need to get all the matching structures
+    structures = get_matching_structures_from_structure_in_item(dm, item)
+
+    if structures is None:
         return None
-    else:
-        # This needs to be explained in the API doc
-        if item.reference_wid:
-            if item.reference_wid in dm.get_refs():
-                return {item.reference_wid}
-        else:
-            if item.reference_doi:
-                references = set(dm.get_references_with_doi(item.reference_doi))
-                if references is None:
-                    references = dm.get_refs()
-            else:
-                references = dm.get_refs()
 
-        return references
+    out = set()
+    for structure in structures:
+        out.update(dm.get_references_containing_structure(structure))
+
+    return out
 
 
-def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
         return None
 
-    # Set recursive=True to have all the structures from the parents too
     out = set()
     for taxon in taxa:
-        out.update(dm.get_structures_of_taxon(taxon))
+        out.update(dm.get_references_containing_taxon(taxon))
 
     return out
 
@@ -124,6 +165,21 @@ def get_matching_structures_from_reference_in_item(
     out = set()
     for reference in references:
         out.update(dm.get_structures_of_reference(reference))
+
+    return out
+
+
+def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
+    # We need to get all the matching taxa
+    taxa = get_matching_taxa_from_taxon_in_item(dm, item)
+
+    if taxa is None:
+        return None
+
+    # Set recursive=True to have all the structures from the parents too
+    out = set()
+    for taxon in taxa:
+        out.update(dm.get_structures_of_taxon(taxon))
 
     return out
 

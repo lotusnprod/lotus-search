@@ -242,7 +242,7 @@ class DataModel:
 
     ### Biblionomy
     @functools.lru_cache(maxsize=None)
-    def get_refs(self) -> dict[int, str]:
+    def get_references(self) -> dict[int, str]:
         return self.db["reference_doi"]
 
     def get_ref_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
@@ -334,6 +334,7 @@ class DataModel:
             return len(self.db["tc2r"][key])
         return 0
 
+    # TODO not working, fix
     def get_references_containing_structure(self, sid: int) -> list[int]:
         references = [
             rid
@@ -352,7 +353,8 @@ class DataModel:
         ]
         return len(references)
 
-    def get_references_containing_taxa(self, tid: int) -> list[int]:
+    # TODO not working, fix
+    def get_references_containing_taxon(self, tid: int) -> list[int]:
         references = [
             rid
             for (taxon_id, sid), rids in self.db["tc2r"].items()
@@ -361,7 +363,7 @@ class DataModel:
         ]
         return references
 
-    def get_number_of_references_containing_taxa(self, tid: int) -> int:
+    def get_number_of_references_containing_taxon(self, tid: int) -> int:
         references = [
             rid
             for (taxon_id, sid), rids in self.db["tc2r"].items()
