@@ -56,7 +56,7 @@ async def search_couples(item: Item) -> CoupleResult:
 
     structures_of_selected_taxa = (
         {taxon: dm.get_structures_of_taxon(taxon) for taxon in selected_taxa}
-        if selected_taxa is not None
+        if selected_taxa
         else {
             taxon: dm.get_structures_of_taxon(taxon)
             for structure in selected_structures
@@ -69,9 +69,8 @@ async def search_couples(item: Item) -> CoupleResult:
     couples = {
         (structure, taxon)
         for taxon, structures in structures_of_selected_taxa.items()
-        if selected_structures is not None
         for structure in structures
-        if structure in selected_structures
+        if not selected_structures or structure in selected_structures
     }
 
     if item.limit == 0:
