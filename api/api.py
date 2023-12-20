@@ -5,17 +5,16 @@ from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
                         StructureInfo, StructureResult, TaxonInfo, TaxonResult)
-from api.queries import (
-                         # get_matching_references_from_couple_in_item,
-                         get_matching_references_from_reference_in_item,
-                         get_matching_references_from_structure_in_item,
-                         get_matching_references_from_taxon_in_item,
-                         get_matching_structures_from_reference_in_item,
-                         get_matching_structures_from_structure_in_item,
-                         get_matching_structures_from_taxon_in_item,
-                         get_matching_taxa_from_reference_in_item,
-                         get_matching_taxa_from_structure_in_item,
-                         get_matching_taxa_from_taxon_in_item)
+from api.queries import (  # get_matching_references_from_couple_in_item,
+    get_matching_references_from_reference_in_item,
+    get_matching_references_from_structure_in_item,
+    get_matching_references_from_taxon_in_item,
+    get_matching_structures_from_reference_in_item,
+    get_matching_structures_from_structure_in_item,
+    get_matching_structures_from_taxon_in_item,
+    get_matching_taxa_from_reference_in_item,
+    get_matching_taxa_from_structure_in_item,
+    get_matching_taxa_from_taxon_in_item)
 from model import DataModel
 
 logging.basicConfig(
@@ -65,6 +64,8 @@ async def search_couples(item: Item) -> CoupleResult:
         }
     )
 
+    # TODO add ref
+
     couples = {
         (structure, taxon)
         for taxon, structures in structures_of_selected_taxa.items()
@@ -113,7 +114,15 @@ async def search_structures(item: Item) -> StructureResult:
     )
 
     # We want the intersection of everything
-    non_empty_sets = [s for s in [matching_structures_by_reference,matching_structures_by_taxon, matching_structures_by_structure,] if s]
+    non_empty_sets = [
+        s
+        for s in [
+            matching_structures_by_reference,
+            matching_structures_by_taxon,
+            matching_structures_by_structure,
+        ]
+        if s
+    ]
     matching_structures = set.intersection(*non_empty_sets) if non_empty_sets else set()
 
     items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
@@ -144,7 +153,15 @@ async def search_taxa(item: Item) -> TaxonResult:
     matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
 
     # We want the intersection of everything
-    non_empty_sets = [s for s in [matching_taxa_by_reference,matching_taxa_by_structure, matching_taxa_by_taxon,] if s]
+    non_empty_sets = [
+        s
+        for s in [
+            matching_taxa_by_reference,
+            matching_taxa_by_structure,
+            matching_taxa_by_taxon,
+        ]
+        if s
+    ]
     matching_taxa = set.intersection(*non_empty_sets) if non_empty_sets else set()
 
     items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())
@@ -184,10 +201,18 @@ async def search_references(item: Item) -> ReferenceResult:
     matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
 
     # We want the intersection of everything
-    non_empty_sets = [s for s in [matching_references_by_reference,matching_references_by_structure, matching_references_by_taxon,] if s]
+    non_empty_sets = [
+        s
+        for s in [
+            matching_references_by_reference,
+            matching_references_by_structure,
+            matching_references_by_taxon,
+        ]
+        if s
+    ]
     matching_references = set.intersection(*non_empty_sets) if non_empty_sets else set()
 
-    items = list(dm.get_dict_of_rid_to_ref_doi(matching_references).items())
+    items = list(dm.get_dict_of_rid_to_reference_doi(matching_references).items())
 
     if item.limit == 0:
         items = items

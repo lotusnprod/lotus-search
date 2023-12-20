@@ -253,19 +253,19 @@ class DataModel:
     def get_references(self) -> dict[int, str]:
         return self.db["reference_doi"]
 
-    def get_ref_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
+    def get_reference_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
         return [
             self.db["reference_doi"][rid]
             for rid in rids
             if rid in self.db["reference_doi"]
         ]
 
-    def get_dict_of_rid_to_ref_doi(self, rid: Iterable[int]) -> dict[int, str]:
+    def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         return {
             r: self.db["reference_doi"][r] for r in rid if r in self.db["reference_doi"]
         }
 
-    def get_ref_doi_from_rid(self, rid: int) -> str | None:
+    def get_reference_doi_from_rid(self, rid: int) -> str | None:
         try:
             rid = int(rid)
         except ValueError:
@@ -314,7 +314,7 @@ class DataModel:
         ]
         return structures
 
-    def get_number_of_structures_of_reference(self, rid: int) -> list[int]:
+    def get_number_of_structures_of_reference(self, rid: int) -> int:
         structures = [
             sid for (tid, sid), rids in self.db["tc2r"].items() if rid in rids
         ]
@@ -325,7 +325,7 @@ class DataModel:
             return self.db["tc2r"][rid]
         return []
 
-    def get_number_of_taxa_of_reference(self, rid: int) -> list[int]:
+    def get_number_of_taxa_of_reference(self, rid: int) -> int:
         if rid in self.db["tc2r"]:
             return len(self.db["tc2r"][rid])
         return 0
