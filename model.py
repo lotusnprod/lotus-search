@@ -278,7 +278,7 @@ class DataModel:
     def get_references_with_doi(self, doi: str) -> Iterable[int]:
         for rid, d in self.db["reference_doi"].items():
             if doi == d:
-                yield d
+                yield rid
 
     ### Mixonomy
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
