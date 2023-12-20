@@ -345,52 +345,47 @@ class DataModel:
             return len(self.db["ts2r"][rid])
         return 0
 
+    # TODO this is not used, decide if we want to make both available and how
+    # refs: ref(structure) AND ref(taxon) or ref(structure AND taxon)
     def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
-        key = (tid, sid)
-        if key in self.db["tc2r"]:
-            return list(self.db["tc2r"][key])
-        return []
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid & key[1] == sid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        return list(matching_references)
 
     def get_number_of_references_containing_couple(self, sid: int, tid: int) -> int:
-        key = (tid, sid)
-        if key in self.db["tc2r"]:
-            return len(self.db["tc2r"][key])
-        return 0
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid & key[1] == sid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        return len(matching_references)
 
-    # TODO not working, fix
     def get_references_containing_structure(self, sid: int) -> list[int]:
-        references = [
-            rid
-            for (tid, structure_id), rids in self.db["tc2r"].items()
-            if structure_id == sid
-            for rid in rids
-        ]
-        return references
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        
+        return list(matching_references)
 
     def get_number_of_references_containing_structure(self, sid: int) -> int:
-        references = [
-            rid
-            for (tid, structure_id), rids in self.db["tc2r"].items()
-            if structure_id == sid
-            for rid in rids
-        ]
-        return len(references)
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        return len(matching_references)
 
-    # TODO not working, fix
     def get_references_containing_taxon(self, tid: int) -> list[int]:
-        references = [
-            rid
-            for (taxon_id, sid), rids in self.db["tc2r"].items()
-            if taxon_id == tid
-            for rid in rids
-        ]
-        return references
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        return list(matching_references)
 
     def get_number_of_references_containing_taxon(self, tid: int) -> int:
-        references = [
-            rid
-            for (taxon_id, sid), rids in self.db["tc2r"].items()
-            if taxon_id == tid
-            for rid in rids
-        ]
-        return len(references)
+        matching_references = set()
+        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid}
+        for key, references_set in relevant_keys.items():
+            matching_references.update(references_set)
+        return len(matching_references)

@@ -64,7 +64,7 @@ async def search_couples(item: Item) -> CoupleResult:
         }
     )
 
-    # TODO add ref
+    # TODO add references
 
     couples = {
         (structure, taxon)
@@ -101,19 +101,14 @@ async def search_couples(item: Item) -> CoupleResult:
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(item: Item) -> StructureResult:
-    # We want the set of all the structures that match a query, or the specific structure given
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(
         dm, item
     )
-    # We want the set of all the structures found in the given taxa
     matching_structures_by_taxon = get_matching_structures_from_taxon_in_item(dm, item)
-
-    # We want the set of all the structures found in the given references
     matching_structures_by_reference = get_matching_structures_from_reference_in_item(
         dm, item
     )
 
-    # We want the intersection of everything
     non_empty_sets = [
         s
         for s in [
@@ -143,16 +138,10 @@ async def search_structures(item: Item) -> StructureResult:
 @app.post("/taxa")
 @version(1, 0)
 async def search_taxa(item: Item) -> TaxonResult:
-    # We want the set of all the taxa matching the query
     matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
-
-    # We want the set of all the taxa which have structures matching the query
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
-
-    # We want the set of all the structures found in the given references
     matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
 
-    # We want the intersection of everything
     non_empty_sets = [
         s
         for s in [
@@ -182,25 +171,17 @@ async def search_taxa(item: Item) -> TaxonResult:
 @app.post("/references")
 @version(1, 0)
 async def search_references(item: Item) -> ReferenceResult:
-    # We want the set of all the references matching the query
     matching_references_by_reference = get_matching_references_from_reference_in_item(
         dm, item
     )
-
-    # We want the set of all the references which have couples matching the query
     # matching_references_by_couple = get_matching_references_from_couple_in_item(
     #     dm, item
     # )
-
-    # We want the set of all the references which have structures matching the query
     matching_references_by_structure = get_matching_references_from_structure_in_item(
         dm, item
     )
-
-    # We want the set of all the references which have taxa matching the query
     matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
 
-    # We want the intersection of everything
     non_empty_sets = [
         s
         for s in [

@@ -99,7 +99,6 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 
 # TODO WIP
 # def get_matching_references_from_couple_in_item(dm: DataModel, item: Item) -> set[int]:
-#     # We need to get all the matching taxa
 #     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 #     # We need to get all the matching structures
 #     structures = get_matching_structures_from_structure_in_item(dm, item)
@@ -126,7 +125,6 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 def get_matching_references_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
-    # We need to get all the matching structures
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -140,7 +138,6 @@ def get_matching_references_from_structure_in_item(
 
 
 def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
-    # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -156,7 +153,6 @@ def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set
 def get_matching_structures_from_reference_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
-    # We need to get all the matching references
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:
@@ -170,7 +166,6 @@ def get_matching_structures_from_reference_in_item(
 
 
 def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
-    # We need to get all the matching taxa
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -185,7 +180,6 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
 
 
 def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
-    # We need to get all the matching structures
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -199,7 +193,6 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
 
 
 def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int]:
-    # We need to get all the matching references
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:
