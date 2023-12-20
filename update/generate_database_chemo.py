@@ -107,5 +107,6 @@ def run(path: Path) -> None:
 
     logging.info("Finished exporting")
 
+
 if __name__ == "__main__":
     run(Path("data"))

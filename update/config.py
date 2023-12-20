@@ -1,6 +1,6 @@
 from update import (download_query_as_csv, generate_database,
-                    generate_database_biblio, generate_database_chemo, generate_database_couples,
-                    generate_database_taxo)
+                    generate_database_biblio, generate_database_chemo,
+                    generate_database_couples, generate_database_taxo)
 from update.common import QLEVER_URL
 from update.models import Group, Task
 
