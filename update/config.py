@@ -1,5 +1,5 @@
 from update import (download_query_as_csv, generate_database,
-                    generate_database_biblio, generate_database_chemo,
+                    generate_database_biblio, generate_database_chemo, generate_database_couples,
                     generate_database_taxo)
 from update.common import QLEVER_URL
 from update.models import Group, Task
@@ -70,6 +70,11 @@ TASKS = [
             "query_file": "update/queries/taxa_ranks.rq",
             "output_file": "taxa_ranks.csv",
         },
+    ),
+    Task(
+        name="generate_database_couples",
+        f=generate_database_couples.run,
+        group=DatabaseGroup,
     ),
     Task(
         name="generate_database_chemo",

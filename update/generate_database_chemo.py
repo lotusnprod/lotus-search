@@ -79,29 +79,7 @@ def run(path: Path) -> None:
 
                 p_links.append(links[mid])
 
-    t2c: dict[int, set[int]] = {}
-    c2t: dict[int, set[int]] = {}
-    tc2r: dict[tuple[int, int], set[str]] = {}
-
     logging.info("Finished generating the chemical libraries")
-
-    with open(path / "couples.csv", "r") as f:
-        reader = csv.reader(f)
-        next(reader)
-        for x in reader:
-            c, t, r = x
-            ic = int(c)
-            it = int(t)
-            if it not in t2c:
-                t2c[it] = set()
-            if ic not in c2t:
-                c2t[ic] = set()
-            if (it, ic) not in tc2r:
-                tc2r[(it, ic)] = set()
-            t2c[it].add(ic)
-            c2t[ic].add(it)
-            tc2r[(it, ic)] = set(r)
-    logging.info("Finished generating couples")
 
     database = {
         "structure_smiles": p_smileses,
@@ -111,10 +89,11 @@ def run(path: Path) -> None:
         "structure_library": library.Serialize(),
         "structure_library_h": library_h.Serialize(),
         "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
-        "t2c": t2c,
-        "c2t": c2t,
-        "tc2r": tc2r,
     }
+
+    with open(path / "database_chemo.pkl", "wb") as f:
+        pickle.dump(database, f)
+    logging.info("Finished dumping")
 
     smols_and_wids = list(zip(p_smols, p_links))
 
@@ -127,11 +106,6 @@ def run(path: Path) -> None:
         write_mols_to_sdf(path, sdf_blocks)
 
     logging.info("Finished exporting")
-
-    with open(path / "database_chemo.pkl", "wb") as f:
-        pickle.dump(database, f)
-    logging.info("Finished dumping")
-
 
 if __name__ == "__main__":
     run(Path("data"))

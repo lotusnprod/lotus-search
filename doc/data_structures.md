@@ -14,9 +14,9 @@
 | structure_library              | bytes                           | The RDKit library                                                 |
 | structure_sim_h_fps            | list[bytes]                     | Similarity fingerprints (with explicit Hs)                        |
 | structure_library_h            | bytes                           | The RDKit library (with explicit Hs)                              |
-| t2c                            | dict[tid, set[sid]]             | All structures from taxon tid                                     |
-| c2t                            | dict[sid, set[tid]]             | All taxa containg structure sid                                   |
-| tc2r                           | dict[tuple[tid, sid], set[rid]] | References of couple tid/sid                                      |
+| t2s                            | dict[tid, set[sid]]             | All structures from taxon tid                                     |
+| s2t                            | dict[sid, set[tid]]             | All taxa containg structure sid                                   |
+| ts2r                           | dict[tuple[tid, sid], set[rid]] | References of couple tid/sid                                      |
 | taxonomy_direct_parents        | dict[tid, set[tid]]             | Direct taxonomic parents                                          |
 | taxonomy_names                 | dict[tid, str]                  | Name of taxon tid                                                 |
 | taxonomy_ranks                 | dict[tid, set[rank_id]]         | Rank of taxon tid                                                 |

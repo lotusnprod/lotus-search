@@ -8,6 +8,12 @@ from tests.common import setup_from_fixture, teardown
 from update.config import TASKS
 from update.methods import run_tasks
 
+
+EXPECTED_KEYS_COUPLES = [
+    "t2s",
+    "s2t",
+    "ts2r",
+]
 EXPECTED_KEYS_CHEMO = [
     "structure_smiles",
     "structure_wid",
@@ -16,9 +22,6 @@ EXPECTED_KEYS_CHEMO = [
     "structure_library",
     "structure_library_h",
     "structure_id",
-    "t2c",
-    "c2t",
-    "tc2r",
 ]
 EXPECTED_KEYS_TAXO = [
     "taxonomy_direct_parents",
@@ -45,11 +48,22 @@ class TestUpdate:
         teardown(self.tmp_path)
 
     def test_pkls_exist(self):
+        assert (self.tmp_path / "database_couples.pkl").exists()
         assert (self.tmp_path / "database_chemo.pkl").exists()
         assert (self.tmp_path / "database_taxo.pkl").exists()
         assert (self.tmp_path / "database_biblio.pkl").exists()
         assert (self.tmp_path / "database.pkl").exists()
         assert (self.tmp_path / "lotus.sdf").exists()
+
+
+    def test_couples(self):
+        with open(self.tmp_path / "database_couples.pkl", "rb") as f:
+            db = pickle.load(f)
+            assert len(db) == len(EXPECTED_KEYS_COUPLES)
+            for expected_key in EXPECTED_KEYS_COUPLES:
+                assert expected_key in db
+                assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
+            # We likely want to test the content as well
 
     def test_chemo(self):
         with open(self.tmp_path / "database_chemo.pkl", "rb") as f:
@@ -81,10 +95,10 @@ class TestUpdate:
         with open(self.tmp_path / "database.pkl", "rb") as f:
             db = pickle.load(f)
             assert len(db) == len(
-                EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
+                EXPECTED_KEYS_COUPLES + EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
             )
             for expected_key in (
-                EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
+                EXPECTED_KEYS_COUPLES + EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO + EXPECTED_KEYS_BIBLIO
             ):
                 assert expected_key in db
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"

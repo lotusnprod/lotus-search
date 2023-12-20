@@ -52,10 +52,10 @@ class DataModel:
         return len(self.db["reference_doi"])
 
     def num_couples(self):
-        return len(self.db["c2t"])
+        return len(self.db["s2t"])
 
     def num_couples_ref(self):
-        return len(self.db["tc2r"])
+        return len(self.db["ts2r"])
 
     ### Taxonomy
     @functools.lru_cache(maxsize=None)
@@ -282,16 +282,16 @@ class DataModel:
 
     ### Mixonomy
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
-        if tid in self.db["t2c"]:
-            matching_structures = set(self.db["t2c"][tid])
+        if tid in self.db["t2s"]:
+            matching_structures = set(self.db["t2s"][tid])
         else:
             matching_structures = set()
 
         if recursive:
             if tid in self.db["taxonomy_children"]:
                 for parent in self.db["taxonomy_children"][tid]:
-                    if parent in self.db["t2c"]:
-                        for structure in self.db["t2c"][parent]:
+                    if parent in self.db["t2s"]:
+                        for structure in self.db["t2s"][parent]:
                             matching_structures.add(structure)
 
         return list(matching_structures)
@@ -299,50 +299,50 @@ class DataModel:
     def get_number_of_structures_of_taxon(
         self, tid: int, recursive: bool = True
     ) -> int:
-        if tid in self.db["t2c"]:
-            matching_structures = set(self.db["t2c"][tid])
+        if tid in self.db["t2s"]:
+            matching_structures = set(self.db["t2s"][tid])
         else:
             matching_structures = set()
 
         if recursive:
             if tid in self.db["taxonomy_children"]:
                 for parent in self.db["taxonomy_children"][tid]:
-                    if parent in self.db["t2c"]:
-                        for structure in self.db["t2c"][parent]:
+                    if parent in self.db["t2s"]:
+                        for structure in self.db["t2s"][parent]:
                             matching_structures.add(structure)
 
         return len(matching_structures)
 
     def get_taxa_containing_structure(self, sid: int) -> set[int]:
-        if sid in self.db["c2t"]:
-            return self.db["c2t"][sid]
+        if sid in self.db["s2t"]:
+            return self.db["s2t"][sid]
         return set()
 
     def get_number_of_taxa_containing_structure(self, sid: int) -> int:
-        if sid not in self.db["c2t"]:
+        if sid not in self.db["s2t"]:
             return 0
-        return len(self.db["c2t"][sid])
+        return len(self.db["s2t"][sid])
 
     def get_structures_of_reference(self, rid: int) -> list[int]:
         structures = [
-            sid for (tid, sid), rids in self.db["tc2r"].items() if rid in rids
+            sid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
         ]
         return structures
 
     def get_number_of_structures_of_reference(self, rid: int) -> int:
         structures = [
-            sid for (tid, sid), rids in self.db["tc2r"].items() if rid in rids
+            sid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
         ]
         return len(structures)
 
     def get_taxa_of_reference(self, rid: int) -> list[int]:
-        if rid in self.db["tc2r"]:
-            return self.db["tc2r"][rid]
+        if rid in self.db["ts2r"]:
+            return self.db["ts2r"][rid]
         return []
 
     def get_number_of_taxa_of_reference(self, rid: int) -> int:
-        if rid in self.db["tc2r"]:
-            return len(self.db["tc2r"][rid])
+        if rid in self.db["ts2r"]:
+            return len(self.db["ts2r"][rid])
         return 0
 
     def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:

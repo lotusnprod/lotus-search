@@ -11,6 +11,10 @@ logging.basicConfig(
 def run(path: Path) -> None:
     database = {}
 
+    with open(path / "database_couples.pkl", "rb") as f:
+        database.update(pickle.load(f))
+    logging.info("Finished integrating couples")
+
     with open(path / "database_chemo.pkl", "rb") as f:
         database.update(pickle.load(f))
     logging.info("Finished integrating chemo")
