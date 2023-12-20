@@ -93,6 +93,14 @@ class DataModel:
             if query in name.lower():
                 yield tid
 
+    # TODO add this as alternative
+    def get_taxa_with_name_exact(self, query: str) -> Iterable[int]:
+        query = query.lower()
+
+        for tid, name in self.db["taxonomy_names"].items():
+            if query == name.lower():
+                yield tid
+
     def get_rank_name_from_wid(self, wid: int) -> str | None:
         if wid not in self.db["taxonomy_ranks_names"]:
             return None
