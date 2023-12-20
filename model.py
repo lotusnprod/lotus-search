@@ -296,32 +296,10 @@ class DataModel:
 
         return list(matching_structures)
 
-    def get_number_of_structures_of_taxon(
-        self, tid: int, recursive: bool = True
-    ) -> int:
-        if tid in self.db["t2s"]:
-            matching_structures = set(self.db["t2s"][tid])
-        else:
-            matching_structures = set()
-
-        if recursive:
-            if tid in self.db["taxonomy_children"]:
-                for parent in self.db["taxonomy_children"][tid]:
-                    if parent in self.db["t2s"]:
-                        for structure in self.db["t2s"][parent]:
-                            matching_structures.add(structure)
-
-        return len(matching_structures)
-
     def get_taxa_containing_structure(self, sid: int) -> set[int]:
         if sid in self.db["s2t"]:
             return self.db["s2t"][sid]
         return set()
-
-    def get_number_of_taxa_containing_structure(self, sid: int) -> int:
-        if sid not in self.db["s2t"]:
-            return 0
-        return len(self.db["s2t"][sid])
 
     def get_structures_of_reference(self, rid: int) -> list[int]:
         structures = [
@@ -329,21 +307,10 @@ class DataModel:
         ]
         return structures
 
-    def get_number_of_structures_of_reference(self, rid: int) -> int:
-        structures = [
-            sid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
-        ]
-        return len(structures)
-
     def get_taxa_of_reference(self, rid: int) -> list[int]:
         if rid in self.db["ts2r"]:
             return self.db["ts2r"][rid]
         return []
-
-    def get_number_of_taxa_of_reference(self, rid: int) -> int:
-        if rid in self.db["ts2r"]:
-            return len(self.db["ts2r"][rid])
-        return 0
 
     # TODO this is not used, decide if we want to make both available and how
     # refs: ref(structure) AND ref(taxon) or ref(structure AND taxon)
@@ -354,13 +321,6 @@ class DataModel:
             matching_references.update(references_set)
         return list(matching_references)
 
-    def get_number_of_references_containing_couple(self, sid: int, tid: int) -> int:
-        matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid & key[1] == sid}
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return len(matching_references)
-
     def get_references_containing_structure(self, sid: int) -> list[int]:
         matching_references = set()
         relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
@@ -369,13 +329,6 @@ class DataModel:
         
         return list(matching_references)
 
-    def get_number_of_references_containing_structure(self, sid: int) -> int:
-        matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return len(matching_references)
-
     def get_references_containing_taxon(self, tid: int) -> list[int]:
         matching_references = set()
         relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid}
@@ -383,9 +336,3 @@ class DataModel:
             matching_references.update(references_set)
         return list(matching_references)
 
-    def get_number_of_references_containing_taxon(self, tid: int) -> int:
-        matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid}
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return len(matching_references)

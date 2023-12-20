@@ -27,6 +27,3 @@ class TestDataModel:
 
     def test_get_taxa(self):
         assert len(self.dm.get_taxa()) == 5
-
-    def test_number_of_taxa_containing_structure(self):
-        assert self.dm.get_number_of_taxa_containing_structure(1) == 2
