@@ -14,7 +14,7 @@ def get_matching_references_from_reference_in_item(
 ) -> set[int] | None:
     """Returns the WID of matching references."""
     if item.reference_wid is None and item.reference_doi is None:
-        return None
+        return set()
     else:
         # This needs to be explained in the API doc
         if item.reference_wid:
@@ -36,7 +36,7 @@ def get_matching_structures_from_structure_in_item(
 ) -> set[int]:
     """Returns the WID of matching structures."""
     if item.structure is None and item.structure_wid is None:
-        return None
+        return set()
     elif item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
@@ -80,7 +80,7 @@ def get_matching_structures_from_structure_in_item(
 def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching taxa."""
     if item.taxon_wid is None and item.taxon_name is None:
-        return None
+        return set()
     else:
         # This needs to be explained in the API doc
         if item.taxon_wid:
