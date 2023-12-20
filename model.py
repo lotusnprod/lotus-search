@@ -296,7 +296,22 @@ class DataModel:
 
         return list(matching_structures)
 
-    # TODO add get_numbers_of_structures_of_taxon
+    def get_number_of_structures_of_taxon(
+        self, tid: int, recursive: bool = True
+    ) -> int:
+        if tid in self.db["t2c"]:
+            matching_structures = set(self.db["t2c"][tid])
+        else:
+            matching_structures = set()
+
+        if recursive:
+            if tid in self.db["taxonomy_children"]:
+                for parent in self.db["taxonomy_children"][tid]:
+                    if parent in self.db["t2c"]:
+                        for structure in self.db["t2c"][parent]:
+                            matching_structures.add(structure)
+
+        return len(matching_structures)
 
     def get_taxa_containing_structure(self, sid: int) -> set[int]:
         if sid in self.db["c2t"]:
