@@ -51,6 +51,8 @@ app = FastAPI(
 @app.post("/couples")
 @version(1, 0)
 async def search_couples(item: Item) -> CoupleResult:
+    # WIP
+    selected_references = get_matching_references_from_reference_in_item(dm, item)
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
