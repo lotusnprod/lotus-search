@@ -1,97 +1,109 @@
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-  "taxon_name": "Gentiana lutea"
+  "structure_wid": 27151406,
+  "taxon_wid": 158572,
+  "reference_wid": 44488598
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
 
 {
   "structure": "Cl",
-  "substructure_search": true
+  "substructure_search": true,
+  "taxon_name": "Gentiana septemfida",
+  "reference_doi": "10.1021/NP50081A018"
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 POST http://127.0.0.1:5000/v1_0/taxa
 Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-  "taxon_name": "Gentiana lutea"
+  "structure_wid": 27151406,
+  "taxon_wid": 158572,
+  "reference_wid": 44488598
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 POST http://127.0.0.1:5000/v1_0/taxa
 Accept: application/json
 Content-Type: application/json
 
 {
   "structure": "Cl",
-  "substructure_search": true
+  "substructure_search": true,
+  "taxon_name": "Gentiana septemfida",
+  "reference_doi": "10.1021/NP50081A018"
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 POST http://127.0.0.1:5000/v1_0/references
 Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-  "taxon_name": "Gentiana lutea"
+  "structure_wid": 27151406,
+  "taxon_wid": 158572,
+  "reference_wid": 44488598
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 POST http://127.0.0.1:5000/v1_0/references
 Accept: application/json
 Content-Type: application/json
 
 {
   "structure": "Cl",
-  "substructure_search": true
+  "substructure_search": true,
+  "taxon_name": "Gentiana septemfida",
+  "reference_doi": "10.1021/NP50081A018"
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 POST http://127.0.0.1:5000/v1_0/couples
 Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-  "taxon_name": "Gentiana lutea"
+  "structure_wid": 27151406,
+  "taxon_wid": 158572,
+  "reference_wid": 44488598
 }
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true}'
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 POST http://127.0.0.1:5000/v1_0/couples
 Accept: application/json
 Content-Type: application/json
 
 {
   "structure": "Cl",
-  "substructure_search": true
+  "substructure_search": true,
+  "taxon_name": "Gentiana septemfida",
+  "reference_doi": "10.1021/NP50081A018"
 }
 
 ###

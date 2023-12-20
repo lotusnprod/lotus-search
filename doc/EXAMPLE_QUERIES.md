@@ -3,13 +3,13 @@
 ### Get all the structures that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 ```
 
 ### Get all chlorinated structures
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```
 
 ## Taxa
@@ -17,13 +17,13 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the taxa that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 ```
 
 ### Get all the taxa where chlorinated structures are found in
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```
 
 ## References
@@ -31,15 +31,16 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the references that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 ```
 
 ### Get all the references where chlorinated structures are found in
 
-### TODO This one is taking super long, don't
+### TODO OPTI FIX 
+### This one is taking super long
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```
 
 ## Couples
@@ -47,11 +48,11 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the couples that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O", "taxon_name":"Gentiana lutea"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 ```
 
 ### Get all the couples with chlorine
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```

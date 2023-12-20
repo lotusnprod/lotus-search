@@ -122,6 +122,7 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 #     return out
 
 
+# TODO OPTI Gets really slow in case of tons of structures (see TODO OPTI)
 def get_matching_references_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
