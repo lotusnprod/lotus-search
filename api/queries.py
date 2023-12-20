@@ -130,7 +130,7 @@ def get_matching_references_from_structure_in_item(
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
-        return None
+        return set()
 
     out = set()
     for structure in structures:
@@ -144,7 +144,7 @@ def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
-        return None
+        return set()
 
     out = set()
     for taxon in taxa:
@@ -160,7 +160,7 @@ def get_matching_structures_from_reference_in_item(
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:
-        return None
+        return set()
 
     out = set()
     for reference in references:
@@ -174,7 +174,7 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
-        return None
+        return set()
 
     # Set recursive=True to have all the structures from the parents too
     out = set()
@@ -189,7 +189,7 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
-        return None
+        return set()
 
     out = set()
     for structure in structures:
@@ -203,7 +203,7 @@ def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[i
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:
-        return None
+        return set()
 
     out = set()
     for reference in references:
