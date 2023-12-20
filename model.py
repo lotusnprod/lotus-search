@@ -164,7 +164,7 @@ class DataModel:
     def get_structure_smiles_from_sid(self, sid: int) -> str | None:
         try:
             sid = self.db["structure_id"][sid]
-            return self.db["structure_smiles"][sid]
+            return sid
         except (IndexError, ValueError):
             log.warning(f"Impossible to find a structure with sid={sid}")
             return None
@@ -317,22 +317,33 @@ class DataModel:
     # refs: ref(structure) AND ref(taxon) or ref(structure AND taxon)
     def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
         matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid & key[1] == sid}
+        relevant_keys = {
+            key: references_set
+            for key, references_set in self.db["ts2r"].items()
+            if key[0] == tid & key[1] == sid
+        }
         for key, references_set in relevant_keys.items():
             matching_references.update(references_set)
         return list(matching_references)
 
     def get_references_containing_structure(self, sid: int) -> list[int]:
         matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
+        relevant_keys = {
+            key: references_set
+            for key, references_set in self.db["ts2r"].items()
+            if key[1] == sid
+        }
         for key, references_set in relevant_keys.items():
             matching_references.update(references_set)
         return list(matching_references)
 
     def get_references_containing_taxon(self, tid: int) -> list[int]:
         matching_references = set()
-        relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[0] == tid}
+        relevant_keys = {
+            key: references_set
+            for key, references_set in self.db["ts2r"].items()
+            if key[0] == tid
+        }
         for key, references_set in relevant_keys.items():
             matching_references.update(references_set)
         return list(matching_references)
-
