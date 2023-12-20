@@ -308,9 +308,10 @@ class DataModel:
         return structures
 
     def get_taxa_of_reference(self, rid: int) -> list[int]:
-        if rid in self.db["ts2r"]:
-            return self.db["ts2r"][rid]
-        return []
+        taxa = [
+            tid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
+        ]
+        return taxa
 
     # TODO this is not used, decide if we want to make both available and how
     # refs: ref(structure) AND ref(taxon) or ref(structure AND taxon)
@@ -326,7 +327,6 @@ class DataModel:
         relevant_keys = {key: references_set for key, references_set in self.db["ts2r"].items() if key[1] == sid}
         for key, references_set in relevant_keys.items():
             matching_references.update(references_set)
-        
         return list(matching_references)
 
     def get_references_containing_taxon(self, tid: int) -> list[int]:
