@@ -36,9 +36,6 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 
 ### Get all the references where chlorinated structures are found in
 
-### TODO OPTI FIX 
-### This one is taking super long
-
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```
