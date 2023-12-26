@@ -13,7 +13,7 @@ logging.basicConfig(
 
 def get_matching_references_from_reference_in_item(
     dm: DataModel, item: Item
-) -> set[int] | None:
+) -> set[int]:
     """Returns the WID of matching references."""
     references = set()
     if item.reference_doi and item.reference_wid:
@@ -36,13 +36,14 @@ def get_matching_references_from_reference_in_item(
 
         return references
 
-    return None
+    return references
 
 
 def get_matching_structures_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
     """Returns the WID of matching structures."""
+    structures = set()
     if item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
@@ -81,13 +82,13 @@ def get_matching_structures_from_structure_in_item(
                 structures = dm.structures_set()
             return structures
 
-    return None
+    return structures
 
 
-def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     """Returns the WID of matching taxa."""
+    taxa = set()
     if item.taxon_wid is not None or item.taxon_name is not None:
-        taxa = set()
         # This needs to be explained in the API doc
         if item.taxon_wid:
             if item.taxon_wid in dm.get_taxa():
@@ -101,7 +102,7 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
                 taxa = dm.get_taxa()
         return taxa
 
-    return None
+    return taxa
 
 
 # TODO WIP
@@ -134,17 +135,11 @@ def get_matching_references_from_structure_in_item(
 ) -> set[int]:
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
-    if structures is None:
-        return set()
-
     return dm.get_references_of_structures(structures)
 
 
 def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
-
-    if taxa is None:
-        return set()
 
     return dm.get_references_of_taxa(taxa)
 
@@ -154,17 +149,11 @@ def get_matching_structures_from_reference_in_item(
 ) -> set[int]:
     references = get_matching_references_from_reference_in_item(dm, item)
 
-    if references is None:
-        return set()
-
     return dm.get_structures_of_references(references)
 
 
 def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
-
-    if taxa is None:
-        return set()
 
     # TODO Set recursive=True to have all the structures from the parents too?
     #      We may have issues if we have a lot, and it will require a bit more work to get it with the db
@@ -179,16 +168,10 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
 def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
-    if structures is None:
-        return set()
-
     return dm.get_taxa_of_structures(structures)
 
 
 def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int]:
     references = get_matching_references_from_reference_in_item(dm, item)
-
-    if references is None:
-        return set()
 
     return dm.get_taxa_of_references(references)
