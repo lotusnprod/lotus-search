@@ -39,7 +39,7 @@ def layout(wid: int):
     img_data = f"data:image/svg+xml,{quote(img)}"
 
     name_id_list = []
-    for t in dm.get_taxa_containing_structure(wid):
+    for t in dm.get_taxa_of_structure(wid):
         name = dm.get_taxon_name_from_tid(t)
         name_id_list.append([name, t])
     name_id_list = sorted(name_id_list, key=lambda x: x[0])

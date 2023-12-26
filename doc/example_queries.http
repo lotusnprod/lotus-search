@@ -1,6 +1,24 @@
-###
+### Query 1
+POST http://127.0.0.1:5000/v1_0/structures
+Accept: application/json
+Content-Type: application/json
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+{
+  "taxon_wid": 158572
+}
+
+### Query 1
+POST http://127.0.0.1:5000/v1_0/structures
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": "c1ccccc1"
+}
+
+
+
+### Query 2
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -108,3 +126,12 @@ Content-Type: application/json
 
 ###
 
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+POST http://127.0.0.1:5000/v1_0/references
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": "C",
+  "substructure_search": true
+}

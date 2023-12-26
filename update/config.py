@@ -1,6 +1,6 @@
 from update import (download_query_as_csv, generate_database,
                     generate_database_biblio, generate_database_chemo,
-                    generate_database_couples, generate_database_taxo)
+                    generate_database_index, generate_database_taxo)
 from update.common import QLEVER_URL
 from update.models import Group, Task
 
@@ -50,7 +50,7 @@ TASKS = [
         params={
             "query_file": "update/queries/taxa_all.rq",
             "output_file": "taxa_all.csv",
-            "url": QLEVER_URL,
+#            "url": QLEVER_URL,
         },
     ),
     Task(
@@ -72,8 +72,8 @@ TASKS = [
         },
     ),
     Task(
-        name="generate_database_couples",
-        f=generate_database_couples.run,
+        name="generate_database_index",
+        f=generate_database_index.run,
         group=DatabaseGroup,
     ),
     Task(
@@ -91,4 +91,4 @@ TASKS = [
     ),
     Task(name="generate_database", f=generate_database.run, group=MergingGroup),
 ]
-MAX_WORKERS = 7
+MAX_WORKERS = 8

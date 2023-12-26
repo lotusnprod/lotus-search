@@ -16,8 +16,8 @@ The dataset is from the [LOTUS](https://lotus.nprod.net) initiative and [Wikidat
 ### The docker compose way (recommended)
 
 ```shell
-docker-compose run -it backend python update.py
-docker-compose up
+docker-compose run -it backend python update.py  # You do not have to run it everytime, but that's recommended until we have a schema versioning
+docker-compose up --build
 ```
 
 The web server is then available on <http://localhost:3000> and the API on <http://localhost:5000>.

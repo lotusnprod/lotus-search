@@ -1,5 +1,7 @@
 import logging
 
+from fastapi import HTTPException
+
 from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
                         StructureInfo, StructureResult, TaxonInfo, TaxonResult)
 from model import DataModel
@@ -13,9 +15,13 @@ def get_matching_references_from_reference_in_item(
     dm: DataModel, item: Item
 ) -> set[int] | None:
     """Returns the WID of matching references."""
-    if item.reference_wid is None and item.reference_doi is None:
-        return set()
-    else:
+    references = set()
+    if item.reference_doi and item.reference_wid:
+        raise HTTPException(
+            status_code=500,
+            detail=f"You cannot provide both 'reference_doi' and 'reference_wid'",
+        )
+    elif item.reference_wid is not None or item.reference_doi is not None:
         # This needs to be explained in the API doc
         if item.reference_wid:
             if item.reference_wid in dm.get_references():
@@ -30,19 +36,19 @@ def get_matching_references_from_reference_in_item(
 
         return references
 
+    return None
+
 
 def get_matching_structures_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
     """Returns the WID of matching structures."""
-    if item.structure is None and item.structure_wid is None:
-        return set()
-    elif item.structure and item.structure_wid:
+    if item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
             detail=f"You cannot provide both 'structure' and 'structure_wid'",
         )
-    else:
+    elif item.structure is not None or item.structure_wid is not None:
         # This needs to be explained in the API doc
         if item.structure_wid:
             if item.structure_wid in dm.structures_set():
@@ -73,15 +79,15 @@ def get_matching_structures_from_structure_in_item(
                         )
             else:
                 structures = dm.structures_set()
-
             return structures
+
+    return None
 
 
 def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching taxa."""
-    if item.taxon_wid is None and item.taxon_name is None:
-        return set()
-    else:
+    if item.taxon_wid is not None or item.taxon_name is not None:
+        taxa = set()
         # This needs to be explained in the API doc
         if item.taxon_wid:
             if item.taxon_wid in dm.get_taxa():
@@ -93,8 +99,9 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
                     taxa = dm.get_taxa()
             else:
                 taxa = dm.get_taxa()
-
         return taxa
+
+    return None
 
 
 # TODO WIP
@@ -122,7 +129,6 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 #     return out
 
 
-# TODO OPTI Gets really slow in case of tons of structures (see TODO OPTI)
 def get_matching_references_from_structure_in_item(
     dm: DataModel, item: Item
 ) -> set[int]:
@@ -131,11 +137,7 @@ def get_matching_references_from_structure_in_item(
     if structures is None:
         return set()
 
-    out = set()
-    for structure in structures:
-        out.update(dm.get_references_containing_structure(structure))
-
-    return out
+    return dm.get_references_of_structures(structures)
 
 
 def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
@@ -144,11 +146,7 @@ def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set
     if taxa is None:
         return set()
 
-    out = set()
-    for taxon in taxa:
-        out.update(dm.get_references_containing_taxon(taxon))
-
-    return out
+    return dm.get_references_of_taxa(taxa)
 
 
 def get_matching_structures_from_reference_in_item(
@@ -159,11 +157,7 @@ def get_matching_structures_from_reference_in_item(
     if references is None:
         return set()
 
-    out = set()
-    for reference in references:
-        out.update(dm.get_structures_of_reference(reference))
-
-    return out
+    return dm.get_structures_of_references(references)
 
 
 def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
@@ -172,7 +166,9 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     if taxa is None:
         return set()
 
-    # Set recursive=True to have all the structures from the parents too
+    # TODO Set recursive=True to have all the structures from the parents too?
+    #      We may have issues if we have a lot, and it will require a bit more work to get it with the db
+    #      We could also have all the parenting relations in the DB and it would be much much faster
     out = set()
     for taxon in taxa:
         out.update(dm.get_structures_of_taxon(taxon))
@@ -186,11 +182,7 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     if structures is None:
         return set()
 
-    out = set()
-    for structure in structures:
-        out.update(dm.get_taxa_containing_structure(structure))
-
-    return out
+    return dm.get_taxa_of_structures(structures)
 
 
 def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int]:
@@ -199,8 +191,4 @@ def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[i
     if references is None:
         return set()
 
-    out = set()
-    for reference in references:
-        out.update(dm.get_taxa_of_reference(references))
-
-    return out
+    return dm.get_taxa_of_references(references)

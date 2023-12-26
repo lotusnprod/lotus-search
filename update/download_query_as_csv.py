@@ -32,8 +32,8 @@ def run(
                 run(path, query_file, output_file, 2, WD_URL)
                 return
             logging.error(f"Timeout for query from file {query_file}")
-            raise TimeoutError(f"Failed to download query {query_file}.... {t}")
-
+            raise TimeoutError(f"Failed to download query {query_file}....")
+    logging.info(f"Writing to {path / output_file}")
     with open(path / output_file, "w") as f:
         f.write(remove_wd_entity_prefix(text=t))
 

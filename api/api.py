@@ -62,7 +62,7 @@ async def search_couples(item: Item) -> CoupleResult:
         else {
             taxon: dm.get_structures_of_taxon(taxon)
             for structure in selected_structures
-            for taxon in dm.get_taxa_containing_structure(structure)
+            for taxon in dm.get_taxa_of_structure(structure)
         }
     )
 
@@ -126,7 +126,7 @@ async def search_structures(item: Item) -> StructureResult:
     if item.limit == 0:
         items = items
     else:
-        items = items[: item.limit]
+        items = items[:item.limit]
 
     return StructureResult(
         ids=matching_structures,

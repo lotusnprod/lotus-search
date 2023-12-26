@@ -16,14 +16,5 @@ class TestDataModel:
     def teardown(self):
         teardown(self.tmp_path)
 
-    def test_num(self):
-        assert self.dm.num_taxa() == 5, f"Expected taxa, got {self.dm.num_taxa()}"
-        assert (
-            self.dm.num_couples() == 3
-        ), f"Expected couples, got {self.dm.num_couples()}"
-        assert (
-            self.dm.num_structures() == 4
-        ), f"Expected structures, got {self.dm.num_structures()}"
-
     def test_get_taxa(self):
         assert len(self.dm.get_taxa()) == 5

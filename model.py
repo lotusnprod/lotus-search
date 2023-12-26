@@ -10,6 +10,7 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 
 from chemistry_helpers import fingerprint, standardize
+from storage.storage import Storage
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -25,6 +26,7 @@ class DataModel:
         if not hasattr(cls, "instance"):
             cls.instance = super(DataModel, cls).__new__(cls)
             cls.instance.db = cls.load_all_data(path)
+            cls.instance.storage = Storage(path)
         return cls.instance
 
     @classmethod
@@ -50,12 +52,6 @@ class DataModel:
 
     def num_references(self):
         return len(self.db["reference_doi"])
-
-    def num_couples(self):
-        return len(self.db["s2t"])
-
-    def num_couples_ref(self):
-        return len(self.db["ts2r"])
 
     ### Taxonomy
     @functools.lru_cache(maxsize=None)
@@ -169,6 +165,7 @@ class DataModel:
             log.warning(f"Impossible to find a structure with sid={sid}")
             return None
 
+    # TODO Move to DB?
     def get_structure_smiles_from_list_of_sids(self, sids: list[int]) -> list[str]:
         ids = [
             self.db["structure_id"][sid]
@@ -281,69 +278,47 @@ class DataModel:
                 yield rid
 
     ### Mixonomy
+    # Todo, we probably want to still return that as a set
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
-        if tid in self.db["t2s"]:
-            matching_structures = set(self.db["t2s"][tid])
-        else:
-            matching_structures = set()
+        matching_structures = self.storage.get_structures_of_taxon(tid)
 
         if recursive:
             if tid in self.db["taxonomy_children"]:
                 for parent in self.db["taxonomy_children"][tid]:
-                    if parent in self.db["t2s"]:
-                        for structure in self.db["t2s"][parent]:
-                            matching_structures.add(structure)
+                    for structure in self.storage.get_structures_of_taxon(parent):
+                        matching_structures.add(structure)
 
         return list(matching_structures)
 
-    def get_taxa_containing_structure(self, sid: int) -> set[int]:
-        if sid in self.db["s2t"]:
-            return self.db["s2t"][sid]
-        return set()
+    def get_taxa_of_structure(self, sid: int) -> set[int]:
+        return self.storage.get_taxa_of_structure(sid)
 
-    def get_structures_of_reference(self, rid: int) -> list[int]:
-        structures = [
-            sid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
-        ]
-        return structures
+    def get_structures_of_reference(self, rid: int) -> set[int]:
+        return self.storage.get_structures_of_reference(rid)
 
-    def get_taxa_of_reference(self, rid: int) -> list[int]:
-        taxa = [
-            tid for (tid, sid), rids in self.db["ts2r"].items() if rid in rids
-        ]
-        return taxa
+    def get_taxa_of_reference(self, rid: int) -> set[int]:
+        return self.storage.get_taxa_of_reference(rid)
 
-    # TODO this is not used, decide if we want to make both available and how
-    # refs: ref(structure) AND ref(taxon) or ref(structure AND taxon)
-    def get_references_containing_couple(self, sid: int, tid: int) -> list[int]:
-        matching_references = set()
-        relevant_keys = {
-            key: references_set
-            for key, references_set in self.db["ts2r"].items()
-            if key[0] == tid & key[1] == sid
-        }
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return list(matching_references)
+    def get_references_of_couple(self, sid: int, tid: int) -> set[int]:
+        return self.storage.get_references_of_couple(sid, tid)
 
-    def get_references_containing_structure(self, sid: int) -> list[int]:
-        matching_references = set()
-        relevant_keys = {
-            key: references_set
-            for key, references_set in self.db["ts2r"].items()
-            if key[1] == sid
-        }
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return list(matching_references)
+    def get_references_of_structure(self, sid: int) -> set[int]:
+        return self.storage.get_references_containing_structure(sid)
 
-    def get_references_containing_taxon(self, tid: int) -> list[int]:
-        matching_references = set()
-        relevant_keys = {
-            key: references_set
-            for key, references_set in self.db["ts2r"].items()
-            if key[0] == tid
-        }
-        for key, references_set in relevant_keys.items():
-            matching_references.update(references_set)
-        return list(matching_references)
+    def get_references_of_taxon(self, tid: int) -> set[int]:
+        return self.storage.get_references_containing_taxon(tid)
+
+    def get_references_of_structures(self, structures: set[int]) -> set[int]:
+        return self.storage.get_references_of_structures(structures)
+
+    def get_references_of_taxa(self, taxa: set[int]) -> set[int]:
+        return self.storage.get_references_of_taxa(taxa)
+
+    def get_structures_of_references(self, references: set[int]) -> set[int]:
+        return self.storage.get_structures_of_references(references)
+
+    def get_taxa_of_structures(self, structures: set[int]) -> set[int]:
+        return self.storage.get_taxa_of_structures(structures)
+
+    def get_taxa_of_references(self, references: set[int]) -> set[int]:
+        return self.storage.get_taxa_of_references(references)
