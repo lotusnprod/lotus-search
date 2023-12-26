@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### 2023-12-26
+
+    - Dependencies update
+    - Return empty sets instead of None
+
+### 2023-12-25
+
+    - Simplify code
+    - Switch to SQLite (WIP)
+
 ### 2023-12-17
 
     - Refactor code
