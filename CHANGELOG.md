@@ -6,6 +6,8 @@
 
     - Dependencies update
     - Return empty sets instead of None
+    - Switch to SQLAlchemy
+    - Move the schema of the db to version 2, delete your index.db
 
 ### 2023-12-25
 

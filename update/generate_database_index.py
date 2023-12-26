@@ -23,7 +23,6 @@ def run(path: Path) -> None:
             triplets.append((r, s, t))
 
     storage.add_triplets(triplets)
-    storage.close()
     logging.info("Finished generating index database")
 
 

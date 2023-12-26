@@ -25,7 +25,6 @@ def run(path: Path) -> None:
     taxon_ranks: dict[int, set[int]] = {}
     taxon_children: dict[int, set[int]] = {}
     taxon_parents_with_distance: dict[int, dict[int, int]] = {}
-    ranks_names: dict[int, str] = {}
 
     with open(path / "taxa.csv", "r") as t:
         reader = DictReader(t)
