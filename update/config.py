@@ -50,7 +50,7 @@ TASKS = [
         params={
             "query_file": "update/queries/taxa_all.rq",
             "output_file": "taxa_all.csv",
-#            "url": QLEVER_URL,
+            "url": QLEVER_URL,
         },
     ),
     Task(
