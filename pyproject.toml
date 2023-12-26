@@ -23,7 +23,7 @@ sqlalchemy = "^2.0.23"
 uvicorn = "^0.25.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.0.0"
+pytest = "^7.4.3"
 pytest-mock = "*"
 requests_mock = "*"
 
