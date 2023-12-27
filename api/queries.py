@@ -11,11 +11,9 @@ logging.basicConfig(
 )
 
 
-def get_matching_references_from_reference_in_item(
-    dm: DataModel, item: Item
-) -> set[int]:
+def get_matching_references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching references."""
-    references = set()
+    references = None
     if item.reference_doi and item.reference_wid:
         raise HTTPException(
             status_code=500,
@@ -26,6 +24,8 @@ def get_matching_references_from_reference_in_item(
         if item.reference_wid:
             if item.reference_wid in dm.get_references():
                 return {item.reference_wid}
+            else:
+                return set()
         else:
             if item.reference_doi:
                 references = set(dm.get_references_with_doi(item.reference_doi))
@@ -39,11 +39,10 @@ def get_matching_references_from_reference_in_item(
     return references
 
 
-def get_matching_structures_from_structure_in_item(
-    dm: DataModel, item: Item
-) -> set[int]:
+def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching structures."""
-    structures = set()
+    structures = None
+
     if item.structure and item.structure_wid:
         raise HTTPException(
             status_code=500,
@@ -54,6 +53,8 @@ def get_matching_structures_from_structure_in_item(
         if item.structure_wid:
             if item.structure_wid in dm.structures_set():
                 return {item.structure_wid}
+            else:
+                return set()
         else:
             if item.structure:
                 if item.substructure_search:
@@ -85,14 +86,16 @@ def get_matching_structures_from_structure_in_item(
     return structures
 
 
-def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching taxa."""
-    taxa = set()
+    taxa = None
     if item.taxon_wid is not None or item.taxon_name is not None:
         # This needs to be explained in the API doc
         if item.taxon_wid:
             if item.taxon_wid in dm.get_taxa():
                 return {item.taxon_wid}
+            else:
+                return set()
         else:
             if item.taxon_name:
                 taxa = set(dm.get_taxa_with_name_containing(item.taxon_name))
@@ -130,30 +133,38 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
 #     return out
 
 
-def get_matching_references_from_structure_in_item(
-    dm: DataModel, item: Item
-) -> set[int]:
+def get_matching_references_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     structures = get_matching_structures_from_structure_in_item(dm, item)
+
+    if structures is None:
+        return None
 
     return dm.get_references_of_structures(structures)
 
 
-def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
+
+    if taxa is None:
+        return None
 
     return dm.get_references_of_taxa(taxa)
 
 
-def get_matching_structures_from_reference_in_item(
-    dm: DataModel, item: Item
-) -> set[int]:
+def get_matching_structures_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     references = get_matching_references_from_reference_in_item(dm, item)
+
+    if references is None:
+        return None
 
     return dm.get_structures_of_references(references)
 
 
-def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
+
+    if taxa is None:
+        return None
 
     # TODO Set recursive=True to have all the structures from the parents too?
     #      We may have issues if we have a lot, and it will require a bit more work to get it with the db
@@ -165,13 +176,34 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     return out
 
 
-def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     structures = get_matching_structures_from_structure_in_item(dm, item)
+
+    if structures is None:
+        return None
 
     return dm.get_taxa_of_structures(structures)
 
 
-def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int]:
+def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     references = get_matching_references_from_reference_in_item(dm, item)
 
+    if references is None:
+        return None
+
     return dm.get_taxa_of_references(references)
+
+
+def combine_and_filter_outputs(sets: list[set], limit: int) -> list[int]:
+    non_none_outputs = [
+        s
+        for s in sets
+        if s is not None
+    ]
+
+    items = list(set.intersection(*non_none_outputs) if non_none_outputs else set())
+
+    if limit == 0:
+        return items
+    else:
+        return items[:limit]

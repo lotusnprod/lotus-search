@@ -1,12 +1,12 @@
 import logging
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
                         StructureInfo, StructureResult, TaxonInfo, TaxonResult)
 from api.queries import (  # get_matching_references_from_couple_in_item,
-    get_matching_references_from_reference_in_item,
+    combine_and_filter_outputs, get_matching_references_from_reference_in_item,
     get_matching_references_from_structure_in_item,
     get_matching_references_from_taxon_in_item,
     get_matching_structures_from_reference_in_item,
@@ -21,13 +21,14 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
-dm = DataModel()
-# Should likely move in the data model if that's used all the time
+
+def get_dm():
+    return DataModel()
+
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -50,7 +51,7 @@ app = FastAPI(
 
 @app.post("/couples")
 @version(1, 0)
-async def search_couples(item: Item) -> CoupleResult:
+async def search_couples(item: Item, dm: DataModel = Depends(get_dm)) -> CoupleResult:
     # WIP
     selected_references = get_matching_references_from_reference_in_item(dm, item)
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
@@ -101,7 +102,7 @@ async def search_couples(item: Item) -> CoupleResult:
 
 @app.post("/structures")
 @version(1, 0)
-async def search_structures(item: Item) -> StructureResult:
+async def search_structures(item: Item, dm: DataModel = Depends(get_dm)) -> StructureResult:
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(
         dm, item
     )
@@ -110,102 +111,63 @@ async def search_structures(item: Item) -> StructureResult:
         dm, item
     )
 
-    non_empty_sets = [
-        s
-        for s in [
-            matching_structures_by_reference,
-            matching_structures_by_taxon,
-            matching_structures_by_structure,
-        ]
-        if s
-    ]
-    matching_structures = set.intersection(*non_empty_sets) if non_empty_sets else set()
+    ids = combine_and_filter_outputs([matching_structures_by_reference,
+                                      matching_structures_by_taxon,
+                                      matching_structures_by_structure], limit=item.limit)
 
-    items = list(dm.get_dict_of_sid_to_smiles(matching_structures).items())
-
-    if item.limit == 0:
-        items = items
-    else:
-        items = items[:item.limit]
+    items = list(dm.get_dict_of_sid_to_smiles(ids).items())
 
     return StructureResult(
-        ids=matching_structures,
+        ids=ids,
         structures={sid: StructureInfo(smiles=value) for sid, value in items},
         description="Structures matching the query",
-        count=len(matching_structures),
+        count=len(items),
     )
 
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item) -> TaxonResult:
+async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResult:
     matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
     matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
 
-    non_empty_sets = [
-        s
-        for s in [
-            matching_taxa_by_reference,
-            matching_taxa_by_structure,
-            matching_taxa_by_taxon,
-        ]
-        if s
-    ]
-    matching_taxa = set.intersection(*non_empty_sets) if non_empty_sets else set()
+    ids = combine_and_filter_outputs([matching_taxa_by_reference,
+                                      matching_taxa_by_structure,
+                                      matching_taxa_by_taxon], limit=item.limit)
 
-    items = list(dm.get_dict_of_tid_to_taxon_name(matching_taxa).items())
-
-    if item.limit == 0:
-        items = items
-    else:
-        items = items[: item.limit]
+    items = list(dm.get_dict_of_tid_to_taxon_name(ids).items())
 
     return TaxonResult(
-        ids=matching_taxa,
+        ids=ids,
         taxa={tid: TaxonInfo(name=value) for tid, value in items},
         description="Taxa matching the query",
-        count=len(matching_taxa),
+        count=len(ids),
     )
 
 
 @app.post("/references")
 @version(1, 0)
-async def search_references(item: Item) -> ReferenceResult:
+async def search_references(item: Item, dm: DataModel = Depends(get_dm)) -> ReferenceResult:
     matching_references_by_reference = get_matching_references_from_reference_in_item(
         dm, item
     )
-    # matching_references_by_couple = get_matching_references_from_couple_in_item(
-    #     dm, item
-    # )
     matching_references_by_structure = get_matching_references_from_structure_in_item(
         dm, item
     )
     matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
 
-    non_empty_sets = [
-        s
-        for s in [
-            matching_references_by_reference,
-            matching_references_by_structure,
-            matching_references_by_taxon,
-        ]
-        if s
-    ]
-    matching_references = set.intersection(*non_empty_sets) if non_empty_sets else set()
+    ids = combine_and_filter_outputs([matching_references_by_reference,
+                                      matching_references_by_structure,
+                                      matching_references_by_taxon], limit=item.limit)
 
-    items = list(dm.get_dict_of_rid_to_reference_doi(matching_references).items())
-
-    if item.limit == 0:
-        items = items
-    else:
-        items = items[: item.limit]
+    items = list(dm.get_dict_of_rid_to_reference_doi(ids).items())
 
     return ReferenceResult(
-        ids=matching_references,
+        ids=ids,
         references={rid: ReferenceInfo(doi=value) for rid, value in items},
         description="References matching the query",
-        count=len(matching_references),
+        count=len(ids),
     )
 
 

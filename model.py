@@ -27,6 +27,7 @@ class DataModel:
             cls.instance = super(DataModel, cls).__new__(cls)
             cls.instance.db = cls.load_all_data(path)
             cls.instance.storage = Storage(path)
+            cls.instance.path = path
         return cls.instance
 
     @classmethod
@@ -176,6 +177,7 @@ class DataModel:
         return [self.db["structure_smiles"][i] for i in ids if 0 <= i < len(llen)]
 
     def get_dict_of_sid_to_smiles(self, sid: Iterable[int]) -> dict[int, str]:
+        # TODO This is gross lets use the db
         ids = {
             s: self.db["structure_id"][s] for s in sid if s in self.db["structure_id"]
         }
