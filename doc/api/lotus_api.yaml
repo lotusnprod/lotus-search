@@ -10,18 +10,16 @@ info:
 servers:
   - url: "https://search.nprod.net/v1_0"
 paths:
-  /couples:
-    $ref: "./paths/couples/post.yaml"
   /references:
     $ref: "./paths/references/post.yaml"
   /structures:
     $ref: "./paths/structures/post.yaml"
   /taxa:
     $ref: "./paths/taxa/post.yaml"
+  /triplets:
+    $ref: "./paths/triplets/post.yaml"
 components:
   schemas:
-    TripletResult:
-      $ref: "./schemas/tripletResult.yaml"
     Item:
       $ref: "./schemas/item.yaml"
     # ReferenceInfo:
@@ -36,5 +34,7 @@ components:
     #   $ref: "./schemas/taxonInfo.yaml"
     TaxonResult:
       $ref: "./schemas/taxonResult.yaml"
+    TripletResult:
+      $ref: "./schemas/tripletResult.yaml"
     HTTPValidationError:
       $ref: "./schemas/validationError.yaml"

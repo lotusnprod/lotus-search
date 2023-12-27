@@ -99,33 +99,6 @@ Content-Type: application/json
 
 ###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
-POST http://127.0.0.1:5000/v1_0/couples
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure_wid": 27151406,
-  "taxon_wid": 158572,
-  "reference_wid": 44488598
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
-POST http://127.0.0.1:5000/v1_0/couples
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": "Cl",
-  "substructure_search": true,
-  "taxon_name": "Gentiana septemfida",
-  "reference_doi": "10.1021/NP50081A018"
-}
-
-###
-
 # curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 POST http://127.0.0.1:5000/v1_0/references
 Accept: application/json
@@ -135,4 +108,31 @@ Content-Type: application/json
   "structure": "C",
   "substructure_search": true,
   "limit": 0
+}
+
+###
+
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+POST http://127.0.0.1:5000/v1_0/triplets
+Accept: application/json
+Content-Type: application/json
+
+{
+"structure_wid": 27151406,
+"taxon_wid": 158572,
+"reference_wid": 44488598
+}
+
+###
+
+# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+POST http://127.0.0.1:5000/v1_0/triplets
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": "Cl",
+  "substructure_search": true,
+  "taxon_name": "Gentiana septemfida",
+  "reference_doi": "10.1021/NP50081A018"
 }

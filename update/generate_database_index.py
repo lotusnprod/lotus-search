@@ -14,7 +14,7 @@ logging.basicConfig(
 def run(path: Path) -> None:
     storage = Storage(path)
     triplets = []
-    with open(path / "couples.csv", "r") as f:
+    with open(path / "triplets.csv", "r") as f:
         reader = DictReader(f)
         for row in reader:
             r = int(row["reference"])

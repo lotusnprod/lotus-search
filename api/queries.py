@@ -125,7 +125,7 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 #     for structure in structures:
 #         stru.update(dm.get_references_containing_structure(structure))
 
-#     # TODO get couples and intersect
+#     # TODO get triplets and intersect
 
 #     return out
 

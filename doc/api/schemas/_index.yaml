@@ -1,5 +1,3 @@
-coupleResult:
-  $ref: "./coupleResult.yaml"
 item:
   $ref: "./item.yaml"
 references:
@@ -14,5 +12,7 @@ taxa:
   $ref: "./taxa.yaml"
 taxonResult:
   $ref: "./taxonResult.yaml"
+tripletResult:
+  $ref: "./tripletResult.yaml"
 validationError:
   $ref: "./validationError.yaml"

@@ -11,15 +11,6 @@ MergingGroup = Group(name="merging", parallel=False)
 
 TASKS = [
     Task(
-        name="couples_referenced",
-        f=download_query_as_csv.run,
-        group=DownloadGroup,
-        params={
-            "query_file": "update/queries/couples_referenced.rq",
-            "output_file": "couples.csv",
-        },
-    ),
-    Task(
         name="dois",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -69,6 +60,15 @@ TASKS = [
         params={
             "query_file": "update/queries/taxa_ranks.rq",
             "output_file": "taxa_ranks.csv",
+        },
+    ),
+    Task(
+        name="triplets",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/triplets.rq",
+            "output_file": "triplets.csv",
         },
     ),
     Task(

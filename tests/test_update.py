@@ -42,7 +42,7 @@ class TestUpdate:
         assert (data_model.path / "database.pkl").exists()
         assert (data_model.path / "lotus.sdf").exists()
 
-    def test_couples(self):
+    def test_triplets(self):
         pass
         # TODO we need to test storage entirely now
 

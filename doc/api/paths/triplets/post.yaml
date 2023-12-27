@@ -1,10 +1,10 @@
 post:
-  operationId: search_couples
+  operationId: search_triplets
   security: []
   summary: |
-    Search couples using parameters
+    Search triplets using parameters
   description: |
-    Search couples using parameters. Additional parameters allow to specify the kind of search and the parameters.
+    Search triplets using parameters. Additional parameters allow to specify the kind of search and the parameters.
   requestBody:
     description: Query
     required: true
@@ -15,13 +15,13 @@ post:
 
   responses:
     '200':
-      description: At least one couple matching the given search could be found
+      description: At least one triplet matching the given search could be found
       content:
         application/json:
           schema:
-            $ref: '../../schemas/coupleResult.yaml'
+            $ref: '../../schemas/tripletResult.yaml'
     '404':
-      description: No couple matching the given search could be found
+      description: No triplet matching the given search could be found
       content:
           application/json:
               schema:
@@ -29,4 +29,4 @@ post:
                 properties:
                     message:
                       type: string
-                      example: No couple matching the given search could be found
+                      example: No triplet matching the given search could be found

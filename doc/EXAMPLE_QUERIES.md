@@ -42,14 +42,14 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 
 ## Couples
 
-### Get all the couples that match the query
+### Get all the triplets that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
 ```
 
-### Get all the couples with chlorine
+### Get all the triplets with chlorine
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/couples -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
 ```
