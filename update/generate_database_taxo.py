@@ -49,32 +49,33 @@ def run(path: Path) -> None:
             taxon_children[parent_id].add(taxon_id)
             taxon_parents_with_distance[taxon_id][parent_id] = 1
             taxon_ranks[taxon_id].add(taxon_rank_id)
+        logging.info(f" Found {len(taxon_direct_parents)} taxa in which chemicals were found in.")
 
-        logging.info(f" Found {len(taxon_direct_parents)} taxa")
+    with open(path / "taxa_names.csv", "r") as f:
+        reader = DictReader(f)
+        dict_taxon_names: dict = {int(row["taxon"]): row["taxon_name"] for row in reader}
+        logging.info(f" Found {len(dict_taxon_names)} taxa with name.")
+
+    with open(path / "taxa_ranks.csv", "r") as f:
+        reader = DictReader(f)
+        dict_taxon_ranks: dict = {int(row["taxon"]): convert_to_int_safe(row["taxon_rank"]) for row in reader}
+        logging.info(f" Found {len(dict_taxon_ranks)} taxa with rank.")
 
     with open(path / "taxa_parents.csv", "r") as f:
         reader = DictReader(f)
         for row in reader:
             taxon_id = convert_to_int_safe(row["taxon"])
-            taxon_name = str(row["taxon_name"])
-            taxon_rank_id = convert_to_int_safe(row["taxon_rank"])
             relative_id = convert_to_int_safe(row["relative"])
-            relative_name = str(row["relative_name"])
-            relative_rank_id = convert_to_int_safe(row["relative_rank"])
             distance = convert_to_int_safe(row["distance"])
 
             if relative_id not in taxon_children:
                 taxon_children[relative_id] = set()
             if taxon_id not in taxon_direct_parents:
                 taxon_direct_parents[taxon_id] = set()
-            if taxon_id not in taxon_names:
-                taxon_names[taxon_id] = taxon_name
-            if relative_id not in taxon_names:
-                taxon_names[relative_id] = relative_name
-            if taxon_id not in taxon_ranks:
-                taxon_ranks[taxon_id] = set()
-            if relative_id not in taxon_ranks:
-                taxon_ranks[relative_id] = set()
+            if taxon_id not in dict_taxon_ranks:
+                dict_taxon_ranks[taxon_id] = set()
+            if relative_id not in dict_taxon_ranks:
+                dict_taxon_ranks[relative_id] = set()
             if taxon_id not in taxon_parents_with_distance:
                 taxon_parents_with_distance[taxon_id] = {}
 
@@ -87,24 +88,18 @@ def run(path: Path) -> None:
                 for child_id in taxon_children[taxon_id]:
                     taxon_children[relative_id].add(child_id)
 
-            taxon_ranks[taxon_id].add(taxon_rank_id)
-
-            taxon_ranks[relative_id].add(relative_rank_id)
-
             taxon_parents_with_distance[taxon_id][relative_id] = distance
+        logging.info(f" Found {len(taxon_parents_with_distance)} taxa with parents.")
 
-    with open(path / "taxa_ranks.csv", "r") as f:
+    with open(path / "ranks_names.csv", "r") as f:
         reader = DictReader(f)
         ranks_names: dict = {int(row["rank"]): row["rankLabel"] for row in reader}
-
-    with open(path / "taxa_all.csv", "r") as f:
-        reader = DictReader(f)
-        dict_all_taxa: dict = {int(row["taxon"]): row["taxon_name"] for row in reader}
+        logging.info(f" Found {len(ranks_names)} ranks with name.")
 
     database = {
         "taxonomy_direct_parents": taxon_direct_parents,
-        "taxonomy_names": dict_all_taxa,
-        "taxonomy_ranks": taxon_ranks,
+        "taxonomy_names": dict_taxon_names,
+        "taxonomy_ranks": dict_taxon_ranks,
         "taxonomy_children": taxon_children,
         "taxonomy_parents_with_distance": taxon_parents_with_distance,
         "taxonomy_ranks_names": ranks_names,
