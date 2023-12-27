@@ -133,5 +133,6 @@ Content-Type: application/json
 
 {
   "structure": "C",
-  "substructure_search": true
+  "substructure_search": true,
+  "limit": 0
 }

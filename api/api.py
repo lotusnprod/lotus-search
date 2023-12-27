@@ -1,20 +1,19 @@
 import logging
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 
-from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
-                        StructureInfo, StructureResult, TaxonInfo, TaxonResult)
-from api.queries import (  # get_matching_references_from_couple_in_item,
-    combine_and_filter_outputs, get_matching_references_from_reference_in_item,
-    get_matching_references_from_structure_in_item,
-    get_matching_references_from_taxon_in_item,
-    get_matching_structures_from_reference_in_item,
-    get_matching_structures_from_structure_in_item,
-    get_matching_structures_from_taxon_in_item,
-    get_matching_taxa_from_reference_in_item,
-    get_matching_taxa_from_structure_in_item,
-    get_matching_taxa_from_taxon_in_item)
+from api.models import (Item, ReferenceInfo, ReferenceResult,
+                        StructureInfo, StructureResult, TaxonInfo, TaxonResult, TripletResult)
+from api.queries import (combine_and_filter_outputs, get_matching_references_from_reference_in_item,
+                         get_matching_references_from_structure_in_item,
+                         get_matching_references_from_taxon_in_item,
+                         get_matching_structures_from_reference_in_item,
+                         get_matching_structures_from_structure_in_item,
+                         get_matching_structures_from_taxon_in_item,
+                         get_matching_taxa_from_reference_in_item,
+                         get_matching_taxa_from_structure_in_item,
+                         get_matching_taxa_from_taxon_in_item)
 from model import DataModel
 
 logging.basicConfig(
@@ -49,54 +48,44 @@ app = FastAPI(
 )
 
 
-@app.post("/couples")
+@app.post("/triplets")
 @version(1, 0)
-async def search_couples(item: Item, dm: DataModel = Depends(get_dm)) -> CoupleResult:
-    # WIP
+async def search_triplets(item: Item, dm: DataModel = Depends(get_dm)) -> TripletResult:
     selected_references = get_matching_references_from_reference_in_item(dm, item)
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    structures_of_selected_taxa = (
-        {taxon: dm.get_structures_of_taxon(taxon) for taxon in selected_taxa}
-        if selected_taxa
-        else {
-            taxon: dm.get_structures_of_taxon(taxon)
-            for structure in selected_structures
-            for taxon in dm.get_taxa_of_structure(structure)
-        }
-    )
-
-    # TODO add references
-
-    couples = {
-        (structure, taxon)
-        for taxon, structures in structures_of_selected_taxa.items()
-        for structure in structures
-        if not selected_structures or structure in selected_structures
-    }
+    triplets_set = dm.get_triples_for(reference_ids=selected_references,
+                                      structure_ids=selected_structures,
+                                      taxon_ids=selected_taxa)
 
     if item.limit == 0:
-        couples = list(couples)
+        triplets = list(triplets_set)
     else:
-        couples = list(couples)[: item.limit]
+        triplets = list(triplets_set)[:item.limit]
 
-    return CoupleResult(
-        ids=[{"structure": structure, "taxon": taxon} for structure, taxon in couples],
+    return TripletResult(
+        triplets=triplets,
+        references={
+            wid: ReferenceInfo(doi=value)
+            for wid, value in dm.get_dict_of_rid_to_reference_doi(
+                [reference_id for reference_id, _, _ in triplets]
+            ).items()
+        },
         structures={
             wid: StructureInfo(smiles=value)
             for wid, value in dm.get_dict_of_sid_to_smiles(
-                [first_value for first_value, _ in couples]
+                [structure_id for _, structure_id, _ in triplets]
             ).items()
         },
         taxa={
             wid: TaxonInfo(name=value)
             for wid, value in dm.get_dict_of_tid_to_taxon_name(
-                [taxon_name for _, taxon_name in couples]
+                [taxon_id for _, _, taxon_id in triplets]
             ).items()
         },
-        description="Couples matching the query",
-        count=len(couples),
+        description="Triplets matching the query",
+        count=len(triplets),
     )
 
 
@@ -115,13 +104,13 @@ async def search_structures(item: Item, dm: DataModel = Depends(get_dm)) -> Stru
                                       matching_structures_by_taxon,
                                       matching_structures_by_structure], limit=item.limit)
 
-    items = list(dm.get_dict_of_sid_to_smiles(ids).items())
+    dict_items = dm.get_dict_of_sid_to_smiles(ids)
 
     return StructureResult(
-        ids=ids,
-        structures={sid: StructureInfo(smiles=value) for sid, value in items},
+        ids=dict_items.keys(),
+        structures={sid: StructureInfo(smiles=value) for sid, value in dict_items.items()},
         description="Structures matching the query",
-        count=len(items),
+        count=len(dict_items),
     )
 
 
@@ -136,13 +125,13 @@ async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResul
                                       matching_taxa_by_structure,
                                       matching_taxa_by_taxon], limit=item.limit)
 
-    items = list(dm.get_dict_of_tid_to_taxon_name(ids).items())
+    dict_items = dm.get_dict_of_tid_to_taxon_name(ids)
 
     return TaxonResult(
-        ids=ids,
-        taxa={tid: TaxonInfo(name=value) for tid, value in items},
+        ids=dict_items.keys(),
+        taxa={tid: TaxonInfo(name=value) for tid, value in dict_items.items()},
         description="Taxa matching the query",
-        count=len(ids),
+        count=len(dict_items),
     )
 
 
@@ -161,13 +150,13 @@ async def search_references(item: Item, dm: DataModel = Depends(get_dm)) -> Refe
                                       matching_references_by_structure,
                                       matching_references_by_taxon], limit=item.limit)
 
-    items = list(dm.get_dict_of_rid_to_reference_doi(ids).items())
+    dict_items = dm.get_dict_of_rid_to_reference_doi(ids)
 
     return ReferenceResult(
-        ids=ids,
-        references={rid: ReferenceInfo(doi=value) for rid, value in items},
+        ids=dict_items.keys(),
+        references={rid: ReferenceInfo(doi=value) for rid, value in dict_items.items()},
         description="References matching the query",
-        count=len(ids),
+        count=len(dict_items),
     )
 
 

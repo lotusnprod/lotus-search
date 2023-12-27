@@ -1,4 +1,4 @@
-title: CoupleResult
+title: TripletResult
 type: object
 properties:
   ids:
@@ -7,17 +7,10 @@ properties:
       IDs
     type: array
     items:
-      type: object
-      properties:
-        reference:
-          type: integer
-          example: 44488598
-        structure:
-          type: integer
-          example: 27151406
-        taxon:
-          type: integer
-          example: 158572
+      type: array
+      items: number
+      description: |
+        Triplets of reference, structure and taxon IDs
   references:
     title: References
     description: |

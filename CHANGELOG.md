@@ -5,9 +5,10 @@
 ### 2023-12-26
 
     - Dependencies update
-    - Return empty sets instead of None
     - Switch to SQLAlchemy
     - Move the schema of the db to version 2, delete your index.db
+    - Triplet endpoints
+    - Tests for API
 
 ### 2023-12-25
 

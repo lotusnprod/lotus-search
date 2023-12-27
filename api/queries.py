@@ -2,13 +2,10 @@ import logging
 
 from fastapi import HTTPException
 
-from api.models import (CoupleResult, Item, ReferenceInfo, ReferenceResult,
-                        StructureInfo, StructureResult, TaxonInfo, TaxonResult)
+from api.models import Item
 from model import DataModel
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def get_matching_references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
@@ -195,11 +192,7 @@ def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[i
 
 
 def combine_and_filter_outputs(sets: list[set], limit: int) -> list[int]:
-    non_none_outputs = [
-        s
-        for s in sets
-        if s is not None
-    ]
+    non_none_outputs = [s for s in sets if s is not None]
 
     items = list(set.intersection(*non_none_outputs) if non_none_outputs else set())
 

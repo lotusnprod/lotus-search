@@ -301,9 +301,6 @@ class DataModel:
     def get_taxa_of_reference(self, rid: int) -> set[int]:
         return self.storage.get_taxa_of_reference(rid)
 
-    def get_references_of_couple(self, sid: int, tid: int) -> set[int]:
-        return self.storage.get_references_of_couple(sid, tid)
-
     def get_references_of_structure(self, sid: int) -> set[int]:
         return self.storage.get_references_containing_structure(sid)
 
@@ -324,3 +321,9 @@ class DataModel:
 
     def get_taxa_of_references(self, references: set[int]) -> set[int]:
         return self.storage.get_taxa_of_references(references)
+
+    def get_triples_for(self,
+                        reference_ids: set[int] | None,
+                        structure_ids: set[int] | None,
+                        taxon_ids: set[int] | None) -> set[tuple[int, int, int]]:
+        return self.storage.get_triplets_for(reference_ids, structure_ids, taxon_ids)

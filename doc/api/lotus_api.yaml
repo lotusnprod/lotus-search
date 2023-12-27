@@ -20,8 +20,8 @@ paths:
     $ref: "./paths/taxa/post.yaml"
 components:
   schemas:
-    CoupleResult:
-      $ref: "./schemas/coupleResult.yaml"
+    TripletResult:
+      $ref: "./schemas/tripletResult.yaml"
     Item:
       $ref: "./schemas/item.yaml"
     # ReferenceInfo:
