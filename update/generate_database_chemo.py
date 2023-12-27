@@ -95,6 +95,7 @@ def run(path: Path) -> None:
         pickle.dump(database, f)
     logging.info("Finished dumping")
 
+    logging.info("Starting SDF")
     smols_and_wids = list(zip(p_smols, p_links))
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
