@@ -1,7 +1,6 @@
 from update import (download_query_as_csv, generate_database,
                     generate_database_biblio, generate_database_chemo,
                     generate_database_index, generate_database_taxo)
-from update.common import QLEVER_URL
 from update.models import Group, Task
 
 DownloadGroup = Group(name="downloads", parallel=True)
@@ -11,37 +10,48 @@ MergingGroup = Group(name="merging", parallel=False)
 
 TASKS = [
     Task(
-        name="dois",
+        name="references",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
             "query_file": "update/queries/references.rq",
-            "output_file": "dois.csv",
+            "output_file": "references.csv",
         },
     ),
     Task(
-        name="smiles",
+        name="ranks_names",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/ranks_names.rq",
+            "output_file": "ranks_names.csv",
+        },
+    ),
+    Task(
+        name="structures",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
             "query_file": "update/queries/structures.rq",
-            "output_file": "smiles.csv",
+            "output_file": "structures.csv",
         },
     ),
     Task(
         name="taxa",
         f=download_query_as_csv.run,
         group=DownloadGroup,
-        params={"query_file": "update/queries/taxa.rq", "output_file": "taxa.csv"},
+        params={
+            "query_file": "update/queries/taxa.rq",
+            "output_file": "taxa.csv"
+        },
     ),
     Task(
-        name="taxa_all",
+        name="taxa_names",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
-            "query_file": "update/queries/taxa_all.rq",
-            "output_file": "taxa_all.csv",
-            "url": QLEVER_URL,
+            "query_file": "update/queries/taxa_names.rq",
+            "output_file": "taxa_names.csv",
         },
     ),
     Task(

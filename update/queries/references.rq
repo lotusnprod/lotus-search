@@ -1,13 +1,17 @@
-SELECT DISTINCT ?reference ?reference_doi WITH {
-      SELECT DISTINCT ?reference WHERE {
-        # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
-        ?structure wdt:P235 [].
-        ?structure p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
-      }
-      # LIMIT 1000 # Test
-    } AS %refs WHERE {
-      SELECT DISTINCT ?reference ?reference_doi WHERE { 
-        INCLUDE %refs
-                ?reference wdt:P356 ?reference_doi.
-      }
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+SELECT ?reference ?reference_doi WITH {
+  SELECT DISTINCT ?reference WHERE {
+    # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
+    ?structure wdt:P235 [].
+    ?structure p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
     }
+    # LIMIT 1000 # Test
+  } AS %refs WHERE {
+  SELECT DISTINCT ?reference ?reference_doi WHERE {
+  INCLUDE %refs
+  ?reference wdt:P356 ?reference_doi.
+  }
+}

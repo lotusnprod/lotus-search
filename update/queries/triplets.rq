@@ -1,3 +1,8 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?structure ?taxon ?reference WHERE {
     # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
     ?structure wdt:P235 [].

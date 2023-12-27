@@ -1,16 +1,13 @@
-SELECT ?taxon ?taxon_name ?taxon_rank ?relative ?relative_name ?relative_rank ?distance WITH {
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?taxon ?relative ?distance WITH {
   SELECT DISTINCT ?taxon WHERE {
     [] wdt:P703 ?subtax.
     ?subtax wdt:P171 ?taxon.
   }
 } AS %taxa WHERE {
-  SELECT DISTINCT ?taxon ?taxon_name ?taxon_rank ?relative ?relative_name ?relative_rank (COUNT(DISTINCT ?rel) AS ?distance) WHERE  { 
+  SELECT DISTINCT ?taxon ?relative (COUNT(DISTINCT ?rel) AS ?distance) WHERE  {
   INCLUDE %taxa
-  ?taxon wdt:P171* ?rel;
-         wdt:P105 ?taxon_rank;
-         wdt:P225 ?taxon_name.
+  ?taxon wdt:P171* ?rel.
   ?rel wdt:P171+ ?relative.
-  ?relative wdt:P105 ?relative_rank;
-            wdt:P225 ?relative_name.
-  } GROUP BY ?taxon ?taxon_name ?taxon_rank ?relative ?relative_name ?relative_rank
+  } GROUP BY ?taxon ?relative
 }

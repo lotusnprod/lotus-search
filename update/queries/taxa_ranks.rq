@@ -1,4 +1,4 @@
-SELECT ?rank ?rankLabel WHERE {
-    ?rank wdt:P31 wd:Q427626.
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?taxon ?taxon_rank WHERE {
+    ?taxon wdt:P105 ?taxon_rank.
 }

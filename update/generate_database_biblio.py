@@ -12,7 +12,7 @@ logging.basicConfig(
 def run(path: Path) -> None:
     reference_doi: dict[int, str] = {}
 
-    with open(path / "dois.csv", "r") as f:
+    with open(path / "references.csv", "r") as f:
         reader = DictReader(f)
         dict_doi: dict = {int(row["reference"]): row["reference_doi"] for row in reader}
 

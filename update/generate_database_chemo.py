@@ -22,7 +22,7 @@ logging.basicConfig(
 def run(path: Path) -> None:
     smileses = []
     links = []
-    with open(path / "smiles.csv", "r") as f:
+    with open(path / "structures.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
         for x in reader:
