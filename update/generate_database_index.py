@@ -20,9 +20,20 @@ def run(path: Path) -> None:
             r = int(row["reference"])
             s = int(row["structure"])
             t = int(row["taxon"])
-            triplets.append((r, s, t))
+            triplets.append({"reference_id": r, "structure_id": s, "taxon_id": t})
 
-    storage.add_triplets(triplets)
+    storage.upsert_triplets(triplets)
+
+    with open(path / "references.csv", "r") as f:
+        reader = DictReader(f)
+        references = [{"id": int(row["reference"]), "doi": row["reference_doi"]} for row in reader]
+
+    with open(path / "smiles_processed.csv", "r") as f:
+        reader = DictReader(f)
+        structures = [{"id": int(row["structure"]), "smiles": row["structure_smiles"]} for row in reader]
+
+    storage.upsert_structures(structures)
+    storage.upsert_references(references)
     logging.info("Finished generating index database")
 
 

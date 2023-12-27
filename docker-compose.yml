@@ -11,7 +11,7 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - backend_data:/app/data
+      - ./data:/app/data
   frontend:
     build: frontend/
     ports:
@@ -20,5 +20,3 @@ services:
       - ./frontend/src:/app/src
     depends_on:
       - backend
-volumes:
-  backend_data:

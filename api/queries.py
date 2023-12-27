@@ -23,13 +23,8 @@ def get_matching_references_from_reference_in_item(dm: DataModel, item: Item) ->
                 return {item.reference_wid}
             else:
                 return set()
-        else:
-            if item.reference_doi:
-                references = set(dm.get_references_with_doi(item.reference_doi))
-                if references is None:
-                    references = dm.get_references()
-            else:
-                references = dm.get_references()
+        elif item.reference_doi:
+            references = dm.get_references_with_doi(item.reference_doi)
 
         return references
 
@@ -103,32 +98,6 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
         return taxa
 
     return taxa
-
-
-# TODO WIP
-# def get_matching_references_from_couple_in_item(dm: DataModel, item: Item) -> set[int]:
-#     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
-#     # We need to get all the matching structures
-#     structures = get_matching_structures_from_structure_in_item(dm, item)
-
-#     if taxa is None:
-#         return None
-
-#     if structures is None:
-#         return None
-
-#     tax = set()
-#     for taxon in taxa:
-#         tax.update(dm.get_structures_of_taxon(taxon))
-
-#     stru = set()
-#     for structure in structures:
-#         stru.update(dm.get_references_containing_structure(structure))
-
-#     # TODO get triplets and intersect
-
-#     return out
-
 
 def get_matching_references_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     structures = get_matching_structures_from_structure_in_item(dm, item)

@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.11-slim
+FROM docker.io/library/python:3.12-slim
 RUN apt update && apt install -y libxrender1 libxtst6 libxi6
 RUN pip install poetry
 COPY poetry.lock pyproject.toml ./

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### 2023-12-27
+    
+    - More refactoring of SQLite
+    - Move DOIs and SMILESes to the DB
+
 ### 2023-12-26
 
     - Dependencies update

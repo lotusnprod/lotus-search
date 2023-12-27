@@ -81,8 +81,14 @@ def run(path: Path) -> None:
 
     logging.info("Finished generating the chemical libraries")
 
+    with open(path / "smiles_processed.csv", "w") as f:
+        # Write a csv with header, structure_id and structure_smiles
+        # from the two arrays p_links and p_smileses  respectively
+        csv_file = csv.writer(f)
+        csv_file.writerow(["structure", "structure_smiles"])
+        csv_file.writerows(zip(p_links, p_smileses))
+
     database = {
-        "structure_smiles": p_smileses,
         "structure_wid": p_links,
         "structure_sim_fps": p_sim_fps,
         "structure_sim_h_fps": p_sim_h_fps,
@@ -100,7 +106,7 @@ def run(path: Path) -> None:
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         chunks = [
-            smols_and_wids[i : i + 1000] for i in range(0, len(smols_and_wids), 1000)
+            smols_and_wids[i:i + 1000] for i in range(0, len(smols_and_wids), 1000)
         ]
         sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
         sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]

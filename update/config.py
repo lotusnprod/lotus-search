@@ -1,5 +1,5 @@
 from update import (download_query_as_csv, generate_database,
-                    generate_database_biblio, generate_database_chemo,
+                    generate_database_chemo,
                     generate_database_index, generate_database_taxo)
 from update.models import Group, Task
 
@@ -82,11 +82,6 @@ TASKS = [
         },
     ),
     Task(
-        name="generate_database_index",
-        f=generate_database_index.run,
-        group=DatabaseGroup,
-    ),
-    Task(
         name="generate_database_chemo",
         f=generate_database_chemo.run,
         group=DatabaseGroup,
@@ -95,9 +90,9 @@ TASKS = [
         name="generate_database_taxo", f=generate_database_taxo.run, group=DatabaseGroup
     ),
     Task(
-        name="generate_database_biblio",
-        f=generate_database_biblio.run,
-        group=DatabaseGroup,
+        name="generate_database_index",
+        f=generate_database_index.run,
+        group=MergingGroup,
     ),
     Task(name="generate_database", f=generate_database.run, group=MergingGroup),
 ]

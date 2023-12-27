@@ -6,7 +6,6 @@ from model import DataModel
 from tests.common import setup_from_fixture
 
 EXPECTED_KEYS_CHEMO = [
-    "structure_smiles",
     "structure_wid",
     "structure_sim_fps",
     "structure_sim_h_fps",
@@ -24,10 +23,6 @@ EXPECTED_KEYS_TAXO = [
     "taxonomy_ranks_names",
 ]
 
-EXPECTED_KEYS_BIBLIO = [
-    "reference_doi",
-]
-
 @pytest.fixture
 def data_model(tmp_path):
     setup_from_fixture(tmp_path)
@@ -38,7 +33,6 @@ class TestUpdate:
     def test_pkls_exist(self, data_model):
         assert (data_model.path / "database_chemo.pkl").exists()
         assert (data_model.path / "database_taxo.pkl").exists()
-        assert (data_model.path / "database_biblio.pkl").exists()
         assert (data_model.path / "database.pkl").exists()
         assert (data_model.path / "lotus.sdf").exists()
 
@@ -63,27 +57,16 @@ class TestUpdate:
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
             # We likely want to test the content as well
 
-    def test_biblio(self, data_model):
-        with open(data_model.path / "database_biblio.pkl", "rb") as f:
-            db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_BIBLIO)
-            for expected_key in EXPECTED_KEYS_BIBLIO:
-                assert expected_key in db
-                assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
-            # We likely want to test the content as well
-
     def test_merge(self, data_model):
         with open(data_model.path / "database.pkl", "rb") as f:
             db = pickle.load(f)
             assert len(db) == len(
                 EXPECTED_KEYS_TAXO
                 + EXPECTED_KEYS_CHEMO
-                + EXPECTED_KEYS_BIBLIO
             )
             for expected_key in (
                 EXPECTED_KEYS_TAXO
                 + EXPECTED_KEYS_CHEMO
-                + EXPECTED_KEYS_BIBLIO
             ):
                 assert expected_key in db
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"

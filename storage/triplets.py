@@ -1,4 +1,4 @@
-from sqlalchemy import Index
+from sqlalchemy import Index, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage.base import Base
@@ -19,7 +19,8 @@ class Triplets(Base):
         Index("rs", "reference_id", "structure_id"),
         Index("rt", "reference_id", "taxon_id"),
         Index("st", "structure_id", "taxon_id"),
-        Index("rst", "reference_id", "structure_id", "taxon_id")
+        Index("rst", "reference_id", "structure_id", "taxon_id"),
+        UniqueConstraint('reference_id', 'structure_id', 'taxon_id', name='unique_rst')
     )
 
     def __repr__(self):

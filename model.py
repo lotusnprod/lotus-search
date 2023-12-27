@@ -10,7 +10,10 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 
 from chemistry_helpers import fingerprint, standardize
+from storage.references import References
 from storage.storage import Storage
+from storage.structures import Structures
+from storage.triplets import Triplets
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -57,15 +60,8 @@ class DataModel:
     ### Taxonomy
     @functools.lru_cache(maxsize=None)
     def get_taxa(self) -> dict[int, str]:
+        # TODO replace with DB
         return self.db["taxonomy_names"]
-
-    # TODO Not used
-    # def get_taxon_name_from_list_of_tids(self, tids: list[int]) -> list[str]:
-    #     return [
-    #         self.db["taxonomy_names"][tid]
-    #         for tid in tids
-    #         if tid in self.db["taxonomy_names"]
-    #     ]
 
     def get_dict_of_tid_to_taxon_name(self, tid: Iterable[int]) -> dict[int, str]:
         return {
@@ -156,6 +152,7 @@ class DataModel:
     ### Structureonomy
     @functools.lru_cache(maxsize=None)
     def structures_set(self) -> set[int]:
+        # TODO use DB
         return set(self.db["structure_wid"])
 
     def get_structure_smiles_from_sid(self, sid: int) -> str | None:
@@ -166,27 +163,27 @@ class DataModel:
             log.warning(f"Impossible to find a structure with sid={sid}")
             return None
 
-    # TODO Move to DB?
-    def get_structure_smiles_from_list_of_sids(self, sids: list[int]) -> list[str]:
+    def get_structure_smiles_from_list_of_sids(self, sids: list[int]) -> set[str]:
+        # TODO get rid of this conversion ideally
         ids = [
             self.db["structure_id"][sid]
             for sid in sids
             if sid in self.db["structure_id"]
         ]
-        llen = self.db["structure_smiles"]
-        return [self.db["structure_smiles"][i] for i in ids if 0 <= i < len(llen)]
+        with self.storage.session() as session:
+            result = session.query(Structures.id, Structures.smiles).filter(Structures.id.in_(sids))
+            return {row[1] for row in result}
 
-    def get_dict_of_sid_to_smiles(self, sid: Iterable[int]) -> dict[int, str]:
-        # TODO This is gross lets use the db
-        ids = {
-            s: self.db["structure_id"][s] for s in sid if s in self.db["structure_id"]
-        }
-        llen = self.db["structure_smiles"]
-        return {
-            sid: self.db["structure_smiles"][i]
-            for sid, i in ids.items()
-            if 0 <= i < len(llen)
-        }
+    def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
+        # TODO get rid of this conversion ideally?
+        ids = [
+            self.db["structure_id"][sid]
+            for sid in sids
+            if sid in self.db["structure_id"]
+        ]
+        with self.storage.session() as session:
+            result = session.query(Structures.id, Structures.smiles).filter(Structures.id.in_(sids))
+            return {row[0]: row[1] for row in result}
 
     def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
@@ -250,7 +247,9 @@ class DataModel:
     ### Biblionomy
     @functools.lru_cache(maxsize=None)
     def get_references(self) -> dict[int, str]:
-        return self.db["reference_doi"]
+        with self.storage.session() as session:
+            result = session.query(References.id, References.doi)
+            return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
         return [
@@ -260,9 +259,9 @@ class DataModel:
         ]
 
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
-        return {
-            r: self.db["reference_doi"][r] for r in rid if r in self.db["reference_doi"]
-        }
+        with self.storage.session() as session:
+            result = session.query(References.id, References.doi).filter(References.id.in_(rid))
+            return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
         try:
@@ -273,54 +272,51 @@ class DataModel:
             return None
         return self.db["reference_doi"][rid]
 
-    # TODO not sure it is the best way to proceed
-    def get_references_with_doi(self, doi: str) -> Iterable[int]:
-        for rid, d in self.db["reference_doi"].items():
-            if doi == d:
-                yield rid
+    def get_references_with_doi(self, doi: str) -> set[int]:
+        return self.storage.find_references_with_doi(doi)
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
-        matching_structures = self.storage.get_structures_of_taxon(tid)
+        matching_structures = self.storage.get_generic_of_generic(Triplets.structure_id, Triplets.taxon_id, tid)
 
         if recursive:
             if tid in self.db["taxonomy_children"]:
                 for parent in self.db["taxonomy_children"][tid]:
-                    for structure in self.storage.get_structures_of_taxon(parent):
+                    for structure in self.get_structures_of_taxon(parent):
                         matching_structures.add(structure)
 
         return list(matching_structures)
 
     def get_taxa_of_structure(self, sid: int) -> set[int]:
-        return self.storage.get_taxa_of_structure(sid)
+        return self.storage.get_generic_of_generic(Triplets.taxon_id, Triplets.structure_id, sid)
 
     def get_structures_of_reference(self, rid: int) -> set[int]:
-        return self.storage.get_structures_of_reference(rid)
+        return self.storage.get_generic_of_generic(Triplets.structure_id, Triplets.reference_id, rid)
 
     def get_taxa_of_reference(self, rid: int) -> set[int]:
-        return self.storage.get_taxa_of_reference(rid)
+        return self.storage.get_generic_of_generic(Triplets.taxon_id, Triplets.reference_id, rid)
 
     def get_references_of_structure(self, sid: int) -> set[int]:
-        return self.storage.get_references_containing_structure(sid)
+        return self.storage.get_generic_of_generic(Triplets.reference_id, Triplets.structure_id, sid)
 
     def get_references_of_taxon(self, tid: int) -> set[int]:
-        return self.storage.get_references_containing_taxon(tid)
+        return self.storage.get_generic_of_generic(Triplets.reference_id, Triplets.taxon_id, tid)
 
     def get_references_of_structures(self, structures: set[int]) -> set[int]:
-        return self.storage.get_references_of_structures(structures)
+        return self.storage.get_generics_of_generics(Triplets.reference_id, Triplets.structure_id, structures)
 
     def get_references_of_taxa(self, taxa: set[int]) -> set[int]:
-        return self.storage.get_references_of_taxa(taxa)
+        return self.storage.get_generics_of_generics(Triplets.reference_id, Triplets.taxon_id, taxa)
 
     def get_structures_of_references(self, references: set[int]) -> set[int]:
-        return self.storage.get_structures_of_references(references)
+        return self.storage.get_generics_of_generics(Triplets.structure_id, Triplets.reference_id, references)
 
     def get_taxa_of_structures(self, structures: set[int]) -> set[int]:
-        return self.storage.get_taxa_of_structures(structures)
+        return self.storage.get_generics_of_generics(Triplets.taxon_id, Triplets.structure_id, structures)
 
     def get_taxa_of_references(self, references: set[int]) -> set[int]:
-        return self.storage.get_taxa_of_references(references)
+        return self.storage.get_generics_of_generics(Triplets.taxon_id, Triplets.reference_id, references)
 
     def get_triples_for(self,
                         reference_ids: set[int] | None,

@@ -2,15 +2,15 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, insert, text
 from sqlalchemy.orm import sessionmaker
 
 # Keep that this way so metadata gets all the tables
-from storage.schemas import Base, SchemaVersion, Triplets
-
+from storage.schemas import Base, SchemaVersion, Triplets, References, Structures
+from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 
 class Storage:
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -44,34 +44,34 @@ class Storage:
             result = connection.execute(text(query))
         return result.fetchall()
 
-    def add_triplets(self, triplets: list[list]) -> None:
+    def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
         with self.session() as session:
-            mappings = [{"reference_id": t[0], "structure_id": t[1], "taxon_id": t[2]} for t in triplets]
-            session.bulk_insert_mappings(Triplets, mappings)
+            session.execute(
+                sqlite_upsert(Triplets).on_conflict_do_nothing(),
+                triplets
+            )
+            session.commit()
+
+    def upsert_references(self, references: list[dict[str, int]]) -> None:
+        with self.session() as session:
+            session.execute(
+                sqlite_upsert(References).on_conflict_do_nothing(),
+                references
+            )
+            session.commit()
+
+    def upsert_structures(self, structures: list[dict[str, int]]) -> None:
+        with self.session() as session:
+            session.execute(
+                sqlite_upsert(Structures).on_conflict_do_nothing(),
+                structures
+            )
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
         with self.session() as session:
             result = session.query(out).filter(inp == item).distinct()
             return {row[0] for row in result}
-
-    def get_references_containing_taxon(self, tid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.reference_id, Triplets.taxon_id, tid)
-
-    def get_references_containing_structure(self, sid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.reference_id, Triplets.structure_id, sid)
-
-    def get_taxa_of_reference(self, rid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.taxon_id, Triplets.reference_id, rid)
-
-    def get_structures_of_reference(self, rid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.structure_id, Triplets.reference_id, rid)
-
-    def get_taxa_of_structure(self, sid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.taxon_id, Triplets.structure_id, sid)
-
-    def get_structures_of_taxon(self, tid: int) -> set[int]:
-        return self.get_generic_of_generic(Triplets.structure_id, Triplets.taxon_id, tid)
 
     def validate_column_name(self, s):
         ps = s.replace('_', '')
@@ -84,23 +84,8 @@ class Storage:
             )
 
         with self.session() as session:
-            result = session.query(out).filter(inp.in_(items)).distinct().all()
+            result = session.query(out).filter(inp.in_(items)).distinct()
             return {row[0] for row in result}
-
-    def get_references_of_structures(self, structures: set[int]) -> set[int]:
-        return self.get_generics_of_generics(Triplets.reference_id, Triplets.structure_id, structures)
-
-    def get_references_of_taxa(self, taxa: set[int]) -> set[int]:
-        return self.get_generics_of_generics(Triplets.reference_id, Triplets.taxon_id, taxa)
-
-    def get_structures_of_references(self, references: set[int]) -> set[int]:
-        return self.get_generics_of_generics(Triplets.structure_id, Triplets.reference_id, references)
-
-    def get_taxa_of_structures(self, structures: set[int]) -> set[int]:
-        return self.get_generics_of_generics(Triplets.taxon_id, Triplets.structure_id, structures)
-
-    def get_taxa_of_references(self, references: set[int]) -> set[int]:
-        return self.get_generics_of_generics(Triplets.taxon_id, Triplets.reference_id, references)
 
     def get_triplets_for(self,
                          reference_ids: set[int] | None,
@@ -121,4 +106,9 @@ class Storage:
             if len(filters) > 0:
                 result = result.filter(*filters)
 
-            return {(row[0], row[1], row[2]) for row in result.distinct()}
+            return {(row[0], row[1], row[2]) for row in result}
+
+    def find_references_with_doi(self, doi: str) -> set[int]:
+        with self.session() as session:
+            result = session.query(References.id).filter(References.doi.like(f"%{doi}%"))
+            return {row[0] for row in result}
