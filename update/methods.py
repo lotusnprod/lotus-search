@@ -8,15 +8,15 @@ from update.models import Task
 
 
 def list_tasks(tasks: list[Task]) -> None:
-    print("Tasks grouped by parallel groups:")
+    logging.info("Tasks grouped by parallel groups:")
     group = None
     for task in tasks:
         if task.group != group:
-            print("")
+            logging.info("")
             group = task.group
-            print(group.name, end=" > ")
-        print(task.name, end=" ")
-    print("")
+            logging.info(group.name, end=" > ")
+        logging.info(task.name, end=" ")
+    logging.info("")
 
 
 def run_tasks(

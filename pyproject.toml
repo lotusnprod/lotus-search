@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "lotus_search"
 version = "0.1.2"
-description = ""
+description = "Lotus Search"
 authors = ["Jonathan Bisson <bjonnh-git@bjonnh.net>", "Adriano Rutz <adafede@gmail.com>"]
+license = "LICENSE"
 packages = [{include = "*.py", from = ""}]
 readme = "README.md"
+homepage = "https://search.nprod.net"
+repository = "https://github.com/lotusnprod/lotus-search"
+documentation = "https://github.com/lotusnprod/lotus-search"
 
 [tool.poetry.dependencies]
 python = "^3.11"

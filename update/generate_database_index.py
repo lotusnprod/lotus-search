@@ -26,11 +26,16 @@ def run(path: Path) -> None:
 
     with open(path / "references.csv", "r") as f:
         reader = DictReader(f)
-        references = [{"id": int(row["reference"]), "doi": row["reference_doi"]} for row in reader]
+        references = [
+            {"id": int(row["reference"]), "doi": row["reference_doi"]} for row in reader
+        ]
 
     with open(path / "smiles_processed.csv", "r") as f:
         reader = DictReader(f)
-        structures = [{"id": int(row["structure"]), "smiles": row["structure_smiles"]} for row in reader]
+        structures = [
+            {"id": int(row["structure"]), "smiles": row["structure_smiles"]}
+            for row in reader
+        ]
 
     storage.upsert_structures(structures)
     storage.upsert_references(references)

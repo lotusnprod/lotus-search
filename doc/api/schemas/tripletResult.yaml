@@ -28,7 +28,7 @@ properties:
       Structures
     type: object
     properties:
-      ids: 
+      ids:
         type: integer
         example: 27151406
       structures:
@@ -39,7 +39,7 @@ properties:
       Taxa
     type: object
     properties:
-      ids: 
+      ids:
         type: integer
         example: 158572
       taxa:

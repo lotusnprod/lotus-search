@@ -6,14 +6,14 @@ properties:
     description: |
       IDs
     type: array
-    example: [158572]
+    example: [ 158572 ]
   taxa:
     title: Taxa
     description: |
       Taxa
     type: object
     properties:
-      ids: 
+      ids:
         type: integer
         example: 158572
       taxa:

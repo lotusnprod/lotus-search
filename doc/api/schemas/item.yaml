@@ -1,6 +1,6 @@
 title: Item
 type: object
-required: []
+required: [ ]
 properties:
   #' References.
   # TODO

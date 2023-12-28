@@ -15,10 +15,7 @@ def data_model(tmp_path):
 class TestApiStructures:
     @pytest.mark.asyncio
     async def test_search_structures_pure_structure(self, data_model):
-        item = Item(
-            structure="C",
-            limit=10
-        )
+        item = Item(structure="C", limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.structures[3].smiles == "C"
@@ -26,11 +23,7 @@ class TestApiStructures:
 
     @pytest.mark.asyncio
     async def test_search_structures_by_substructure(self, data_model):
-        item = Item(
-            structure="C",
-            substructure_search=True,
-            limit=10
-        )
+        item = Item(structure="C", substructure_search=True, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 3
         assert result.structures[1].smiles == "C[C@H](N)O"
@@ -39,11 +32,7 @@ class TestApiStructures:
 
     @pytest.mark.asyncio
     async def test_search_structures_by_substructure_limits(self, data_model):
-        item = Item(
-            structure="C",
-            substructure_search=True,
-            limit=1
-        )
+        item = Item(structure="C", substructure_search=True, limit=1)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert len(result.structures) == 1
@@ -52,11 +41,7 @@ class TestApiStructures:
     @pytest.mark.asyncio
     async def test_search_structure_restrict_taxon_exists(self, data_model):
         # We search for a compound that exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            taxon_wid=1,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", taxon_wid=1, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.structures[1].smiles == "C[C@H](N)O"
@@ -65,22 +50,14 @@ class TestApiStructures:
     @pytest.mark.asyncio
     async def test_search_structure_restrict_taxon_not_exists(self, data_model):
         # We search for a compound that does not exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            taxon_wid=3,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", taxon_wid=3, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 0
 
     @pytest.mark.asyncio
     async def test_search_structure_restrict_reference_exists(self, data_model):
         # We search for a compound that exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            reference_wid=1,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", reference_wid=1, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.structures[1].smiles == "C[C@H](N)O"
@@ -101,39 +78,30 @@ class TestApiStructures:
         assert result.count == 0
 
     @pytest.mark.asyncio
-    async def test_search_structure_restrict_reference_and_taxon_both_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_both_exist(
+        self, data_model
+    ):
         # We search for a compound that exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            reference_wid=1,
-            taxon_wid=1,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", reference_wid=1, taxon_wid=1, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.structures[1].smiles == "C[C@H](N)O"
         assert result.description == "Structures matching the query"
 
     @pytest.mark.asyncio
-    async def test_search_structure_restrict_reference_and_taxon_none_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_none_exist(
+        self, data_model
+    ):
         # We search for a compound that exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            reference_wid=4,
-            taxon_wid=3,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", reference_wid=4, taxon_wid=3, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 0
 
     @pytest.mark.asyncio
-    async def test_search_structure_restrict_reference_and_taxon_one_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_one_exist(
+        self, data_model
+    ):
         # We search for a compound that exist in this taxon
-        item = Item(
-            structure="CC(N)O",
-            reference_wid=1,
-            taxon_wid=3,
-            limit=10
-        )
+        item = Item(structure="CC(N)O", reference_wid=1, taxon_wid=3, limit=10)
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 0

@@ -56,7 +56,9 @@ class TestApiReferences:
         assert result.description == "References matching the query"
 
     @pytest.mark.asyncio
-    async def test_search_references_with_taxon_non_matching_structure_existing(self, data_model):
+    async def test_search_references_with_taxon_non_matching_structure_existing(
+        self, data_model
+    ):
         item = Item(reference_doi="42.1/1", taxon_wid="2", structure_wid="1")
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0

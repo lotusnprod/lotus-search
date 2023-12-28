@@ -9,8 +9,7 @@ from pathlib import Path
 from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
-from chemistry_helpers import (fingerprint, process_smiles,
-                               process_smol_and_wid, standardize,
+from chemistry_helpers import (process_smiles, process_smol_and_wid,
                                write_mols_to_sdf)
 
 RDLogger.DisableLog("rdApp.*")
@@ -106,7 +105,7 @@ def run(path: Path) -> None:
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         chunks = [
-            smols_and_wids[i:i + 1000] for i in range(0, len(smols_and_wids), 1000)
+            smols_and_wids[i : i + 1000] for i in range(0, len(smols_and_wids), 1000)
         ]
         sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
         sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]

@@ -171,7 +171,9 @@ class DataModel:
             if sid in self.db["structure_id"]
         ]
         with self.storage.session() as session:
-            result = session.query(Structures.id, Structures.smiles).filter(Structures.id.in_(sids))
+            result = session.query(Structures.id, Structures.smiles).filter(
+                Structures.id.in_(sids)
+            )
             return {row[1] for row in result}
 
     def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
@@ -182,7 +184,9 @@ class DataModel:
             if sid in self.db["structure_id"]
         ]
         with self.storage.session() as session:
-            result = session.query(Structures.id, Structures.smiles).filter(Structures.id.in_(sids))
+            result = session.query(Structures.id, Structures.smiles).filter(
+                Structures.id.in_(sids)
+            )
             return {row[0]: row[1] for row in result}
 
     def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
@@ -260,7 +264,9 @@ class DataModel:
 
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
-            result = session.query(References.id, References.doi).filter(References.id.in_(rid))
+            result = session.query(References.id, References.doi).filter(
+                References.id.in_(rid)
+            )
             return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
@@ -278,7 +284,9 @@ class DataModel:
     ### Mixonomy
     # Todo, we probably want to still return that as a set
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
-        matching_structures = self.storage.get_generic_of_generic(Triplets.structure_id, Triplets.taxon_id, tid)
+        matching_structures = self.storage.get_generic_of_generic(
+            Triplets.structure_id, Triplets.taxon_id, tid
+        )
 
         if recursive:
             if tid in self.db["taxonomy_children"]:
@@ -289,37 +297,59 @@ class DataModel:
         return list(matching_structures)
 
     def get_taxa_of_structure(self, sid: int) -> set[int]:
-        return self.storage.get_generic_of_generic(Triplets.taxon_id, Triplets.structure_id, sid)
+        return self.storage.get_generic_of_generic(
+            Triplets.taxon_id, Triplets.structure_id, sid
+        )
 
     def get_structures_of_reference(self, rid: int) -> set[int]:
-        return self.storage.get_generic_of_generic(Triplets.structure_id, Triplets.reference_id, rid)
+        return self.storage.get_generic_of_generic(
+            Triplets.structure_id, Triplets.reference_id, rid
+        )
 
     def get_taxa_of_reference(self, rid: int) -> set[int]:
-        return self.storage.get_generic_of_generic(Triplets.taxon_id, Triplets.reference_id, rid)
+        return self.storage.get_generic_of_generic(
+            Triplets.taxon_id, Triplets.reference_id, rid
+        )
 
     def get_references_of_structure(self, sid: int) -> set[int]:
-        return self.storage.get_generic_of_generic(Triplets.reference_id, Triplets.structure_id, sid)
+        return self.storage.get_generic_of_generic(
+            Triplets.reference_id, Triplets.structure_id, sid
+        )
 
     def get_references_of_taxon(self, tid: int) -> set[int]:
-        return self.storage.get_generic_of_generic(Triplets.reference_id, Triplets.taxon_id, tid)
+        return self.storage.get_generic_of_generic(
+            Triplets.reference_id, Triplets.taxon_id, tid
+        )
 
     def get_references_of_structures(self, structures: set[int]) -> set[int]:
-        return self.storage.get_generics_of_generics(Triplets.reference_id, Triplets.structure_id, structures)
+        return self.storage.get_generics_of_generics(
+            Triplets.reference_id, Triplets.structure_id, structures
+        )
 
     def get_references_of_taxa(self, taxa: set[int]) -> set[int]:
-        return self.storage.get_generics_of_generics(Triplets.reference_id, Triplets.taxon_id, taxa)
+        return self.storage.get_generics_of_generics(
+            Triplets.reference_id, Triplets.taxon_id, taxa
+        )
 
     def get_structures_of_references(self, references: set[int]) -> set[int]:
-        return self.storage.get_generics_of_generics(Triplets.structure_id, Triplets.reference_id, references)
+        return self.storage.get_generics_of_generics(
+            Triplets.structure_id, Triplets.reference_id, references
+        )
 
     def get_taxa_of_structures(self, structures: set[int]) -> set[int]:
-        return self.storage.get_generics_of_generics(Triplets.taxon_id, Triplets.structure_id, structures)
+        return self.storage.get_generics_of_generics(
+            Triplets.taxon_id, Triplets.structure_id, structures
+        )
 
     def get_taxa_of_references(self, references: set[int]) -> set[int]:
-        return self.storage.get_generics_of_generics(Triplets.taxon_id, Triplets.reference_id, references)
+        return self.storage.get_generics_of_generics(
+            Triplets.taxon_id, Triplets.reference_id, references
+        )
 
-    def get_triples_for(self,
-                        reference_ids: set[int] | None,
-                        structure_ids: set[int] | None,
-                        taxon_ids: set[int] | None) -> set[tuple[int, int, int]]:
+    def get_triples_for(
+        self,
+        reference_ids: set[int] | None,
+        structure_ids: set[int] | None,
+        taxon_ids: set[int] | None,
+    ) -> set[tuple[int, int, int]]:
         return self.storage.get_triplets_for(reference_ids, structure_ids, taxon_ids)

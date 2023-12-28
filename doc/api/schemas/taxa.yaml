@@ -2,7 +2,7 @@ title: Taxa
 description: |
   Taxa
 type: object
-required: []
+required: [ ]
 properties:
   name:
     title: Name

@@ -3,9 +3,10 @@ import logging
 from fastapi import Depends, FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 
-from api.models import (Item, ReferenceInfo, ReferenceResult,
-                        StructureInfo, StructureResult, TaxonInfo, TaxonResult, TripletResult)
-from api.queries import (combine_and_filter_outputs, get_matching_references_from_reference_in_item,
+from api.models import (Item, ReferenceInfo, ReferenceResult, StructureInfo,
+                        StructureResult, TaxonInfo, TaxonResult, TripletResult)
+from api.queries import (combine_and_filter_outputs,
+                         get_matching_references_from_reference_in_item,
                          get_matching_references_from_structure_in_item,
                          get_matching_references_from_taxon_in_item,
                          get_matching_structures_from_reference_in_item,
@@ -55,14 +56,16 @@ async def search_triplets(item: Item, dm: DataModel = Depends(get_dm)) -> Triple
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
-    triplets_set = dm.get_triples_for(reference_ids=selected_references,
-                                      structure_ids=selected_structures,
-                                      taxon_ids=selected_taxa)
+    triplets_set = dm.get_triples_for(
+        reference_ids=selected_references,
+        structure_ids=selected_structures,
+        taxon_ids=selected_taxa,
+    )
 
     if item.limit == 0:
         triplets = list(triplets_set)
     else:
-        triplets = list(triplets_set)[:item.limit]
+        triplets = list(triplets_set)[: item.limit]
 
     return TripletResult(
         triplets=triplets,
@@ -91,7 +94,9 @@ async def search_triplets(item: Item, dm: DataModel = Depends(get_dm)) -> Triple
 
 @app.post("/structures")
 @version(1, 0)
-async def search_structures(item: Item, dm: DataModel = Depends(get_dm)) -> StructureResult:
+async def search_structures(
+    item: Item, dm: DataModel = Depends(get_dm)
+) -> StructureResult:
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(
         dm, item
     )
@@ -100,15 +105,22 @@ async def search_structures(item: Item, dm: DataModel = Depends(get_dm)) -> Stru
         dm, item
     )
 
-    ids = combine_and_filter_outputs([matching_structures_by_reference,
-                                      matching_structures_by_taxon,
-                                      matching_structures_by_structure], limit=item.limit)
+    ids = combine_and_filter_outputs(
+        [
+            matching_structures_by_reference,
+            matching_structures_by_taxon,
+            matching_structures_by_structure,
+        ],
+        limit=item.limit,
+    )
 
     dict_items = dm.get_dict_of_sid_to_smiles(ids)
 
     return StructureResult(
         ids=dict_items.keys(),
-        structures={sid: StructureInfo(smiles=value) for sid, value in dict_items.items()},
+        structures={
+            sid: StructureInfo(smiles=value) for sid, value in dict_items.items()
+        },
         description="Structures matching the query",
         count=len(dict_items),
     )
@@ -121,9 +133,14 @@ async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResul
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
     matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
 
-    ids = combine_and_filter_outputs([matching_taxa_by_reference,
-                                      matching_taxa_by_structure,
-                                      matching_taxa_by_taxon], limit=item.limit)
+    ids = combine_and_filter_outputs(
+        [
+            matching_taxa_by_reference,
+            matching_taxa_by_structure,
+            matching_taxa_by_taxon,
+        ],
+        limit=item.limit,
+    )
 
     dict_items = dm.get_dict_of_tid_to_taxon_name(ids)
 
@@ -137,7 +154,9 @@ async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResul
 
 @app.post("/references")
 @version(1, 0)
-async def search_references(item: Item, dm: DataModel = Depends(get_dm)) -> ReferenceResult:
+async def search_references(
+    item: Item, dm: DataModel = Depends(get_dm)
+) -> ReferenceResult:
     matching_references_by_reference = get_matching_references_from_reference_in_item(
         dm, item
     )
@@ -146,9 +165,14 @@ async def search_references(item: Item, dm: DataModel = Depends(get_dm)) -> Refe
     )
     matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
 
-    ids = combine_and_filter_outputs([matching_references_by_reference,
-                                      matching_references_by_structure,
-                                      matching_references_by_taxon], limit=item.limit)
+    ids = combine_and_filter_outputs(
+        [
+            matching_references_by_reference,
+            matching_references_by_structure,
+            matching_references_by_taxon,
+        ],
+        limit=item.limit,
+    )
 
     dict_items = dm.get_dict_of_rid_to_reference_doi(ids)
 

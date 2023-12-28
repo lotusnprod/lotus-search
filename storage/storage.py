@@ -3,11 +3,13 @@ from pathlib import Path
 from typing import Any
 
 from sqlalchemy import create_engine, insert, text
+from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 from sqlalchemy.orm import sessionmaker
 
 # Keep that this way so metadata gets all the tables
-from storage.schemas import Base, SchemaVersion, Triplets, References, Structures
-from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
+from storage.schemas import (Base, References, SchemaVersion, Structures,
+                             Triplets)
+
 
 class Storage:
     SCHEMA_VERSION = 3
@@ -16,10 +18,12 @@ class Storage:
         self.con = sqlite3.connect(path / "index.db")
         self.list_limit = self.con.getlimit(sqlite3.SQLITE_LIMIT_VARIABLE_NUMBER)
         self.con.close()
-        self.db_path = str((path / 'index.db').absolute())
+        self.db_path = str((path / "index.db").absolute())
         self.engine = create_engine(f"sqlite:///{self.db_path}")
         # Check if the schema table exists if not, call create
-        new_db = self.query("SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'")
+        new_db = self.query(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'"
+        )
 
         if len(new_db) == 0:
             Base.metadata.create_all(self.engine)
@@ -46,25 +50,20 @@ class Storage:
 
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
         with self.session() as session:
-            session.execute(
-                sqlite_upsert(Triplets).on_conflict_do_nothing(),
-                triplets
-            )
+            session.execute(sqlite_upsert(Triplets).on_conflict_do_nothing(), triplets)
             session.commit()
 
     def upsert_references(self, references: list[dict[str, int]]) -> None:
         with self.session() as session:
             session.execute(
-                sqlite_upsert(References).on_conflict_do_nothing(),
-                references
+                sqlite_upsert(References).on_conflict_do_nothing(), references
             )
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, int]]) -> None:
         with self.session() as session:
             session.execute(
-                sqlite_upsert(Structures).on_conflict_do_nothing(),
-                structures
+                sqlite_upsert(Structures).on_conflict_do_nothing(), structures
             )
             session.commit()
 
@@ -74,7 +73,7 @@ class Storage:
             return {row[0] for row in result}
 
     def validate_column_name(self, s):
-        ps = s.replace('_', '')
+        ps = s.replace("_", "")
         return ps.islower() and ps.isalpha()
 
     def get_generics_of_generics(self, out: Any, inp: Any, items: set[int]) -> set[int]:
@@ -87,10 +86,12 @@ class Storage:
             result = session.query(out).filter(inp.in_(items)).distinct()
             return {row[0] for row in result}
 
-    def get_triplets_for(self,
-                         reference_ids: set[int] | None,
-                         structure_ids: set[int] | None,
-                         taxon_ids: set[int] | None) -> set[tuple[int, int, int]]:
+    def get_triplets_for(
+        self,
+        reference_ids: set[int] | None,
+        structure_ids: set[int] | None,
+        taxon_ids: set[int] | None,
+    ) -> set[tuple[int, int, int]]:
         with self.session() as session:
             filters = []
             if reference_ids is not None:
@@ -99,9 +100,9 @@ class Storage:
                 filters += [Triplets.structure_id.in_(structure_ids)]
             if taxon_ids is not None:
                 filters += [Triplets.taxon_id.in_(taxon_ids)]
-            result = session.query(Triplets.reference_id,
-                                   Triplets.structure_id,
-                                   Triplets.taxon_id)
+            result = session.query(
+                Triplets.reference_id, Triplets.structure_id, Triplets.taxon_id
+            )
 
             if len(filters) > 0:
                 result = result.filter(*filters)
@@ -110,5 +111,7 @@ class Storage:
 
     def find_references_with_doi(self, doi: str) -> set[int]:
         with self.session() as session:
-            result = session.query(References.id).filter(References.doi.like(f"%{doi}%"))
+            result = session.query(References.id).filter(
+                References.doi.like(f"%{doi}%")
+            )
             return {row[0] for row in result}

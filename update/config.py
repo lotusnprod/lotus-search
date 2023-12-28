@@ -1,6 +1,6 @@
 from update import (download_query_as_csv, generate_database,
-                    generate_database_chemo,
-                    generate_database_index, generate_database_taxo)
+                    generate_database_chemo, generate_database_index,
+                    generate_database_taxo)
 from update.models import Group, Task
 
 DownloadGroup = Group(name="downloads", parallel=True)
@@ -40,10 +40,7 @@ TASKS = [
         name="taxa",
         f=download_query_as_csv.run,
         group=DownloadGroup,
-        params={
-            "query_file": "update/queries/taxa.rq",
-            "output_file": "taxa.csv"
-        },
+        params={"query_file": "update/queries/taxa.rq", "output_file": "taxa.csv"},
     ),
     Task(
         name="taxa_names",

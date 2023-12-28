@@ -5,10 +5,14 @@ from fastapi import HTTPException
 from api.models import Item
 from model import DataModel
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
-def get_matching_references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_references_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     """Returns the WID of matching references."""
     references = None
     if item.reference_doi and item.reference_wid:
@@ -31,7 +35,9 @@ def get_matching_references_from_reference_in_item(dm: DataModel, item: Item) ->
     return references
 
 
-def get_matching_structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_structures_from_structure_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     """Returns the WID of matching structures."""
     structures = None
 
@@ -99,7 +105,10 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
 
     return taxa
 
-def get_matching_references_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
+
+def get_matching_references_from_structure_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -108,7 +117,9 @@ def get_matching_references_from_structure_in_item(dm: DataModel, item: Item) ->
     return dm.get_references_of_structures(structures)
 
 
-def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_references_from_taxon_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -117,7 +128,9 @@ def get_matching_references_from_taxon_in_item(dm: DataModel, item: Item) -> set
     return dm.get_references_of_taxa(taxa)
 
 
-def get_matching_structures_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_structures_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:
@@ -126,7 +139,9 @@ def get_matching_structures_from_reference_in_item(dm: DataModel, item: Item) ->
     return dm.get_structures_of_references(references)
 
 
-def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_structures_from_taxon_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     taxa = get_matching_taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -142,7 +157,9 @@ def get_matching_structures_from_taxon_in_item(dm: DataModel, item: Item) -> set
     return out
 
 
-def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_taxa_from_structure_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     structures = get_matching_structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -151,7 +168,9 @@ def get_matching_taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[i
     return dm.get_taxa_of_structures(structures)
 
 
-def get_matching_taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def get_matching_taxa_from_reference_in_item(
+    dm: DataModel, item: Item
+) -> set[int] | None:
     references = get_matching_references_from_reference_in_item(dm, item)
 
     if references is None:

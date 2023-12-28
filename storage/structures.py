@@ -10,9 +10,7 @@ class Structures(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     smiles: Mapped[str]
 
-    __table_args__ = (
-        Index("structure_id", "id"),
-    )
+    __table_args__ = (Index("structure_id", "id"),)
 
     def __repr__(self):
         return f"Structures(id={self.id}, smiles={self.smiles})"

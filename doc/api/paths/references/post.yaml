@@ -1,6 +1,6 @@
 post:
   operationId: search_references
-  security: []
+  security: [ ]
   summary: |
     Search references using parameters
   description: |
@@ -23,10 +23,10 @@ post:
     '404':
       description: No reference matching the given search could be found
       content:
-          application/json:
-              schema:
-                type: object
-                properties:
-                    message:
-                      type: string
-                      example: No reference matching the given search could be found
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: No reference matching the given search could be found

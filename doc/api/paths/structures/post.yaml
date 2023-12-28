@@ -1,6 +1,6 @@
 post:
   operationId: search_structures
-  security: []
+  security: [ ]
   summary: |
     Search structures using parameters
   description: |
@@ -23,20 +23,20 @@ post:
     '404':
       description: No structure matching the given query search be found
       content:
-          application/json:
-              schema:
-                type: object
-                properties:
-                    message:
-                      type: string
-                      example: No structure matching the given search could be found
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: No structure matching the given search could be found
     '500':
       description: The structure given is invalid
       content:
-          application/json:
-              schema:
-                type: object
-                properties:
-                    message:
-                      type: string
-                      example: The structure given is invalid
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: The structure given is invalid

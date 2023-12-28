@@ -20,7 +20,7 @@ class Triplets(Base):
         Index("rt", "reference_id", "taxon_id"),
         Index("st", "structure_id", "taxon_id"),
         Index("rst", "reference_id", "structure_id", "taxon_id"),
-        UniqueConstraint('reference_id', 'structure_id', 'taxon_id', name='unique_rst')
+        UniqueConstraint("reference_id", "structure_id", "taxon_id", name="unique_rst"),
     )
 
     def __repr__(self):

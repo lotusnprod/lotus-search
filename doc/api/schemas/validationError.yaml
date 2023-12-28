@@ -8,8 +8,8 @@ properties:
   loc:
     items:
       anyOf:
-      - type: string
-      - type: integer
+        - type: string
+        - type: integer
     title: Location
   msg:
     type: string

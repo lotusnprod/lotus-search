@@ -49,16 +49,22 @@ def run(path: Path) -> None:
             taxon_children[parent_id].add(taxon_id)
             taxon_parents_with_distance[taxon_id][parent_id] = 1
             taxon_ranks[taxon_id].add(taxon_rank_id)
-        logging.info(f" Found {len(taxon_direct_parents)} taxa in which chemicals were found in.")
+        logging.info(
+            f" Found {len(taxon_direct_parents)} taxa in which chemicals were found in."
+        )
 
     with open(path / "taxa_names.csv", "r") as f:
         reader = DictReader(f)
-        dict_taxon_names: dict = {int(row["taxon"]): row["taxon_name"] for row in reader}
+        dict_taxon_names: dict = {
+            int(row["taxon"]): row["taxon_name"] for row in reader
+        }
         logging.info(f" Found {len(dict_taxon_names)} taxa with name.")
 
     with open(path / "taxa_ranks.csv", "r") as f:
         reader = DictReader(f)
-        dict_taxon_ranks: dict = {int(row["taxon"]): convert_to_int_safe(row["taxon_rank"]) for row in reader}
+        dict_taxon_ranks: dict = {
+            int(row["taxon"]): convert_to_int_safe(row["taxon_rank"]) for row in reader
+        }
         logging.info(f" Found {len(dict_taxon_ranks)} taxa with rank.")
 
     with open(path / "taxa_parents.csv", "r") as f:
