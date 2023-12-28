@@ -25,6 +25,7 @@ requests = "^2.31.0"
 rdkit = "^2023.9.3"
 sqlalchemy = "^2.0.23"
 uvicorn = "^0.25.0"
+coverage = "^7.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
@@ -38,3 +39,8 @@ start = "app:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:The module rdkit.Chem.MolStandardize:DeprecationWarning"
+]
