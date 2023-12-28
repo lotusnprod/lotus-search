@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import create_engine, insert, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 from sqlalchemy.orm import sessionmaker
 

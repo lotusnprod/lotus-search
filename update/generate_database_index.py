@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-import pickle
 from csv import DictReader
 from pathlib import Path
 
