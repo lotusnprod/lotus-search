@@ -1,6 +1,6 @@
 
 
-.PHONY: start tests
+.PHONY: start tests fix
 
 start:
 	docker compose up --build -d
@@ -11,3 +11,10 @@ tests: start
 fix: start
 	docker compose run backend poetry run black .
 	docker compose run backend poetry run isort .
+
+.PHONY: clean_data clean_db
+clean_data:
+	docker compose run backend rm -rf /app/data/*
+
+clean_db:
+	docker compose run backend rm -rf /app/data/index.db

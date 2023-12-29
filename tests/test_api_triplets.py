@@ -61,3 +61,13 @@ class TestApiTriplets:
         assert len(result.structures) == 0
         assert len(result.taxa) == 0
         assert result.description == "Triplets matching the query"
+
+    @pytest.mark.asyncio
+    async def test_triplets_one_taxon(self, data_model):
+        item = Item(taxon_wid=1)
+        result: TripletResult = await search_triplets(item=item, dm=data_model)
+        assert result.count == 2
+        assert len(result.references) == 2
+        assert len(result.structures) == 1
+        assert len(result.taxa) == 1
+        assert result.description == "Triplets matching the query"
