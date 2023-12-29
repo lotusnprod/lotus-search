@@ -4,9 +4,9 @@ PREFIX pr: <http://www.wikidata.org/prop/reference/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?structure ?taxon ?reference WHERE {
-    # We use InChIKey (P235) instead of SMILES as some of them are incomplete.
-    ?structure wdt:P235 [].
-    ?structure p:P703 ?statement.
-    ?statement ps:P703 ?taxon;
-    (prov:wasDerivedFrom/pr:P248) ?reference.
+  ?structure wdt:P235 [];
+    p:P703 [
+      ps:P703 ?taxon;
+              (prov:wasDerivedFrom/pr:P248) ?reference;
+    ]
 }
