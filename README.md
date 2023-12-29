@@ -22,6 +22,11 @@ docker-compose up --build
 
 The web server is then available on <http://localhost:3000> and the API on <http://localhost:5000>.
 
+### Run tests
+```
+make tests
+```
+
 ### The manual way
 
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:

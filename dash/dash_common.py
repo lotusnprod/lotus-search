@@ -7,7 +7,7 @@ from flask_caching import Cache
 
 from chemistry_helpers import molecule_svg
 from dash import dcc, get_app, html
-from model import DataModel
+from model.model import DataModel
 
 dm = DataModel()
 

@@ -4,7 +4,7 @@ from flask import Flask
 
 import dash
 from dash import Dash
-from model import DataModel
+from model.model import DataModel
 
 plotly.io.json.config.default_engine = "orjson"
 

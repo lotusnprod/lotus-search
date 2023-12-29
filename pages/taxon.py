@@ -7,7 +7,7 @@ from dash_config import PAGE_SIZE
 
 import dash
 from dash import Input, Output, callback, dcc
-from model import DataModel
+from model.model import DataModel
 
 dm = DataModel()
 

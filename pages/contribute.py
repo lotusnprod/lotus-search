@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 import dash
 import plotly_dash_ketcher
 from dash import Input, Output, State, callback, dcc, html
-from model import DataModel
+from model.model import DataModel
 
 dm = DataModel()
 

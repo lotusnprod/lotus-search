@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 
 import dash
 from dash import Input, Output, State, callback, dcc, html
-from model import DataModel
+from model.model import DataModel
 
 dash.register_page(
     __name__, name="Taxon resolver", top_nav=True, path="/taxon_resolver", order=70

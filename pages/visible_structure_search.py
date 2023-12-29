@@ -7,7 +7,7 @@ from dash_config import PAGE_SIZE
 import dash
 import plotly_dash_ketcher
 from dash import Input, Output, callback, dcc
-from model import DataModel
+from model.model import DataModel
 
 dash.register_page(
     __name__, name="Structure search", top_nav=True, path="/structures/search", order=2

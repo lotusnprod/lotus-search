@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
 import pickle
+from collections import defaultdict
 from csv import DictReader
 from pathlib import Path
 
@@ -10,7 +11,7 @@ logging.basicConfig(
 
 
 # See https://www.wikidata.org/wiki/Q2576881
-def convert_to_int_safe(s: str):
+def convert_to_int_safe(s: str) -> int | None:
     try:
         result = int(s)
         return result
@@ -22,7 +23,7 @@ def convert_to_int_safe(s: str):
 def run(path: Path) -> None:
     taxon_direct_parents: dict[int, set[int]] = {}
     taxon_names: dict[int, str] = {}
-    taxon_ranks: dict[int, set[int]] = {}
+    taxon_ranks: dict[int, set[int]] = defaultdict(set)
     taxon_children: dict[int, set[int]] = {}
     taxon_parents_with_distance: dict[int, dict[int, int]] = {}
 
@@ -43,7 +44,7 @@ def run(path: Path) -> None:
             if taxon_id not in taxon_ranks:
                 taxon_ranks[taxon_id] = set()
             if taxon_id not in taxon_parents_with_distance:
-                taxon_parents_with_distance[taxon_id] = {}
+                taxon_parents_with_distance[taxon_id] = dict()
 
             taxon_direct_parents[taxon_id].add(parent_id)
             taxon_children[parent_id].add(taxon_id)
@@ -62,9 +63,11 @@ def run(path: Path) -> None:
 
     with open(path / "taxa_ranks.csv", "r") as f:
         reader = DictReader(f)
-        dict_taxon_ranks: dict = {
-            int(row["taxon"]): convert_to_int_safe(row["taxon_rank"]) for row in reader
-        }
+        dict_taxon_ranks = {}
+        for row in reader:
+            rank_value = convert_to_int_safe(row["taxon_rank"])
+            if rank_value is not None:
+                 dict_taxon_ranks[int(row["taxon"])] = set([rank_value])
         logging.info(f" Found {len(dict_taxon_ranks)} taxa with rank.")
 
     with open(path / "taxa_parents.csv", "r") as f:
@@ -73,6 +76,9 @@ def run(path: Path) -> None:
             taxon_id = convert_to_int_safe(row["taxon"])
             relative_id = convert_to_int_safe(row["relative"])
             distance = convert_to_int_safe(row["distance"])
+
+            if taxon_id is None or relative_id is None or distance is None:
+                continue
 
             if relative_id not in taxon_children:
                 taxon_children[relative_id] = set()
@@ -83,7 +89,7 @@ def run(path: Path) -> None:
             if relative_id not in dict_taxon_ranks:
                 dict_taxon_ranks[relative_id] = set()
             if taxon_id not in taxon_parents_with_distance:
-                taxon_parents_with_distance[taxon_id] = {}
+                taxon_parents_with_distance[taxon_id] = dict()
 
             if distance == 1:
                 taxon_direct_parents[taxon_id].add(relative_id)

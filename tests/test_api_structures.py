@@ -2,7 +2,7 @@ import pytest
 
 from api.api import search_structures
 from api.models import Item
-from model import DataModel
+from model.model import DataModel
 from tests.common import setup_from_fixture
 
 
@@ -22,6 +22,21 @@ class TestApiStructures:
         assert result.description == "Structures matching the query"
 
     @pytest.mark.asyncio
+    async def test_search_error_giving_both_structure_and_wid(self, data_model):
+        item = Item(structure="C", structure_wid="1")
+        with pytest.raises(Exception):
+            await search_structures(item=item, dm=data_model)
+
+    @pytest.mark.asyncio
+    async def test_search_invalid_structure(self, data_model):
+        item = Item(structure="C1", limit=10)
+        with pytest.raises(Exception):
+            await search_structures(item=item, dm=data_model)
+        item.substructure_search = True
+        with pytest.raises(Exception):
+            await search_structures(item=item, dm=data_model)
+
+    @pytest.mark.asyncio
     async def test_search_structures_by_substructure(self, data_model):
         item = Item(structure="C", substructure_search=True, limit=10)
         result = await search_structures(item=item, dm=data_model)
@@ -32,7 +47,13 @@ class TestApiStructures:
 
     @pytest.mark.asyncio
     async def test_search_structures_by_substructure_limits(self, data_model):
-        item = Item(structure="C", substructure_search=True, limit=1)
+        item = Item(structure="C", substructure_search=True)
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 3
+        item.limit = 0
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 3
+        item.limit = 1
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert len(result.structures) == 1

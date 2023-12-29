@@ -5,7 +5,7 @@ from dash_common import get_svg_of_wid
 
 import dash
 from dash import dash_table, dcc, html
-from model import DataModel
+from model.model import DataModel
 
 dm = DataModel()
 

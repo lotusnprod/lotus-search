@@ -14,7 +14,7 @@ class Group:
 @dataclass
 class Task:
     name: str
-    f: Callable
+    f: Callable | None
     group: Group
     params: Dict[str, str] = field(default_factory=dict)
 

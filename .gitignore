@@ -8,3 +8,4 @@ contributions
 /django_api/napapi/db.sqlite3
 /doc/api/dist
 
+/htmlcov/
