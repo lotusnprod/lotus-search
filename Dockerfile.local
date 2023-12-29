@@ -5,7 +5,7 @@ COPY poetry.lock pyproject.toml ./
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi
 RUN mkdir /app /app/data
-RUN adduser --system --no-create-home nonroot
+RUN adduser nonroot
 RUN chown -R nonroot /app/data
 USER nonroot
 WORKDIR /app

@@ -7,8 +7,7 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 from sqlalchemy.orm import sessionmaker
 
 # Keep that this way so metadata gets all the tables
-from storage.schemas import (Base, References, SchemaVersion, Structures,
-                             Triplets)
+from storage.schemas import Base, References, SchemaVersion, Structures, Triplets
 
 
 class Storage:
@@ -36,7 +35,7 @@ class Storage:
 
         if db_version != self.SCHEMA_VERSION:
             raise Exception(
-                f"Database schema version {db_version} does not match expected version {self.SCHEMA_VERSION}"
+                f"Database schema version {db_version} does not match expected version {self.SCHEMA_VERSION}. You want to delete data/index.db and rebuild it."
             )
 
     def session(self):
@@ -71,10 +70,6 @@ class Storage:
         with self.session() as session:
             result = session.query(out).filter(inp == item).distinct()
             return {row[0] for row in result}
-
-    def validate_column_name(self, s):
-        ps = s.replace("_", "")
-        return ps.islower() and ps.isalpha()
 
     def get_generics_of_generics(self, out: Any, inp: Any, items: set[int]) -> set[int]:
         if len(items) > self.list_limit:

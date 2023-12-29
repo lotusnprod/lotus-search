@@ -3,19 +3,29 @@ import logging
 from fastapi import Depends, FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 
-from api.models import (Item, ReferenceInfo, ReferenceResult, StructureInfo,
-                        StructureResult, TaxonInfo, TaxonResult, TripletResult)
-from api.queries import (combine_and_filter_outputs,
-                         get_matching_references_from_reference_in_item,
-                         get_matching_references_from_structure_in_item,
-                         get_matching_references_from_taxon_in_item,
-                         get_matching_structures_from_reference_in_item,
-                         get_matching_structures_from_structure_in_item,
-                         get_matching_structures_from_taxon_in_item,
-                         get_matching_taxa_from_reference_in_item,
-                         get_matching_taxa_from_structure_in_item,
-                         get_matching_taxa_from_taxon_in_item)
-from model import DataModel
+from api.models import (
+    Item,
+    ReferenceInfo,
+    ReferenceResult,
+    StructureInfo,
+    StructureResult,
+    TaxonInfo,
+    TaxonResult,
+    TripletResult,
+)
+from api.queries import (
+    combine_and_filter_outputs,
+    get_matching_references_from_reference_in_item,
+    get_matching_references_from_structure_in_item,
+    get_matching_references_from_taxon_in_item,
+    get_matching_structures_from_reference_in_item,
+    get_matching_structures_from_structure_in_item,
+    get_matching_structures_from_taxon_in_item,
+    get_matching_taxa_from_reference_in_item,
+    get_matching_taxa_from_structure_in_item,
+    get_matching_taxa_from_taxon_in_item,
+)
+from model.model import DataModel
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -24,10 +34,6 @@ logging.basicConfig(
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
-
-
-def get_dm():
-    return DataModel()
 
 
 app = FastAPI(
@@ -51,7 +57,9 @@ app = FastAPI(
 
 @app.post("/triplets")
 @version(1, 0)
-async def search_triplets(item: Item, dm: DataModel = Depends(get_dm)) -> TripletResult:
+async def search_triplets(
+    item: Item, dm: DataModel = Depends(DataModel)
+) -> TripletResult:
     selected_references = get_matching_references_from_reference_in_item(dm, item)
     selected_structures = get_matching_structures_from_structure_in_item(dm, item)
     selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
@@ -95,7 +103,7 @@ async def search_triplets(item: Item, dm: DataModel = Depends(get_dm)) -> Triple
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(
-    item: Item, dm: DataModel = Depends(get_dm)
+    item: Item, dm: DataModel = Depends(DataModel)
 ) -> StructureResult:
     matching_structures_by_structure = get_matching_structures_from_structure_in_item(
         dm, item
@@ -128,7 +136,7 @@ async def search_structures(
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResult:
+async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonResult:
     matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
     matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
     matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
@@ -155,7 +163,7 @@ async def search_taxa(item: Item, dm: DataModel = Depends(get_dm)) -> TaxonResul
 @app.post("/references")
 @version(1, 0)
 async def search_references(
-    item: Item, dm: DataModel = Depends(get_dm)
+    item: Item, dm: DataModel = Depends(DataModel)
 ) -> ReferenceResult:
     matching_references_by_reference = get_matching_references_from_reference_in_item(
         dm, item

@@ -24,7 +24,7 @@ requests_log.propagate = True
 
 
 class DataModel:
-    def __new__(cls, path: Path = Path("./data")):
+    def __new__(cls, path: Path = Path("../data")):
         # Each instance will be the same, it is all read-only
         if not hasattr(cls, "instance"):
             cls.instance = super(DataModel, cls).__new__(cls)
@@ -48,15 +48,6 @@ class DataModel:
         data["structure_library_h"] = new_lib_h
         return data
 
-    def num_taxa(self):
-        return len(self.db["taxonomy_names"])
-
-    def num_structures(self):
-        return len(self.db["structure_smiles"])
-
-    def num_references(self):
-        return len(self.db["reference_doi"])
-
     ### Taxonomy
     @functools.lru_cache(maxsize=None)
     def get_taxa(self) -> dict[int, str]:
@@ -79,12 +70,15 @@ class DataModel:
             return None
         return self.db["taxonomy_names"][tid]
 
-    def get_taxa_with_name_containing(self, query: str) -> Iterable[int]:
+    # TODO switch that to DB
+    def get_taxa_with_name_containing(self, query: str) -> set[int]:
         query = query.lower()
 
-        for tid, name in self.db["taxonomy_names"].items():
-            if query in name.lower():
-                yield tid
+        return {
+            tid
+            for tid, name in self.db["taxonomy_names"].items()
+            if query in name.lower()
+        }
 
     # TODO add this as alternative
     def get_taxa_with_name_exact(self, query: str) -> Iterable[int]:
@@ -255,6 +249,11 @@ class DataModel:
             result = session.query(References.id, References.doi)
             return {row[0]: row[1] for row in result}
 
+    def get_reference_with_id(self, rid: int) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(References.id).filter(References.id == rid)
+            return {row[0] for row in result}
+
     def get_reference_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
         return [
             self.db["reference_doi"][rid]
@@ -353,3 +352,10 @@ class DataModel:
         taxon_ids: set[int] | None,
     ) -> set[tuple[int, int, int]]:
         return self.storage.get_triplets_for(reference_ids, structure_ids, taxon_ids)
+
+    def get_taxon_by_id(self, taxon_wid: int) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(Triplets.taxon_id).filter(
+                Triplets.taxon_id == taxon_wid
+            )
+            return {row[0] for row in result.distinct()}

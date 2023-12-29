@@ -2,7 +2,7 @@ import pickle
 
 import pytest
 
-from model import DataModel
+from model.model import DataModel
 from tests.common import setup_from_fixture
 
 EXPECTED_KEYS_CHEMO = [

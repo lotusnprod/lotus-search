@@ -10,7 +10,7 @@ logging.basicConfig(
 
 
 # See https://www.wikidata.org/wiki/Q2576881
-def convert_to_int_safe(s: str):
+def convert_to_int_safe(s: str) -> int | None:
     try:
         result = int(s)
         return result

@@ -9,8 +9,7 @@ from pathlib import Path
 from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
-from chemistry_helpers import (process_smiles, process_smol_and_wid,
-                               write_mols_to_sdf)
+from chemistry_helpers import process_smiles, process_smol_and_wid, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(

@@ -20,7 +20,12 @@ def list_tasks(tasks: list[Task]) -> None:
 
 
 def run_tasks(
-    tasks: list[Task], path: Path, only=str | None, stop=str | None, skip=str | None
+    tasks: list[Task],
+    path: Path,
+    only=str | None,
+    stop=str | None,
+    skip=str | None,
+    parallel: bool = True,
 ) -> None:
     start = time.time()
 
@@ -43,7 +48,7 @@ def run_tasks(
                     f.result()
                 futures.clear()
 
-            if current_group.parallel:
+            if current_group.parallel and parallel:
                 future: Future[None] = executor.submit(task.run, path)
                 futures.append(future)
             else:

@@ -2,7 +2,7 @@ import pytest
 
 from api.api import search_taxa
 from api.models import Item
-from model import DataModel
+from model.model import DataModel
 from tests.common import setup_from_fixture
 
 
@@ -23,9 +23,13 @@ class TestApiTaxa:
 
     @pytest.mark.asyncio
     async def test_taxa_limit(self, data_model):
-        item = Item(taxon_name="Taxon", limit=10)
+        expected_count = 5
+        item = Item(taxon_name="Taxon")
         result = await search_taxa(item=item, dm=data_model)
-        assert result.count == 5
+        assert result.count == expected_count
+        item.limit = 0
+        result = await search_taxa(item=item, dm=data_model)
+        assert result.count == expected_count
         item.limit = 1
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
