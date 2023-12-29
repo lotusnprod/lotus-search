@@ -37,7 +37,7 @@ jobs:
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.9
+          thresholdAll: 0.95
       - name: Run tests
         if: github.event_name != 'pull_request'
         run: |
