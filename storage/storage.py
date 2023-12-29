@@ -54,15 +54,21 @@ class Storage:
 
     def upsert_references(self, references: list[dict[str, int]]) -> None:
         with self.session() as session:
+            stmt = sqlite_upsert(References).values(references)
             session.execute(
-                sqlite_upsert(References).on_conflict_do_nothing(), references
+                stmt.on_conflict_do_update(
+                    stmt.table.primary_key,
+                    set_={"doi": stmt.excluded.doi})
             )
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, int]]) -> None:
         with self.session() as session:
+            stmt = sqlite_upsert(Structures).values(structures)
             session.execute(
-                sqlite_upsert(Structures).on_conflict_do_nothing(), structures
+                stmt.on_conflict_do_update(
+                    stmt.table.primary_key,
+                    set_={"smiles": stmt.excluded.smiles})
             )
             session.commit()
 

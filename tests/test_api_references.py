@@ -81,3 +81,15 @@ class TestApiReferences:
         item = Item(reference_doi="42.1/1", taxon_wid="2", structure_wid="1")
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
+
+    @pytest.mark.asyncio
+    async def test_search_references_with_structure_wid(self, data_model):
+        item = Item(structure_wid="1")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 3
+
+    @pytest.mark.asyncio
+    async def test_search_references_with_taxon_wid(self, data_model):
+        item = Item(taxon_wid="1")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 2

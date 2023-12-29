@@ -62,10 +62,6 @@ class DataModel:
         }
 
     def get_taxon_name_from_tid(self, tid: int) -> str | None:
-        try:
-            tid = int(tid)
-        except ValueError:
-            return None
         if tid not in self.db["taxonomy_names"]:
             return None
         return self.db["taxonomy_names"][tid]
@@ -81,12 +77,8 @@ class DataModel:
         }
 
     # TODO add this as alternative
-    def get_taxa_with_name_exact(self, query: str) -> Iterable[int]:
-        query = query.lower()
-
-        for tid, name in self.db["taxonomy_names"].items():
-            if query == name.lower():
-                yield tid
+    def get_taxa_with_name_exact(self, query: str) -> set[int]:
+        return {tid for tid, name in self.db["taxonomy_names"].items() if name == query}
 
     def get_rank_name_from_wid(self, wid: int) -> str | None:
         if wid not in self.db["taxonomy_ranks_names"]:
@@ -115,10 +107,6 @@ class DataModel:
         return response.json()
 
     def get_ranks_string(self, wid: int) -> str:
-        try:
-            wid = int(wid)
-        except ValueError:
-            return None
         if wid in self.db["taxonomy_ranks"]:
             i_ranks = self.db["taxonomy_ranks"][wid]
             n_ranks = [self.get_rank_name_from_wid(int(it)) for it in i_ranks]
@@ -139,7 +127,7 @@ class DataModel:
                     distance = self.db["taxonomy_parents_with_distance"][parent][
                         relative
                     ]
-                    tree.append((relative, distance))
+                    tree.append((relative, 1 + distance))
         tree = sorted(tree, key=lambda x: x[1])
         return tree
 
@@ -150,12 +138,11 @@ class DataModel:
         return set(self.db["structure_wid"])
 
     def get_structure_smiles_from_sid(self, sid: int) -> str | None:
-        try:
-            sid = self.db["structure_id"][sid]
-            return sid
-        except (IndexError, ValueError):
-            log.warning(f"Impossible to find a structure with sid={sid}")
-            return None
+        with self.storage.session() as session:
+            out = session.query(Structures).get(sid)
+            if out is None:
+                return None
+            return out.smiles
 
     def get_structure_smiles_from_list_of_sids(self, sids: list[int]) -> set[str]:
         # TODO get rid of this conversion ideally
@@ -243,23 +230,10 @@ class DataModel:
         return out
 
     ### Biblionomy
-    @functools.lru_cache(maxsize=None)
-    def get_references(self) -> dict[int, str]:
-        with self.storage.session() as session:
-            result = session.query(References.id, References.doi)
-            return {row[0]: row[1] for row in result}
-
     def get_reference_with_id(self, rid: int) -> set[int]:
         with self.storage.session() as session:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
-
-    def get_reference_doi_from_list_of_rids(self, rids: list[int]) -> list[str]:
-        return [
-            self.db["reference_doi"][rid]
-            for rid in rids
-            if rid in self.db["reference_doi"]
-        ]
 
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
@@ -269,20 +243,19 @@ class DataModel:
             return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
-        try:
-            rid = int(rid)
-        except ValueError:
-            return None
-        if rid not in self.db["reference_doi"]:
-            return None
-        return self.db["reference_doi"][rid]
+        with self.storage.session() as session:
+            result = session.query(References).get(rid)
+            if result is None:
+                return None
+            return result.doi
+
 
     def get_references_with_doi(self, doi: str) -> set[int]:
         return self.storage.find_references_with_doi(doi)
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
-    def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> list[int]:
+    def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> set[int]:
         matching_structures = self.storage.get_generic_of_generic(
             Triplets.structure_id, Triplets.taxon_id, tid
         )
@@ -293,7 +266,7 @@ class DataModel:
                     for structure in self.get_structures_of_taxon(parent):
                         matching_structures.add(structure)
 
-        return list(matching_structures)
+        return matching_structures
 
     def get_taxa_of_structure(self, sid: int) -> set[int]:
         return self.storage.get_generic_of_generic(
