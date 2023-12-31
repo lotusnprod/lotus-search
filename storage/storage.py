@@ -7,11 +7,21 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 from sqlalchemy.orm import sessionmaker
 
 # Keep that this way so metadata gets all the tables
-from storage.schemas import Base, References, SchemaVersion, Structures, Triplets
+from storage.models import (
+    Base,
+    References,
+    SchemaVersion,
+    Structures,
+    TaxoNames,
+    TaxoParents,
+    TaxoRankNames,
+    TaxoRanks,
+    Triplets,
+)
 
 
 class Storage:
-    SCHEMA_VERSION = 3
+    SCHEMA_VERSION = 4
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -57,19 +67,65 @@ class Storage:
             stmt = sqlite_upsert(References).values(references)
             session.execute(
                 stmt.on_conflict_do_update(
-                    stmt.table.primary_key,
-                    set_={"doi": stmt.excluded.doi})
+                    stmt.table.primary_key, set_={"doi": stmt.excluded.doi}
+                )
             )
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, int]]) -> None:
         with self.session() as session:
-            stmt = sqlite_upsert(Structures).values(structures)
-            session.execute(
-                stmt.on_conflict_do_update(
-                    stmt.table.primary_key,
-                    set_={"smiles": stmt.excluded.smiles})
-            )
+            for i in range(0, len(structures), 1000):
+                stmt = sqlite_upsert(Structures).values(structures[i : i + 1000])
+                session.execute(
+                    stmt.on_conflict_do_update(
+                        stmt.table.primary_key, set_={"smiles": stmt.excluded.smiles}
+                    )
+                )
+
+                session.commit()
+
+    def upsert_taxo_names(self, taxo_names: list[dict[str, int]]) -> None:
+        with self.session() as session:
+            for i in range(0, len(taxo_names), 1000):
+                stmt = sqlite_upsert(TaxoNames).values(taxo_names[i : i + 1000])
+                session.execute(
+                    stmt.on_conflict_do_update(
+                        stmt.table.primary_key, set_={"name": stmt.excluded.name}
+                    )
+                )
+                session.commit()
+
+    def upsert_rank_names(self, ranks_names: list[dict[str, int]]) -> None:
+        with self.session() as session:
+            for i in range(0, len(ranks_names), 1000):
+                stmt = sqlite_upsert(TaxoRankNames).values(ranks_names[i : i + 1000])
+                session.execute(
+                    stmt.on_conflict_do_update(
+                        stmt.table.primary_key, set_={"name": stmt.excluded.name}
+                    )
+                )
+                session.commit()
+
+    def upsert_taxo_ranks(self, taxo_ranks: list[dict[str, int]]) -> None:
+        with self.session() as session:
+            for i in range(0, len(taxo_ranks), 1000):
+                stmt = sqlite_upsert(TaxoRanks).values(taxo_ranks[i : i + 1000])
+                session.execute(
+                    stmt.on_conflict_do_nothing() # TODO We probably want to generate a warning, or just wipe everything and rebuild
+                )
+                session.commit()
+
+    def upsert_taxo_parenting(self, parenting: dict[int, dict[int, int]]) -> None:
+        with self.session() as session:
+            for item, parents in parenting.items():
+                stmt = sqlite_upsert(TaxoParents).values(
+                    [{"id": item, "parent_id": parent, "distance": distance} for parent, distance in parents.items()]
+                )
+                session.execute(
+                    stmt.on_conflict_do_update(
+                        stmt.table.primary_key, set_={"distance": stmt.excluded.distance}
+                    )
+                )
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
@@ -109,10 +165,3 @@ class Storage:
                 result = result.filter(*filters)
 
             return {(row[0], row[1], row[2]) for row in result}
-
-    def find_references_with_doi(self, doi: str) -> set[int]:
-        with self.session() as session:
-            result = session.query(References.id).filter(
-                References.doi.like(f"%{doi}%")
-            )
-            return {row[0] for row in result}

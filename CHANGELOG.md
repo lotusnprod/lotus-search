@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### 2023-12-30
+    
+    - Move the taxo to the DB
+    - Fix the merging bug (making blocks of 1000 for now so A. can use it, will find a better way)
+    - Some refactoring
+
 ### 2023-12-27
     
     - More refactoring of SQLite

@@ -38,7 +38,9 @@ class TestRunQueryToCSV:
             with patch("update.download_query_as_csv.sleep") as mock_sleep:
                 run(self.path, self.query_file, self.output_file, url="foo")
                 assert mock_sparql_to_csv.call_count == 5
-                urls = [arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list]
+                urls = [
+                    arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list
+                ]
                 assert urls == ["foo"] * 3 + ["https://query.wikidata.org/sparql"] * 2
                 assert self.output_file.read_text() == "valid result"
                 assert mock_sleep.call_count == 4
@@ -56,7 +58,9 @@ class TestRunQueryToCSV:
                 with pytest.raises(TimeoutError):
                     run(self.path, self.query_file, self.output_file)
                 assert mock_sparql_to_csv.call_count == 3
-                urls = [arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list]
+                urls = [
+                    arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list
+                ]
                 assert urls == ["https://query.wikidata.org/sparql"] * 3
                 assert mock_sleep.call_count == 2
                 sleep_times = [arg_list[0][0] for arg_list in mock_sleep.call_args_list]
@@ -64,7 +68,7 @@ class TestRunQueryToCSV:
 
     def test_writes_expected_result(self):
         with patch(
-                "update.download_query_as_csv.sparql_to_csv"
+            "update.download_query_as_csv.sparql_to_csv"
         ) as mock_sparql_to_csv, patch(
             "update.download_query_as_csv.remove_wd_entity_prefix"
         ) as mock_remove_wd_entity_prefix:

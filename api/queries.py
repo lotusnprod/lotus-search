@@ -78,7 +78,7 @@ def get_matching_taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] 
         # This needs to be explained in the API doc
         if item.taxon_wid:
             return dm.get_taxon_by_id(item.taxon_wid)
-        return dm.get_taxa_with_name_containing(item.taxon_name)
+        return dm.get_taxa_with_name_matching(item.taxon_name)
 
     return None
 

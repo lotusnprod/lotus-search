@@ -1,4 +1,4 @@
-from storage.references import References
+from storage.models.references import References
 
 
 def test_references():

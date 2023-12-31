@@ -1,9 +1,13 @@
 
 
-.PHONY: start tests fix
+.PHONY: start stop tests fix
 
 start:
 	docker compose up --build -d
+
+stop:
+	docker compose down
+
 
 tests: start
 	docker compose run backend poetry run pytest --cov-config=.coveragerc --cov=. -n auto

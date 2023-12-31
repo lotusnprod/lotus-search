@@ -1,4 +1,4 @@
-from storage.triplets import Triplets
+from storage.models.triplets import Triplets
 
 
 def test_triplets():

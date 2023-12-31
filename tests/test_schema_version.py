@@ -1,4 +1,4 @@
-from storage.schema_version import SchemaVersion
+from storage.models.schema_version import SchemaVersion
 
 
 def test_schema_version():

@@ -10,10 +10,8 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 
 from chemistry_helpers import fingerprint, standardize
-from storage.references import References
+from storage.models import References, Structures, TaxoNames, TaxoParents, TaxoRankNames, TaxoRanks, Triplets
 from storage.storage import Storage
-from storage.structures import Structures
-from storage.triplets import Triplets
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -24,7 +22,7 @@ requests_log.propagate = True
 
 
 class DataModel:
-    def __new__(cls, path: Path = Path("../data")):
+    def __new__(cls, path: Path = Path("./data")):
         # Each instance will be the same, it is all read-only
         if not hasattr(cls, "instance"):
             cls.instance = super(DataModel, cls).__new__(cls)
@@ -49,41 +47,35 @@ class DataModel:
         return data
 
     ### Taxonomy
-    @functools.lru_cache(maxsize=None)
-    def get_taxa(self) -> dict[int, str]:
-        # TODO replace with DB
-        return self.db["taxonomy_names"]
-
     def get_dict_of_tid_to_taxon_name(self, tid: Iterable[int]) -> dict[int, str]:
-        return {
-            t: self.db["taxonomy_names"][t]
-            for t in tid
-            if t in self.db["taxonomy_names"]
-        }
+        with self.storage.session() as session:
+            result = session.query(TaxoNames.id, TaxoNames.name).filter(
+                TaxoNames.id.in_(tid)
+            )
+            return {row[0]: row[1] for row in result}
 
     def get_taxon_name_from_tid(self, tid: int) -> str | None:
-        if tid not in self.db["taxonomy_names"]:
-            return None
-        return self.db["taxonomy_names"][tid]
+        with self.storage.session() as session:
+            result = session.get(TaxoNames, tid)
+            if result is None:
+                return None
+            return result.name
 
-    # TODO switch that to DB
-    def get_taxa_with_name_containing(self, query: str) -> set[int]:
-        query = query.lower()
-
-        return {
-            tid
-            for tid, name in self.db["taxonomy_names"].items()
-            if query in name.lower()
-        }
-
-    # TODO add this as alternative
-    def get_taxa_with_name_exact(self, query: str) -> set[int]:
-        return {tid for tid, name in self.db["taxonomy_names"].items() if name == query}
+    def get_taxa_with_name_matching(self, query: str, exact=False) -> set[int]:
+        with self.storage.session() as session:
+            if exact:
+                matcher = TaxoNames.name == query
+            else:
+                matcher = TaxoNames.name.like(f"%{query}%")
+            result = session.query(TaxoNames.id).filter(matcher)
+            return {row[0] for row in result}
 
     def get_rank_name_from_wid(self, wid: int) -> str | None:
-        if wid not in self.db["taxonomy_ranks_names"]:
-            return None
-        return self.db["taxonomy_ranks_names"][wid]
+        with self.storage.session() as session:
+            result = session.get(TaxoRankNames, wid)
+            if result is None:
+                return None
+            return result.name
 
     def resolve_taxon(self, query: str) -> any:
         query = {
@@ -107,29 +99,17 @@ class DataModel:
         return response.json()
 
     def get_ranks_string(self, wid: int) -> str:
-        if wid in self.db["taxonomy_ranks"]:
-            i_ranks = self.db["taxonomy_ranks"][wid]
-            n_ranks = [self.get_rank_name_from_wid(int(it)) for it in i_ranks]
+        with self.storage.session() as session:
+            result = session.query(TaxoRanks.rank_id).filter(
+                TaxoRanks.id == wid
+            )
+            rank_ids = [row[0] for row in result]
+        if len(rank_ids) > 0:
+            n_ranks = [self.get_rank_name_from_wid(int(it)) for it in rank_ids]
             ranks = " (" + ", ".join(set(n_ranks)) + ")"
         else:
             ranks = ""
         return ranks
-
-    def get_taxonomic_tree(self, tid: int) -> list[tuple[int, int]]:
-        if tid not in self.db["taxonomy_direct_parents"]:
-            return []
-        parent_taxa = self.db["taxonomy_direct_parents"][tid]
-        tree = []
-        for parent in parent_taxa:
-            tree.append((parent, 1))
-            if parent in self.db["taxonomy_parents_with_distance"]:
-                for relative in self.db["taxonomy_parents_with_distance"][parent]:
-                    distance = self.db["taxonomy_parents_with_distance"][parent][
-                        relative
-                    ]
-                    tree.append((relative, 1 + distance))
-        tree = sorted(tree, key=lambda x: x[1])
-        return tree
 
     ### Structureonomy
     @functools.lru_cache(maxsize=None)
@@ -139,7 +119,7 @@ class DataModel:
 
     def get_structure_smiles_from_sid(self, sid: int) -> str | None:
         with self.storage.session() as session:
-            out = session.query(Structures).get(sid)
+            out = session.get(Structures, sid)
             if out is None:
                 return None
             return out.smiles
@@ -244,14 +224,17 @@ class DataModel:
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
         with self.storage.session() as session:
-            result = session.query(References).get(rid)
+            result = session.get(References, rid)
             if result is None:
                 return None
             return result.doi
 
-
     def get_references_with_doi(self, doi: str) -> set[int]:
-        return self.storage.find_references_with_doi(doi)
+        with self.storage.session() as session:
+            result = session.query(References.id).filter(
+                References.doi.like(f"%{doi}%")
+            )
+            return {row[0] for row in result}
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
@@ -261,11 +244,15 @@ class DataModel:
         )
 
         if recursive:
-            if tid in self.db["taxonomy_children"]:
-                for parent in self.db["taxonomy_children"][tid]:
-                    for structure in self.get_structures_of_taxon(parent):
-                        matching_structures.add(structure)
+            with self.storage.session() as session:
+                # if exist
+                result = session.query(TaxoParents.id).filter(
+                    TaxoParents.parent_id == tid
+                )
 
+                for row in result:
+                    for structure in self.get_structures_of_taxon(row[0]):
+                        matching_structures.add(structure)
         return matching_structures
 
     def get_taxa_of_structure(self, sid: int) -> set[int]:

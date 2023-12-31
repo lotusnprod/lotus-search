@@ -1,7 +1,7 @@
 from sqlalchemy import Index, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from storage.base import Base
+from storage.models.base import Base
 
 
 class Triplets(Base):

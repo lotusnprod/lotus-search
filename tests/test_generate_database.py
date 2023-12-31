@@ -19,7 +19,7 @@ class TestGenerateDatabase:
     ):
         mock_pickle_load.return_value = {"key": "value"}
         generate_database.run(self.path)
-        assert mock_pickle_load.call_count == 2
+        assert mock_pickle_load.call_count == 1
         assert mock_pickle_dump.call_count == 1
 
     @patch("update.generate_database.pickle.dump")
@@ -30,13 +30,11 @@ class TestGenerateDatabase:
     ):
         mock_pickle_load.side_effect = [
             {"chemo_key": "chemo_value"},
-            {"taxo_key": "taxo_value"},
         ]
         generate_database.run(self.path)
         mock_pickle_dump.assert_called_once_with(
             {
                 "chemo_key": "chemo_value",
-                "taxo_key": "taxo_value",
             },
             mock_open.return_value.__enter__.return_value,
         )

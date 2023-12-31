@@ -14,9 +14,6 @@ class TestDataModel:
     def test_make_coverage_happy(self, tmp_path):
         setup_from_fixture(tmp_path)
 
-    def test_get_taxa(self, data_model):
-        assert len(data_model.get_taxa()) == 5
-
     def test_get_taxon_name_from_tid(self, data_model):
         assert data_model.get_taxon_name_from_tid(1) == "Taxon 1"
         assert data_model.get_taxon_name_from_tid(666) is None
@@ -67,12 +64,13 @@ class TestDataModel:
         assert len(data_model.get_structures_of_taxon(666)) == 0
         assert len(data_model.get_structures_of_taxon(2, recursive=False)) == 2
 
-    def test_get_taxonomic_tree(self, data_model):
-        assert data_model.get_taxonomic_tree(1) == [(5, 1), (8, 2)]
-        assert data_model.get_taxonomic_tree(666) == []
+    def test_get_taxa_with_name_matching(self, data_model):
+        assert len(data_model.get_taxa_with_name_matching("Taxon 1")) == 1
+        assert len(data_model.get_taxa_with_name_matching("taxon 1")) == 1
+        assert len(data_model.get_taxa_with_name_matching("Taxon 666")) == 0
+        assert len(data_model.get_taxa_with_name_matching("Taxon")) == 5
 
-    def test_get_taxa_with_name_exact(self, data_model):
-        assert len(data_model.get_taxa_with_name_exact("Taxon 1")) == 1
-        assert len(data_model.get_taxa_with_name_exact("taxon 1")) == 0
-        assert len(data_model.get_taxa_with_name_exact("Taxon 666")) == 0
-        assert len(data_model.get_taxa_with_name_exact("Taxon")) == 0
+        assert len(data_model.get_taxa_with_name_matching("Taxon 1", exact=True)) == 1
+        assert len(data_model.get_taxa_with_name_matching("taxon 1", exact=True)) == 0
+        assert len(data_model.get_taxa_with_name_matching("Taxon 666", exact=True)) == 0
+        assert len(data_model.get_taxa_with_name_matching("Taxon", exact=True)) == 0

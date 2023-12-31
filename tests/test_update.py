@@ -15,12 +15,7 @@ EXPECTED_KEYS_CHEMO = [
 ]
 
 EXPECTED_KEYS_TAXO = [
-    "taxonomy_direct_parents",
-    "taxonomy_names",
-    "taxonomy_ranks",
-    "taxonomy_children",
     "taxonomy_parents_with_distance",
-    "taxonomy_ranks_names",
 ]
 
 
@@ -61,8 +56,8 @@ class TestUpdate:
     def test_merge(self, data_model):
         with open(data_model.path / "database.pkl", "rb") as f:
             db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO)
-            for expected_key in EXPECTED_KEYS_TAXO + EXPECTED_KEYS_CHEMO:
+            assert len(db) == len(EXPECTED_KEYS_CHEMO)
+            for expected_key in EXPECTED_KEYS_CHEMO:
                 assert expected_key in db
                 assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
             # For this one this is probably fine as we tested in the two others

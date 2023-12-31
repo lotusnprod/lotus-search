@@ -1,4 +1,4 @@
-from storage.structures import Structures
+from storage.models.structures import Structures
 
 
 def test_structures():
