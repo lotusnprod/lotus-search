@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2024-01-01
+
+    - Optimize the SPARQL queries, remove the useless ones
+    - Optimize the CSV parsing
+    - Optimize the SQLite queries
+    - Clean up a little
+
 ### 2023-12-30
     
     - Move the taxo to the DB

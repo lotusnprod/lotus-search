@@ -5,7 +5,8 @@ import pickle
 from pathlib import Path
 
 from storage.storage import Storage
-from update.generate_database_taxo import convert_to_int_safe
+
+from update.taxo_helper import convert_to_int_safe, generate_taxon_parents_with_distance
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -66,18 +67,6 @@ def run(path: Path) -> None:
     logging.info(" Processed taxa names")
     taxon_ranks_dict = {}
 
-    with open(path / "taxa.csv", "r") as t:
-        reader = csv.reader(t)
-        headers = next(reader)
-        taxon_index = headers.index("taxon")
-        name_index = headers.index("taxon_name")
-        rank_index = headers.index("taxon_rank")
-
-        for row in reader:
-            taxon_id = int(row[taxon_index])
-            taxo_names_dict[taxon_id] = row[name_index]
-            taxon_ranks_dict[taxon_id] = {int(row[rank_index])}
-
     logging.info(" Processed taxa")
     with open(path / "ranks_names.csv", "r") as f:
         reader = csv.reader(f)
@@ -120,9 +109,7 @@ def run(path: Path) -> None:
         references.append({"id": ref, "doi": doi})
 
     logging.info(" Processed dicts")
-    with open(path / "database_taxo.pkl", "rb") as f:
-        database_taxo = pickle.load(f)
-        storage.upsert_taxo_parenting(database_taxo["taxonomy_parents_with_distance"])
+    storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
 
     storage.upsert_triplets(triplets)
