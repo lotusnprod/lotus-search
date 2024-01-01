@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import csv
 import logging
-import pickle
 from pathlib import Path
 
 from storage.storage import Storage
@@ -16,6 +15,7 @@ logging.basicConfig(
 def run(path: Path) -> None:
     storage = Storage(path)
     storage.drop_and_create_tables()
+    taxa = set()  # So we can get only the parenting that we care about
     triplets = []
     dedup = set()
     with open(path / "triplets.csv", "r") as f:
@@ -29,6 +29,7 @@ def run(path: Path) -> None:
             ref = int(row[ref_index])
             struct = int(row[struct_index])
             taxon = int(row[taxon_index])
+            taxa.add(taxon)
             if (ref, struct, taxon) in dedup:
                 continue
             dedup.add((ref, struct, taxon))
@@ -67,7 +68,6 @@ def run(path: Path) -> None:
     logging.info(" Processed taxa names")
     taxon_ranks_dict = {}
 
-    logging.info(" Processed taxa")
     with open(path / "ranks_names.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
@@ -109,7 +109,7 @@ def run(path: Path) -> None:
         references.append({"id": ref, "doi": doi})
 
     logging.info(" Processed dicts")
-    storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
+    storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path, taxa))
     logging.info(" Taxo parenting inserted")
 
     storage.upsert_triplets(triplets)

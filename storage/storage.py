@@ -105,13 +105,14 @@ class Storage:
                 )
             session.commit()
 
-    def upsert_taxo_parenting(self, parenting: dict[int, dict[int, int]]) -> None:
+    def upsert_taxo_parenting(self, parenting: list[tuple[int, int, int]]) -> None:
         with self.session(autoflush=False) as session:
-            for item, parents in parenting.items():
+            for i in range(0, len(parenting), self.list_limit // 2):
                 session.execute(
                     insert(TaxoParents),
-                    [{"id": item, "parent_id": parent, "distance": distance} for parent, distance in parents.items()]
+                    [{"id": item[0], "parent_id": item[1], "distance": item[2]} for item in parenting[i: i + self.list_limit // 2]]
                 )
+
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
