@@ -21,7 +21,7 @@ def convert_to_int_safe(s: str) -> int | None:
 
 def generate_taxon_parents_with_distance(path: Path, taxa: set[int]) -> list[tuple[int, int, int]]:
     graph = defaultdict(list)
-    distances = set()
+    distances = []
     with open(path / "taxa_parents.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
@@ -43,12 +43,10 @@ def generate_taxon_parents_with_distance(path: Path, taxa: set[int]) -> list[tup
             current_node = queue.popleft()
             current_distance = visited[current_node]
 
-            # Visit all neighbors of the current node
             for neighbor in graph[current_node]:
                 if neighbor not in visited:
                     queue.append(neighbor)
                     visited[neighbor] = current_distance + 1
-                    # Record the distance from start_node to neighbor
-                    distances.add((node, neighbor, current_distance + 1))
+                    distances.append((node, neighbor, current_distance + 1))
 
-    return list(distances)
+    return distances
