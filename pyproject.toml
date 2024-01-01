@@ -27,7 +27,7 @@ sqlalchemy = "^2.0.23"
 uvicorn = "^0.25.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.0.0"
+pytest = "^7.4.4"
 pytest-asyncio = "^0.23.2"
 pytest-mock = "*"
 requests_mock = "*"
