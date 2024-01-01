@@ -41,6 +41,10 @@ class TestRunQueryToCSV:
                 urls = [
                     arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list
                 ]
+                as_post = [
+                    arg_list[1]["as_post"] for arg_list in mock_sparql_to_csv.call_args_list
+                ]
+                assert as_post == [False, False, True, False, False]
                 assert urls == ["foo"] * 3 + ["https://query.wikidata.org/sparql"] * 2
                 assert self.output_file.read_text() == "valid result"
                 assert mock_sleep.call_count == 4

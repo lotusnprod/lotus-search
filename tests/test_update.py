@@ -14,11 +14,6 @@ EXPECTED_KEYS_CHEMO = [
     "structure_id",
 ]
 
-EXPECTED_KEYS_TAXO = [
-    "taxonomy_parents_with_distance",
-]
-
-
 @pytest.fixture
 def data_model(tmp_path):
     setup_from_fixture(tmp_path)
@@ -28,8 +23,6 @@ def data_model(tmp_path):
 class TestUpdate:
     def test_pkls_exist(self, data_model):
         assert (data_model.path / "database_chemo.pkl").exists()
-        assert (data_model.path / "database_taxo.pkl").exists()
-        assert (data_model.path / "database.pkl").exists()
         assert (data_model.path / "lotus.sdf").exists()
 
     def test_triplets(self):
@@ -43,24 +36,6 @@ class TestUpdate:
             for expected_key in EXPECTED_KEYS_CHEMO:
                 assert expected_key in db
             # We likely want to test the content as well
-
-    def test_taxo(self, data_model):
-        with open(data_model.path / "database_taxo.pkl", "rb") as f:
-            db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_TAXO)
-            for expected_key in EXPECTED_KEYS_TAXO:
-                assert expected_key in db
-                assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
-            # We likely want to test the content as well
-
-    def test_merge(self, data_model):
-        with open(data_model.path / "database.pkl", "rb") as f:
-            db = pickle.load(f)
-            assert len(db) == len(EXPECTED_KEYS_CHEMO)
-            for expected_key in EXPECTED_KEYS_CHEMO:
-                assert expected_key in db
-                assert len(db[expected_key]) > 0, f"Empty key: {expected_key}"
-            # For this one this is probably fine as we tested in the two others
 
     def test_sdf(self, data_model):
         generated_sdf_path = data_model.path / "lotus.sdf"

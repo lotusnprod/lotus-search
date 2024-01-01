@@ -34,7 +34,7 @@ class DataModel:
     @classmethod
     @functools.lru_cache(maxsize=None)
     def load_all_data(cls, path: Path):
-        with open(path / "database.pkl", "rb") as f:
+        with open(path / "database_chemo.pkl", "rb") as f:
             data = pickle.load(f)
         new_lib = rdSubstructLibrary.SubstructLibrary()
         new_lib_h = rdSubstructLibrary.SubstructLibrary()

@@ -1,11 +1,15 @@
-from requests import get
+from requests import get, post
 
 WD_URL = "https://query.wikidata.org/sparql"
 QLEVER_URL = "https://qlever.cs.uni-freiburg.de/api/wikidata"
 
 
-def sparql_to_csv(query: str, url: str = WD_URL) -> str:
-    return get(
+def sparql_to_csv(query: str, url: str = WD_URL, as_post: bool = False) -> str:
+    if as_post:
+        f = post
+    else:
+        f = get
+    return f(
         url,
         params={"query": query},
         headers={
