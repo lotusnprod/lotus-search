@@ -39,7 +39,6 @@ def run(path: Path) -> None:
             taxon_parents_with_distance[taxon_id][parent_id] = 1
             taxon_ranks[taxon_id].add(taxon_rank_id)
 
-
     with open(path / "taxa_parents.csv", "r") as f:
         reader = DictReader(f)
         for row in reader:

@@ -2,8 +2,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import create_engine, text
-from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
+from sqlalchemy import create_engine, insert, text
 from sqlalchemy.orm import sessionmaker
 
 # Keep that this way so metadata gets all the tables
@@ -35,10 +34,7 @@ class Storage:
         )
 
         if len(new_db) == 0:
-            Base.metadata.create_all(self.engine)
-            with self.session() as session:
-                session.add(SchemaVersion(version=self.SCHEMA_VERSION))
-                session.commit()
+            self.create_tables()
 
         with self.session() as session:
             db_version = session.query(SchemaVersion).first().version
@@ -48,8 +44,8 @@ class Storage:
                 f"Database schema version {db_version} does not match expected version {self.SCHEMA_VERSION}. You want to delete data/index.db and rebuild it."
             )
 
-    def session(self):
-        Session = sessionmaker(bind=self.engine)
+    def session(self, autoflush=True):
+        Session = sessionmaker(bind=self.engine, autoflush=autoflush)
         return Session()
 
     def query(self, query: str):
@@ -58,73 +54,63 @@ class Storage:
         return result.fetchall()
 
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            session.execute(sqlite_upsert(Triplets).on_conflict_do_nothing(), triplets)
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(triplets), self.list_limit // 3):
+                session.execute(insert(Triplets), triplets[i: i + self.list_limit // 3])
             session.commit()
 
     def upsert_references(self, references: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            stmt = sqlite_upsert(References).values(references)
-            session.execute(
-                stmt.on_conflict_do_update(
-                    stmt.table.primary_key, set_={"doi": stmt.excluded.doi}
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(references), self.list_limit // 2):
+                session.execute(
+                    insert(References).values(),
+                    references[i: i + self.list_limit // 2],
                 )
-            )
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            for i in range(0, len(structures), 1000):
-                stmt = sqlite_upsert(Structures).values(structures[i : i + 1000])
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
-                    stmt.on_conflict_do_update(
-                        stmt.table.primary_key, set_={"smiles": stmt.excluded.smiles}
-                    )
+                    insert(Structures),
+                    structures[i: i + self.list_limit // 2]
                 )
 
-                session.commit()
+            session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            for i in range(0, len(taxo_names), 1000):
-                stmt = sqlite_upsert(TaxoNames).values(taxo_names[i : i + 1000])
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
-                    stmt.on_conflict_do_update(
-                        stmt.table.primary_key, set_={"name": stmt.excluded.name}
-                    )
+                    insert(TaxoNames),
+                    taxo_names[i: i + self.list_limit // 2]
                 )
-                session.commit()
+            session.commit()
 
     def upsert_rank_names(self, ranks_names: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            for i in range(0, len(ranks_names), 1000):
-                stmt = sqlite_upsert(TaxoRankNames).values(ranks_names[i : i + 1000])
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
-                    stmt.on_conflict_do_update(
-                        stmt.table.primary_key, set_={"name": stmt.excluded.name}
-                    )
+                    insert(TaxoRankNames),
+                    ranks_names[i: i + self.list_limit // 2]
                 )
-                session.commit()
+            session.commit()
 
     def upsert_taxo_ranks(self, taxo_ranks: list[dict[str, int]]) -> None:
-        with self.session() as session:
-            for i in range(0, len(taxo_ranks), 1000):
-                stmt = sqlite_upsert(TaxoRanks).values(taxo_ranks[i : i + 1000])
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(taxo_ranks), self.list_limit // 2):
                 session.execute(
-                    stmt.on_conflict_do_nothing() # TODO We probably want to generate a warning, or just wipe everything and rebuild
+                    insert(TaxoRanks),
+                    taxo_ranks[i: i + self.list_limit // 2]
                 )
-                session.commit()
+            session.commit()
 
     def upsert_taxo_parenting(self, parenting: dict[int, dict[int, int]]) -> None:
-        with self.session() as session:
+        with self.session(autoflush=False) as session:
             for item, parents in parenting.items():
-                stmt = sqlite_upsert(TaxoParents).values(
-                    [{"id": item, "parent_id": parent, "distance": distance} for parent, distance in parents.items()]
-                )
                 session.execute(
-                    stmt.on_conflict_do_update(
-                        stmt.table.primary_key, set_={"distance": stmt.excluded.distance}
-                    )
+                    insert(TaxoParents),
+                    [{"id": item, "parent_id": parent, "distance": distance} for parent, distance in parents.items()]
                 )
             session.commit()
 
@@ -144,10 +130,10 @@ class Storage:
             return {row[0] for row in result}
 
     def get_triplets_for(
-        self,
-        reference_ids: set[int] | None,
-        structure_ids: set[int] | None,
-        taxon_ids: set[int] | None,
+            self,
+            reference_ids: set[int] | None,
+            structure_ids: set[int] | None,
+            taxon_ids: set[int] | None,
     ) -> set[tuple[int, int, int]]:
         with self.session() as session:
             filters = []
@@ -165,3 +151,13 @@ class Storage:
                 result = result.filter(*filters)
 
             return {(row[0], row[1], row[2]) for row in result}
+
+    def create_tables(self):
+        Base.metadata.create_all(self.engine)
+        with self.session() as session:
+            session.add(SchemaVersion(version=self.SCHEMA_VERSION))
+            session.commit()
+
+    def drop_and_create_tables(self):
+        Base.metadata.drop_all(self.engine)
+        self.create_tables()
