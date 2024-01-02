@@ -1,15 +1,11 @@
+from unittest import mock
+
 import pytest
 
-from model.model import DataModel
-from tests.common import setup_from_fixture
+from .common import data_model, setup_from_fixture
 
 
-@pytest.fixture
-def data_model(tmp_path):
-    setup_from_fixture(tmp_path)
-    return DataModel(tmp_path)
-
-
+@pytest.mark.usefixtures("data_model")
 class TestDataModel:
     def test_make_coverage_happy(self, tmp_path):
         setup_from_fixture(tmp_path)
@@ -25,6 +21,14 @@ class TestDataModel:
     def test_resolve_taxon(self, data_model):
         out = data_model.resolve_taxon("Gentiana luthea")
         assert out["names"][0]["results"][0]["currentCanonicalFull"] == "Gentiana lutea"
+
+    def test_resolve_taxon_with_error(self, data_model):
+        with mock.patch('requests.post') as mock_post:
+            mock_post.side_effect = Exception("Connection error")
+            with mock.patch("model.data_model.log.error") as mock_log_error:
+                result = data_model.resolve_taxon("Gentiana luthea")
+                mock_log_error.assert_called_once()
+                assert result is None
 
     def test_get_ranks_string(self, data_model):
         assert data_model.get_ranks_string(1) == " (genus)"
@@ -52,7 +56,7 @@ class TestDataModel:
         assert len(data_model.get_taxa_of_reference(666)) == 0
 
     def test_get_structures_of_reference(self, data_model):
-        assert len(data_model.get_structures_of_reference(1)) == 1
+        assert len(data_model.get_structures_of_reference(1)) == 2
         assert len(data_model.get_structures_of_reference(666)) == 0
 
     def test_get_taxa_of_structure(self, data_model):
@@ -74,3 +78,10 @@ class TestDataModel:
         assert len(data_model.get_taxa_with_name_matching("taxon 1", exact=True)) == 0
         assert len(data_model.get_taxa_with_name_matching("Taxon 666", exact=True)) == 0
         assert len(data_model.get_taxa_with_name_matching("Taxon", exact=True)) == 0
+
+    def test_tsv_of_scores(self, data_model):
+        assert data_model.structure_get_tsv_from_scores([1, 2, 3], [0.1, 0.2, 0.3]) == """Wikidata link	Similarity	Smiles
+http://www.wikidata.org/entity/Q1	0.100	C[C@H](N)O
+http://www.wikidata.org/entity/Q2	0.200	C[C@@H](N)O
+http://www.wikidata.org/entity/Q3	0.300	C
+"""

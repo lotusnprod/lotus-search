@@ -2,7 +2,7 @@ import pickle
 
 import pytest
 
-from model.model import DataModel
+from model.data_model import DataModel
 from tests.common import setup_from_fixture
 
 EXPECTED_KEYS_CHEMO = [
@@ -45,6 +45,8 @@ class TestUpdate:
             sdf = f.read()
         # If you need to update, set r to w below, and do fo.write(sdf)
         # don't forget to remove it after
+        # with open(fixture_sdf_path, "w") as fo: ## Promise I'll remove that before committing
+        #    sdf_fixture = fo.write(sdf)
         with open(fixture_sdf_path, "r") as fo:
             sdf_fixture = fo.read()
 

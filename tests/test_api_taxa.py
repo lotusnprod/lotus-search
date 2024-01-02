@@ -2,16 +2,10 @@ import pytest
 
 from api.api import search_taxa
 from api.models import Item
-from model.model import DataModel
-from tests.common import setup_from_fixture
+from .common import data_model
 
 
-@pytest.fixture
-def data_model(tmp_path):
-    setup_from_fixture(tmp_path)
-    return DataModel(tmp_path)
-
-
+@pytest.mark.usefixtures("data_model")
 class TestApiTaxa:
     @pytest.mark.asyncio
     async def test_taxa_simple(self, data_model):
