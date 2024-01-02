@@ -13,13 +13,19 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       - name: Load cached Poetry installation
         id: cached-poetry
         uses: actions/cache@v3
         with:
           path: ~/.local
           key: poetry-0
+      - name: Load cached env
+        id: cached-env
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/.cache/pypoetry/virtualenvs
+          key: venv-0
       - name: Install Poetry
         if: steps.cached-poetry.outputs.cache-hit != 'true'
         uses: snok/install-poetry@v1
@@ -39,7 +45,7 @@ jobs:
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.95
+          thresholdAll: 0.98
       - name: Run tests
         if: github.event_name != 'pull_request'
         run: |
