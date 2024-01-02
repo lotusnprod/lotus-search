@@ -2,16 +2,10 @@ import pytest
 
 from api.api import search_structures
 from api.models import Item
-from model.model import DataModel
-from tests.common import setup_from_fixture
+from .common import data_model
 
 
-@pytest.fixture
-def data_model(tmp_path):
-    setup_from_fixture(tmp_path)
-    return DataModel(tmp_path)
-
-
+@pytest.mark.usefixtures("data_model")
 class TestApiStructures:
     @pytest.mark.asyncio
     async def test_search_structures_pure_structure(self, data_model):
@@ -40,8 +34,25 @@ class TestApiStructures:
     async def test_search_structures_by_substructure(self, data_model):
         item = Item(structure="C", substructure_search=True, limit=10)
         result = await search_structures(item=item, dm=data_model)
+        assert result.count == 4
+        assert result.structures[1].smiles == "C[C@H](N)O"
+        assert result.structures[3].smiles == "C"
+        assert result.description == "Structures matching the query"
+
+    @pytest.mark.asyncio
+    async def test_search_structures_by_substructure_explicit_h(self, data_model):
+        item = Item(structure="C([H])([H])([H])", substructure_search=True, limit=10)
+        result = await search_structures(item=item, dm=data_model)
         assert result.count == 3
         assert result.structures[1].smiles == "C[C@H](N)O"
+        assert result.structures[3].smiles == "C"
+        assert result.description == "Structures matching the query"
+
+    @pytest.mark.asyncio
+    async def test_search_structures_by_similarity_explicit_h(self, data_model):
+        item = Item(structure="C([H])([H])([H])([H])", substructure_search=False, limit=10)
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 1
         assert result.structures[3].smiles == "C"
         assert result.description == "Structures matching the query"
 
@@ -49,10 +60,10 @@ class TestApiStructures:
     async def test_search_structures_by_substructure_limits(self, data_model):
         item = Item(structure="C", substructure_search=True)
         result = await search_structures(item=item, dm=data_model)
-        assert result.count == 3
+        assert result.count == 4
         item.limit = 0
         result = await search_structures(item=item, dm=data_model)
-        assert result.count == 3
+        assert result.count == 4
         item.limit = 1
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1

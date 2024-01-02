@@ -124,26 +124,7 @@ class DataModel:
                 return None
             return out.smiles
 
-    def get_structure_smiles_from_list_of_sids(self, sids: list[int]) -> set[str]:
-        # TODO get rid of this conversion ideally
-        ids = [
-            self.db["structure_id"][sid]
-            for sid in sids
-            if sid in self.db["structure_id"]
-        ]
-        with self.storage.session() as session:
-            result = session.query(Structures.id, Structures.smiles).filter(
-                Structures.id.in_(sids)
-            )
-            return {row[1] for row in result}
-
     def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
-        # TODO get rid of this conversion ideally?
-        ids = [
-            self.db["structure_id"][sid]
-            for sid in sids
-            if sid in self.db["structure_id"]
-        ]
         with self.storage.session() as session:
             result = session.query(Structures.id, Structures.smiles).filter(
                 Structures.id.in_(sids)
@@ -201,12 +182,13 @@ class DataModel:
             out.append((wid, DataStructs.TanimotoSimilarity(fp, fp_db[iid])))
         return out
 
-    def structure_get_tsv_from_scores(self, sids: list[int], scores) -> str:
+    def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
+        smiles_dict = self.get_dict_of_sid_to_smiles(wids)
         for idx, score in enumerate(scores):
-            sid = sids[idx]
-            smiles = self.db["structure_smiles"][self.db["structure_id"][sid]]
-            out += f"http://www.wikidata.org/entity/Q{sid}\t{score:.3f}\t{smiles}\n"
+            wid = wids[idx]
+            smiles = smiles_dict[wid]
+            out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
     ### Biblionomy
@@ -305,7 +287,7 @@ class DataModel:
             Triplets.taxon_id, Triplets.reference_id, references
         )
 
-    def get_triples_for(
+    def get_triplets_for(
         self,
         reference_ids: set[int] | None,
         structure_ids: set[int] | None,

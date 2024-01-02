@@ -52,6 +52,7 @@ build-backend = "poetry.core.masonry.api"
 filterwarnings = [
     "ignore:The module rdkit.Chem.MolStandardize:DeprecationWarning"
 ]
+testpaths = "tests"
 
 [tool.isort]
 profile = "black"

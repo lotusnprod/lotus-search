@@ -36,14 +36,6 @@ class Storage:
         if len(new_db) == 0:
             self.create_tables()
 
-        with self.session() as session:
-            db_version = session.query(SchemaVersion).first().version
-
-        if db_version != self.SCHEMA_VERSION:
-            raise Exception(
-                f"Database schema version {db_version} does not match expected version {self.SCHEMA_VERSION}. You want to delete data/index.db and rebuild it."
-            )
-
     def session(self, autoflush=True):
         Session = sessionmaker(bind=self.engine, autoflush=autoflush)
         return Session()
@@ -121,14 +113,15 @@ class Storage:
             return {row[0] for row in result}
 
     def get_generics_of_generics(self, out: Any, inp: Any, items: set[int]) -> set[int]:
-        if len(items) > self.list_limit:
-            raise Exception(
-                f"Too many {inp}, the limit is {self.list_limit} and you have {len(items)}"
-            )
+        items_set = list(items)
+        output = set()
 
         with self.session() as session:
-            result = session.query(out).filter(inp.in_(items)).distinct()
-            return {row[0] for row in result}
+            for i in range(0, len(items_set), self.list_limit):
+                result = session.query(out).filter(inp.in_(items_set[i : i + self.list_limit]))
+                output |= {row[0] for row in result}
+
+        return output
 
     def get_triplets_for(
             self,

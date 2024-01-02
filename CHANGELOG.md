@@ -8,6 +8,8 @@
     - Optimize the CSV parsing
     - Optimize the SQLite queries
     - Clean up a little
+    - Faster tests
+    - Full coverage
 
 ### 2023-12-30
     

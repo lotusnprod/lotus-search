@@ -13,19 +13,8 @@ from api.models import (
     TaxonResult,
     TripletResult,
 )
-from api.queries import (
-    combine_and_filter_outputs,
-    get_matching_references_from_reference_in_item,
-    get_matching_references_from_structure_in_item,
-    get_matching_references_from_taxon_in_item,
-    get_matching_structures_from_reference_in_item,
-    get_matching_structures_from_structure_in_item,
-    get_matching_structures_from_taxon_in_item,
-    get_matching_taxa_from_reference_in_item,
-    get_matching_taxa_from_structure_in_item,
-    get_matching_taxa_from_taxon_in_item,
-)
-from model.model import DataModel
+from api.queries import get_references_for_item, get_structures_for_item, get_taxa_for_item, get_triplets_for_item
+from model.data_model import DataModel
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -60,20 +49,7 @@ app = FastAPI(
 async def search_triplets(
     item: Item, dm: DataModel = Depends(DataModel)
 ) -> TripletResult:
-    selected_references = get_matching_references_from_reference_in_item(dm, item)
-    selected_structures = get_matching_structures_from_structure_in_item(dm, item)
-    selected_taxa = get_matching_taxa_from_taxon_in_item(dm, item)
-
-    triplets_set = dm.get_triples_for(
-        reference_ids=selected_references,
-        structure_ids=selected_structures,
-        taxon_ids=selected_taxa,
-    )
-
-    if item.limit == 0:
-        triplets = list(triplets_set)
-    else:
-        triplets = list(triplets_set)[: item.limit]
+    triplets = get_triplets_for_item(item, dm)
 
     return TripletResult(
         triplets=triplets,
@@ -105,24 +81,7 @@ async def search_triplets(
 async def search_structures(
     item: Item, dm: DataModel = Depends(DataModel)
 ) -> StructureResult:
-    matching_structures_by_structure = get_matching_structures_from_structure_in_item(
-        dm, item
-    )
-    matching_structures_by_taxon = get_matching_structures_from_taxon_in_item(dm, item)
-    matching_structures_by_reference = get_matching_structures_from_reference_in_item(
-        dm, item
-    )
-
-    ids = combine_and_filter_outputs(
-        [
-            matching_structures_by_reference,
-            matching_structures_by_taxon,
-            matching_structures_by_structure,
-        ],
-        limit=item.limit,
-    )
-
-    dict_items = dm.get_dict_of_sid_to_smiles(ids)
+    dict_items = get_structures_for_item(item, dm)
 
     return StructureResult(
         ids=dict_items.keys(),
@@ -137,20 +96,7 @@ async def search_structures(
 @app.post("/taxa")
 @version(1, 0)
 async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonResult:
-    matching_taxa_by_taxon = get_matching_taxa_from_taxon_in_item(dm, item)
-    matching_taxa_by_structure = get_matching_taxa_from_structure_in_item(dm, item)
-    matching_taxa_by_reference = get_matching_taxa_from_reference_in_item(dm, item)
-
-    ids = combine_and_filter_outputs(
-        [
-            matching_taxa_by_reference,
-            matching_taxa_by_structure,
-            matching_taxa_by_taxon,
-        ],
-        limit=item.limit,
-    )
-
-    dict_items = dm.get_dict_of_tid_to_taxon_name(ids)
+    dict_items = get_taxa_for_item(item, dm)
 
     return TaxonResult(
         ids=dict_items.keys(),
@@ -165,24 +111,7 @@ async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonRe
 async def search_references(
     item: Item, dm: DataModel = Depends(DataModel)
 ) -> ReferenceResult:
-    matching_references_by_reference = get_matching_references_from_reference_in_item(
-        dm, item
-    )
-    matching_references_by_structure = get_matching_references_from_structure_in_item(
-        dm, item
-    )
-    matching_references_by_taxon = get_matching_references_from_taxon_in_item(dm, item)
-
-    ids = combine_and_filter_outputs(
-        [
-            matching_references_by_reference,
-            matching_references_by_structure,
-            matching_references_by_taxon,
-        ],
-        limit=item.limit,
-    )
-
-    dict_items = dm.get_dict_of_rid_to_reference_doi(ids)
+    dict_items = get_references_for_item(item, dm)
 
     return ReferenceResult(
         ids=dict_items.keys(),
