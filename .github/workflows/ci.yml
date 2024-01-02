@@ -27,9 +27,11 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       - name: Run tests for PR
+        env:
+          PYTHONDONTWRITEBYTECODE: 1
         run: |
           poetry install
-          poetry run pytest --cov-config=.coveragerc --cov=. -n auto
+          poetry run pytest --cov-config=.coveragerc --cov=.
           poetry run coverage xml
       - name: Get Cover
         if: github.event_name == 'pull_request'
