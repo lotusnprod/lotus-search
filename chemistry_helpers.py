@@ -30,13 +30,6 @@ def fingerprint(mol):
     return fpgen.GetFingerprint(mol)
 
 
-def process_smol_and_wid(smol_and_wid):
-    sdf_blocks = []
-    for smol, wid in smol_and_wid:
-        sdf_blocks.append((wid, Chem.MolToMolBlock(smol)))
-    return sdf_blocks
-
-
 def standardize(mol):
     clean_mol = rdMolStandardize.Cleanup(mol)
     bigger_clean = rdMolStandardize.FragmentParent(clean_mol)
@@ -50,8 +43,9 @@ def process_smiles(inp):
         nid, smiles = inp
         mol = Chem.MolFromSmiles(smiles)
         smol = standardize(mol)
-        smiles_clean = Chem.MolToSmiles(smol)
         if smol is not None:
+            smiles_clean = Chem.MolToSmiles(smol)
+            mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
             smol_h = Chem.AddHs(smol)
@@ -62,6 +56,7 @@ def process_smiles(inp):
                 smiles,
                 smol,
                 smiles_clean,
+                mol_block,
                 sim_fp,
                 sub_fp,
                 smol_h.ToBinary(),

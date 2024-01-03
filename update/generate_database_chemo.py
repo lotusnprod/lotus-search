@@ -4,12 +4,13 @@ import logging
 import multiprocessing
 import pickle
 from concurrent.futures import ProcessPoolExecutor
+# from itertools import islice
 from pathlib import Path
 
 from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
-from chemistry_helpers import process_smiles, process_smol_and_wid, write_mols_to_sdf
+from chemistry_helpers import process_smiles, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(
@@ -23,6 +24,7 @@ def run(path: Path) -> None:
     with open(path / "structures.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
+        # for x in islice(reader, 1000):
         for x in reader:
             c, smi, cano = x
             if smi == "":
@@ -42,6 +44,7 @@ def run(path: Path) -> None:
 
     library_h = rdSubstructLibrary.SubstructLibrary(mols_h, fps_h)
 
+    sdf_blocks = []
     p_smileses = []
     p_smols = []
     p_sim_fps = []
@@ -53,10 +56,11 @@ def run(path: Path) -> None:
         for result in results:
             if result is not None:
                 (
-                    mid,
+                    nid,
                     smiles,
                     smol,
                     smiles_clean,
+                    mol_block,
                     sim_fp,
                     sub_fp,
                     mol_h,
@@ -69,13 +73,14 @@ def run(path: Path) -> None:
                 p_sim_h_fps.append(sim_fp_h)
 
                 smis.AddSmiles(smiles_clean)
+                sdf_blocks.append((links[nid], mol_block))
                 fps.AddFingerprint(sub_fp)
                 p_sim_fps.append(sim_fp)
 
                 p_smols.append(smol)
                 p_smileses.append(smiles)
 
-                p_links.append(links[mid])
+                p_links.append(links[nid])
 
     logging.info("Finished generating the chemical libraries")
 
@@ -88,6 +93,7 @@ def run(path: Path) -> None:
 
     database = {
         "structure_wid": p_links,
+        # TODO add blocks if needed
         "structure_sim_fps": p_sim_fps,
         "structure_sim_h_fps": p_sim_h_fps,
         "structure_library": library.Serialize(),
@@ -99,16 +105,8 @@ def run(path: Path) -> None:
         pickle.dump(database, f)
     logging.info("Finished dumping")
 
-    logging.info("Starting SDF")
-    smols_and_wids = list(zip(p_smols, p_links))
-
-    with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        chunks = [
-            smols_and_wids[i : i + 1000] for i in range(0, len(smols_and_wids), 1000)
-        ]
-        sdf_blocks_list = list(executor.map(process_smol_and_wid, chunks))
-        sdf_blocks = [block for sublist in sdf_blocks_list for block in sublist]
-        write_mols_to_sdf(path, sdf_blocks)
+    logging.info("Exporting SDF")
+    write_mols_to_sdf(path, sdf_blocks)
 
     logging.info("Finished exporting")
 
