@@ -4,7 +4,7 @@ PREFIX pr: <http://www.wikidata.org/prop/reference/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT ?reference ?reference_doi WHERE {
-  ?structure wdt:P235 [].
-  ?structure p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
+  [ wdt:P235 []; ]
+  p:P703/(prov:wasDerivedFrom/pr:P248) ?reference.
   ?reference wdt:P356 ?reference_doi.
 }
