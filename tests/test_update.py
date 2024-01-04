@@ -12,6 +12,7 @@ EXPECTED_KEYS_CHEMO = [
     "structure_library",
     "structure_library_h",
     "structure_id",
+    "structure_ranges",
 ]
 
 @pytest.fixture
