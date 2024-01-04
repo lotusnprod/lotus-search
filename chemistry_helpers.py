@@ -70,14 +70,5 @@ def process_smiles(inp):
         return None
 
 
-def write_mols_to_sdf(path: Path, sdf_blocks):
-    with Chem.SDWriter(str(path / "lotus.sdf")) as w:
-        for wid, sdf_block in sdf_blocks:
-            mol = Chem.MolFromMolBlock(sdf_block)
-            if mol:
-                mol.SetProp("WID", str(wid))
-                w.write(mol)
-
-
 fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 uncharger = rdMolStandardize.Uncharger()

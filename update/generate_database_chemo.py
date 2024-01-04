@@ -10,7 +10,8 @@ from pathlib import Path
 from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
-from chemistry_helpers import process_smiles, write_mols_to_sdf
+from chemistry_helpers import process_smiles
+from sdf_helpers import mmap_file, find_structures_line_ranges, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(
@@ -24,7 +25,7 @@ def run(path: Path) -> None:
     with open(path / "structures.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
-        # for x in islice(reader, 1000):
+        # for x in islice(reader, 100):
         for x in reader:
             c, smi, cano = x
             if smi == "":
@@ -51,6 +52,7 @@ def run(path: Path) -> None:
     p_sim_h_fps = []
     p_links = []
 
+    logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         results = executor.map(process_smiles, enumerate(smileses), chunksize=1000)
         for result in results:
@@ -81,9 +83,28 @@ def run(path: Path) -> None:
                 p_smileses.append(smiles)
 
                 p_links.append(links[nid])
-
     logging.info("Finished generating the chemical libraries")
+    
+    logging.info("Generating and exporting SDF")
+    write_mols_to_sdf(path / "lotus.sdf", sdf_blocks)
 
+    logging.info("Indexing SDF")
+    mmaped_sdf = mmap_file(path / "lotus.sdf")
+    structures_ranges = find_structures_line_ranges(mmaped_sdf)
+
+    logging.info("Generating database")
+    database = {
+        "structure_wid": p_links,
+        "structure_sim_fps": p_sim_fps,
+        "structure_sim_h_fps": p_sim_h_fps,
+        "structure_library": library.Serialize(),
+        "structure_library_h": library_h.Serialize(),
+        "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
+        "structure_ranges" : structures_ranges,
+    }
+    # print(database)
+
+    logging.info("Exporting processed smiles")
     with open(path / "smiles_processed.csv", "w") as f:
         # Write a csv with header, structure_id and structure_smiles
         # from the two arrays p_links and p_smileses  respectively
@@ -91,23 +112,10 @@ def run(path: Path) -> None:
         csv_file.writerow(["structure", "structure_smiles"])
         csv_file.writerows(zip(p_links, p_smileses))
 
-    database = {
-        "structure_wid": p_links,
-        # TODO add blocks if needed
-        "structure_sim_fps": p_sim_fps,
-        "structure_sim_h_fps": p_sim_h_fps,
-        "structure_library": library.Serialize(),
-        "structure_library_h": library_h.Serialize(),
-        "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
-    }
-
+    logging.info("Exporting database")
     with open(path / "database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
-    logging.info("Finished dumping")
-
-    logging.info("Exporting SDF")
-    write_mols_to_sdf(path, sdf_blocks)
-
+   
     logging.info("Finished exporting")
 
 
