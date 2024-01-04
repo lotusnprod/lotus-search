@@ -66,6 +66,9 @@ def run(path: Path) -> None:
         taxo_names_dict = {int(row[taxon_index]): row[name_index] for row in reader}
 
     logging.info(" Processed taxa names")
+
+    # Eventually TODO add taxa_names_com
+    
     taxon_ranks_dict = {}
 
     with open(path / "ranks_names.csv", "r") as f:

@@ -10,6 +10,8 @@ class TestDataModel:
     def test_make_coverage_happy(self, tmp_path):
         setup_from_fixture(tmp_path)
 
+     # Eventually TODO add taxa_names_com
+
     def test_get_taxon_name_from_tid(self, data_model):
         assert data_model.get_taxon_name_from_tid(1) == "Taxon 1"
         assert data_model.get_taxon_name_from_tid(666) is None

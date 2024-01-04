@@ -12,21 +12,21 @@ MergingGroup = Group(name="merging", parallel=False)
 
 TASKS = [
     Task(
-        name="references",
-        f=download_query_as_csv.run,
-        group=DownloadGroup,
-        params={
-            "query_file": "update/queries/references.rq",
-            "output_file": "references.csv",
-        },
-    ),
-    Task(
         name="ranks_names",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
             "query_file": "update/queries/ranks_names.rq",
             "output_file": "ranks_names.csv",
+        },
+    ),
+    Task(
+        name="references",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/references.rq",
+            "output_file": "references.csv",
         },
     ),
     Task(
@@ -45,6 +45,15 @@ TASKS = [
         params={
             "query_file": "update/queries/taxa_names.rq",
             "output_file": "taxa_names.csv",
+        },
+    ),
+    Task(
+        name="taxa_names_com",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_names_com.rq",
+            "output_file": "taxa_names_com.csv",
         },
     ),
     Task(
