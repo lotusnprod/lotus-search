@@ -11,7 +11,7 @@ from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
 from chemistry_helpers import process_smiles
-from sdf_helpers import mmap_file, find_structures_line_ranges, write_mols_to_sdf
+from sdf_helpers import mmap_file, find_structures_bytes_ranges, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(
@@ -90,7 +90,7 @@ def run(path: Path) -> None:
 
     logging.info("Indexing SDF")
     mmaped_sdf = mmap_file(path / "lotus.sdf")
-    structures_ranges = find_structures_line_ranges(mmaped_sdf)
+    structures_ranges = find_structures_bytes_ranges(mmaped_sdf)
 
     logging.info("Generating database")
     database = {

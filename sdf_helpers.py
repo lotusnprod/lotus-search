@@ -11,16 +11,16 @@ def mmap_file(file_path):
     return mmapped_file
 
 
-def find_structures_line_ranges(mmapped_file):
+def find_structures_bytes_ranges(mmapped_file):
     structures_ranges = {}
-    start_line = 1
+    start_offset = 0
     prev_line = prev_prev_line = b""
-    for line_number, line in enumerate(iter(mmapped_file.readline, b""), start=1):
+    for line in iter(mmapped_file.readline, b""):
         if line.startswith(b"$$$$"):
-            end_line = line_number
+            end_offset = mmapped_file.tell() - len(line)
             identifier = int(prev_prev_line.strip().decode())
-            structures_ranges[identifier] = (start_line, end_line)
-            start_line = line_number + 1
+            structures_ranges[identifier] = (start_offset, end_offset)
+            start_offset = mmapped_file.tell()
         prev_prev_line, prev_line = prev_line, line
     return structures_ranges
 
@@ -29,7 +29,7 @@ def read_selected_ranges(mmapped_file, ranges_to_read):
     selected_lines = deque()
     for start, end in ranges_to_read:
         selected_lines.append(mmapped_file[start:end].decode())
-    return selected_lines
+    return list(selected_lines)
 
 
 def write_mols_to_sdf(path: Path, sdf_blocks):
@@ -44,7 +44,7 @@ def write_mols_to_sdf(path: Path, sdf_blocks):
 def main():
     file_path = "data/lotus.sdf"
     mmapped_file = mmap_file(file_path)
-    structures_ranges = find_structures_line_ranges(mmapped_file)
+    structures_ranges = find_structures_bytes_ranges(mmapped_file)
     # print(structures_ranges)
     start_time = time.time()
     ranges_to_read = [structures_ranges[key] for key in list(structures_ranges.keys())[:100000]]
