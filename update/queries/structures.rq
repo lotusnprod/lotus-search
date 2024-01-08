@@ -1,3 +1,4 @@
+PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
@@ -5,8 +6,8 @@ SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
     # Could also be
     # P31 wd:Q113145171 `type of a chemical entity`
     # P31 wd:Q59199015 `group of stereoisomers`
-    ?structure wdt:P235 [].
-    ?structure wdt:P703 [].
+    ?structure p:P235 [].
+    ?structure p:P703 [].
 
     # All P2017 should also have P233 but some of them are not complete.
     OPTIONAL {
