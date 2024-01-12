@@ -12,11 +12,7 @@ properties:
     description: |
       Structures
     type: object
-    properties:
-      ids:
-        type: integer
-        example: 27151406
-      structures:
+    additionalProperties:
         $ref: "./structures.yaml"
   count:
     title: Count

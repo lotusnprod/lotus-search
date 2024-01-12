@@ -13,7 +13,7 @@ properties:
     example: 3613679
     type: integer
 
-  molecule:
+  structure:
     description: |
       A MOL file or SMILES of the structure of the structure or part of it.
     default: ~
