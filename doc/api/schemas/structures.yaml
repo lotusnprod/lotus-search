@@ -3,7 +3,7 @@ description: |
   Structures
 type: object
 properties:
-  structure_smiles:
+  smiles:
     title: Structure SMILES
     description: |
       Structure SMILES
