@@ -72,6 +72,8 @@ def process_smiles(inp):
         smol = standardize(mol)
         if smol is not None:
             smiles_clean = Chem.MolToSmiles(smol)
+            inchi_clean = Chem.inchi.MolToInchi(smol)
+            inchikey_clean = Chem.inchi.MolToInchiKey(smol)
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
@@ -86,6 +88,8 @@ def process_smiles(inp):
                 smiles,
                 smol,
                 smiles_clean,
+                inchi_clean,
+                inchikey_clean,
                 mol_block,
                 sim_fp,
                 sub_fp,

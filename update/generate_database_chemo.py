@@ -45,6 +45,8 @@ def run(path: Path) -> None:
 
     library_h = rdSubstructLibrary.SubstructLibrary(mols_h, fps_h)
 
+    inchis = []
+    inchikeys = []
     sdf_blocks = []
     p_smileses = []
     p_smols = []
@@ -62,9 +64,13 @@ def run(path: Path) -> None:
                     smiles,
                     smol,
                     smiles_clean,
+                    inchi_clean,
+                    inchikey_clean,
                     mol_block,
                     sim_fp,
                     sub_fp,
+                    # desc_mordred,
+                    # desc_rdkit,
                     mol_h,
                     sim_fp_h,
                     sub_fp_h,
@@ -75,6 +81,8 @@ def run(path: Path) -> None:
                 p_sim_h_fps.append(sim_fp_h)
 
                 smis.AddSmiles(smiles_clean)
+                inchis.append(inchi_clean)
+                inchikeys.append(inchikey_clean)
                 sdf_blocks.append((links[nid], mol_block))
                 fps.AddFingerprint(sub_fp)
                 p_sim_fps.append(sim_fp)
@@ -103,6 +111,9 @@ def run(path: Path) -> None:
         "structure_ranges" : structures_ranges,
     }
     # print(database)
+    # TODO add BLOCKS table based on the ranges
+
+    # TODO decide where to put InChI(Key)s
 
     logging.info("Exporting processed smiles")
     with open(path / "smiles_processed.csv", "w") as f:
