@@ -1,7 +1,9 @@
 'use client'
 
-import {useState} from "react";
+import React, {useRef, useState} from "react";
 import {StructureSearchQuery} from "@/interfaces/structure_search_query";
+import KetcherLotus, {KetcherLotusMethods} from "@/components/KetcherLotus";
+import dynamic from "next/dynamic";
 
 interface StructureSearchProps {
     onSearchSubmit: (searchValue: StructureSearchQuery) => void;
@@ -9,27 +11,29 @@ interface StructureSearchProps {
 
 const StructureSearch: React.FC<StructureSearchProps> =
     ({onSearchSubmit}) => {
-        const [inputValue, setInputValue] = useState('c1ccccc1');
         const [substructureSearch, setSubstructureSearch] = useState(false);
-
-        const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        const ketcherRef = useRef<KetcherLotusMethods>(null);
+        const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
-            onSearchSubmit({smiles: inputValue, substructureSearch: substructureSearch});
+            if (ketcherRef.current) {
+                const smiles = await ketcherRef.current.getValue()
+                if (smiles != "")
+                    onSearchSubmit({smiles: smiles, substructureSearch: substructureSearch})
+            } else {
+                console.log("Nothing to search for")
+            }
         };
 
         return (
             <main>
+                <div className="w-full">
+                    <KetcherLotus ref={ketcherRef}/>
+                </div>
                 <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-                    <input className='bg-gray-200 text-black shadow-inner rounded-l p-2 flex-1' id='smiles' type='text'
-                           aria-label='structure smiles' placeholder='SMILES string.'
-                           value={inputValue}
-                           onChange={(e) => setInputValue(e.target.value)}
-                    />
                     <label className="inline-flex items-center">
                         <input className='bg-gray-200 text-black shadow-inner rounded-l p-2 flex-1' id='smiles'
                                type='checkbox'
                                aria-label='Substructure search'
-                               value={inputValue}
                                onChange={e => setSubstructureSearch(!substructureSearch)}
                         />
                         <span className="ml-2 text-gray-700">Substructure search</span>
@@ -44,5 +48,6 @@ const StructureSearch: React.FC<StructureSearchProps> =
             </main>
         )
     }
-
-export default StructureSearch;
+export default dynamic(() => Promise.resolve(StructureSearch), {
+    ssr: false
+})

@@ -28,6 +28,12 @@ const nextConfig = {
             {
                 source: '/api/:path*',
                 destination: 'http://backend:5000/:path*' // Proxy to Backend
+            },
+            // See https://lifescience.opensource.epam.com/indigo/service/index.html
+            // For how to use it with a proxy redirect later
+            {
+                source: '/indigo/:path*',
+                destination: 'http://indigo:8002/:path*' // Proxy to Indigo
             }
         ]
     }

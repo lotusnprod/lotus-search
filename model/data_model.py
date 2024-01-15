@@ -22,14 +22,16 @@ requests_log.propagate = True
 
 
 class DataModel:
-    def __new__(cls, path: Path = Path("./data")):
+    def __new__(cls):
         # Each instance will be the same, it is all read-only
-        if not hasattr(cls, "instance"):
-            cls.instance = super(DataModel, cls).__new__(cls)
-            cls.instance.db = cls.load_all_data(path)
-            cls.instance.storage = Storage(path)
-            cls.instance.path = path
-        return cls.instance
+        if not hasattr(cls, "_instance"):
+            cls._instance = super(DataModel, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self, path: Path = Path("./data")):
+        self.db = self.load_all_data(path)
+        self.storage = Storage(path)
+        self.path = path
 
     @classmethod
     @functools.lru_cache(maxsize=None)
