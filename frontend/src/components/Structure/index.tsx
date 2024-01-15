@@ -15,7 +15,7 @@ interface StructureProps {
 
 const Structure: React.FC<StructureProps> = ({id, structure, highlight}) => {
     return (
-        <div className="mr-4 p-4 bg-gray-200">
+        <div className="mr-4 mb-1 p-4 bg-gray-200">
             <MoleculeStructure
                 svgMode={true}
                 structure={structure}
