@@ -1,5 +1,6 @@
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_name WHERE {
-    ?taxon wdt:P225 ?taxon_name.
+    ?taxon wdt:P225 ?taxon_name. hint:Prior hint:rangeSafe true.
 }
+LIMIT 5000000

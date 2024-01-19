@@ -4,6 +4,7 @@ PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT DISTINCT ?reference ?reference_doi WHERE {
-  [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference.
+  [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference. hint:Prior hint:rangeSafe true.
   ?reference wdt:P356 ?reference_doi.
 }
+LIMIT 200000

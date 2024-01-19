@@ -17,3 +17,4 @@ SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
         ?structure wdt:P2017 ?structure_smiles.
     }
 }
+LIMIT 500000
