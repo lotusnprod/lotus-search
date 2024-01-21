@@ -13,7 +13,12 @@ from api.models import (
     TaxonResult,
     TripletResult,
 )
-from api.queries import get_references_for_item, get_structures_for_item, get_taxa_for_item, get_triplets_for_item
+from api.queries import (
+    get_references_for_item,
+    get_structures_for_item,
+    get_taxa_for_item,
+    get_triplets_for_item,
+)
 from model.data_model import DataModel
 
 logging.basicConfig(
