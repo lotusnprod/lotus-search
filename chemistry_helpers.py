@@ -83,6 +83,9 @@ def process_smiles(inp):
             smol_h = Chem.AddHs(smol)
             sim_fp_h = fingerprint(smol_h)
             sub_fp_h = Chem.PatternFingerprint(smol_h)
+            Chem.RemoveStereochemistry(smol)
+            smiles_no_stereo = Chem.MolToSmiles(smol)
+            inchi_no_stereo = Chem.inchi.MolToInchi(smol)
             return (
                 nid,
                 smiles,
@@ -98,6 +101,8 @@ def process_smiles(inp):
                 smol_h.ToBinary(),
                 sim_fp_h,
                 sub_fp_h,
+                smiles_no_stereo,
+                inchi_no_stereo,
             )
         else:
             return None

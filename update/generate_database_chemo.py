@@ -53,6 +53,8 @@ def run(path: Path) -> None:
     p_sim_fps = []
     p_sim_h_fps = []
     p_links = []
+    smis_no_stereo = []
+    inchis_no_stereo = []
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -74,6 +76,8 @@ def run(path: Path) -> None:
                     mol_h,
                     sim_fp_h,
                     sub_fp_h,
+                    smiles_no_stereo,
+                    inchi_no_stereo,
                 ) = result
 
                 mols_h.AddMol(Mol(mol_h))
@@ -89,6 +93,8 @@ def run(path: Path) -> None:
 
                 p_smols.append(smol)
                 p_smileses.append(smiles)
+                smis_no_stereo.append(smiles_no_stereo)
+                inchis_no_stereo.append(inchi_no_stereo)
 
                 p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")
