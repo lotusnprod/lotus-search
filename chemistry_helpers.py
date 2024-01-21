@@ -1,9 +1,9 @@
 import logging
-from mordred import Calculator, descriptors
 from pathlib import Path
+
+from mordred import Calculator, descriptors
 from rdkit import Chem
-from rdkit.Chem import Descriptors
-from rdkit.Chem import rdFingerprintGenerator
+from rdkit.Chem import Descriptors, rdFingerprintGenerator
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
@@ -38,18 +38,19 @@ def get_mol_descriptors_mordred(mol):
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
 def get_mol_descriptors_rdkit(mol):
-    """ calculate the full list of descriptors for a molecule
-    
-        missingVal is used if the descriptor cannot be calculated
+    """calculate the full list of descriptors for a molecule
+
+    missingVal is used if the descriptor cannot be calculated
     """
     res = {}
-    for nm,fn in Descriptors._descList:
+    for nm, fn in Descriptors._descList:
         # some of the descriptor fucntions can throw errors if they fail, catch those here:
         try:
             val = fn(mol)
         except:
             # print the error message:
             import traceback
+
             traceback.print_exc()
             # and set the descriptor value to None
             val = None

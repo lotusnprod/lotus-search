@@ -5,6 +5,7 @@ import logging
 import multiprocessing
 import pickle
 from concurrent.futures import ProcessPoolExecutor
+
 # from itertools import islice
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
 from chemistry_helpers import process_smiles
-from sdf_helpers import mmap_file, find_structures_bytes_ranges, write_mols_to_sdf
+from sdf_helpers import find_structures_bytes_ranges, mmap_file, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(

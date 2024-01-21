@@ -1,7 +1,7 @@
 import mmap
-
-from pathlib import Path
 from collections import deque
+from pathlib import Path
+
 from rdkit.Chem import MolFromMolBlock, SDWriter
 
 
@@ -48,7 +48,9 @@ def main():
     structures_ranges = find_structures_bytes_ranges(mmapped_file)
     # print(structures_ranges)
     start_time = time.time()
-    ranges_to_read = [structures_ranges[key] for key in list(structures_ranges.keys())[:100000]]
+    ranges_to_read = [
+        structures_ranges[key] for key in list(structures_ranges.keys())[:100000]
+    ]
     if ranges_to_read:
         selected_lines = read_selected_ranges(mmapped_file, ranges_to_read)
     else:
@@ -61,5 +63,6 @@ def main():
 if __name__ == "__main__":
     import logging
     import time
+
     logging.basicConfig(level=logging.INFO)
     main()

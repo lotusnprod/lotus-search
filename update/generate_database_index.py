@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 from storage.storage import Storage
-
 from update.taxo_helper import convert_to_int_safe, generate_taxon_parents_with_distance
 
 logging.basicConfig(
@@ -33,11 +32,13 @@ def run(path: Path) -> None:
             if (ref, struct, taxon) in dedup:
                 continue
             dedup.add((ref, struct, taxon))
-            triplets.append({
-                "reference_id": int(row[ref_index]),
-                "structure_id": int(row[struct_index]),
-                "taxon_id": int(row[taxon_index])
-            })
+            triplets.append(
+                {
+                    "reference_id": int(row[ref_index]),
+                    "structure_id": int(row[struct_index]),
+                    "taxon_id": int(row[taxon_index]),
+                }
+            )
     logging.info(" Processed triplets")
 
     with open(path / "references.csv", "r") as f:
@@ -68,7 +69,7 @@ def run(path: Path) -> None:
     logging.info(" Processed taxa names")
 
     # Eventually TODO add taxa_names_com
-    
+
     taxon_ranks_dict = {}
 
     with open(path / "ranks_names.csv", "r") as f:

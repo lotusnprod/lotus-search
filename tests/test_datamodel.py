@@ -10,7 +10,7 @@ class TestDataModel:
     def test_make_coverage_happy(self, tmp_path):
         setup_from_fixture(tmp_path)
 
-     # Eventually TODO add taxa_names_com
+    # Eventually TODO add taxa_names_com
 
     def test_get_taxon_name_from_tid(self, data_model):
         assert data_model.get_taxon_name_from_tid(1) == "Taxon 1"
@@ -25,7 +25,7 @@ class TestDataModel:
         assert out["names"][0]["results"][0]["currentCanonicalFull"] == "Gentiana lutea"
 
     def test_resolve_taxon_with_error(self, data_model):
-        with mock.patch('requests.post') as mock_post:
+        with mock.patch("requests.post") as mock_post:
             mock_post.side_effect = Exception("Connection error")
             with mock.patch("model.data_model.log.error") as mock_log_error:
                 result = data_model.resolve_taxon("Gentiana luthea")
@@ -82,8 +82,11 @@ class TestDataModel:
         assert len(data_model.get_taxa_with_name_matching("Taxon", exact=True)) == 0
 
     def test_tsv_of_scores(self, data_model):
-        assert data_model.structure_get_tsv_from_scores([1, 2, 3], [0.1, 0.2, 0.3]) == """Wikidata link	Similarity	Smiles
+        assert (
+            data_model.structure_get_tsv_from_scores([1, 2, 3], [0.1, 0.2, 0.3])
+            == """Wikidata link	Similarity	Smiles
 http://www.wikidata.org/entity/Q1	0.100	C[C@H](N)O
 http://www.wikidata.org/entity/Q2	0.200	C[C@@H](N)O
 http://www.wikidata.org/entity/Q3	0.300	C
 """
+        )

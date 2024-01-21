@@ -10,7 +10,15 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 
 from chemistry_helpers import fingerprint, standardize
-from storage.models import References, Structures, TaxoNames, TaxoParents, TaxoRankNames, TaxoRanks, Triplets
+from storage.models import (
+    References,
+    Structures,
+    TaxoNames,
+    TaxoParents,
+    TaxoRankNames,
+    TaxoRanks,
+    Triplets,
+)
 from storage.storage import Storage
 
 logging.basicConfig()
@@ -100,9 +108,7 @@ class DataModel:
 
     def get_ranks_string(self, wid: int) -> str:
         with self.storage.session() as session:
-            result = session.query(TaxoRanks.rank_id).filter(
-                TaxoRanks.id == wid
-            )
+            result = session.query(TaxoRanks.rank_id).filter(TaxoRanks.id == wid)
             rank_ids = [row[0] for row in result]
         if len(rank_ids) > 0:
             n_ranks = [self.get_rank_name_from_wid(int(it)) for it in rank_ids]

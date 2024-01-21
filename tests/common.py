@@ -15,7 +15,7 @@ def setup_from_fixture(tmp_path: Path):
     runner.run_tasks(only=None, stop=None, skip="downloads", parallel=False)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def data_model(tmp_path_factory):
     temp_dir = tmp_path_factory.mktemp("data_model")
     setup_from_fixture(temp_dir)

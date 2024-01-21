@@ -2,6 +2,7 @@ import pytest
 
 from api.api import search_structures
 from api.models import Item
+
 from .common import data_model
 
 
@@ -50,7 +51,9 @@ class TestApiStructures:
 
     @pytest.mark.asyncio
     async def test_search_structures_by_similarity_explicit_h(self, data_model):
-        item = Item(structure="C([H])([H])([H])([H])", substructure_search=False, limit=10)
+        item = Item(
+            structure="C([H])([H])([H])([H])", substructure_search=False, limit=10
+        )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.structures[3].smiles == "C"

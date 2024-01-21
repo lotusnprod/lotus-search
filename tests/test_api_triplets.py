@@ -2,6 +2,7 @@ import pytest
 
 from api.api import search_triplets
 from api.models import Item, TripletResult
+
 from .common import data_model
 
 
