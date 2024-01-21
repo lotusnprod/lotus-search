@@ -37,12 +37,10 @@ def run(path: Path) -> None:
     with open(path / "structures.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
-        # for x in islice(reader, 100):
-        for x in reader:
-            c, smi, cano = x
-            if smi == "":
-                smi = cano
-            smiles = smi.strip()
+        # for row in islice(reader, 100):
+        for row in reader:
+            c, smi, cano = row
+            smiles = smi.strip() if smi else cano.strip()
             if smiles not in processed_smiles_set:
                 smileses.append(smiles)
                 links.append(int(c))
@@ -135,9 +133,8 @@ def run(path: Path) -> None:
         "structure_ranges": structures_ranges,
     }
     # print(database)
-    # TODO add BLOCKS table based on the ranges
-
-    # TODO decide where to put InChI(Key)s
+    # TODO: add BLOCKS table based on the ranges
+    # TODO: decide where to put InChI(Key)s
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"
@@ -147,7 +144,7 @@ def run(path: Path) -> None:
         # Write a csv with header, structure_id and structure_smiles
         if not file_exists:
             csv_file.writerow(["structure", "structure_smiles"])
-        # from the two arrays p_links and p_smileses  respectively
+        # from the two arrays p_links and p_smileses respectively
         csv_file.writerows(zip(p_links, p_smileses))
 
     logging.info("Exporting database")
