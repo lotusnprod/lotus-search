@@ -135,6 +135,7 @@ def run(path: Path) -> None:
     # print(database)
     # TODO: add BLOCKS table based on the ranges
     # TODO: decide where to put InChI(Key)s
+    # TODO: decide where to put descriptors
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"

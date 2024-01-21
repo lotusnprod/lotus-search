@@ -77,7 +77,7 @@ def process_smiles(inp):
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
-            # TODO not doing it now, waiting to keep everything
+            # TODO not doing it now, very intensive
             # desc_mordred = get_mol_descriptors_mordred(smol)
             # desc_rdkit = get_mol_descriptors_rdkit(smol)
             smol_h = Chem.AddHs(smol)
