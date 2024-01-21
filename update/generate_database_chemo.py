@@ -21,6 +21,18 @@ logging.basicConfig(
 )
 
 
+def export_descriptors_to_csv(descriptors, file_path):
+    file_exists = file_path.exists()
+    with open(file_path, "a") as f:
+        headers = ["smiles"] + list(descriptors[next(iter(descriptors))].keys())
+        csv_writer = csv.writer(f)
+        if not file_exists:
+            csv_writer.writerow(headers)
+        for structure, properties in descriptors.items():
+            row = [structure] + [properties.get(key, "") for key in headers[1:]]
+            csv_writer.writerow(row)
+
+
 def load_processed_smiles(path: Path) -> set:
     processed_smiles_set = set()
     processed_smiles_file = path / "smiles_processed.csv"
@@ -141,14 +153,12 @@ def run(path: Path) -> None:
     # print(database)
     # TODO: add BLOCKS table based on the ranges
     # TODO: decide where to put InChI(Key)s
-    
+
     logging.info("Exporting rdkit descriptors")
-    with open( path / "descriptors_rdkit.json", "w") as json_file:
-        json.dump(descriptors_r, json_file, indent=2)
+    export_descriptors_to_csv(descriptors_r, path / "descriptors_rdkit.csv")
 
     logging.info("Exporting mordred descriptors")
-    with open( path / "descriptors_mordred.json", "w") as json_file:
-        json.dump(descriptors_m, json_file, indent=2)
+    export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"
