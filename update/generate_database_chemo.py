@@ -19,7 +19,19 @@ logging.basicConfig(
 )
 
 
+def load_processed_smiles(path: Path) -> set:
+    processed_smiles_set = set()
+    processed_smiles_file = path / "smiles_processed.csv"
+    if processed_smiles_file.exists():
+        with open(processed_smiles_file, "r") as f:
+            reader = csv.reader(f)
+            next(reader)  # Skip header
+            processed_smiles_set.update(row[1] for row in reader)
+    return processed_smiles_set
+
+
 def run(path: Path) -> None:
+    processed_smiles_set = load_processed_smiles(path)
     smileses = []
     links = []
     with open(path / "structures.csv", "r") as f:
@@ -30,8 +42,14 @@ def run(path: Path) -> None:
             c, smi, cano = x
             if smi == "":
                 smi = cano
-            smileses.append(smi)
-            links.append(int(c))
+            smiles = smi.strip()
+            if smiles not in processed_smiles_set:
+                smileses.append(smiles)
+                links.append(int(c))
+
+    if not smileses:
+        logging.info("No new SMILES to process. Exiting.")
+        return
 
     max_workers = multiprocessing.cpu_count()
 
@@ -98,7 +116,7 @@ def run(path: Path) -> None:
 
                 p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")
-    
+
     logging.info("Generating and exporting SDF")
     write_mols_to_sdf(path / "lotus.sdf", sdf_blocks)
 
@@ -114,7 +132,7 @@ def run(path: Path) -> None:
         "structure_library": library.Serialize(),
         "structure_library_h": library_h.Serialize(),
         "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
-        "structure_ranges" : structures_ranges,
+        "structure_ranges": structures_ranges,
     }
     # print(database)
     # TODO add BLOCKS table based on the ranges
@@ -122,17 +140,20 @@ def run(path: Path) -> None:
     # TODO decide where to put InChI(Key)s
 
     logging.info("Exporting processed smiles")
-    with open(path / "smiles_processed.csv", "w") as f:
-        # Write a csv with header, structure_id and structure_smiles
-        # from the two arrays p_links and p_smileses  respectively
+    smiles_file_path = path / "smiles_processed.csv"
+    file_exists = smiles_file_path.exists()
+    with open(smiles_file_path, "a") as f:  # Append mode to avoid overwriting
         csv_file = csv.writer(f)
-        csv_file.writerow(["structure", "structure_smiles"])
+        # Write a csv with header, structure_id and structure_smiles
+        if not file_exists:
+            csv_file.writerow(["structure", "structure_smiles"])
+        # from the two arrays p_links and p_smileses  respectively
         csv_file.writerows(zip(p_links, p_smileses))
 
     logging.info("Exporting database")
     with open(path / "database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
-   
+
     logging.info("Finished exporting")
 
 

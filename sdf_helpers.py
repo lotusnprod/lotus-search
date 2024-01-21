@@ -33,12 +33,13 @@ def read_selected_ranges(mmapped_file, ranges_to_read):
 
 
 def write_mols_to_sdf(path: Path, sdf_blocks):
-    with SDWriter(str(path)) as w:
-        for wid, sdf_block in sdf_blocks:
-            mol = MolFromMolBlock(sdf_block)
-            if mol:
-                mol.SetProp("WID", str(wid))
-                w.write(mol)
+    with open(str(path), "a") as f:
+        with SDWriter(f) as w:
+            for wid, sdf_block in sdf_blocks:
+                mol = MolFromMolBlock(sdf_block)
+                if mol:
+                    mol.SetProp("WID", str(wid))
+                    w.write(mol)
 
 
 def main():
