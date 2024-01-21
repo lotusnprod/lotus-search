@@ -33,7 +33,7 @@ def fingerprint(mol):
 
 # from https://github.com/mordred-descriptor/mordred/tree/develop/examples
 def get_mol_descriptors_mordred(mol):
-    return calc(mol)
+    return calc(mol).drop_missing().asdict()
 
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
@@ -77,9 +77,8 @@ def process_smiles(inp):
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
-            # TODO not doing it now, very intensive
-            # desc_mordred = get_mol_descriptors_mordred(smol)
-            # desc_rdkit = get_mol_descriptors_rdkit(smol)
+            desc_mordred = get_mol_descriptors_mordred(smol)
+            desc_rdkit = get_mol_descriptors_rdkit(smol)
             smol_h = Chem.AddHs(smol)
             sim_fp_h = fingerprint(smol_h)
             sub_fp_h = Chem.PatternFingerprint(smol_h)
@@ -96,8 +95,8 @@ def process_smiles(inp):
                 mol_block,
                 sim_fp,
                 sub_fp,
-                # desc_mordred,
-                # desc_rdkit,
+                desc_mordred,
+                desc_rdkit,
                 smol_h.ToBinary(),
                 sim_fp_h,
                 sub_fp_h,

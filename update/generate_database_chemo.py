@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import csv
+import json
 import logging
 import multiprocessing
 import pickle
@@ -71,6 +72,8 @@ def run(path: Path) -> None:
     p_links = []
     smis_no_stereo = []
     inchis_no_stereo = []
+    descriptors_r = {}
+    descriptors_m = {}
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -87,8 +90,8 @@ def run(path: Path) -> None:
                     mol_block,
                     sim_fp,
                     sub_fp,
-                    # desc_mordred,
-                    # desc_rdkit,
+                    desc_mordred,
+                    desc_rdkit,
                     mol_h,
                     sim_fp_h,
                     sub_fp_h,
@@ -111,6 +114,8 @@ def run(path: Path) -> None:
                 p_smileses.append(smiles)
                 smis_no_stereo.append(smiles_no_stereo)
                 inchis_no_stereo.append(inchi_no_stereo)
+                descriptors_m[smiles] = desc_mordred
+                descriptors_r[smiles] = desc_rdkit
 
                 p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")
@@ -135,7 +140,14 @@ def run(path: Path) -> None:
     # print(database)
     # TODO: add BLOCKS table based on the ranges
     # TODO: decide where to put InChI(Key)s
-    # TODO: decide where to put descriptors
+    
+    logging.info("Exporting rdkit descriptors")
+    with open( path / "descriptors_rdkit.json", "w") as json_file:
+        json.dump(descriptors_r, json_file, indent=2)
+
+    logging.info("Exporting mordred descriptors")
+    with open( path / "descriptors_mordred.json", "w") as json_file:
+        json.dump(descriptors_m, json_file, indent=2)
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"
