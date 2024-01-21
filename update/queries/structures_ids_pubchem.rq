@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?structure ?structure_id_pubchem WHERE {
+    ?structure wdt:P662 ?structure_id_pubchem. hint:Prior hint:rangeSafe true. # int
+}
+LIMIT 2000000

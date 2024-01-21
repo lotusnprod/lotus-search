@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?structure ?structure_id_kegg WHERE {
+    ?structure wdt:P665 ?structure_id_kegg. hint:Prior hint:rangeSafe true. # str
+}
+LIMIT 2000000

@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT ?taxon ?taxon_id_irmng WHERE {
+    ?taxon wdt:P5055 ?taxon_id_irmng. hint:Prior hint:rangeSafe true. # int
+}
+LIMIT 2000000
