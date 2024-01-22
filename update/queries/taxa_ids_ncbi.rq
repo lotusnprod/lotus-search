@@ -1,3 +1,4 @@
+PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_id_ncbi WHERE {
