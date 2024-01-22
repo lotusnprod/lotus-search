@@ -12,6 +12,60 @@ MergingGroup = Group(name="merging", parallel=False)
 
 TASKS = [
     Task(
+        name="classes_cxsmiles",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_cxsmiles.rq",
+            "output_file": "classes_cxsmiles.csv",
+        },
+    ),
+    Task(
+        name="classes_inchi",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_inchi.rq",
+            "output_file": "classes_inchi.csv",
+        },
+    ),
+    Task(
+        name="classes_parents",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_parents.rq",
+            "output_file": "classes_parents.csv",
+        },
+    ),
+    Task(
+        name="classes_smarts",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_smarts.rq",
+            "output_file": "classes_smarts.csv",
+        },
+    ),
+    Task(
+        name="classes_smiles_canonical",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_smiles_canonical.rq",
+            "output_file": "classes_smiles_canonical.csv",
+        },
+    ),
+    Task(
+        name="classes_smiles_isomeric",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/classes_smiles_isomeric.rq",
+            "output_file": "classes_smiles_isomeric.csv",
+        },
+    ),
+    Task(
         name="ranks_names",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -36,6 +90,15 @@ TASKS = [
         params={
             "query_file": "update/queries/structures.rq",
             "output_file": "structures.csv",
+        },
+    ),
+    Task(
+        name="structures_classes",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_classes.rq",
+            "output_file": "structures_classes.csv",
         },
     ),
     Task(
