@@ -10,7 +10,7 @@ class Item(BaseModel):
     taxon_name: str | None = None
     reference_wid: int | None = None
     reference_doi: str | None = None
-    limit: int = 1000
+    limit: int = 0
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -75,3 +75,12 @@ class TripletResult(BaseModel):
     taxa: dict[int, TaxonInfo]
     count: int
     description: str
+
+
+class AutocompleteTaxa(BaseModel):
+    taxon_name: str
+
+
+class StructureDepiction(BaseModel):
+    structure: str
+    highlight: str | None = None

@@ -7,6 +7,7 @@ import styled from "@emotion/styled";
 import { Config } from "ketcher-react/dist/script";
 import { Ketcher } from "ketcher-core";
 import 'ketcher-react/dist/index.css';
+import {createRoot} from "react-dom/client";
 
 
 const structServiceProvider = new StandaloneStructServiceProvider();
@@ -39,6 +40,7 @@ export const KetcherEditorLotus = ({
   ...rest
 }: KetcherEditorProps) => (
   <KetcherEditorWrapper height={height}>
+    <div id="ketcher-root" />
     <KetcherEditor
       staticResourcesUrl={process.env.PUBLIC_URL!}
       structServiceProvider={structServiceProvider}

@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.16",
+    "@mui/joy": "^5.0.0-beta.23",
     "@rdkit/rdkit": "^2023.9.2-1.0.0",
     "ketcher-react": "^2.15.1",
     "ketcher-standalone": "^2.15.1",
@@ -27,7 +30,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0",
     "typescript": "^5"
   },
   "browser": {

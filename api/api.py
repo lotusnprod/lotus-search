@@ -1,19 +1,20 @@
 import logging
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (
-    Item,
+    AutocompleteTaxa, Item,
     ReferenceInfo,
     ReferenceResult,
-    StructureInfo,
+    StructureDepiction, StructureInfo,
     StructureResult,
     TaxonInfo,
     TaxonResult,
     TripletResult,
 )
 from api.queries import get_references_for_item, get_structures_for_item, get_taxa_for_item, get_triplets_for_item
+from chemistry_helpers import molecule_svg
 from model.data_model import DataModel
 
 logging.basicConfig(
@@ -24,6 +25,7 @@ description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
+dm = DataModel()
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -47,7 +49,7 @@ app = FastAPI(
 @app.post("/triplets")
 @version(1, 0)
 async def search_triplets(
-    item: Item, dm: DataModel = Depends(DataModel)
+        item: Item
 ) -> TripletResult:
     triplets = get_triplets_for_item(item, dm)
 
@@ -79,7 +81,7 @@ async def search_triplets(
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(
-    item: Item, dm: DataModel = Depends(DataModel)
+        item: Item
 ) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
@@ -95,7 +97,7 @@ async def search_structures(
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonResult:
+async def search_taxa(item: Item) -> TaxonResult:
     dict_items = get_taxa_for_item(item, dm)
 
     return TaxonResult(
@@ -109,7 +111,7 @@ async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonRe
 @app.post("/references")
 @version(1, 0)
 async def search_references(
-    item: Item, dm: DataModel = Depends(DataModel)
+        item: Item
 ) -> ReferenceResult:
     dict_items = get_references_for_item(item, dm)
 
@@ -119,6 +121,22 @@ async def search_references(
         description="References matching the query",
         count=len(dict_items),
     )
+
+
+@app.post("/autocomplete/taxa")
+@version(1, 0)
+async def autocomplete_taxa(
+        inp: AutocompleteTaxa
+) -> dict[str, int]:
+    return dm.get_dict_of_taxa_from_name(inp.taxon_name)
+
+
+@app.post("/depiction/structure")
+@version(1, 0)
+async def depiction_molecule(
+        structure_depiction: StructureDepiction
+) -> dict[str, str]:
+    return {"svg": molecule_svg(structure_depiction.structure, molecule=None)}
 
 
 app = VersionedFastAPI(app, enable_latest=True)

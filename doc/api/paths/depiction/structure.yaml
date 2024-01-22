@@ -1,0 +1,28 @@
+post:
+  operationId: depiction_structure
+  security: [ ]
+  summary: |
+   Depict a structure as SVG
+  description: |
+   Depict a structure as SVG
+  requestBody:
+    description: depictStructureQuery
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/depiction/depictStructureQuery.yaml"
+
+  responses:
+    '200':
+      description: structure depiction
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/depiction/depictStructureResponse.yaml"
+    '400':
+      description: Probably some failure
+      content:
+        application/json:
+          schema:
+            type: string

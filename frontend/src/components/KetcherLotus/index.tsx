@@ -44,11 +44,6 @@ const KetcherLotus = React.forwardRef<KetcherLotusMethods, KetcherLotusProps>(
 
         return (
             <div ref={editorusRef}>
-                {!(global as any).ketcher && (
-                    <div>
-                        Loading...
-                    </div>
-                )}
                 <Suspense fallback={<KetcherLoading/>}>
                     <KetcherEditorLotus
                         height={300}

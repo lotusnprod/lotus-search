@@ -1,0 +1,6 @@
+title: Taxa
+type: object
+properties:
+  taxon_name:
+    type: string
+    example: "Taxus"

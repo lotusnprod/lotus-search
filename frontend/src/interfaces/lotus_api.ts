@@ -37,6 +37,22 @@ export interface paths {
      */
     post: operations["search_triplets"];
   };
+  "/autocomplete/taxa": {
+    /**
+     * Autocomplete taxa names when given a portion of the name
+     *
+     * @description Autocomplete taxa names when given a portion of the name.
+     */
+    post: operations["autocomplete_taxa"];
+  };
+  "/depiction/structure": {
+    /**
+     * Depict a structure as SVG
+     *
+     * @description Depict a structure as SVG
+     */
+    post: operations["depiction_structure"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -279,6 +295,34 @@ export interface components {
        */
       description?: string;
     };
+    /** Taxa */
+    taxaQuery: {
+      /** @example Taxus */
+      taxon_name?: string;
+    };
+    /**
+     * TaxaResult
+     * @example {
+     *   "Taxus baccata": 1340928,
+     *   "Taxus floridana": 1340929
+     * }
+     */
+    taxaResult: {
+      [key: string]: number;
+    };
+    depictStructureQuery: {
+      /** @description A SMILES string to depict. */
+      structure?: string;
+      /**
+       * @description A SMILES string to highlight in the structure. If not provided, the
+       * structure will be depicted without highlighting.
+       */
+      highlight?: null | string;
+    };
+    depictStructureResponse: {
+      /** @description The SVG depiction of the structure. */
+      svg?: string;
+    };
     /** HTTPValidationError */
     validationError: {
       /** Location */
@@ -427,6 +471,60 @@ export interface operations {
             /** @example No triplet matching the given search could be found */
             message?: string;
           };
+        };
+      };
+    };
+  };
+  /**
+   * Autocomplete taxa names when given a portion of the name
+   *
+   * @description Autocomplete taxa names when given a portion of the name.
+   */
+  autocomplete_taxa: {
+    /** @description Query */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["taxaQuery"];
+      };
+    };
+    responses: {
+      /** @description Matching taxa */
+      200: {
+        content: {
+          "application/json": components["schemas"]["taxaResult"];
+        };
+      };
+      /** @description Invalid query */
+      400: {
+        content: {
+          "application/json": string;
+        };
+      };
+    };
+  };
+  /**
+   * Depict a structure as SVG
+   *
+   * @description Depict a structure as SVG
+   */
+  depiction_structure: {
+    /** @description depictStructureQuery */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["depictStructureQuery"];
+      };
+    };
+    responses: {
+      /** @description structure depiction */
+      200: {
+        content: {
+          "application/json": components["schemas"]["depictStructureResponse"];
+        };
+      };
+      /** @description Probably some failure */
+      400: {
+        content: {
+          "application/json": string;
         };
       };
     };

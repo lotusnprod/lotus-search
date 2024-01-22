@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import React from "react";
 import MenuBar from "@/components/MenuBar";
+import {Box, CssBaseline, CssVarsProvider} from "@mui/joy";
+import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,8 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <MenuBar />
-        {children}
+      <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
   )
