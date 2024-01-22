@@ -39,6 +39,177 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_chebi",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_chebi.rq",
+            "output_file": "structures_ids_chebi.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_chembl",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_chembl.rq",
+            "output_file": "structures_ids_chembl.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_chemspider",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_chemspider.rq",
+            "output_file": "structures_ids_chemspider.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_kegg",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_kegg.rq",
+            "output_file": "structures_ids_kegg.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_pubchem",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_pubchem.rq",
+            "output_file": "structures_ids_pubchem.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_zinc",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_zinc.rq",
+            "output_file": "structures_ids_zinc.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_col",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_col.rq",
+            "output_file": "taxa_ids_col.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_eol",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_eol.rq",
+            "output_file": "taxa_ids_eol.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_gbif",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_gbif.rq",
+            "output_file": "taxa_ids_gbif.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_inat",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_inat.rq",
+            "output_file": "taxa_ids_inat.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_ipni",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_ipni.rq",
+            "output_file": "taxa_ids_ipni.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_irmng",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_irmng.rq",
+            "output_file": "taxa_ids_irmng.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_itis",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_itis.rq",
+            "output_file": "taxa_ids_itis.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_ncbi",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_ncbi.rq",
+            "output_file": "taxa_ids_ncbi.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_otl",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_otl.rq",
+            "output_file": "taxa_ids_otl.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_powo",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_powo.rq",
+            "output_file": "taxa_ids_powo.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_tropicos",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_tropicos.rq",
+            "output_file": "taxa_ids_tropicos.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_wfo",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_wfo.rq",
+            "output_file": "taxa_ids_wfo.csv",
+        },
+    ),
+    Task(
+        name="taxa_ids_worms",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/taxa_ids_worms.rq",
+            "output_file": "taxa_ids_worms.csv",
+        },
+    ),
+    Task(
         name="taxa_names",
         f=download_query_as_csv.run,
         group=DownloadGroup,

@@ -1,4 +1,5 @@
 import pickle
+
 import pytest
 
 from model.data_model import DataModel
@@ -14,6 +15,7 @@ EXPECTED_KEYS_CHEMO = [
     "structure_id",
     "structure_ranges",
 ]
+
 
 @pytest.fixture
 def data_model(tmp_path):
@@ -54,19 +56,27 @@ class TestUpdate:
         assert (
             sdf == sdf_fixture
         ), f"Content mismatch between {generated_sdf_path} and {fixture_sdf_path}"
-        
+
         mmaped_sdf_fixture = mmap_file(fixture_sdf_path)
 
         ranges = find_structures_bytes_ranges(mmaped_sdf_fixture)
         # Hard to find bytes manually
-        ranges_expected = {1: (0, 409), 2: (414, 823), 3: (828, 988), 4: (993, 1153), 6: (1158, 1567)}
+        ranges_expected = {
+            1: (0, 409),
+            2: (414, 823),
+            3: (828, 988),
+            4: (993, 1153),
+            6: (1158, 1567),
+        }
         assert (
             ranges == ranges_expected
-            ), f"Content mismatch between {ranges} and {ranges_expected}"
+        ), f"Content mismatch between {ranges} and {ranges_expected}"
 
         ranges_to_read = [ranges[key] for key in list(ranges.keys())]
         block = read_selected_ranges(mmaped_sdf_fixture, [ranges_to_read[2]])
-        block_expected = ["""\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"""]
+        block_expected = [
+            """\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"""
+        ]
         assert (
             block == block_expected
-            ), f"Content mismatch between {block} and {block_expected}"
+        ), f"Content mismatch between {block} and {block_expected}"

@@ -11,9 +11,7 @@ logging.basicConfig(
 )
 
 
-def references_from_reference_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching references."""
     if item.reference_doi and item.reference_wid:
         raise HTTPException(
@@ -29,9 +27,7 @@ def references_from_reference_in_item(
     return None
 
 
-def structures_from_structure_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching structures."""
     structures = None
 
@@ -84,9 +80,7 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     return None
 
 
-def references_from_structure_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def references_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     structures = structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -95,9 +89,7 @@ def references_from_structure_in_item(
     return dm.get_references_of_structures(structures)
 
 
-def references_from_taxon_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     taxa = taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -106,9 +98,7 @@ def references_from_taxon_in_item(
     return dm.get_references_of_taxa(taxa)
 
 
-def structures_from_reference_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def structures_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     references = references_from_reference_in_item(dm, item)
 
     if references is None:
@@ -117,9 +107,7 @@ def structures_from_reference_in_item(
     return dm.get_structures_of_references(references)
 
 
-def structures_from_taxon_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     taxa = taxa_from_taxon_in_item(dm, item)
 
     if taxa is None:
@@ -135,9 +123,7 @@ def structures_from_taxon_in_item(
     return out
 
 
-def taxa_from_structure_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
     structures = structures_from_structure_in_item(dm, item)
 
     if structures is None:
@@ -146,9 +132,7 @@ def taxa_from_structure_in_item(
     return dm.get_taxa_of_structures(structures)
 
 
-def taxa_from_reference_in_item(
-    dm: DataModel, item: Item
-) -> set[int] | None:
+def taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     references = references_from_reference_in_item(dm, item)
 
     if references is None:
@@ -190,7 +174,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         [
             structures_from_structure_in_item(dm, item),
             structures_from_taxon_in_item(dm, item),
-            structures_from_reference_in_item(dm, item)
+            structures_from_reference_in_item(dm, item),
         ],
         limit=item.limit,
     )

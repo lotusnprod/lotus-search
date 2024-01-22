@@ -19,7 +19,9 @@ def convert_to_int_safe(s: str) -> int | None:
         return None
 
 
-def generate_taxon_parents_with_distance(path: Path, taxa: set[int]) -> list[tuple[int, int, int]]:
+def generate_taxon_parents_with_distance(
+    path: Path, taxa: set[int]
+) -> list[tuple[int, int, int]]:
     graph = defaultdict(list)
     distances = []
     with open(path / "taxa_parents.csv", "r") as f:

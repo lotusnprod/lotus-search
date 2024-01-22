@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT ?taxon ?taxon_id_powo WHERE {
+    ?taxon wdt:P5037 ?taxon_id_powo. hint:Prior hint:rangeSafe true. # str
+}
+LIMIT 1500000

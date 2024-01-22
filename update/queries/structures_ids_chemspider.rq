@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?structure ?structure_id_chemspider WHERE {
+    ?structure wdt:P661 ?structure_id_chemspider. hint:Prior hint:rangeSafe true. # int
+}
+LIMIT 2000000

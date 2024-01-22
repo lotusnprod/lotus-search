@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import csv
+import json
 import logging
 import multiprocessing
 import pickle
 from concurrent.futures import ProcessPoolExecutor
+
 # from itertools import islice
 from pathlib import Path
 
@@ -11,7 +13,7 @@ from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 
 from chemistry_helpers import process_smiles
-from sdf_helpers import mmap_file, find_structures_bytes_ranges, write_mols_to_sdf
+from sdf_helpers import find_structures_bytes_ranges, mmap_file, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
 logging.basicConfig(
@@ -19,19 +21,47 @@ logging.basicConfig(
 )
 
 
+def export_descriptors_to_csv(descriptors, file_path):
+    file_exists = file_path.exists()
+    with open(file_path, "a") as f:
+        headers = ["smiles"] + list(descriptors[next(iter(descriptors))].keys())
+        csv_writer = csv.writer(f)
+        if not file_exists:
+            csv_writer.writerow(headers)
+        for structure, properties in descriptors.items():
+            row = [structure] + [properties.get(key, "") for key in headers[1:]]
+            csv_writer.writerow(row)
+
+
+def load_processed_smiles(path: Path) -> set:
+    processed_smiles_set = set()
+    processed_smiles_file = path / "smiles_processed.csv"
+    if processed_smiles_file.exists():
+        with open(processed_smiles_file, "r") as f:
+            reader = csv.reader(f)
+            next(reader)  # Skip header
+            processed_smiles_set.update(row[1] for row in reader)
+    return processed_smiles_set
+
+
 def run(path: Path) -> None:
+    processed_smiles_set = load_processed_smiles(path)
     smileses = []
     links = []
     with open(path / "structures.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)
-        # for x in islice(reader, 100):
-        for x in reader:
-            c, smi, cano = x
-            if smi == "":
-                smi = cano
-            smileses.append(smi)
-            links.append(int(c))
+        # for row in islice(reader, 100):
+        for row in reader:
+            c, smi, cano = row
+            smiles = smi.strip() if smi else cano.strip()
+            if smiles not in processed_smiles_set:
+                smileses.append(smiles)
+                links.append(int(c))
+
+    if not smileses:
+        logging.info("No new SMILES to process. Exiting.")
+        return
 
     max_workers = multiprocessing.cpu_count()
 
@@ -53,6 +83,10 @@ def run(path: Path) -> None:
     p_sim_fps = []
     p_sim_h_fps = []
     p_links = []
+    smis_no_stereo = []
+    inchis_no_stereo = []
+    descriptors_r = {}
+    descriptors_m = {}
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -69,11 +103,13 @@ def run(path: Path) -> None:
                     mol_block,
                     sim_fp,
                     sub_fp,
-                    # desc_mordred,
-                    # desc_rdkit,
+                    desc_mordred,
+                    desc_rdkit,
                     mol_h,
                     sim_fp_h,
                     sub_fp_h,
+                    smiles_no_stereo,
+                    inchi_no_stereo,
                 ) = result
 
                 mols_h.AddMol(Mol(mol_h))
@@ -89,10 +125,14 @@ def run(path: Path) -> None:
 
                 p_smols.append(smol)
                 p_smileses.append(smiles)
+                smis_no_stereo.append(smiles_no_stereo)
+                inchis_no_stereo.append(inchi_no_stereo)
+                descriptors_m[smiles] = desc_mordred
+                descriptors_r[smiles] = desc_rdkit
 
                 p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")
-    
+
     logging.info("Generating and exporting SDF")
     write_mols_to_sdf(path / "lotus.sdf", sdf_blocks)
 
@@ -108,25 +148,33 @@ def run(path: Path) -> None:
         "structure_library": library.Serialize(),
         "structure_library_h": library_h.Serialize(),
         "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
-        "structure_ranges" : structures_ranges,
+        "structure_ranges": structures_ranges,
     }
     # print(database)
-    # TODO add BLOCKS table based on the ranges
+    # TODO: add BLOCKS table based on the ranges
+    # TODO: decide where to put InChI(Key)s
 
-    # TODO decide where to put InChI(Key)s
+    logging.info("Exporting rdkit descriptors")
+    export_descriptors_to_csv(descriptors_r, path / "descriptors_rdkit.csv")
+
+    logging.info("Exporting mordred descriptors")
+    export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
 
     logging.info("Exporting processed smiles")
-    with open(path / "smiles_processed.csv", "w") as f:
-        # Write a csv with header, structure_id and structure_smiles
-        # from the two arrays p_links and p_smileses  respectively
+    smiles_file_path = path / "smiles_processed.csv"
+    file_exists = smiles_file_path.exists()
+    with open(smiles_file_path, "a") as f:  # Append mode to avoid overwriting
         csv_file = csv.writer(f)
-        csv_file.writerow(["structure", "structure_smiles"])
+        # Write a csv with header, structure_id and structure_smiles
+        if not file_exists:
+            csv_file.writerow(["structure", "structure_smiles"])
+        # from the two arrays p_links and p_smileses respectively
         csv_file.writerows(zip(p_links, p_smileses))
 
     logging.info("Exporting database")
     with open(path / "database_chemo.pkl", "wb") as f:
         pickle.dump(database, f)
-   
+
     logging.info("Finished exporting")
 
 

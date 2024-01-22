@@ -1,0 +1,6 @@
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?structure ?structure_id_zinc WHERE {
+    ?structure wdt:P2084 ?structure_id_zinc. hint:Prior hint:rangeSafe true. # int
+}
+LIMIT 2000000

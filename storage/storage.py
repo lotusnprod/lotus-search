@@ -48,7 +48,9 @@ class Storage:
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(triplets), self.list_limit // 3):
-                session.execute(insert(Triplets), triplets[i: i + self.list_limit // 3])
+                session.execute(
+                    insert(Triplets), triplets[i : i + self.list_limit // 3]
+                )
             session.commit()
 
     def upsert_references(self, references: list[dict[str, int]]) -> None:
@@ -56,7 +58,7 @@ class Storage:
             for i in range(0, len(references), self.list_limit // 2):
                 session.execute(
                     insert(References).values(),
-                    references[i: i + self.list_limit // 2],
+                    references[i : i + self.list_limit // 2],
                 )
             session.commit()
 
@@ -64,8 +66,7 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
-                    insert(Structures),
-                    structures[i: i + self.list_limit // 2]
+                    insert(Structures), structures[i : i + self.list_limit // 2]
                 )
 
             session.commit()
@@ -74,8 +75,7 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoNames),
-                    taxo_names[i: i + self.list_limit // 2]
+                    insert(TaxoNames), taxo_names[i : i + self.list_limit // 2]
                 )
             session.commit()
 
@@ -83,8 +83,7 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoRankNames),
-                    ranks_names[i: i + self.list_limit // 2]
+                    insert(TaxoRankNames), ranks_names[i : i + self.list_limit // 2]
                 )
             session.commit()
 
@@ -92,8 +91,7 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_ranks), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoRanks),
-                    taxo_ranks[i: i + self.list_limit // 2]
+                    insert(TaxoRanks), taxo_ranks[i : i + self.list_limit // 2]
                 )
             session.commit()
 
@@ -102,7 +100,10 @@ class Storage:
             for i in range(0, len(parenting), self.list_limit // 2):
                 session.execute(
                     insert(TaxoParents),
-                    [{"id": item[0], "parent_id": item[1], "distance": item[2]} for item in parenting[i: i + self.list_limit // 2]]
+                    [
+                        {"id": item[0], "parent_id": item[1], "distance": item[2]}
+                        for item in parenting[i : i + self.list_limit // 2]
+                    ],
                 )
 
             session.commit()
@@ -118,16 +119,18 @@ class Storage:
 
         with self.session() as session:
             for i in range(0, len(items_set), self.list_limit):
-                result = session.query(out).filter(inp.in_(items_set[i : i + self.list_limit]))
+                result = session.query(out).filter(
+                    inp.in_(items_set[i : i + self.list_limit])
+                )
                 output |= {row[0] for row in result}
 
         return output
 
     def get_triplets_for(
-            self,
-            reference_ids: set[int] | None,
-            structure_ids: set[int] | None,
-            taxon_ids: set[int] | None,
+        self,
+        reference_ids: set[int] | None,
+        structure_ids: set[int] | None,
+        taxon_ids: set[int] | None,
     ) -> set[tuple[int, int, int]]:
         with self.session() as session:
             filters = []

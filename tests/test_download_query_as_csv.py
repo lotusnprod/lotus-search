@@ -42,7 +42,8 @@ class TestRunQueryToCSV:
                     arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list
                 ]
                 as_post = [
-                    arg_list[1]["as_post"] for arg_list in mock_sparql_to_csv.call_args_list
+                    arg_list[1]["as_post"]
+                    for arg_list in mock_sparql_to_csv.call_args_list
                 ]
                 assert as_post == [False, False, True, False, False]
                 assert urls == ["foo"] * 3 + ["https://query.wikidata.org/sparql"] * 2

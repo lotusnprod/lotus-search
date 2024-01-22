@@ -12,13 +12,14 @@ logging.basicConfig(
 
 
 def run(
-        path: Path, query_file: Path, output_file: Path, retry: int = 3, url: str = WD_URL
+    path: Path, query_file: Path, output_file: Path, retry: int = 3, url: str = WD_URL
 ) -> None:
     with open(query_file, "r") as qf:
         query = qf.read()
 
-    t = sparql_to_csv(query=query, url=url,
-                      as_post=(retry == 1))  # The last retry we do a POST just in case the cache was polluted
+    t = sparql_to_csv(
+        query=query, url=url, as_post=(retry == 1)
+    )  # The last retry we do a POST just in case the cache was polluted
     if "java.util.concurrent.TimeoutException" in t:
         if retry > 1:
             logging.warning(f"Failed to download query {query_file}, retrying...")

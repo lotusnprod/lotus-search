@@ -3,7 +3,7 @@ from .references import References
 from .schema_version import SchemaVersion
 from .structures import Structures
 from .taxo_names import TaxoNames
-from .taxo_rank_names import TaxoRankNames
-from .triplets import Triplets
 from .taxo_parents import TaxoParents
+from .taxo_rank_names import TaxoRankNames
 from .taxo_ranks import TaxoRanks
+from .triplets import Triplets
