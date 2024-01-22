@@ -1,0 +1,18 @@
+PREFIX hint: <http://www.bigdata.com/queryHints#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?structure ?class WHERE {
+    VALUES ?instance {
+        wd:Q47154513 # structural class of chemical entities
+        wd:Q56256178 # class of chemical entities with similar source or occurrence
+        wd:Q17339814 # group or class of chemical substances
+        wd:Q56256173 # class of chemical entities with similar applications or functions
+        wd:Q74892521 # imprecise class of chemical entities
+    }
+    ?class wdt:P31 ?instance.
+    ?structure p:P235 []. hint:Prior hint:rangeSafe true.
+    ?structure p:P703 [].
+    ?structure wdt:P279 ?class.
+}
+LIMIT 500000

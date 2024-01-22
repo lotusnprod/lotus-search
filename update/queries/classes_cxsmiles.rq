@@ -1,0 +1,14 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT ?class ?class_cxsmiles WHERE {
+    VALUES ?instance {
+        wd:Q47154513
+        wd:Q56256178
+        wd:Q17339814
+        wd:Q56256173
+        wd:Q74892521
+    }
+    ?class wdt:P31 ?instance;
+    wdt:P10718 ?class_cxsmiles.
+}
