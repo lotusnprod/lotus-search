@@ -6,18 +6,7 @@ properties:
     description: |
       IDs
     type: array
-    items:
-      type: object
-      properties:
-        reference:
-          type: integer
-          example: 44488598
-        structure:
-          type: integer
-          example: 27151406
-        taxon:
-          type: integer
-          example: 158572
+    example: [ 44488598 ]
   references:
     title: References
     description: |
