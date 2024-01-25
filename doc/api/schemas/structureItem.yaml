@@ -1,0 +1,17 @@
+title: Structure
+description: |
+  Structure
+type: object
+properties:
+  structure_wid:
+    description: |
+      Wikidata identifier of the structure (without the Q).
+    default: ~
+    example: 3613679
+    type: integer
+  molecule:
+    description: |
+      A MOL file or SMILES of the structure of the structure or part of it.
+    default: ~
+    example: "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
+    type: string
