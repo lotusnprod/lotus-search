@@ -6,47 +6,52 @@ properties:
     description: |
       Triplets of reference, structure and taxon IDs
     type: array
+    items:
+      type: array
+      items:
+        type: integer
     example : [ [44488598, 27151406, 158572] ]
   references:
-    title: References
     description: |
       References
     type: object
     properties:
       ids:
+        description: |
+          IDs
         type: integer
         example: 44488598
       references:
         $ref: "./references.yaml"
   structures:
-    title: Structures
     description: |
       Structures
     type: object
     properties:
       ids:
+        description: |
+          IDs
         type: integer
         example: 27151406
       structures:
         $ref: "./structures.yaml"
   taxa:
-    title: Taxa
     description: |
       Taxa
     type: object
     properties:
       ids:
+        description: |
+          IDs
         type: integer
         example: 158572
       taxa:
         $ref: "./taxa.yaml"
   count:
-    title: Count
     description: |
       Count
     type: integer
   description:
-    title: Description
     description: |
       Description
     type: string

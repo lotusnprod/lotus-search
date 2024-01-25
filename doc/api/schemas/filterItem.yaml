@@ -1,12 +1,8 @@
 title: Filter
-description: |
-  Filter
 type: object
 properties:
   structural:
     title: Structural
-    description: |
-      Structural filter
     type: object
     properties:
       substructure_search:
@@ -23,8 +19,6 @@ properties:
         type: number
   taxal:
     title: Taxal
-    description: |
-      Taxal filter
     type: object
     properties:
       taxon_children:

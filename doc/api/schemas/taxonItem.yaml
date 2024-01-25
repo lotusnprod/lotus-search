@@ -1,6 +1,4 @@
 title: Taxon
-description: |
-  Taxon
 type: object
 properties:
   taxon_wid:

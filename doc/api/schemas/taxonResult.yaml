@@ -2,29 +2,28 @@ title: TaxonResult
 type: object
 properties:
   ids:
-    title: IDs
     description: |
       IDs
     type: array
+    items:
+      type: integer
     example: [ 158572 ]
   taxa:
     title: Taxa
-    description: |
-      Taxa
     type: object
     properties:
       ids:
+        description: |
+          IDs
         type: integer
         example: 158572
       taxa:
         $ref: "./taxa.yaml"
   count:
-    title: Count
     description: |
       Count
     type: integer
   description:
-    title: Description
     description: |
       Description
     type: string

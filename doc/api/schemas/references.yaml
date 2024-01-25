@@ -1,18 +1,14 @@
 title: References
-description: |
-  References
 type: object
 required: [ ]
 properties:
   doi:
-    title: DOI
     description: |
       DOI
     type: string
     example: "10.1080/1057563021000040466"
-  title:
-    title: Title
-    description: |
-      Title
-    type: string
-    example: "Iridoids from Seeds of Gentiana Lutea"
+  # title:
+  #   description: |
+  #     Title
+  #   type: string
+  #   example: "Iridoids from Seeds of Gentiana Lutea"
