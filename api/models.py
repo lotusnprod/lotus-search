@@ -63,11 +63,6 @@ class TaxonResult(BaseModel):
     description: str
 
 
-class CoupleIds(BaseModel):
-    structure: int
-    taxon: int
-
-
 class TripletResult(BaseModel):
     triplets: list[list[int]]
     references: dict[int, ReferenceInfo]
