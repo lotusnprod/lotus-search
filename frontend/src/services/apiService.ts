@@ -19,6 +19,10 @@ export const fetchStructures = async (input: components["schemas"]["item"]): Pro
     return callApi('/api/v1_0/structures', input)
 }
 
+export const fetchTaxa = async (input: components["schemas"]["item"]): Promise<components["schemas"]["TaxonResult"]> => {
+    return callApi('/api/v1_0/taxa', input)
+}
+
 export const autocompleteTaxa = async (input: components["schemas"]["taxaQuery"]): Promise<components["schemas"]["taxaResult"]> => {
     return callApi('/api/v1_0/autocomplete/taxa', input)
 

@@ -144,4 +144,25 @@ async def depiction_molecule(
     return {"svg": molecule_svg(structure_depiction.structure, molecule=None)}
 
 
-app = VersionedFastAPI(app, enable_latest=True)
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "logging.Formatter",
+            "fmt": "%(levelname)s %(name)s@%(lineno)d %(message)s",
+        },
+    },
+    "handlers": {
+        "default": {
+            "formatter": "default",
+            "class": "my_project.ColorStreamHandler",
+            "stream": "ext://sys.stderr",
+        },
+    },
+    "loggers": {
+        "": {"handlers": ["default"], "level": "TRACE"},
+    },
+}
+
+app = VersionedFastAPI(app, enable_latest=True, log_config=LOGGING_CONFIG)

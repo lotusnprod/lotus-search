@@ -136,3 +136,13 @@ Content-Type: application/json
   "taxon_name": "Gentiana septemfida",
   "reference_doi": "10.1021/NP50081A018"
 }
+
+###
+# Taxa by name
+POST http://127.0.0.1:5000/v1_0/taxa
+Accept: application/json
+Content-Type: application/json
+
+{
+  "taxon_name": "Ta"
+}
