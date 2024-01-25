@@ -1,17 +1,25 @@
 item:
   $ref: "./item.yaml"
+filterItem:
+  $ref: "./filterItem.yaml"
 references:
   $ref: "./references.yaml"
+referenceItem:
+  $ref: "./referenceItem.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
 structures:
   $ref: "./structures.yaml"
+structureItem:
+  $ref: "./structureItem.yaml"
 structureResult:
   $ref: "./structureResult.yaml"
 taxa:
   $ref: "./taxa.yaml"
 taxonResult:
   $ref: "./taxonResult.yaml"
+taxonItem:
+  $ref: "./taxonItem.yaml"
 tripletResult:
   $ref: "./tripletResult.yaml"
 validationError:

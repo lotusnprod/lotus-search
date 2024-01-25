@@ -1,0 +1,17 @@
+title: Reference
+description: |
+  Reference
+type: object
+properties:
+  reference_wid:
+    description: |
+      Wikidata identifier of the reference (without the Q).
+    default: ~
+    example: 44488598
+    type: integer
+  doi:
+    description: |
+      The DOI of the reference.
+    default: ~
+    example: "10.1080/1057563021000040466"
+    type: string

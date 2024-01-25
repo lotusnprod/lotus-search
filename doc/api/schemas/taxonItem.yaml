@@ -1,0 +1,18 @@
+title: Taxon
+description: |
+  Taxon
+type: object
+properties:
+  taxon_wid:
+    description: |
+      Wikidata identifier of the taxon (without the Q).
+    default: ~
+    example: 158572
+    type: integer
+  taxon_name:
+    description: |
+      The name searched (can be partial and slightly incorrect).
+    default: ~
+    # The mistake is on purpose
+    example: "Gentiana luteha"
+    type: string
