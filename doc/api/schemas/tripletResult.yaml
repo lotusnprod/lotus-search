@@ -1,16 +1,12 @@
 title: TripletResult
 type: object
 properties:
-  ids:
-    title: IDs
+  triplets:
+    title: Triplets
     description: |
-      IDs
+      Triplets of reference, structure and taxon IDs
     type: array
-    items:
-      type: array
-      items: number
-      description: |
-        Triplets of reference, structure and taxon IDs
+    example : [ [44488598, 27151406, 158572] ]
   references:
     title: References
     description: |
