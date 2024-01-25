@@ -1,6 +1,4 @@
 title: Reference
-description: |
-  Reference
 type: object
 properties:
   reference_wid:

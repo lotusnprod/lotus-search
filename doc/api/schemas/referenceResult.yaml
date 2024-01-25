@@ -2,29 +2,28 @@ title: ReferenceResult
 type: object
 properties:
   ids:
-    title: IDs
     description: |
       IDs
     type: array
+    items:
+      type: integer
     example: [ 44488598 ]
   references:
     title: References
-    description: |
-      References
     type: object
     properties:
       ids:
+        description: |
+          IDs
         type: integer
         example: 44488598
       references:
         $ref: "./references.yaml"
   count:
-    title: Count
     description: |
       Count
     type: integer
   description:
-    title: Description
     description: |
       Description
     type: string

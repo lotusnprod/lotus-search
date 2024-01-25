@@ -1,11 +1,8 @@
 title: Taxa
-description: |
-  Taxa
 type: object
 required: [ ]
 properties:
   name:
-    title: Name
     description: |
       Name
     type: string

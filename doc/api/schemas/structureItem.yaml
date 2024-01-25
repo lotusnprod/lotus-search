@@ -1,6 +1,4 @@
 title: Structure
-description: |
-  Structure
 type: object
 properties:
   structure_wid:
