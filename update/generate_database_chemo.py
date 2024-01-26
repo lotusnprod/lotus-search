@@ -11,6 +11,7 @@ from pathlib import Path
 
 from rdkit import RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
+from tqdm import tqdm
 
 from chemistry_helpers import process_smiles
 from sdf_helpers import find_structures_bytes_ranges, mmap_file, write_mols_to_sdf
@@ -90,7 +91,13 @@ def run(path: Path) -> None:
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        results = executor.map(process_smiles, enumerate(smileses), chunksize=1000)
+        results = tuple(
+            tqdm(
+                executor.map(process_smiles, enumerate(smileses), chunksize=1000),
+                total=len(smileses),
+                desc="Processing SMILES",
+            )
+        )
         for result in results:
             if result is not None:
                 (
