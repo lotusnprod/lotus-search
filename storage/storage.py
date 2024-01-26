@@ -53,7 +53,7 @@ class Storage:
                 )
             session.commit()
 
-    def upsert_references(self, references: list[dict[str, int]]) -> None:
+    def upsert_references(self, references: list[dict[str, object]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(references), self.list_limit // 2):
                 session.execute(
@@ -62,7 +62,7 @@ class Storage:
                 )
             session.commit()
 
-    def upsert_structures(self, structures: list[dict[str, int]]) -> None:
+    def upsert_structures(self, structures: list[dict[str, object]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
@@ -71,7 +71,7 @@ class Storage:
 
             session.commit()
 
-    def upsert_taxo_names(self, taxo_names: list[dict[str, int]]) -> None:
+    def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
@@ -79,7 +79,7 @@ class Storage:
                 )
             session.commit()
 
-    def upsert_rank_names(self, ranks_names: list[dict[str, int]]) -> None:
+    def upsert_rank_names(self, ranks_names: list[dict[str, object]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
