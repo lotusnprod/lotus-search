@@ -3,14 +3,13 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from api.models import (
-    FilterItem,
+from api.models import (  # ReferenceOption,
     Item,
     ReferenceItem,
-    StructureFilterItem,
     StructureItem,
-    TaxonFilterItem,
+    StructureOption,
     TaxonItem,
+    TaxonOption,
 )
 from model.data_model import DataModel
 
@@ -44,8 +43,8 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     wid = item.structure.wid
     molecule = item.structure.molecule
-    sub = item.filter.structure.substructure_search
-    sim = item.filter.structure.similarity_level
+    sub = item.structure.option.substructure_search
+    sim = item.structure.option.similarity_level
 
     if molecule and wid:
         raise HTTPException(
@@ -176,7 +175,7 @@ def combine_and_filter_outputs(sets: list[set], limit: int) -> list[int]:
 
 
 def apply_limit(item: Item, items: list[Any] | set[Any]) -> list[Any]:
-    lim = item.filter.limit
+    lim = item.limit
 
     if lim == 0:
         return list(items)
@@ -201,7 +200,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
             structures_from_taxon_in_item(dm, item),
             structures_from_reference_in_item(dm, item),
         ],
-        limit=item.filter.limit,
+        limit=item.limit,
     )
 
     return dm.get_dict_of_sid_to_smiles(ids)
@@ -214,7 +213,7 @@ def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
             taxa_from_structure_in_item(dm, item),
             taxa_from_reference_in_item(dm, item),
         ],
-        limit=item.filter.limit,
+        limit=item.limit,
     )
 
     return dm.get_dict_of_tid_to_taxon_name(ids)
@@ -227,7 +226,7 @@ def get_references_for_item(item: Item, dm: DataModel) -> dict[int, str]:
             references_from_structure_in_item(dm, item),
             references_from_taxon_in_item(dm, item),
         ],
-        limit=item.filter.limit,
+        limit=item.limit,
     )
 
     return dm.get_dict_of_rid_to_reference_doi(ids)
