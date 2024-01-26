@@ -1,0 +1,15 @@
+title: Structure
+type: object
+properties:
+  substructure_search:
+    description: |
+      Search by substructure.
+    default: false
+    example: false
+    type: boolean
+  similarity_level:
+    description: |
+      Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
+    default: 1.0
+    example: 0.8
+    type: number

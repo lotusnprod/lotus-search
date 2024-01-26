@@ -1,15 +1,17 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (
-    AutocompleteTaxa, Item,
-    ReferenceInfo,
+    AutocompleteTaxa,
+    Item,
+    ReferenceObject,
     ReferenceResult,
-    StructureDepiction, StructureInfo,
+    StructureDepiction,
+    StructureObject,
     StructureResult,
-    TaxonInfo,
+    TaxonObject,
     TaxonResult,
     TripletResult,
 )
@@ -30,7 +32,6 @@ description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
-dm = DataModel()
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -54,26 +55,26 @@ app = FastAPI(
 @app.post("/triplets")
 @version(1, 0)
 async def search_triplets(
-        item: Item
+    item: Item, dm: DataModel = Depends(DataModel)
 ) -> TripletResult:
     triplets = get_triplets_for_item(item, dm)
 
     return TripletResult(
         triplets=triplets,
         references={
-            wid: ReferenceInfo(doi=value)
+            wid: ReferenceObject(doi=value)
             for wid, value in dm.get_dict_of_rid_to_reference_doi(
                 [reference_id for reference_id, _, _ in triplets]
             ).items()
         },
         structures={
-            wid: StructureInfo(smiles=value)
+            wid: StructureObject(smiles=value)
             for wid, value in dm.get_dict_of_sid_to_smiles(
                 [structure_id for _, structure_id, _ in triplets]
             ).items()
         },
         taxa={
-            wid: TaxonInfo(name=value)
+            wid: TaxonObject(name=value)
             for wid, value in dm.get_dict_of_tid_to_taxon_name(
                 [taxon_id for _, _, taxon_id in triplets]
             ).items()
@@ -86,14 +87,14 @@ async def search_triplets(
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(
-        item: Item
+    item: Item, dm: DataModel = Depends(DataModel)
 ) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
     return StructureResult(
         ids=dict_items.keys(),
-        structures={
-            sid: StructureInfo(smiles=value) for sid, value in dict_items.items()
+        objects={
+            sid: StructureObject(smiles=value) for sid, value in dict_items.items()
         },
         description="Structures matching the query",
         count=len(dict_items),
@@ -102,12 +103,12 @@ async def search_structures(
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item) -> TaxonResult:
+async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonResult:
     dict_items = get_taxa_for_item(item, dm)
 
     return TaxonResult(
         ids=dict_items.keys(),
-        taxa={tid: TaxonInfo(name=value) for tid, value in dict_items.items()},
+        objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
         description="Taxa matching the query",
         count=len(dict_items),
     )
@@ -116,13 +117,13 @@ async def search_taxa(item: Item) -> TaxonResult:
 @app.post("/references")
 @version(1, 0)
 async def search_references(
-        item: Item
+    item: Item, dm: DataModel = Depends(DataModel)
 ) -> ReferenceResult:
     dict_items = get_references_for_item(item, dm)
 
     return ReferenceResult(
         ids=dict_items.keys(),
-        references={rid: ReferenceInfo(doi=value) for rid, value in dict_items.items()},
+        objects={rid: ReferenceObject(doi=value) for rid, value in dict_items.items()},
         description="References matching the query",
         count=len(dict_items),
     )

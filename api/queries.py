@@ -4,13 +4,13 @@ from typing import Any
 from fastapi import HTTPException
 
 from api.models import (
-    Filter,
+    FilterItem,
     Item,
-    Reference,
-    StructuralFilter,
-    Structure,
-    TaxalFilter,
-    Taxon,
+    ReferenceItem,
+    StructureFilterItem,
+    StructureItem,
+    TaxonFilterItem,
+    TaxonItem,
 )
 from model.data_model import DataModel
 
@@ -44,8 +44,8 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     wid = item.structure.wid
     molecule = item.structure.molecule
-    sub = item.filter.structural.substructure_search
-    sim = item.filter.structural.similarity_level
+    sub = item.filter.structure.substructure_search
+    sim = item.filter.structure.similarity_level
 
     if molecule and wid:
         raise HTTPException(

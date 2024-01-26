@@ -12,41 +12,11 @@ properties:
         type: integer
     example : [ [44488598, 27151406, 158572] ]
   references:
-    description: |
-      References
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 44488598
-      references:
-        $ref: "./referenceObject.yaml"
+    $ref: "./referenceObject.yaml"
   structures:
-    description: |
-      Structures
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 27151406
-      structures:
-        $ref: "./structureObject.yaml"
+    $ref: "./structureObject.yaml"
   taxa:
-    description: |
-      Taxa
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 158572
-      taxa:
-        $ref: "./taxonObject.yaml"
+    $ref: "./taxonObject.yaml"
   count:
     description: |
       Count
@@ -55,3 +25,4 @@ properties:
     description: |
       Description
     type: string
+required: ["triplets"]

@@ -2,13 +2,13 @@ import pytest
 
 from api.api import search_references
 from api.models import (
-    Filter,
+    FilterItem,
     Item,
-    Reference,
-    StructuralFilter,
-    Structure,
-    TaxalFilter,
-    Taxon,
+    ReferenceItem,
+    StructureFilterItem,
+    StructureItem,
+    TaxonFilterItem,
+    TaxonItem,
 )
 
 from .common import data_model
@@ -32,7 +32,7 @@ class TestApiReferences:
         item = Item(reference={"doi": "42.1/1"})
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
-        assert result.references[1].doi == "42.1/1"
+        assert result.objects[1].doi == "42.1/1"
         assert result.description == "References matching the query"
 
     async def test_search_references_error_giving_doi_and_id(self, data_model):
@@ -49,7 +49,7 @@ class TestApiReferences:
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 1})
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
-        assert result.references[1].doi == "42.1/1"
+        assert result.objects[1].doi == "42.1/1"
         assert result.description == "References matching the query"
 
     async def test_search_references_with_taxon_non_existing(self, data_model):
@@ -66,7 +66,7 @@ class TestApiReferences:
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 1}, structure={"wid": 1})
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
-        assert result.references[1].doi == "42.1/1"
+        assert result.objects[1].doi == "42.1/1"
         assert result.description == "References matching the query"
 
     async def test_search_references_with_taxon_non_matching_structure_existing(
