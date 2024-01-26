@@ -1,23 +1,23 @@
-import requests_mock
+from requests_mock import Mocker
 
 from update.common import remove_wd_entity_prefix, sparql_to_csv
 
 
 class TestWdSparqlToCsv:
     def test_returns_expected_csv(self):
-        with requests_mock.Mocker() as m:
+        with Mocker() as m:
             m.get("https://query.wikidata.org/sparql", text="expected_csv")
             result = sparql_to_csv("query")
             assert result == "expected_csv"
 
     def test_returns_expected_csv_with_post(self):
-        with requests_mock.Mocker() as m:
+        with Mocker() as m:
             m.post("https://query.wikidata.org/sparql", text="expected_csv")
             result = sparql_to_csv("query", as_post=True)
             assert result == "expected_csv"
 
     def test_uses_provided_url(self):
-        with requests_mock.Mocker() as m:
+        with Mocker() as m:
             m.get("https://other.url/sparql", text="expected_csv")
             result = sparql_to_csv("query", "https://other.url/sparql")
             assert result == "expected_csv"
