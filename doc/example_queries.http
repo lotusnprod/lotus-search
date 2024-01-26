@@ -4,7 +4,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "taxon_wid": 158572
+  "taxon": 
+  {
+    "wid": 158572
+  }
 }
 
 ### Query 1
@@ -13,7 +16,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "c1ccccc1"
+  "structure": 
+  {
+    "molecule": "c1ccccc1"
+  }
 }
 
 
@@ -24,9 +30,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure_wid": 27151406,
-  "taxon_wid": 158572,
-  "reference_wid": 44488598
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
 }
 
 ###
@@ -37,10 +52,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "Cl",
-  "substructure_search": true,
-  "taxon_name": "Gentiana septemfida",
-  "reference_doi": "10.1021/NP50081A018"
+  "structure": 
+  {
+    "molecule": "Cl"
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  },
+  "filter":
+  {
+    "structure":
+    {
+      "substructure_search": true
+    }
+  }
 }
 
 ###
@@ -51,9 +81,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure_wid": 27151406,
-  "taxon_wid": 158572,
-  "reference_wid": 44488598
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
 }
 
 ###
@@ -64,10 +103,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "Cl",
-  "substructure_search": true,
-  "taxon_name": "Gentiana septemfida",
-  "reference_doi": "10.1021/NP50081A018"
+  "structure": 
+  {
+    "molecule": "Cl"
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  },
+  "filter":
+  {
+    "structure":
+    {
+      "substructure_search": true
+    }
+  }
 }
 
 ###
@@ -78,9 +132,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure_wid": 27151406,
-  "taxon_wid": 158572,
-  "reference_wid": 44488598
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
 }
 
 ###
@@ -91,10 +154,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "Cl",
-  "substructure_search": true,
-  "taxon_name": "Gentiana septemfida",
-  "reference_doi": "10.1021/NP50081A018"
+  "structure": 
+  {
+    "molecule": "Cl"
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  },
+  "filter":
+  {
+    "structure":
+    {
+      "substructure_search": true
+    }
+  }
 }
 
 ###
@@ -109,6 +187,20 @@ Content-Type: application/json
   "substructure_search": true,
   "limit": 0
 }
+{
+  "structure": 
+  {
+    "molecule": "C"
+  },
+  "filter":
+  {
+    "structure":
+    {
+      "substructure_search": true
+    },
+    "limit": 0,
+  }
+}
 
 ###
 
@@ -118,9 +210,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-"structure_wid": 27151406,
-"taxon_wid": 158572,
-"reference_wid": 44488598
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
 }
 
 ###
@@ -131,10 +232,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "Cl",
-  "substructure_search": true,
-  "taxon_name": "Gentiana septemfida",
-  "reference_doi": "10.1021/NP50081A018"
+  "structure": 
+  {
+    "molecule": "Cl"
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  },
+  "filter":
+  {
+    "structure":
+    {
+      "substructure_search": true
+    }
+  }
 }
 
 ###
