@@ -3,13 +3,13 @@
 ### Get all the structures that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure": {"wid": 27151406}, "taxon": {"wid": 158572}, "reference": {"wid":44488598}}'
 ```
 
 ### Get all chlorinated structures
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure": {"molecule": "Cl"}, "taxon": {"name": "Gentiana septemfida"}, "reference": {"doi": "10.1021/NP50081A018"}, "filter": {"structure": {"substructure_search": true}}}'
 ```
 
 ## Taxa
@@ -17,13 +17,13 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the taxa that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure": {"wid": 27151406}, "taxon": {"wid": 158572}, "reference": {"wid":44488598}}'
 ```
 
 ### Get all the taxa where chlorinated structures are found in
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure": {"molecule": "Cl"}, "taxon": {"name": "Gentiana septemfida"}, "reference": {"doi": "10.1021/NP50081A018"}, "filter": {"structure": {"substructure_search": true}}}'
 ```
 
 ## References
@@ -31,13 +31,13 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the references that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure": {"wid": 27151406}, "taxon": {"wid": 158572}, "reference": {"wid":44488598}}'
 ```
 
 ### Get all the references where chlorinated structures are found in
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure": {"molecule": "Cl"}, "taxon": {"name": "Gentiana septemfida"}, "reference": {"doi": "10.1021/NP50081A018"}, "filter": {"structure": {"substructure_search": true}}}'
 ```
 
 ## Triplets
@@ -45,11 +45,11 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ### Get all the triplets that match the query
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure": {"wid": 27151406}, "taxon": {"wid": 158572}, "reference": {"wid":44488598}}'
 ```
 
 ### Get all the triplets with chlorine
 
 ```shell
-curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure": {"molecule": "Cl"}, "taxon": {"name": "Gentiana septemfida"}, "reference": {"doi": "10.1021/NP50081A018"}, "filter": {"structure": {"substructure_search": true}}}'
 ```
