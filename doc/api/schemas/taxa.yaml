@@ -1,9 +1,0 @@
-title: Taxa
-type: object
-required: [ ]
-properties:
-  name:
-    description: |
-      Name
-    type: string
-    example: "Gentiana lutea"

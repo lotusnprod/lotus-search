@@ -1,4 +1,4 @@
-title: Reference
+title: ReferenceItem
 type: object
 properties:
   reference_wid:
