@@ -54,7 +54,11 @@ Content-Type: application/json
 {
   "structure": 
   {
-    "molecule": "Cl"
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
   },
   "taxon":
   {
@@ -63,13 +67,6 @@ Content-Type: application/json
   "reference":
   { 
     "doi": "10.1021/NP50081A018"
-  },
-  "filter":
-  {
-    "structure":
-    {
-      "substructure_search": true
-    }
   }
 }
 
@@ -105,7 +102,11 @@ Content-Type: application/json
 {
   "structure": 
   {
-    "molecule": "Cl"
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
   },
   "taxon":
   {
@@ -114,13 +115,6 @@ Content-Type: application/json
   "reference":
   { 
     "doi": "10.1021/NP50081A018"
-  },
-  "filter":
-  {
-    "structure":
-    {
-      "substructure_search": true
-    }
   }
 }
 
@@ -156,7 +150,11 @@ Content-Type: application/json
 {
   "structure": 
   {
-    "molecule": "Cl"
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
   },
   "taxon":
   {
@@ -165,13 +163,6 @@ Content-Type: application/json
   "reference":
   { 
     "doi": "10.1021/NP50081A018"
-  },
-  "filter":
-  {
-    "structure":
-    {
-      "substructure_search": true
-    }
   }
 }
 
@@ -183,22 +174,15 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": "C",
-  "substructure_search": true,
-  "limit": 0
-}
-{
   "structure": 
   {
-    "molecule": "C"
-  },
-  "filter":
-  {
-    "structure":
+    "molecule": "C",
+    "option": 
     {
       "substructure_search": true
-    },
-    "limit": 0,
+    }
+  },
+  "limit": 0,
   }
 }
 
@@ -234,7 +218,11 @@ Content-Type: application/json
 {
   "structure": 
   {
-    "molecule": "Cl"
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
   },
   "taxon":
   {
@@ -243,12 +231,5 @@ Content-Type: application/json
   "reference":
   { 
     "doi": "10.1021/NP50081A018"
-  },
-  "filter":
-  {
-    "structure":
-    {
-      "substructure_search": true
-    }
   }
 }

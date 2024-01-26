@@ -1,14 +1,13 @@
 import pytest
 
 from api.api import search_taxa
-from api.models import (
-    FilterItem,
+from api.models import (  # ReferenceOption,
     Item,
     ReferenceItem,
-    StructureFilterItem,
     StructureItem,
-    TaxonFilterItem,
+    StructureOption,
     TaxonItem,
+    TaxonOption,
 )
 
 from .common import data_model
@@ -28,10 +27,10 @@ class TestApiTaxa:
         item = Item(taxon={"name": "Taxon"})
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == expected_count
-        item.filter.limit = 0
+        item.limit = 0
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == expected_count
-        item.filter.limit = 1
+        item.limit = 1
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
 

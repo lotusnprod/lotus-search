@@ -1,4 +1,4 @@
-title: Structure
+title: StructureOption
 type: object
 properties:
   substructure_search:

@@ -7,5 +7,5 @@ properties:
     $ref: "./structureItem.yaml"
   taxon:
     $ref: "./taxonItem.yaml"
-  filter:
-    $ref: "./filterItem.yaml"
+  limit:
+    $ref: "./limit.yaml"

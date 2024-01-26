@@ -1,4 +1,4 @@
-title: Taxon
+title: TaxonOption
 type: object
 properties:
   taxon_children:

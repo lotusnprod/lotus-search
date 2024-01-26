@@ -1,0 +1,6 @@
+title: Limit
+description: |
+  Limit to n results.
+default: false
+example: 1000
+type: integer

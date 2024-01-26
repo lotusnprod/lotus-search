@@ -13,3 +13,9 @@ properties:
     default: ~
     example: "10.1080/1057563021000040466"
     type: string
+  # option:
+  #   $ref: "./referenceOption.yaml"
+  # filter:
+  #   $ref: "./referenceFilter.yaml"
+  # limit:
+  #   $ref: "./limit.yaml"

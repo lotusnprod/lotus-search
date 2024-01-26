@@ -1,14 +1,13 @@
 import pytest
 
 from api.api import search_references
-from api.models import (
-    FilterItem,
+from api.models import (  # ReferenceOption,
     Item,
     ReferenceItem,
-    StructureFilterItem,
     StructureItem,
-    TaxonFilterItem,
+    StructureOption,
     TaxonItem,
+    TaxonOption,
 )
 
 from .common import data_model
@@ -21,10 +20,10 @@ class TestApiReferences:
         item = Item(reference={"doi": "42"})
         result = await search_references(item=item, dm=data_model)
         assert result.count == expected_total
-        item.filter.limit = 0
+        item.limit = 0
         result = await search_references(item=item, dm=data_model)
         assert result.count == expected_total
-        item.filter.limit = 1
+        item.limit = 1
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
 

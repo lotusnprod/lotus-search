@@ -1,29 +1,29 @@
 item:
   $ref: "./item.yaml"
-filterItem:
-  $ref: "./filterItem.yaml"
-# referenceFilterItem:
-#   $ref: "./referenceFilterItem.yaml"
+limit:
+  $ref: "./limit.yaml"
 referenceItem:
   $ref: "./referenceItem.yaml"
 referenceObject:
   $ref: "./referenceObject.yaml"
+# referenceOption:
+#   $ref: "./referenceOption.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
-structureFilterItem:
-  $ref: "./structureFilterItem.yaml"
 structureItem:
   $ref: "./structureItem.yaml"
 structureObject:
   $ref: "./structureObject.yaml"
+structureOption:
+  $ref: "./structureOption.yaml"
 structureResult:
   $ref: "./structureResult.yaml"
-taxonFilterItem:
-  $ref: "./taxonFilterItem.yaml"
 taxonItem:
   $ref: "./taxonItem.yaml"
 taxonObject:
   $ref: "./taxonObject.yaml"
+taxonOption:
+  $ref: "./taxonOption.yaml"
 taxonResult:
   $ref: "./taxonResult.yaml"
 tripletResult:

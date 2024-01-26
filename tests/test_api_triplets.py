@@ -1,14 +1,13 @@
 import pytest
 
 from api.api import search_triplets
-from api.models import (
-    FilterItem,
+from api.models import (  # ReferenceOption,
     Item,
     ReferenceItem,
-    StructureFilterItem,
     StructureItem,
-    TaxonFilterItem,
+    StructureOption,
     TaxonItem,
+    TaxonOption,
 )
 
 from .common import data_model
@@ -29,7 +28,7 @@ class TestApiTriplets:
         item = Item(filter={"limit": 0})
         result: TripletResult = await search_triplets(item=item, dm=data_model)
         assert result.count == 6
-        item.filter.limit = 3
+        item.limit = 3
         result: TripletResult = await search_triplets(item=item, dm=data_model)
         assert result.count == 3
 
