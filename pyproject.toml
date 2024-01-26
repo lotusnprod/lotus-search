@@ -25,6 +25,7 @@ pydantic = "^2.5.3"
 requests = "^2.31.0"
 rdkit = "^2023.9.4"
 sqlalchemy = "^2.0.25"
+tqdm = "^4.66.1"
 uvicorn = "^0.26.0"
 
 [tool.poetry.dev-dependencies]
