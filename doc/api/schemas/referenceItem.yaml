@@ -1,7 +1,7 @@
 title: ReferenceItem
 type: object
 properties:
-  reference_wid:
+  wid:
     description: |
       Wikidata identifier of the reference (without the Q).
     default: ~

@@ -1,13 +1,13 @@
 title: TaxonItem
 type: object
 properties:
-  taxon_wid:
+  wid:
     description: |
       Wikidata identifier of the taxon (without the Q).
     default: ~
     example: 158572
     type: integer
-  taxon_name:
+  name:
     description: |
       The name searched (can be partial and slightly incorrect).
     default: ~
