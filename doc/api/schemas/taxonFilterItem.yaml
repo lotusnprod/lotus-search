@@ -1,0 +1,9 @@
+title: Taxon
+type: object
+properties:
+  taxon_children:
+    description: |
+      Whether to include the children of the taxon.
+    default: true
+    example: true
+    type: boolean

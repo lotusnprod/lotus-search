@@ -2,18 +2,24 @@ item:
   $ref: "./item.yaml"
 filterItem:
   $ref: "./filterItem.yaml"
+# referenceFilterItem:
+#   $ref: "./referenceFilterItem.yaml"
 referenceItem:
   $ref: "./referenceItem.yaml"
 referenceObject:
   $ref: "./referenceObject.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
+structureFilterItem:
+  $ref: "./structureFilterItem.yaml"
 structureItem:
   $ref: "./structureItem.yaml"
 structureObject:
   $ref: "./structureObject.yaml"
 structureResult:
   $ref: "./structureResult.yaml"
+taxonFilterItem:
+  $ref: "./taxonFilterItem.yaml"
 taxonItem:
   $ref: "./taxonItem.yaml"
 taxonObject:

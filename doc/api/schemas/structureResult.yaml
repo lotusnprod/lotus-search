@@ -8,17 +8,8 @@ properties:
     items:
       type: integer
     example: [ 27151406 ]
-  structures:
-    title: Structures
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 27151406
-      object:
-        $ref: "./structureObject.yaml"
+  objects:
+    $ref: "./structureObject.yaml"
   count:
     description: |
       Count
@@ -27,3 +18,4 @@ properties:
     description: |
       Description
     type: string
+required: ["ids"]

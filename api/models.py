@@ -1,44 +1,48 @@
-from typing import Optional, Union
+from typing import Dict, Optional, List, Union
 
 from pydantic import BaseModel
 
 
-class Reference(BaseModel):
-    wid: Optional[int] = None
-    doi: Optional[str] = None
+# class ReferenceFilterItem(BaseModel):
+#     TODO
 
 
-class Structure(BaseModel):
-    wid: Optional[int] = None
-    molecule: Optional[str] = None
-
-
-class Taxon(BaseModel):
-    wid: Optional[int] = None
-    name: Optional[str] = None
-
-
-class StructuralFilter(BaseModel):
+class StructureFilterItem(BaseModel):
     substructure_search: bool = False
     similarity_level: float = 1.0
 
 
-class TaxalFilter(BaseModel):
+class TaxonFilterItem(BaseModel):
     taxon_children: bool = False
 
 
-class Filter(BaseModel):
-    structural: StructuralFilter = StructuralFilter()
-    taxal: TaxalFilter = TaxalFilter()
+class FilterItem(BaseModel):
+    # refrence: ReferenceFilterItem = ReferenceFilterItem()
+    structure: StructureFilterItem = StructureFilterItem()
+    taxon: TaxonFilterItem = TaxonFilterItem()
     limit: Optional[int] = None
 
 
-class Item(BaseModel):
-    reference: Reference = Reference()
-    structure: Structure = Structure()
-    taxon: Taxon = Taxon()
-    filter: Filter = Filter()
+class ReferenceItem(BaseModel):
+    wid: Optional[int] = None
+    doi: Optional[str] = None
 
+
+class StructureItem(BaseModel):
+    wid: Optional[int] = None
+    molecule: Optional[str] = None
+
+
+class TaxonItem(BaseModel):
+    wid: Optional[int] = None
+    name: Optional[str] = None
+
+
+class Item(BaseModel):
+    filter: FilterItem = FilterItem()
+    reference: ReferenceItem = ReferenceItem()
+    structure: StructureItem = StructureItem()
+    taxon: TaxonItem = TaxonItem()
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -53,11 +57,11 @@ class Item(BaseModel):
                     },
                     "taxon": {"wid": 158572, "name": "Gentiana lutea"},
                     "filter": {
-                        "structural": {
+                        "structure": {
                             "substructure_search": True,
                             "similarity_level": 0.8,
                         },
-                        "taxal": {"taxon_children": True},
+                        "taxon": {"taxon_children": True},
                         "limit": 1000,
                     },
                 }
@@ -66,43 +70,43 @@ class Item(BaseModel):
     }
 
 
-class ReferenceInfo(BaseModel):
+class ReferenceObject(BaseModel):
     doi: str
 
 
 class ReferenceResult(BaseModel):
-    ids: list[int]
-    references: dict[int, ReferenceInfo]
-    count: int
-    description: str
+    ids: List[int]
+    objects: Optional[Dict[int, ReferenceObject]]
+    count: Optional[int]
+    description: Optional[str]
 
 
-class StructureInfo(BaseModel):
+class StructureObject(BaseModel):
     smiles: str
 
 
 class StructureResult(BaseModel):
-    ids: list[int]
-    structures: dict[int, StructureInfo]
-    count: int
-    description: str
+    ids: List[int]
+    objects: Optional[Dict[int, StructureObject]]
+    count: Optional[int]
+    description: Optional[str]
 
 
-class TaxonInfo(BaseModel):
+class TaxonObject(BaseModel):
     name: str
 
 
 class TaxonResult(BaseModel):
-    ids: list[int]
-    taxa: dict[int, TaxonInfo]
-    count: int
-    description: str
+    ids: List[int]
+    objects: Optional[Dict[int, TaxonObject]]
+    count: Optional[int]
+    description: Optional[str]
 
 
 class TripletResult(BaseModel):
-    triplets: list[list[int]]
-    references: dict[int, ReferenceInfo]
-    structures: dict[int, StructureInfo]
-    taxa: dict[int, TaxonInfo]
-    count: int
-    description: str
+    triplets: List[List[int]]
+    references: Optional[Dict[int, ReferenceObject]]
+    structures: Optional[Dict[int, StructureObject]]
+    taxa: Optional[Dict[int, TaxonObject]]
+    count: Optional[int]
+    description: Optional[str]

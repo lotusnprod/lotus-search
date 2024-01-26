@@ -8,17 +8,8 @@ properties:
     items:
       type: integer
     example: [ 158572 ]
-  taxa:
-    title: Taxa
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 158572
-      object:
-        $ref: "./taxonObject.yaml"
+  objects:
+    $ref: "./taxonObject.yaml"
   count:
     description: |
       Count
@@ -27,3 +18,4 @@ properties:
     description: |
       Description
     type: string
+required: ["ids"]

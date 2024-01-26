@@ -2,14 +2,13 @@ import pytest
 
 from api.api import search_triplets
 from api.models import (
-    Filter,
+    FilterItem,
     Item,
-    Reference,
-    StructuralFilter,
-    Structure,
-    TaxalFilter,
-    Taxon,
-    TripletResult,
+    ReferenceItem,
+    StructureFilterItem,
+    StructureItem,
+    TaxonFilterItem,
+    TaxonItem,
 )
 
 from .common import data_model

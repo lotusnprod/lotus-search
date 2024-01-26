@@ -8,17 +8,8 @@ properties:
     items:
       type: integer
     example: [ 44488598 ]
-  references:
-    title: References
-    type: object
-    properties:
-      ids:
-        description: |
-          IDs
-        type: integer
-        example: 44488598
-      object:
-        $ref: "./referenceObject.yaml"
+  objects:
+    $ref: "./referenceObject.yaml"
   count:
     description: |
       Count
@@ -27,3 +18,4 @@ properties:
     description: |
       Description
     type: string
+required: ["ids"]

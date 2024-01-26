@@ -1,29 +1,15 @@
 title: FilterItem
 type: object
 properties:
-  structural:
-    title: Structural
-    type: object
-    properties:
-      substructure_search:
-        description: |
-          Search by substructure.
-        default: false
-        example: false
-        type: boolean
-      similarity_level:
-        description: |
-          Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
-        default: 1.0
-        example: 0.8
-        type: number
-  taxal:
-    title: Taxal
-    type: object
-    properties:
-      taxon_children:
-        description: |
-          Whether to include the children of the taxon.
-        default: true
-        example: true
-        type: boolean
+  # reference:
+  #   $ref: "./referenceFilterItem.yaml"
+  structure:
+    $ref: "./structureFilterItem.yaml"
+  taxon:
+    $ref: "./taxonFilterItem.yaml"
+  limit:
+    description: |
+      Limit of the number of results.
+    default: false
+    example: 1000
+    type: integer

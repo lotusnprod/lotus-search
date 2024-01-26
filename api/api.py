@@ -5,11 +5,11 @@ from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (
     Item,
-    ReferenceInfo,
+    ReferenceObject,
     ReferenceResult,
-    StructureInfo,
+    StructureObject,
     StructureResult,
-    TaxonInfo,
+    TaxonObject,
     TaxonResult,
     TripletResult,
 )
@@ -59,19 +59,19 @@ async def search_triplets(
     return TripletResult(
         triplets=triplets,
         references={
-            wid: ReferenceInfo(doi=value)
+            wid: ReferenceObject(doi=value)
             for wid, value in dm.get_dict_of_rid_to_reference_doi(
                 [reference_id for reference_id, _, _ in triplets]
             ).items()
         },
         structures={
-            wid: StructureInfo(smiles=value)
+            wid: StructureObject(smiles=value)
             for wid, value in dm.get_dict_of_sid_to_smiles(
                 [structure_id for _, structure_id, _ in triplets]
             ).items()
         },
         taxa={
-            wid: TaxonInfo(name=value)
+            wid: TaxonObject(name=value)
             for wid, value in dm.get_dict_of_tid_to_taxon_name(
                 [taxon_id for _, _, taxon_id in triplets]
             ).items()
@@ -90,8 +90,8 @@ async def search_structures(
 
     return StructureResult(
         ids=dict_items.keys(),
-        structures={
-            sid: StructureInfo(smiles=value) for sid, value in dict_items.items()
+        objects={
+            sid: StructureObject(smiles=value) for sid, value in dict_items.items()
         },
         description="Structures matching the query",
         count=len(dict_items),
@@ -105,7 +105,7 @@ async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonRe
 
     return TaxonResult(
         ids=dict_items.keys(),
-        taxa={tid: TaxonInfo(name=value) for tid, value in dict_items.items()},
+        objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
         description="Taxa matching the query",
         count=len(dict_items),
     )
@@ -120,7 +120,7 @@ async def search_references(
 
     return ReferenceResult(
         ids=dict_items.keys(),
-        references={rid: ReferenceInfo(doi=value) for rid, value in dict_items.items()},
+        objects={rid: ReferenceObject(doi=value) for rid, value in dict_items.items()},
         description="References matching the query",
         count=len(dict_items),
     )
