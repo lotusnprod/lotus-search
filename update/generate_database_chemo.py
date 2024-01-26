@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import csv
-import json
 import logging
 import multiprocessing
-import pickle
+import pickle  # S403
 from concurrent.futures import ProcessPoolExecutor
 
 # from itertools import islice
@@ -22,9 +21,9 @@ logging.basicConfig(
 )
 
 
-def export_descriptors_to_csv(descriptors, file_path):
-    file_exists = file_path.exists()
-    with open(file_path, "a") as f:
+def export_descriptors_to_csv(descriptors: dict, path: Path) -> None:
+    file_exists = path.exists()
+    with open(path, "a") as f:
         headers = ["smiles"] + list(descriptors[next(iter(descriptors))].keys())
         csv_writer = csv.writer(f)
         if not file_exists:
