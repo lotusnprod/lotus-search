@@ -1,5 +1,6 @@
 title: TripletResult
 type: object
+required: ["triplets"]
 properties:
   triplets:
     title: Triplets
@@ -25,4 +26,3 @@ properties:
     description: |
       Description
     type: string
-required: ["triplets"]

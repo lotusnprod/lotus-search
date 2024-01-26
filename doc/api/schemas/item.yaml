@@ -1,6 +1,5 @@
 title: Item
 type: object
-required: [ ]
 properties:
   # reference:
   #   $ref: "./referenceItem.yaml"

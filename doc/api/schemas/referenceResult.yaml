@@ -1,5 +1,6 @@
 title: ReferenceResult
 type: object
+required: ["ids"]
 properties:
   ids:
     description: |
@@ -18,4 +19,3 @@ properties:
     description: |
       Description
     type: string
-required: ["ids"]

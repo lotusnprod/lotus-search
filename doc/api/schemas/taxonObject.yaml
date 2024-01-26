@@ -1,6 +1,5 @@
 title: TaxonObject
 type: object
-required: [ ]
 properties:
   name:
     description: |
