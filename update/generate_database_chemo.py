@@ -34,7 +34,7 @@ def export_descriptors_to_csv(descriptors: dict, path: Path) -> None:
 
 
 def load_processed_smiles(path: Path) -> set:
-    processed_smiles_set = set()
+    processed_smiles_set: set = set()
     processed_smiles_file = path / "smiles_processed.csv"
     if processed_smiles_file.exists():
         with open(processed_smiles_file, "r") as f:
