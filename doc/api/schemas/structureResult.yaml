@@ -17,8 +17,8 @@ properties:
           IDs
         type: integer
         example: 27151406
-      structures:
-        $ref: "./structures.yaml"
+      object:
+        $ref: "./structureObject.yaml"
   count:
     description: |
       Count

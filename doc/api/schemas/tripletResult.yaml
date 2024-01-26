@@ -22,7 +22,7 @@ properties:
         type: integer
         example: 44488598
       references:
-        $ref: "./references.yaml"
+        $ref: "./referenceObject.yaml"
   structures:
     description: |
       Structures
@@ -34,7 +34,7 @@ properties:
         type: integer
         example: 27151406
       structures:
-        $ref: "./structures.yaml"
+        $ref: "./structureObject.yaml"
   taxa:
     description: |
       Taxa
@@ -46,7 +46,7 @@ properties:
         type: integer
         example: 158572
       taxa:
-        $ref: "./taxa.yaml"
+        $ref: "./taxonObject.yaml"
   count:
     description: |
       Count

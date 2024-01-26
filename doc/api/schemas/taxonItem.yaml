@@ -1,4 +1,4 @@
-title: Taxon
+title: TaxonItem
 type: object
 properties:
   taxon_wid:

@@ -17,8 +17,8 @@ properties:
           IDs
         type: integer
         example: 158572
-      taxa:
-        $ref: "./taxa.yaml"
+      object:
+        $ref: "./taxonObject.yaml"
   count:
     description: |
       Count
