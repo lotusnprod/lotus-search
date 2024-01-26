@@ -1,29 +1,65 @@
+from typing import Optional, Union
+
 from pydantic import BaseModel
 
 
-class Item(BaseModel):
-    structure_wid: int | None = None
-    structure: str | None = None
-    substructure_search: bool | None = None
+class Reference(BaseModel):
+    wid: Optional[int] = None
+    doi: Optional[str] = None
+
+
+class Structure(BaseModel):
+    wid: Optional[int] = None
+    molecule: Optional[str] = None
+
+
+class Taxon(BaseModel):
+    wid: Optional[int] = None
+    name: Optional[str] = None
+
+
+class StructuralFilter(BaseModel):
+    substructure_search: bool = False
     similarity_level: float = 1.0
-    taxon_wid: int | None = None
-    taxon_name: str | None = None
-    reference_wid: int | None = None
-    reference_doi: str | None = None
-    limit: int = 1000
+
+
+class TaxalFilter(BaseModel):
+    taxon_children: bool = False
+
+
+class Filter(BaseModel):
+    structural: StructuralFilter = StructuralFilter()
+    taxal: TaxalFilter = TaxalFilter()
+    limit: Optional[int] = None
+
+
+class Item(BaseModel):
+    reference: Reference = Reference()
+    structure: Structure = Structure()
+    taxon: Taxon = Taxon()
+    filter: Filter = Filter()
+
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "structure_wid": 27151406,
-                    "structure": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
-                    "substructure_search": True,
-                    "similarity_level": 0.8,
-                    "taxon_wid": 158572,
-                    "taxon_name": "Gentiana lutea",
-                    "reference_wid": 44488598,
-                    "reference_doi": "10.1080/1057563021000040466",
-                    "limit": 1000,
+                    "reference": {
+                        "wid": 44488598,
+                        "doi": "10.1080/1057563021000040466",
+                    },
+                    "structure": {
+                        "wid": 27151406,
+                        "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                    },
+                    "taxon": {"wid": 158572, "name": "Gentiana lutea"},
+                    "filter": {
+                        "structural": {
+                            "substructure_search": True,
+                            "similarity_level": 0.8,
+                        },
+                        "taxal": {"taxon_children": True},
+                        "limit": 1000,
+                    },
                 }
             ]
         }
