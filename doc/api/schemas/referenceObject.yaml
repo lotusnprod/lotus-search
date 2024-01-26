@@ -1,6 +1,5 @@
 title: ReferenceObject
 type: object
-required: [ ]
 properties:
   doi:
     description: |
