@@ -46,7 +46,7 @@ const KetcherLotus = React.forwardRef<KetcherLotusMethods, KetcherLotusProps>(
             <div ref={editorusRef}>
                 <Suspense fallback={<KetcherLoading/>}>
                     <KetcherEditorLotus
-                        height={300}
+                        height={500}
                         errorHandler={console.error.bind(console)}
                         onInit={handleKetcherInit}
                     />
