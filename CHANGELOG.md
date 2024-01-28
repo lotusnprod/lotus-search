@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### 2024-01-27
+
+    - Add a SVG endpoint for structures
+    - Add an autocomplete endpoint for taxa
+    - Better management of the model
+
 ### 2024-01-01
 
     - Optimize the SPARQL queries, remove the useless ones
