@@ -1,0 +1,6 @@
+type: object
+properties:
+  svg:
+    type: string
+    description: |
+      The SVG depiction of the structure.

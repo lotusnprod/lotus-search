@@ -1,0 +1,7 @@
+title: TaxaResult
+type: object
+additionalProperties:
+  type: integer
+example:
+  "Taxus baccata": 1340928
+  "Taxus floridana": 1340929

@@ -18,6 +18,10 @@ paths:
     $ref: "./paths/taxa/post.yaml"
   /triplets:
     $ref: "./paths/triplets/post.yaml"
+  /autocomplete/taxa:
+    $ref: "./paths/autocomplete/taxa/post.yaml"
+  /depiction/structure:
+    $ref: "./paths/depiction/structure.yaml"
 components:
   schemas:
     Item:

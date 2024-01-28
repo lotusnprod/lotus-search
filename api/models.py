@@ -115,3 +115,12 @@ class TripletResult(BaseModel):
     taxa: Optional[Dict[int, TaxonObject]]
     count: Optional[int]
     description: Optional[str]
+
+
+class AutocompleteTaxa(BaseModel):
+    taxon_name: str
+
+
+class DepictionStructure(BaseModel):
+    structure: str
+    highlight: str | None = None

@@ -1,0 +1,11 @@
+type: object
+properties:
+  structure:
+    type: string
+    description: |
+      A SMILES string to depict.
+  highlight:
+    type: ['null', string]
+    description: |
+      A SMILES string to highlight in the structure. If not provided, the
+      structure will be depicted without highlighting.
