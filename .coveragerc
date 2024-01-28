@@ -11,6 +11,7 @@ omit =
 [report]
 exclude_also =
     def __repr__
+    def lifespan
     if self.debug:
     if settings.DEBUG
     raise AssertionError

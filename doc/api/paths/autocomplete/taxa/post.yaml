@@ -1,0 +1,28 @@
+post:
+  operationId: autocomplete_taxa
+  security: [ ]
+  summary: |
+    Autocomplete taxa names when given a portion of the name
+  description: |
+    Autocomplete taxa names when given a portion of the name.
+  requestBody:
+    description: Query
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/autocomplete/taxaQuery.yaml"
+
+  responses:
+    '200':
+      description: Matching taxa
+      content:
+        application/json:
+          schema:
+            $ref: "../../../schemas/autocomplete/taxaResult.yaml"
+    '400':
+      description: Invalid query
+      content:
+        application/json:
+          schema:
+            type: string

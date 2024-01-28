@@ -30,14 +30,11 @@ requests_log.propagate = True
 
 
 class DataModel:
-    def __new__(cls, path: Path = Path("./data")):
-        # Each instance will be the same, it is all read-only
-        if not hasattr(cls, "instance"):
-            cls.instance = super(DataModel, cls).__new__(cls)
-            cls.instance.db = cls.load_all_data(path)
-            cls.instance.storage = Storage(path)
-            cls.instance.path = path
-        return cls.instance
+    def __init__(self, path: Path = Path("./data")):
+        self.db = self.load_all_data(path)
+        self.storage = Storage(path)
+        self.taxa_name_db = self.preload_taxa()
+        self.path = path
 
     @classmethod
     @functools.lru_cache(maxsize=None)
@@ -307,3 +304,14 @@ class DataModel:
                 Triplets.taxon_id == taxon_wid
             )
             return {row[0] for row in result.distinct()}
+
+    def preload_taxa(self):
+        with self.storage.session() as session:
+            result = session.query(TaxoNames.id, TaxoNames.name).all()
+            return {row[1]: row[0] for row in result}
+
+    def get_dict_of_taxa_from_name(self, taxon_name: str) -> dict[str, int]:
+        with self.storage.session() as session:
+            matcher = TaxoNames.name.like(f"{taxon_name}%")
+            result = session.query(TaxoNames.name, TaxoNames.id).filter(matcher)
+        return {row[0]: row[1] for row in result}
