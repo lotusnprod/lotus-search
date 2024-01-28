@@ -65,22 +65,8 @@ export interface components {
     TaxonResult: components["schemas"]["taxonResult"];
     TripletResult: components["schemas"]["tripletResult"];
     HTTPValidationError: components["schemas"]["validationError"];
-    /** Item */
-    item: {
-      /**
-       * @description Wikidata identifier of the structure (without the Q).
-       *
-       * @default null
-       * @example 3613679
-       */
-      structure_wid?: number;
-      /**
-       * @description A MOL file or SMILES of the structure of the structure or part of it.
-       *
-       * @default null
-       * @example C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O
-       */
-      structure?: string;
+    /** StructureOption */
+    structureOption: {
       /**
        * @description Search by substructure.
        *
@@ -95,124 +81,120 @@ export interface components {
        * @example 0.8
        */
       similarity_level?: number;
+    };
+    /** StructureItem */
+    structureItem: {
+      /**
+       * @description Wikidata identifier of the structure (without the Q).
+       *
+       * @default null
+       * @example 3613679
+       */
+      wid?: number;
+      /**
+       * @description A MOL file or SMILES of the structure of the structure or part of it.
+       *
+       * @default null
+       * @example C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O
+       */
+      molecule?: string;
+      option?: components["schemas"]["structureOption"];
+    };
+    /** TaxonOption */
+    taxonOption: {
+      /**
+       * @description Whether to include the children of the taxon.
+       *
+       * @default true
+       * @example true
+       */
+      taxon_children?: boolean;
+    };
+    /** TaxonItem */
+    taxonItem: {
       /**
        * @description Wikidata identifier of the taxon (without the Q).
        *
        * @default null
        * @example 158572
        */
-      taxon_wid?: number;
+      wid?: number;
       /**
        * @description The name searched (can be partial and slightly incorrect).
        *
        * @default null
        * @example Gentiana luteha
        */
-      taxon_name?: string;
+      name?: string;
+      option?: components["schemas"]["taxonOption"];
     };
     /**
-     * References
-     * @description References
+     * Limit
+     * @description Limit to n results.
+     *
+     * @default false
+     * @example 1000
      */
-    references: {
+    limit: number;
+    /** Item */
+    item: {
+      structure?: components["schemas"]["structureItem"];
+      taxon?: components["schemas"]["taxonItem"];
+      limit?: components["schemas"]["limit"];
+    };
+    /** ReferenceObject */
+    referenceObject: {
       /**
-       * DOI
        * @description DOI
        *
        * @example 10.1080/1057563021000040466
        */
       doi?: string;
-      /**
-       * Title
-       * @description Title
-       *
-       * @example Iridoids from Seeds of Gentiana Lutea
-       */
-      title?: string;
     };
     /** ReferenceResult */
     referenceResult: {
       /**
-       * IDs
        * @description IDs
+       *
+       * @example [
+       *   44488598
+       * ]
        */
-      ids?: {
-          /** @example 44488598 */
-          reference?: number;
-          /** @example 27151406 */
-          structure?: number;
-          /** @example 158572 */
-          taxon?: number;
-        }[];
-      /**
-       * References
-       * @description References
-       */
-      references?: {
-        /** @example 44488598 */
-        ids?: number;
-        references?: components["schemas"]["references"];
-      };
-      /**
-       * Count
-       * @description Count
-       */
+      ids: number[];
+      objects?: components["schemas"]["referenceObject"];
+      /** @description Count */
       count?: number;
-      /**
-       * Description
-       * @description Description
-       */
+      /** @description Description */
       description?: string;
     };
-    /**
-     * Structures
-     * @description Structures
-     */
-    structures: {
+    /** StructureObject */
+    structureObject: {
       /**
-       * Structure SMILES
        * @description Structure SMILES
        *
        * @example C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O
        */
-      smiles?: string;
+      structure_smiles?: string;
     };
     /** StructureResult */
     structureResult: {
       /**
-       * IDs
        * @description IDs
        *
        * @example [
        *   27151406
        * ]
        */
-      ids?: unknown[];
-      /**
-       * Structures
-       * @description Structures
-       */
-      structures?: {
-        [key: string]: components["schemas"]["structures"];
-      };
-      /**
-       * Count
-       * @description Count
-       */
+      ids: number[];
+      objects?: components["schemas"]["structureObject"];
+      /** @description Count */
       count?: number;
-      /**
-       * Description
-       * @description Description
-       */
+      /** @description Description */
       description?: string;
     };
-    /**
-     * Taxa
-     * @description Taxa
-     */
-    taxa: {
+    /** TaxonObject */
+    taxonObject: {
       /**
-       * Name
        * @description Name
        *
        * @example Gentiana lutea
@@ -222,77 +204,40 @@ export interface components {
     /** TaxonResult */
     taxonResult: {
       /**
-       * IDs
        * @description IDs
        *
        * @example [
        *   158572
        * ]
        */
-      ids?: unknown[];
-      /**
-       * Taxa
-       * @description Taxa
-       */
-      taxa?: {
-        /** @example 158572 */
-        ids?: number;
-        taxa?: components["schemas"]["taxa"];
-      };
-      /**
-       * Count
-       * @description Count
-       */
+      ids: number[];
+      objects?: components["schemas"]["taxonObject"];
+      /** @description Count */
       count?: number;
-      /**
-       * Description
-       * @description Description
-       */
+      /** @description Description */
       description?: string;
     };
     /** TripletResult */
     tripletResult: {
       /**
-       * IDs
-       * @description IDs
+       * Triplets
+       * @description Triplets of reference, structure and taxon IDs
+       *
+       * @example [
+       *   [
+       *     44488598,
+       *     27151406,
+       *     158572
+       *   ]
+       * ]
        */
-      ids?: number[][];
-      /**
-       * References
-       * @description References
-       */
-      references?: {
-        /** @example 44488598 */
-        ids?: number;
-        references?: components["schemas"]["references"];
-      };
-      /**
-       * Structures
-       * @description Structures
-       */
-      structures?: {
-        /** @example 27151406 */
-        ids?: number;
-        structures?: components["schemas"]["structures"];
-      };
-      /**
-       * Taxa
-       * @description Taxa
-       */
-      taxa?: {
-        /** @example 158572 */
-        ids?: number;
-        taxa?: components["schemas"]["taxa"];
-      };
-      /**
-       * Count
-       * @description Count
-       */
+      triplets: number[][];
+      references?: components["schemas"]["referenceObject"];
+      structures?: components["schemas"]["structureObject"];
+      taxa?: components["schemas"]["taxonObject"];
+      /** @description Count */
       count?: number;
-      /**
-       * Description
-       * @description Description
-       */
+      /** @description Description */
       description?: string;
     };
     /** Taxa */
