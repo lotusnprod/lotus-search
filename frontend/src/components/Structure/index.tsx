@@ -17,7 +17,7 @@ const Structure: React.FC<StructureProps> = ({id, structure, highlight}) => {
     return (
         <div className="mr-4 mb-1 p-4 bg-gray-200">
             <MoleculeStructure
-                structure={structure}
+                structure={structure} highlight={highlight}
             />
             <a href={`https://www.wikidata.org/wiki/Q${id}`} className="text-black">Q{id} - Wikidata page</a>
         </div>

@@ -4,16 +4,17 @@ import React, { useState, useEffect } from 'react';
 import {structureDepiction} from "@/services/apiService";
 
 interface SvgRendererProps {
-  apiEndpoint: string;
+  structure: string;
+  highlight: string;
 }
 
-const SvgRenderer: React.FC<SvgRendererProps> = ({ structure }) => {
+const SvgRenderer: React.FC<SvgRendererProps> = ({ structure, highlight }) => {
   const [svgContent, setSvgContent] = useState<string>('');
 
   useEffect(() => {
     const fetchSvg = async () => {
       try {
-        const svgData = await structureDepiction({structure: structure});
+        const svgData = await structureDepiction({structure: structure, highlight: highlight});
         if (svgData.svg === undefined) {
           return;
         }

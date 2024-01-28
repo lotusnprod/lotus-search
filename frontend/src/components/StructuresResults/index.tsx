@@ -6,7 +6,7 @@ import {components} from "@/interfaces/lotus_api";
 import Structure from "@/components/Structure";
 import Pagination from "@/components/Pagination";
 import {Grid, Sheet} from "@mui/joy";
-import {LotusAPIItem} from "@/interfaces/schemas";
+import {LotusAPIItem, StructureObject} from "@/interfaces/schemas";
 
 interface StructureResultProps {
     searchQuery: LotusAPIItem;
@@ -22,7 +22,7 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        if (searchQuery.structure == "") return
+        if ((searchQuery.structure?.molecule || "") == "") return
         setLoading(true)
         fetchStructures(searchQuery).then(setApiData)
             .catch((error) => setError(error.message))
@@ -37,11 +37,12 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
     if (error) return <div>Error: {error}</div>;
 
     // Calculate the total number of pages
-    const totalPages = apiData && apiData.structures ? Math.ceil(Object.keys(apiData.structures).length / ITEMS_PER_PAGE) : 0;
+    const totalPages = apiData &&
+     apiData.objects ? Math.ceil(Object.keys(apiData.objects).length / ITEMS_PER_PAGE) : 0;
 
     // Get the current items
-    const currentItems = apiData && apiData.structures
-        ? Object.entries(apiData.structures)
+    const currentItems : [string, StructureObject][] = apiData && apiData.objects
+        ? Object.entries<StructureObject>(apiData.objects)
             .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
         : [];
     if (currentItems.length == 0) {
@@ -51,9 +52,9 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
         Structure searching
         <Grid container spacing={2} sx={{flexGrow: 1}}>
             {currentItems.map(([index, structure]) => (
-                structure?.smiles ? <Grid key={"grid_structure_" + index} xs={4}>
-                        <Structure key={"structure_" + index} id={index} structure={structure.smiles}
-                                   highlight={searchQuery.smiles}/>
+                structure ? <Grid key={"grid_structure_" + index} xs={4}>
+                        <Structure key={"structure_" + index} id={index} structure={structure.smiles || ""}
+                                   highlight={searchQuery.structure?.molecule || ""}/>
                     </Grid>
                     : null
             ))}

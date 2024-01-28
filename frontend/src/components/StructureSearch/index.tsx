@@ -1,7 +1,6 @@
 'use client'
 
 import React, {useRef, useState} from "react";
-import {StructureSearchQuery} from "@/interfaces/structure_search_query";
 import KetcherLotus, {KetcherLotusMethods} from "@/components/KetcherLotus";
 import dynamic from "next/dynamic";
 import AutocompleteTaxa from "@/components/AutocompleteTaxa";
@@ -23,9 +22,15 @@ const StructureSearch: React.FC<StructureSearchProps> =
                 const smiles = await ketcherRef.current.getValue()
                 if (smiles != "")
                     onSearchSubmit({
-                        structure: smiles,
-                        substructure_search: substructureSearch,
-                        taxon_wid: selectedTaxa
+                        structure: {
+                            molecule: smiles,
+                            option: {
+                                substructure_search: substructureSearch
+                            }
+                        },
+                        taxon: {
+                            wid: selectedTaxa
+                        }
                     })
             } else {
                 console.log("Nothing to search for")

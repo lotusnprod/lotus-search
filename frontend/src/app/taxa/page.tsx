@@ -1,8 +1,6 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {StructureSearchQuery} from "@/interfaces/structure_search_query";
-import AutocompleteTaxa from "@/components/AutocompleteTaxa";
 import Input from "@mui/joy/Input";
 import {LotusAPIItem} from "@/interfaces/schemas";
 import TaxaResults from "@/components/TaxaResults";
@@ -20,7 +18,7 @@ export default function Page() {
     }, [debouncedQuery])
 
     const updateQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery({ taxon_name: event.target.value })
+        setSearchQuery({ taxon: {name: event.target.value }})
     }
 
     return (

@@ -1,7 +1,7 @@
 title: StructureObject
 type: object
 properties:
-  structure_smiles:
+  smiles:
     description: |
       Structure SMILES
     type: string

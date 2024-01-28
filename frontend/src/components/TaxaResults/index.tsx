@@ -6,7 +6,7 @@ import {components} from "@/interfaces/lotus_api";
 import Structure from "@/components/Structure";
 import Pagination from "@/components/Pagination";
 import {Grid, Sheet} from "@mui/joy";
-import {LotusAPIItem} from "@/interfaces/schemas";
+import {LotusAPIItem, TaxonObject} from "@/interfaces/schemas";
 
 interface TaxonResultQuery {
     searchQuery: LotusAPIItem;
@@ -22,7 +22,7 @@ const TaxaResults: React.FC<TaxonResultQuery> = ({searchQuery}) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        if (searchQuery.taxon_name == "") return
+        if ((searchQuery.taxon?.name || "") == "") return
         setLoading(true)
         fetchTaxa(searchQuery).then(setApiData)
             .catch((error) => setError(error.message))
@@ -37,11 +37,11 @@ const TaxaResults: React.FC<TaxonResultQuery> = ({searchQuery}) => {
     if (error) return <div>Error: {error}</div>;
 
     // Calculate the total number of pages
-    const totalPages = apiData && apiData.taxa ? Math.ceil(Object.keys(apiData.taxa).length / ITEMS_PER_PAGE) : 0;
+    const totalPages = apiData && apiData.objects ? Math.ceil(Object.keys(apiData.objects).length / ITEMS_PER_PAGE) : 0;
 
     // Get the current items
-    const currentItems: Taxa[] = apiData && apiData.taxa
-        ? Object.entries(apiData.taxa)
+    const currentItems: [string, TaxonObject][] = apiData && apiData.objects
+        ? Object.entries(apiData.objects)
             .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
         : [];
     if (currentItems.length == 0) {
