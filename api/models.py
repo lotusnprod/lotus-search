@@ -121,6 +121,6 @@ class AutocompleteTaxa(BaseModel):
     taxon_name: str
 
 
-class StructureDepiction(BaseModel):
+class DepictionStructure(BaseModel):
     structure: str
     highlight: str | None = None

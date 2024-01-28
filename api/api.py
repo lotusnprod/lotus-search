@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 from fastapi_versioning import VersionedFastAPI, version
@@ -8,7 +9,7 @@ from api.models import (
     Item,
     ReferenceObject,
     ReferenceResult,
-    StructureDepiction,
+    DepictionStructure,
     StructureObject,
     StructureResult,
     TaxonObject,
@@ -32,6 +33,17 @@ description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
 
+data_model: None | DataModel = None
+
+
+def get_data_model() -> DataModel:
+    """
+    A bit messy, but that way we can inject our own in tests
+    :return:
+    """
+    global data_model
+    return data_model
+
 
 app = FastAPI(
     title="LOTUS FastAPI",
@@ -52,10 +64,18 @@ app = FastAPI(
 )
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    global data_model
+    data_model = DataModel()
+    yield
+    data_model = None
+
+
 @app.post("/triplets")
 @version(1, 0)
 async def search_triplets(
-    item: Item, dm: DataModel = Depends(DataModel)
+    item: Item, dm: DataModel = Depends(get_data_model)
 ) -> TripletResult:
     triplets = get_triplets_for_item(item, dm)
 
@@ -87,7 +107,7 @@ async def search_triplets(
 @app.post("/structures")
 @version(1, 0)
 async def search_structures(
-    item: Item, dm: DataModel = Depends(DataModel)
+    item: Item, dm: DataModel = Depends(get_data_model)
 ) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
@@ -103,7 +123,7 @@ async def search_structures(
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonResult:
+async def search_taxa(item: Item, dm: DataModel = Depends(get_data_model)) -> TaxonResult:
     dict_items = get_taxa_for_item(item, dm)
 
     return TaxonResult(
@@ -117,7 +137,7 @@ async def search_taxa(item: Item, dm: DataModel = Depends(DataModel)) -> TaxonRe
 @app.post("/references")
 @version(1, 0)
 async def search_references(
-    item: Item, dm: DataModel = Depends(DataModel)
+    item: Item, dm: DataModel = Depends(get_data_model)
 ) -> ReferenceResult:
     dict_items = get_references_for_item(item, dm)
 
@@ -132,17 +152,18 @@ async def search_references(
 @app.post("/autocomplete/taxa")
 @version(1, 0)
 async def autocomplete_taxa(
-        inp: AutocompleteTaxa
+        inp: AutocompleteTaxa,
+        dm: DataModel = Depends(get_data_model)
 ) -> dict[str, int]:
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
 
 @app.post("/depiction/structure")
 @version(1, 0)
-async def depiction_molecule(
-        structure_depiction: StructureDepiction
+async def depiction_structure(
+        depiction_structure: DepictionStructure
 ) -> dict[str, str]:
-    return {"svg": molecule_svg(structure_depiction.structure, molecule=None)}
+    return {"svg": molecule_svg(depiction_structure.structure, highlight=depiction_structure.highlight)}
 
 
 LOGGING_CONFIG = {
@@ -166,4 +187,4 @@ LOGGING_CONFIG = {
     },
 }
 
-app = VersionedFastAPI(app, enable_latest=True, log_config=LOGGING_CONFIG)
+app = VersionedFastAPI(app, enable_latest=True, log_config=LOGGING_CONFIG, lifespan=lifespan)
