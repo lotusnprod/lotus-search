@@ -9,3 +9,7 @@ contributions
 /doc/api/dist
 
 /htmlcov/
+/frontend/node_modules/
+/frontend/.next/
+
+**/__pycache__/
