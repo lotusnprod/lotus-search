@@ -56,7 +56,7 @@ requests-mock = "^1.11.0"
 start = "app:main"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.12.1"
+black = "^24.1.1"
 isort = "^5.13.2"
 tox = "^4.12.1"
 
