@@ -4,9 +4,9 @@ import React, {useEffect, useState} from 'react';
 import {fetchStructures} from "@/services/apiService";
 import {components} from "@/interfaces/lotus_api";
 import Structure from "@/components/Structure";
-import Pagination from "@/components/Pagination";
 import {Grid, Sheet} from "@mui/joy";
 import {LotusAPIItem, StructureObject} from "@/interfaces/schemas";
+import {Pagination} from "@mui/material";
 
 interface StructureResultProps {
     searchQuery: LotusAPIItem;
@@ -33,15 +33,20 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
             );
     }, [searchQuery]);
 
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setCurrentPage(value);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     // Calculate the total number of pages
     const totalPages = apiData &&
-     apiData.objects ? Math.ceil(Object.keys(apiData.objects).length / ITEMS_PER_PAGE) : 0;
+    apiData.objects ? Math.ceil(Object.keys(apiData.objects).length / ITEMS_PER_PAGE) : 0;
 
     // Get the current items
-    const currentItems : [string, StructureObject][] = apiData && apiData.objects
+    const currentItems: [string, StructureObject][] = apiData && apiData.objects
         ? Object.entries<StructureObject>(apiData.objects)
             .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
         : [];
@@ -50,6 +55,7 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
     }
     return (<Sheet>
         Structure searching
+        <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
         <Grid container spacing={2} sx={{flexGrow: 1}}>
             {currentItems.map(([index, structure]) => (
                 structure ? <Grid key={"grid_structure_" + index} xs={4}>
@@ -59,7 +65,7 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
                     : null
             ))}
         </Grid>
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+        <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
     </Sheet>)
 }
 

@@ -11,10 +11,18 @@ interface StructureSearchProps {
     onSearchSubmit: (searchValue: LotusAPIItem) => void;
 }
 
+function parseToIntOrUndefined(str: string | null): number | undefined {
+    if (!str) return undefined;
+    const num = parseInt(str, 10);
+    return isNaN(num) ? undefined : num;
+}
+
 const StructureSearch: React.FC<StructureSearchProps> =
     ({onSearchSubmit}) => {
+        const queryParams = new URLSearchParams(location.search);
         const [substructureSearch, setSubstructureSearch] = useState(false);
-        const [selectedTaxa, setSelectedTaxa] = useState<number | undefined>(undefined);
+        const [selectedTaxa, setSelectedTaxa] =
+            useState<number | undefined>(parseToIntOrUndefined(queryParams.get('taxon_wid')));
         const ketcherRef = useRef<KetcherLotusMethods>(null);
         const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();

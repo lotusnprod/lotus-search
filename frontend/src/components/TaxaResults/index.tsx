@@ -1,12 +1,12 @@
 'use client'
 
+import {Experimental_CssVarsProvider} from '@mui/material/styles';
 import React, {useEffect, useState} from 'react';
-import {fetchStructures, fetchTaxa} from "@/services/apiService";
+import {fetchTaxa} from "@/services/apiService";
 import {components} from "@/interfaces/lotus_api";
-import Structure from "@/components/Structure";
-import Pagination from "@/components/Pagination";
-import {Grid, Sheet} from "@mui/joy";
+import {Button, Card, Link, Sheet, Table} from "@mui/joy";
 import {LotusAPIItem, TaxonObject} from "@/interfaces/schemas";
+import {Pagination} from "@mui/material";
 
 interface TaxonResultQuery {
     searchQuery: LotusAPIItem;
@@ -33,6 +33,11 @@ const TaxaResults: React.FC<TaxonResultQuery> = ({searchQuery}) => {
             );
     }, [searchQuery]);
 
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setCurrentPage(value);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -49,12 +54,33 @@ const TaxaResults: React.FC<TaxonResultQuery> = ({searchQuery}) => {
     }
     return (<Sheet>
         Taxon searching
-        <Grid container spacing={2} sx={{flexGrow: 1}}>
+        <Experimental_CssVarsProvider>
+            <Pagination page={currentPage} count={totalPages} onChange={handlePageChange} color="primary"/>
+        </Experimental_CssVarsProvider>
+        <Table aria-label="basic table">
+            <thead>
+            <tr>
+                <th style={{width: '40%'}}>Name</th>
+                <th>Structures</th>
+                <th>References</th>
+            </tr>
+            </thead>
+            <tbody>
             {currentItems.map(([index, item]) => (
-                <div key={index}>{ item.name }</div>
+               <tr>
+                   <td>
+                       <Link href={"/taxon/"+index}>{item.name}</Link>
+                   </td>
+                   <td><Link href={"/structures?taxon_name="+encodeURIComponent(item.wid || "")}>?</Link></td>
+                   <td>?</td>
+               </tr>
             ))}
-        </Grid>
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+            </tbody>
+        </Table>
+
+        <Experimental_CssVarsProvider>
+            <Pagination page={currentPage} count={totalPages} onChange={handlePageChange} color="primary"/>
+        </Experimental_CssVarsProvider>
     </Sheet>)
 }
 
