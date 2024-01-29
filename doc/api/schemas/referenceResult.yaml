@@ -7,8 +7,8 @@ properties:
       IDs
     type: array
     items:
+      example: [ 44488598 ]
       type: integer
-    example: [ 44488598 ]
   objects:
     $ref: "./referenceObject.yaml"
   count:

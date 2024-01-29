@@ -4,8 +4,10 @@ properties:
   doi:
     description: |
       DOI
-    type: string
     example: "10.1080/1057563021000040466"
+    type: string
+  # external_ids:
+  #   $ref: "./referenceId.yaml"
   # title:
   #   description: |
   #     Title
