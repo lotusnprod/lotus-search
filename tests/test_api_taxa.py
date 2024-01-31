@@ -30,7 +30,9 @@ class TestApiTaxa:
         assert result.description == "Taxa matching the query"
 
     async def test_taxa_children_id(self, data_model):
-        item = Item(taxon={"wid": 5, "option": {"taxon_children": True}}, modeEnum="objects")
+        item = Item(
+            taxon={"wid": 5, "option": {"taxon_children": True}}, modeEnum="objects"
+        )
         result = await search_taxa(item=item, dm=data_model)
         # TODO FIX
         assert result.count == 4
@@ -48,7 +50,10 @@ class TestApiTaxa:
         assert result.description == "Taxa matching the query"
 
     async def test_taxa_children_name(self, data_model):
-        item = Item(taxon={"name": "Taxon parent", "option": {"taxon_children": True}}, modeEnum="objects")
+        item = Item(
+            taxon={"name": "Taxon parent", "option": {"taxon_children": True}},
+            modeEnum="objects",
+        )
         result = await search_taxa(item=item, dm=data_model)
         # TODO FIX
         assert result.count == 4

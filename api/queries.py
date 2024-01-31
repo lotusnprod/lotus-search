@@ -96,10 +96,14 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     if wid is not None or name is not None:
         # This needs to be explained in the API doc
         if wid:
-            return dm.get_taxon_children_by_id(wid) if children else dm.get_taxon_by_id(wid)
-        elif name: 
+            return (
+                dm.get_taxon_children_by_id(wid)
+                if children
+                else dm.get_taxon_by_id(wid)
+            )
+        elif name:
             t = dm.get_taxa_with_name_matching(name)
-            if children: 
+            if children:
                 result_set = set()
                 for taxon in t:
                     print(taxon)

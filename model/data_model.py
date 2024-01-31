@@ -301,9 +301,7 @@ class DataModel:
 
     def get_taxon_by_id(self, tid: int) -> set[int]:
         with self.storage.session() as session:
-            result = session.query(Triplets.taxon_id).filter(
-                Triplets.taxon_id == tid
-            )
+            result = session.query(Triplets.taxon_id).filter(Triplets.taxon_id == tid)
             return {row[0] for row in result.distinct()}
 
     def get_taxon_children_by_id(self, tid: int) -> set[int]:
@@ -313,13 +311,12 @@ class DataModel:
             recursive_query = (
                 session.query(TaxoParents.id)
                 .filter(TaxoParents.parent_id == tid)
-                .cte(name='recursive_query', recursive=True)
+                .cte(name="recursive_query", recursive=True)
             )
 
             alias = aliased(TaxoParents)
             recursive_query = recursive_query.union_all(
-                session.query(alias.id)
-                .filter(alias.parent_id == recursive_query.c.id)
+                session.query(alias.id).filter(alias.parent_id == recursive_query.c.id)
             )
 
             result = session.query(recursive_query).all()
@@ -329,7 +326,6 @@ class DataModel:
             #     TaxoParents.parent_id == tid
             # )
             return {row[0] for row in result}
-
 
     def preload_taxa(self):
         with self.storage.session() as session:
