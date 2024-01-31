@@ -41,7 +41,7 @@ class Item(BaseModel):
     structure: StructureItem = StructureItem()
     taxon: TaxonItem = TaxonItem()
     limit: Optional[int] = None
-    modeEnum: str = "id"
+    modeEnum: str = "objects"
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -67,7 +67,7 @@ class Item(BaseModel):
                         "option": {"taxon_children": True},
                     },
                     "limit": 1000,
-                    "modeEnum": "id",
+                    "modeEnum": "ids",
                 }
             ]
         }

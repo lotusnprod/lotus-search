@@ -23,7 +23,7 @@ class TestApiStructures:
         assert result.description == "Structures matching the query"
 
     async def test_search_structures_pure_structure_ids(self, data_model):
-        item = Item(structure={"molecule": "C"}, limit=10)
+        item = Item(structure={"molecule": "C"}, limit=10, modeEnum="ids")
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects is None

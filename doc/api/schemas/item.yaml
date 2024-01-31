@@ -11,6 +11,6 @@ properties:
     $ref: "./limit.yaml"
   modeEnum:
     title: ModeEnum
-    default: "ids"
-    example: "objects"
+    default: "objects"
+    example: "ids"
     type: string

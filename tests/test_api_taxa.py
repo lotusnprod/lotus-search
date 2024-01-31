@@ -23,7 +23,7 @@ class TestApiTaxa:
         assert result.description == "Taxa matching the query"
 
     async def test_taxa_simple_ids(self, data_model):
-        item = Item(taxon={"name": "Taxon 1"})
+        item = Item(taxon={"name": "Taxon 1"}, modeEnum="ids")
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects is None

@@ -29,7 +29,7 @@ class TestApiReferences:
 
     async def test_search_with_limits_id(self, data_model):
         expected_total = 4
-        item = Item(reference={"doi": "42"})
+        item = Item(reference={"doi": "42"}, modeEnum="ids")
         result = await search_references(item=item, dm=data_model)
         assert result.count == expected_total
         assert result.objects is None

@@ -25,7 +25,7 @@ class TestApiTriplets:
         assert result.description == "Triplets matching the query"
 
     async def test_triplets_all_id(self, data_model):
-        item = Item()
+        item = Item(modeEnum="ids")
         result: TripletResult = await search_triplets(item=item, dm=data_model)
         assert result.count == 6
         assert result.references is None
