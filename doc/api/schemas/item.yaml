@@ -9,3 +9,8 @@ properties:
     $ref: "./taxonItem.yaml"
   limit:
     $ref: "./limit.yaml"
+  modeEnum:
+    title: ModeEnum
+    default: "ids"
+    example: "objects"
+    type: string

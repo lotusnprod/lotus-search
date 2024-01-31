@@ -20,5 +20,3 @@ properties:
     $ref: "./taxonOption.yaml"
   # filter:
   #   $ref: "./taxonFilter.yaml"
-  # limit:
-  #   $ref: "./limit.yaml"

@@ -16,14 +16,21 @@ from .common import data_model
 @pytest.mark.usefixtures("data_model")
 class TestApiTaxa:
     async def test_taxa_simple(self, data_model):
-        item = Item(taxon={"name": "Taxon 1"})
+        item = Item(taxon={"name": "Taxon 1"}, modeEnum="objects")
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].name == "Taxon 1"
         assert result.description == "Taxa matching the query"
 
+    async def test_taxa_simple_ids(self, data_model):
+        item = Item(taxon={"name": "Taxon 1"})
+        result = await search_taxa(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects is None
+        assert result.description == "Taxa matching the query"
+
     async def test_taxa_children_id(self, data_model):
-        item = Item(taxon={"wid": 5, "option": {"taxon_children": True}})
+        item = Item(taxon={"wid": 5, "option": {"taxon_children": True}}, modeEnum="objects")
         result = await search_taxa(item=item, dm=data_model)
         # TODO FIX
         assert result.count == 4
@@ -41,7 +48,7 @@ class TestApiTaxa:
         assert result.description == "Taxa matching the query"
 
     async def test_taxa_children_name(self, data_model):
-        item = Item(taxon={"name": "Taxon parent", "option": {"taxon_children": True}})
+        item = Item(taxon={"name": "Taxon parent", "option": {"taxon_children": True}}, modeEnum="objects")
         result = await search_taxa(item=item, dm=data_model)
         # TODO FIX
         assert result.count == 4
@@ -63,7 +70,7 @@ class TestApiTaxa:
         assert result.count == 1
 
     async def test_taxa_restrict_structure_existing(self, data_model):
-        item = Item(taxon={"name": "Taxon 1"}, structure={"wid": 1})
+        item = Item(taxon={"name": "Taxon 1"}, structure={"wid": 1}, modeEnum="objects")
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].name == "Taxon 1"
@@ -75,7 +82,7 @@ class TestApiTaxa:
         assert result.count == 0
 
     async def test_taxa_restrict_reference_existing(self, data_model):
-        item = Item(taxon={"name": "Taxon 1"}, reference={"wid": 1})
+        item = Item(taxon={"name": "Taxon 1"}, reference={"wid": 1}, modeEnum="objects")
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].name == "Taxon 1"

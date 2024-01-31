@@ -41,6 +41,7 @@ class Item(BaseModel):
     structure: StructureItem = StructureItem()
     taxon: TaxonItem = TaxonItem()
     limit: Optional[int] = None
+    modeEnum: str = "id"
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -51,7 +52,6 @@ class Item(BaseModel):
                         # "option": {
                         #     "TODO": True,
                         # },
-                        # "limit": 1000
                     },
                     "structure": {
                         "wid": 27151406,
@@ -60,15 +60,14 @@ class Item(BaseModel):
                             "substructure_search": True,
                             "similarity_level": 0.8,
                         },
-                        # "limit": 1000
                     },
                     "taxon": {
                         "wid": 158572,
                         "name": "Gentiana lutea",
                         "option": {"taxon_children": True},
-                        # "limit": 1000
                     },
                     "limit": 1000,
+                    "modeEnum": "id",
                 }
             ]
         }
@@ -81,7 +80,7 @@ class ReferenceObject(BaseModel):
 
 class ReferenceResult(BaseModel):
     ids: List[int]
-    objects: Optional[Dict[int, ReferenceObject]]
+    objects: Optional[Dict[int, ReferenceObject]] = None
     count: Optional[int]
     description: Optional[str]
 
@@ -92,7 +91,7 @@ class StructureObject(BaseModel):
 
 class StructureResult(BaseModel):
     ids: List[int]
-    objects: Optional[Dict[int, StructureObject]]
+    objects: Optional[Dict[int, StructureObject]] = None
     count: Optional[int]
     description: Optional[str]
 
@@ -103,16 +102,16 @@ class TaxonObject(BaseModel):
 
 class TaxonResult(BaseModel):
     ids: List[int]
-    objects: Optional[Dict[int, TaxonObject]]
+    objects: Optional[Dict[int, TaxonObject]] = None
     count: Optional[int]
     description: Optional[str]
 
 
 class TripletResult(BaseModel):
     triplets: List[List[int]]
-    references: Optional[Dict[int, ReferenceObject]]
-    structures: Optional[Dict[int, StructureObject]]
-    taxa: Optional[Dict[int, TaxonObject]]
+    references: Optional[Dict[int, ReferenceObject]] = None
+    structures: Optional[Dict[int, StructureObject]] = None
+    taxa: Optional[Dict[int, TaxonObject]] = None
     count: Optional[int]
     description: Optional[str]
 

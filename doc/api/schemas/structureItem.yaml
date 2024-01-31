@@ -19,5 +19,3 @@ properties:
     $ref: "./structureOption.yaml"
   # filter:
   #   $ref: "./structureFilter.yaml"
-  # limit:
-  #   $ref: "./limit.yaml"
