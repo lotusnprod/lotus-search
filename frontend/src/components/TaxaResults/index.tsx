@@ -71,7 +71,7 @@ const TaxaResults: React.FC<TaxonResultQuery> = ({searchQuery}) => {
                    <td>
                        <Link href={"/taxon/"+index}>{item.name}</Link>
                    </td>
-                   <td><Link href={"/structures?taxon_name="+encodeURIComponent(item.wid || "")}>?</Link></td>
+                   <td><Link href={"/structures?taxon_wid="+encodeURIComponent(index || "")+"&taxon_name="+encodeURIComponent(item.name || "")}>?</Link></td>
                    <td>?</td>
                </tr>
             ))}

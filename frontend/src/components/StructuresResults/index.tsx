@@ -7,9 +7,10 @@ import Structure from "@/components/Structure";
 import {Grid, Sheet} from "@mui/joy";
 import {LotusAPIItem, StructureObject} from "@/interfaces/schemas";
 import {Pagination} from "@mui/material";
+import {Experimental_CssVarsProvider} from "@mui/material/styles";
 
 interface StructureResultProps {
-    searchQuery: LotusAPIItem;
+    searchQuery: LotusAPIItem | undefined;
 }
 
 
@@ -22,15 +23,16 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        if ((searchQuery.structure?.molecule || "") == "") return
-        setLoading(true)
-        fetchStructures(searchQuery).then(setApiData)
-            .catch((error) => setError(error.message))
-            .finally(() => {
-                    setLoading(false)
-                    setError(null)
-                }
-            );
+        if (searchQuery) {
+            setLoading(true)
+            fetchStructures(searchQuery).then(setApiData)
+                .catch((error) => setError(error.message))
+                .finally(() => {
+                        setLoading(false)
+                        setError(null)
+                    }
+                );
+        }
     }, [searchQuery]);
 
 
@@ -42,30 +44,36 @@ const StructureResult: React.FC<StructureResultProps> = ({searchQuery}) => {
     if (error) return <div>Error: {error}</div>;
 
     // Calculate the total number of pages
+    const count = apiData ? Object.keys(apiData.objects).length : 0
     const totalPages = apiData &&
-    apiData.objects ? Math.ceil(Object.keys(apiData.objects).length / ITEMS_PER_PAGE) : 0;
+    apiData.objects ? Math.ceil(count / ITEMS_PER_PAGE) : 0;
 
     // Get the current items
     const currentItems: [string, StructureObject][] = apiData && apiData.objects
         ? Object.entries<StructureObject>(apiData.objects)
             .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
         : [];
-    if (currentItems.length == 0) {
+    if (count == 0) {
         return <div>No results</div>
     }
     return (<Sheet>
-        Structure searching
-        <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
+        Structure searching: {count} results
+        <Experimental_CssVarsProvider>
+            <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
+        </Experimental_CssVarsProvider>
+
         <Grid container spacing={2} sx={{flexGrow: 1}}>
             {currentItems.map(([index, structure]) => (
                 structure ? <Grid key={"grid_structure_" + index} xs={4}>
                         <Structure key={"structure_" + index} id={index} structure={structure.smiles || ""}
-                                   highlight={searchQuery.structure?.molecule || ""}/>
+                                   highlight={searchQuery?.structure?.molecule || ""}/>
                     </Grid>
                     : null
             ))}
         </Grid>
-        <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
+        <Experimental_CssVarsProvider>
+            <Pagination page={currentPage} count={totalPages} onChange={handlePageChange}/>
+        </Experimental_CssVarsProvider>
     </Sheet>)
 }
 

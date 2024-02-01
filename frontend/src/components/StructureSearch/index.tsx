@@ -4,7 +4,7 @@ import React, {useRef, useState} from "react";
 import KetcherLotus, {KetcherLotusMethods} from "@/components/KetcherLotus";
 import dynamic from "next/dynamic";
 import AutocompleteTaxa from "@/components/AutocompleteTaxa";
-import {FormControl, FormLabel} from "@mui/joy";
+import {Chip, FormControl, FormLabel} from "@mui/joy";
 import {LotusAPIItem} from "@/interfaces/schemas";
 
 interface StructureSearchProps {
@@ -19,31 +19,42 @@ function parseToIntOrUndefined(str: string | null): number | undefined {
 
 const StructureSearch: React.FC<StructureSearchProps> =
     ({onSearchSubmit}) => {
+        const hasRunOnce = useRef(false);
         const queryParams = new URLSearchParams(location.search);
         const [substructureSearch, setSubstructureSearch] = useState(false);
         const [selectedTaxa, setSelectedTaxa] =
             useState<number | undefined>(parseToIntOrUndefined(queryParams.get('taxon_wid')));
         const ketcherRef = useRef<KetcherLotusMethods>(null);
-        const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            if (ketcherRef.current) {
-                const smiles = await ketcherRef.current.getValue()
-                if (smiles != "")
-                    onSearchSubmit({
-                        structure: {
-                            molecule: smiles,
-                            option: {
-                                substructure_search: substructureSearch
-                            }
-                        },
-                        taxon: {
-                            wid: selectedTaxa
-                        }
-                    })
-            } else {
-                console.log("Nothing to search for")
+
+        const submit = async () => {
+            const smiles = ketcherRef.current ? await ketcherRef.current.getValue() : ""
+            var query: LotusAPIItem = {
+                taxon: {
+                    wid: selectedTaxa
+                }
             }
-        };
+            if (smiles && smiles != "") {
+                query["structure"] = {
+                    molecule: smiles,
+                    option: {substructure_search: substructureSearch}
+                }
+            }
+
+            onSearchSubmit(query)
+
+        }
+        const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            submit()
+        }
+
+        if (!hasRunOnce.current) {
+            // Your code here will run only on the initial render
+            hasRunOnce.current = true
+            if (queryParams.get('taxon_wid')) {
+                submit()
+            }
+        }
 
         return (
             <main>
@@ -52,7 +63,12 @@ const StructureSearch: React.FC<StructureSearchProps> =
                 </div>
                 <FormControl>
                     <FormLabel>Restrict by taxon</FormLabel>
-                    <AutocompleteTaxa onSelectionChange={(selectedOption) => setSelectedTaxa(selectedOption?.id)}/>
+                    {
+                        queryParams.get('taxon_name') ?
+                            <Chip>Searching in {queryParams.get('taxon_name')}</Chip> :
+                            <AutocompleteTaxa
+                                onSelectionChange={(selectedOption) => setSelectedTaxa(selectedOption?.id)}/>
+                    }
                 </FormControl>
                 <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
                     <label className="inline-flex items-center">
