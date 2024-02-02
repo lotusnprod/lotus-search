@@ -27,7 +27,7 @@ classifiers =[
 
 [tool.poetry.dependencies]
 python = "^3.11"
-dash = "^2.14.2"
+dash = "^2.15.0"
 dash-bootstrap-components = "^1.5.0"
 fastapi = "^0.109.0"
 fastapi-versioning = "^0.10.0"
