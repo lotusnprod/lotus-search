@@ -47,6 +47,7 @@ def get_mol_descriptors_rdkit(mol):
         except:
             # print the error message:
             import traceback
+
             traceback.print_exc()
             # and set the descriptor value to None
             val = None
