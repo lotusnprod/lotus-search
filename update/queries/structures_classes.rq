@@ -14,5 +14,6 @@ SELECT DISTINCT ?structure ?class WHERE {
     ?structure p:P235 []. hint:Prior hint:rangeSafe true.
     ?structure p:P703 [].
     ?structure wdt:P279 ?class.
+    FILTER (?class != wd:Q11173)
 }
 LIMIT 500000
