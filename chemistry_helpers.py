@@ -38,19 +38,15 @@ def get_mol_descriptors_mordred(mol):
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
 def get_mol_descriptors_rdkit(mol):
-    """calculate the full list of descriptors for a molecule
-
-    missingVal is used if the descriptor cannot be calculated
-    """
+    """calculate the full list of descriptors for a molecule."""
     res = {}
     for nm, fn in Descriptors._descList:
-        # some of the descriptor fucntions can throw errors if they fail, catch those here:
+        # some of the descriptor functions can throw errors if they fail, catch those here:
         try:
             val = fn(mol)
         except:
             # print the error message:
             import traceback
-
             traceback.print_exc()
             # and set the descriptor value to None
             val = None
