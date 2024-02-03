@@ -85,8 +85,8 @@ def run(path: Path) -> None:
     p_links = []
     smis_no_stereo = []
     inchis_no_stereo = []
+    # descriptors_m = {}
     descriptors_r = {}
-    descriptors_m = {}
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -109,7 +109,7 @@ def run(path: Path) -> None:
                     mol_block,
                     sim_fp,
                     sub_fp,
-                    desc_mordred,
+                    # desc_mordred,
                     desc_rdkit,
                     mol_h,
                     sim_fp_h,
@@ -133,7 +133,7 @@ def run(path: Path) -> None:
                 p_smileses.append(smiles)
                 smis_no_stereo.append(smiles_no_stereo)
                 inchis_no_stereo.append(inchi_no_stereo)
-                descriptors_m[smiles] = desc_mordred
+                # descriptors_m[smiles] = desc_mordred
                 descriptors_r[smiles] = desc_rdkit
 
                 p_links.append(links[nid])
@@ -163,8 +163,8 @@ def run(path: Path) -> None:
     logging.info("Exporting rdkit descriptors")
     export_descriptors_to_csv(descriptors_r, path / "descriptors_rdkit.csv")
 
-    logging.info("Exporting mordred descriptors")
-    export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
+    # logging.info("Exporting mordred descriptors")
+    # export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"

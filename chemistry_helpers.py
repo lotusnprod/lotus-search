@@ -78,7 +78,7 @@ def process_smiles(inp):
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
-            desc_mordred = get_mol_descriptors_mordred(smol)
+            # desc_mordred = get_mol_descriptors_mordred(smol)
             desc_rdkit = get_mol_descriptors_rdkit(smol)
             smol_h = Chem.AddHs(smol)
             sim_fp_h = fingerprint(smol_h)
@@ -96,7 +96,7 @@ def process_smiles(inp):
                 mol_block,
                 sim_fp,
                 sub_fp,
-                desc_mordred,
+                # desc_mordred,
                 desc_rdkit,
                 smol_h.ToBinary(),
                 sim_fp_h,
