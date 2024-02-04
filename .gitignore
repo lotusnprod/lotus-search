@@ -1,5 +1,6 @@
 .coverage*
 coverage.xml
+.DS_Store
 .idea
 .tox
 data
