@@ -19,9 +19,7 @@ def convert_to_int_safe(s: str) -> int | None:
         return None
 
 
-def generate_taxon_parents_with_distance(
-    path: Path, taxa: set[int]
-) -> list[tuple[int, int, int]]:
+def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int]]:
     graph = defaultdict(list)
     distances = []
     with open(path / "taxa_parents.csv", "r") as f:
@@ -38,7 +36,7 @@ def generate_taxon_parents_with_distance(
                 continue
             graph[taxon_id].append(parent_id)
     # Good ol' BFS
-    for node in taxa:
+    for node in list(graph.keys()):
         visited = {node: 0}
         queue = deque([node])
         while queue:

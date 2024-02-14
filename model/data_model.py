@@ -306,7 +306,6 @@ class DataModel:
 
     def get_taxon_children_by_id(self, tid: int) -> set[int]:
         with self.storage.session() as session:
-            # TODO FIX
             # Recursive query to fetch all children for the given taxon ID
             recursive_query = (
                 session.query(TaxoParents.id)
@@ -319,7 +318,7 @@ class DataModel:
                 session.query(alias.id).filter(alias.parent_id == recursive_query.c.id)
             )
 
-            result = session.query(recursive_query).all()
+            result = set(session.query(recursive_query).all())
 
             ## This is working but not recursively to get all children
             # result = session.query(TaxoParents.id).filter(
