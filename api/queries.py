@@ -213,7 +213,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_dict_of_sid_to_smiles(ids)
+    return dm.get_structure_object_from_dict_of_sids(ids)
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
@@ -226,7 +226,7 @@ def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_dict_of_tid_to_taxon_name(ids)
+    return dm.get_taxon_object_from_dict_of_tids(ids)
 
 
 def get_references_for_item(item: Item, dm: DataModel) -> dict[int, str]:
@@ -239,4 +239,4 @@ def get_references_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_dict_of_rid_to_reference_doi(ids)
+    return dm.get_reference_object_from_dict_of_rids(ids)

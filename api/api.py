@@ -84,19 +84,19 @@ async def search_triplets(
             triplets=triplets,
             references={
                 wid: ReferenceObject(doi=value)
-                for wid, value in dm.get_dict_of_rid_to_reference_doi(
+                for wid, value in dm.get_reference_object_from_dict_of_rids(
                     [reference_id for reference_id, _, _ in triplets]
                 ).items()
             },
             structures={
                 wid: StructureObject(smiles=value)
-                for wid, value in dm.get_dict_of_sid_to_smiles(
+                for wid, value in dm.get_structure_object_from_dict_of_sids(
                     [structure_id for _, structure_id, _ in triplets]
                 ).items()
             },
             taxa={
                 wid: TaxonObject(name=value)
-                for wid, value in dm.get_dict_of_tid_to_taxon_name(
+                for wid, value in dm.get_taxon_object_from_dict_of_tids(
                     [taxon_id for _, _, taxon_id in triplets]
                 ).items()
             },
