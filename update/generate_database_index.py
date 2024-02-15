@@ -113,7 +113,7 @@ def run(path: Path) -> None:
         references.append({"id": ref, "doi": doi})
 
     logging.info(" Processed dicts")
-    storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path, taxa))
+    storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
 
     storage.upsert_triplets(triplets)

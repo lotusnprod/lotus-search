@@ -41,8 +41,9 @@ def read_selected_ranges(
 
 def write_mols_to_sdf(path: Path, sdf_blocks: Iterable[Tuple[int, str]]) -> None:
     with open(str(path), "a") as f:
+        sorted_sdf_blocks = sorted(sdf_blocks, key=lambda x: x[0])
         with SDWriter(f) as w:
-            for wid, sdf_block in sdf_blocks:
+            for wid, sdf_block in sorted_sdf_blocks:
                 mol = MolFromMolBlock(sdf_block)
                 if mol:
                     mol.SetProp("WID", str(wid))

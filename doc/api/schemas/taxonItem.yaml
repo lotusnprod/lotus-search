@@ -14,9 +14,9 @@ properties:
     # The mistake is on purpose
     example: "Gentiana luteha"
     type: string
+  # external_id:
+  #   $ref: "./taxonId.yaml"
   option:
     $ref: "./taxonOption.yaml"
   # filter:
   #   $ref: "./taxonFilter.yaml"
-  # limit:
-  #   $ref: "./limit.yaml"

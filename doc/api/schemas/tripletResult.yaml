@@ -6,12 +6,12 @@ properties:
     title: Triplets
     description: |
       Triplets of reference, structure and taxon IDs
-    type: array
+    example : [ [44488598, 27151406, 158572] ]
     items:
       type: array
       items:
         type: integer
-    example : [ [44488598, 27151406, 158572] ]
+    type: array
   references:
     $ref: "./referenceObject.yaml"
   structures:

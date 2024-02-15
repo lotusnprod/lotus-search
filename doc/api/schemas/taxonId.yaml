@@ -1,0 +1,68 @@
+title: TaxonObject
+type: object
+properties:
+  col:
+    description: |
+      Catalogue Of Life ID
+    example: "6KB7S"
+    type: string
+  eol:
+    description: |
+      Encyclopedia Of Life ID
+    example: 483956
+    type: integer
+  gbif:
+    description: |
+      Global Biodiversity Information Facility Taxon ID
+    example: 3170040
+    type: integer
+  inat:
+    description: |
+      iNaturalist taxon ID
+    example: 142299
+    type: integer
+  ipni:
+    description: |
+      International Plant Names Index ID
+    example: "368453-1"
+    type: string
+  irmng:
+    description: |
+      Interim Register of Marine and Nonmarine Genera ID
+    example: 10921368
+    type: integer
+  itis:
+    description: |
+      Integrated Taxonomic Information System ID
+    example: 505985
+    type: integer
+  ncbi:
+    description: |
+      NCBI taxon ID
+    example: 172557
+    type: integer
+  otl:
+    description: |
+      Open Tree of Life ID
+    example: 346679
+    type: integer
+  powo:
+    description: |
+      Plants of the World Online ID
+    example: "urn:lsid:ipni.org:names:368453-1"
+    type: string
+  tropicos:
+    description: |
+      Tropicos ID
+    example: 13800021
+    type: integer
+  wfo:
+    description: |
+      World Flora Online ID
+    example: "wfo-0000697915"
+    type: string
+  worms:
+    description: |
+      Encyclopedia Of Life ID
+    example: 1
+    type: integer

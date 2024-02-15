@@ -4,5 +4,7 @@ properties:
   smiles:
     description: |
       Structure SMILES
-    type: string
     example: "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O"
+    type: string
+  # external_id:
+  #   $ref: "./structureId.yaml"

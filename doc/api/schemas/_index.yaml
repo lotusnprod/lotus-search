@@ -2,6 +2,8 @@ item:
   $ref: "./item.yaml"
 limit:
   $ref: "./limit.yaml"
+referenceId:
+  $ref: "./referenceId.yaml"
 referenceItem:
   $ref: "./referenceItem.yaml"
 referenceObject:
@@ -10,6 +12,8 @@ referenceObject:
 #   $ref: "./referenceOption.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
+structureId:
+  $ref: "./structureId.yaml"
 structureItem:
   $ref: "./structureItem.yaml"
 structureObject:

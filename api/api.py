@@ -6,10 +6,10 @@ from fastapi_versioning import VersionedFastAPI, version
 
 from api.models import (
     AutocompleteTaxa,
+    DepictionStructure,
     Item,
     ReferenceObject,
     ReferenceResult,
-    DepictionStructure,
     StructureObject,
     StructureResult,
     TaxonObject,
@@ -79,29 +79,36 @@ async def search_triplets(
 ) -> TripletResult:
     triplets = get_triplets_for_item(item, dm)
 
-    return TripletResult(
-        triplets=triplets,
-        references={
-            wid: ReferenceObject(doi=value)
-            for wid, value in dm.get_dict_of_rid_to_reference_doi(
-                [reference_id for reference_id, _, _ in triplets]
-            ).items()
-        },
-        structures={
-            wid: StructureObject(smiles=value)
-            for wid, value in dm.get_dict_of_sid_to_smiles(
-                [structure_id for _, structure_id, _ in triplets]
-            ).items()
-        },
-        taxa={
-            wid: TaxonObject(name=value)
-            for wid, value in dm.get_dict_of_tid_to_taxon_name(
-                [taxon_id for _, _, taxon_id in triplets]
-            ).items()
-        },
-        description="Triplets matching the query",
-        count=len(triplets),
-    )
+    if item.modeEnum == "objects":
+        return TripletResult(
+            triplets=triplets,
+            references={
+                wid: ReferenceObject(doi=value)
+                for wid, value in dm.get_dict_of_rid_to_reference_doi(
+                    [reference_id for reference_id, _, _ in triplets]
+                ).items()
+            },
+            structures={
+                wid: StructureObject(smiles=value)
+                for wid, value in dm.get_dict_of_sid_to_smiles(
+                    [structure_id for _, structure_id, _ in triplets]
+                ).items()
+            },
+            taxa={
+                wid: TaxonObject(name=value)
+                for wid, value in dm.get_dict_of_tid_to_taxon_name(
+                    [taxon_id for _, _, taxon_id in triplets]
+                ).items()
+            },
+            description="Triplets matching the query",
+            count=len(triplets),
+        )
+    else:
+        return TripletResult(
+            triplets=triplets,
+            description="Triplets matching the query",
+            count=len(triplets),
+        )
 
 
 @app.post("/structures")
@@ -111,27 +118,43 @@ async def search_structures(
 ) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
-    return StructureResult(
-        ids=dict_items.keys(),
-        objects={
-            sid: StructureObject(smiles=value) for sid, value in dict_items.items()
-        },
-        description="Structures matching the query",
-        count=len(dict_items),
-    )
+    if item.modeEnum == "objects":
+        return StructureResult(
+            ids=dict_items.keys(),
+            objects={
+                sid: StructureObject(smiles=value) for sid, value in dict_items.items()
+            },
+            description="Structures matching the query",
+            count=len(dict_items),
+        )
+    else:
+        return StructureResult(
+            ids=dict_items.keys(),
+            description="Structures matching the query",
+            count=len(dict_items),
+        )
 
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item, dm: DataModel = Depends(get_data_model)) -> TaxonResult:
+async def search_taxa(
+    item: Item, dm: DataModel = Depends(get_data_model)
+) -> TaxonResult:
     dict_items = get_taxa_for_item(item, dm)
 
-    return TaxonResult(
-        ids=dict_items.keys(),
-        objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
-        description="Taxa matching the query",
-        count=len(dict_items),
-    )
+    if item.modeEnum == "objects":
+        return TaxonResult(
+            ids=dict_items.keys(),
+            objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
+            description="Taxa matching the query",
+            count=len(dict_items),
+        )
+    else:
+        return TaxonResult(
+            ids=dict_items.keys(),
+            description="Taxa matching the query",
+            count=len(dict_items),
+        )
 
 
 @app.post("/references")
@@ -141,19 +164,27 @@ async def search_references(
 ) -> ReferenceResult:
     dict_items = get_references_for_item(item, dm)
 
-    return ReferenceResult(
-        ids=dict_items.keys(),
-        objects={rid: ReferenceObject(doi=value) for rid, value in dict_items.items()},
-        description="References matching the query",
-        count=len(dict_items),
-    )
+    if item.modeEnum == "objects":
+        return ReferenceResult(
+            ids=dict_items.keys(),
+            objects={
+                rid: ReferenceObject(doi=value) for rid, value in dict_items.items()
+            },
+            description="References matching the query",
+            count=len(dict_items),
+        )
+    else:
+        return ReferenceResult(
+            ids=dict_items.keys(),
+            description="References matching the query",
+            count=len(dict_items),
+        )
 
 
 @app.post("/autocomplete/taxa")
 @version(1, 0)
 async def autocomplete_taxa(
-        inp: AutocompleteTaxa,
-        dm: DataModel = Depends(get_data_model)
+    inp: AutocompleteTaxa, dm: DataModel = Depends(get_data_model)
 ) -> dict[str, int]:
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
@@ -161,9 +192,13 @@ async def autocomplete_taxa(
 @app.post("/depiction/structure")
 @version(1, 0)
 async def depiction_structure(
-        depiction_structure: DepictionStructure
+    depiction_structure: DepictionStructure,
 ) -> dict[str, str]:
-    return {"svg": molecule_svg(depiction_structure.structure, highlight=depiction_structure.highlight)}
+    return {
+        "svg": molecule_svg(
+            depiction_structure.structure, highlight=depiction_structure.highlight
+        )
+    }
 
 
 LOGGING_CONFIG = {
@@ -187,4 +222,6 @@ LOGGING_CONFIG = {
     },
 }
 
-app = VersionedFastAPI(app, enable_latest=True, log_config=LOGGING_CONFIG, lifespan=lifespan)
+app = VersionedFastAPI(
+    app, enable_latest=True, log_config=LOGGING_CONFIG, lifespan=lifespan
+)

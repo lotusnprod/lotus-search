@@ -1,0 +1,8 @@
+title: ReferenceId
+type: object
+properties:
+  doi:
+    description: |
+      DOI
+    example: "10.1080/1057563021000040466"
+    type: string

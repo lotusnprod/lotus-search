@@ -16,10 +16,17 @@ from .common import data_model
 @pytest.mark.usefixtures("data_model")
 class TestApiStructures:
     async def test_search_structures_pure_structure(self, data_model):
-        item = Item(structure={"molecule": "C"}, limit=10)
+        item = Item(structure={"molecule": "C"}, limit=10, modeEnum="objects")
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[3].smiles == "C"
+        assert result.description == "Structures matching the query"
+
+    async def test_search_structures_pure_structure_ids(self, data_model):
+        item = Item(structure={"molecule": "C"}, limit=10, modeEnum="ids")
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects is None
         assert result.description == "Structures matching the query"
 
     async def test_search_error_giving_both_structure_and_wid(self, data_model):
@@ -39,6 +46,7 @@ class TestApiStructures:
         item = Item(
             structure={"molecule": "C", "option": {"substructure_search": True}},
             limit=10,
+            modeEnum="objects",
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 4
@@ -53,6 +61,7 @@ class TestApiStructures:
                 "option": {"substructure_search": True},
             },
             limit=10,
+            modeEnum="objects",
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 3
@@ -67,6 +76,7 @@ class TestApiStructures:
                 "option": {"substructure_search": False},
             },
             limit=10,
+            modeEnum="objects",
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
@@ -77,6 +87,7 @@ class TestApiStructures:
         item = Item(
             structure={"molecule": "C", "option": {"substructure_search": True}},
             limit=10,
+            modeEnum="objects",
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 4
@@ -91,7 +102,12 @@ class TestApiStructures:
 
     async def test_search_structure_restrict_taxon_exists(self, data_model):
         # We search for a compound that exist in this taxon
-        item = Item(structure={"molecule": "CC(N)O"}, taxon={"wid": 1}, limit=10)
+        item = Item(
+            structure={"molecule": "CC(N)O"},
+            taxon={"wid": 1},
+            limit=10,
+            modeEnum="objects",
+        )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].smiles == "C[C@H](N)O"
@@ -105,7 +121,12 @@ class TestApiStructures:
 
     async def test_search_structure_restrict_reference_exists(self, data_model):
         # We search for a compound that exist in this taxon
-        item = Item(structure={"molecule": "CC(N)O"}, reference={"wid": 1}, limit=10)
+        item = Item(
+            structure={"molecule": "CC(N)O"},
+            reference={"wid": 1},
+            limit=10,
+            modeEnum="objects",
+        )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].smiles == "C[C@H](N)O"
@@ -132,6 +153,7 @@ class TestApiStructures:
             reference={"wid": 1},
             taxon={"wid": 1},
             limit=10,
+            modeEnum="objects",
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1

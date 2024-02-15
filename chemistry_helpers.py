@@ -38,13 +38,10 @@ def get_mol_descriptors_mordred(mol):
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
 def get_mol_descriptors_rdkit(mol):
-    """calculate the full list of descriptors for a molecule
-
-    missingVal is used if the descriptor cannot be calculated
-    """
+    """calculate the full list of descriptors for a molecule."""
     res = {}
     for nm, fn in Descriptors._descList:
-        # some of the descriptor fucntions can throw errors if they fail, catch those here:
+        # some of the descriptor functions can throw errors if they fail, catch those here:
         try:
             val = fn(mol)
         except:
@@ -75,10 +72,11 @@ def process_smiles(inp):
             smiles_clean = Chem.MolToSmiles(smol)
             inchi_clean = Chem.inchi.MolToInchi(smol)
             inchikey_clean = Chem.inchi.MolToInchiKey(smol)
+            formula_clean = Chem.rdMolDescriptors.CalcMolFormula(smol)
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
-            desc_mordred = get_mol_descriptors_mordred(smol)
+            # desc_mordred = get_mol_descriptors_mordred(smol)
             desc_rdkit = get_mol_descriptors_rdkit(smol)
             smol_h = Chem.AddHs(smol)
             sim_fp_h = fingerprint(smol_h)
@@ -86,6 +84,7 @@ def process_smiles(inp):
             Chem.RemoveStereochemistry(smol)
             smiles_no_stereo = Chem.MolToSmiles(smol)
             inchi_no_stereo = Chem.inchi.MolToInchi(smol)
+            inchikey_no_stereo = Chem.inchi.MolToInchiKey(smol)
             return (
                 nid,
                 smiles,
@@ -93,16 +92,18 @@ def process_smiles(inp):
                 smiles_clean,
                 inchi_clean,
                 inchikey_clean,
+                formula_clean,
                 mol_block,
                 sim_fp,
                 sub_fp,
-                desc_mordred,
+                # desc_mordred,
                 desc_rdkit,
                 smol_h.ToBinary(),
                 sim_fp_h,
                 sub_fp_h,
                 smiles_no_stereo,
                 inchi_no_stereo,
+                inchikey_no_stereo,
             )
         else:
             return None

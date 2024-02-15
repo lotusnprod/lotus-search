@@ -8,6 +8,7 @@ from pathlib import Path
 import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
+from sqlalchemy.orm import aliased
 
 from chemistry_helpers import fingerprint, standardize
 from storage.models import (
@@ -298,12 +299,32 @@ class DataModel:
     ) -> set[tuple[int, int, int]]:
         return self.storage.get_triplets_for(reference_ids, structure_ids, taxon_ids)
 
-    def get_taxon_by_id(self, taxon_wid: int) -> set[int]:
+    def get_taxon_by_id(self, tid: int) -> set[int]:
         with self.storage.session() as session:
-            result = session.query(Triplets.taxon_id).filter(
-                Triplets.taxon_id == taxon_wid
-            )
+            result = session.query(Triplets.taxon_id).filter(Triplets.taxon_id == tid)
             return {row[0] for row in result.distinct()}
+
+    def get_taxon_children_by_id(self, tid: int) -> set[int]:
+        with self.storage.session() as session:
+            # Recursive query to fetch all children for the given taxon ID
+            recursive_query = (
+                session.query(TaxoParents.id)
+                .filter(TaxoParents.parent_id == tid)
+                .cte(name="recursive_query", recursive=True)
+            )
+
+            alias = aliased(TaxoParents)
+            recursive_query = recursive_query.union_all(
+                session.query(alias.id).filter(alias.parent_id == recursive_query.c.id)
+            )
+
+            result = set(session.query(recursive_query).all())
+
+            ## This is working but not recursively to get all children
+            # result = session.query(TaxoParents.id).filter(
+            #     TaxoParents.parent_id == tid
+            # )
+            return {row[0] for row in result}
 
     def preload_taxa(self):
         with self.storage.session() as session:

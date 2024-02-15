@@ -3,7 +3,7 @@ import csv
 import logging
 import multiprocessing
 import pickle  # S403
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # from itertools import islice
 from pathlib import Path
@@ -77,6 +77,7 @@ def run(path: Path) -> None:
 
     inchis = []
     inchikeys = []
+    formulas = []
     sdf_blocks = []
     p_smileses = []
     p_smols = []
@@ -85,58 +86,65 @@ def run(path: Path) -> None:
     p_links = []
     smis_no_stereo = []
     inchis_no_stereo = []
+    inchikeys_no_stereo = []
+    # descriptors_m = {}
     descriptors_r = {}
-    descriptors_m = {}
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        futures = {
+            executor.submit(process_smiles, smiles): smiles
+            for smiles in enumerate(smileses)
+        }
         results = tuple(
-            tqdm(
-                executor.map(process_smiles, enumerate(smileses), chunksize=1000),
-                total=len(smileses),
-                desc="Processing SMILES",
-            )
+            tqdm(as_completed(futures), total=len(smileses), desc="Processing SMILES")
         )
-        for result in results:
-            if result is not None:
-                (
-                    nid,
-                    smiles,
-                    smol,
-                    smiles_clean,
-                    inchi_clean,
-                    inchikey_clean,
-                    mol_block,
-                    sim_fp,
-                    sub_fp,
-                    desc_mordred,
-                    desc_rdkit,
-                    mol_h,
-                    sim_fp_h,
-                    sub_fp_h,
-                    smiles_no_stereo,
-                    inchi_no_stereo,
-                ) = result
+        for future in results:
+            if future is not None:
+                result = future.result()
+                if result is not None:
+                    (
+                        nid,
+                        smiles,
+                        smol,
+                        smiles_clean,
+                        inchi_clean,
+                        inchikey_clean,
+                        formulas_clean,
+                        mol_block,
+                        sim_fp,
+                        sub_fp,
+                        # desc_mordred,
+                        desc_rdkit,
+                        mol_h,
+                        sim_fp_h,
+                        sub_fp_h,
+                        smiles_no_stereo,
+                        inchi_no_stereo,
+                        inchikey_no_stereo,
+                    ) = result
 
-                mols_h.AddMol(Mol(mol_h))
-                fps_h.AddFingerprint(sub_fp_h)
-                p_sim_h_fps.append(sim_fp_h)
+                    mols_h.AddMol(Mol(mol_h))
+                    fps_h.AddFingerprint(sub_fp_h)
+                    p_sim_h_fps.append(sim_fp_h)
 
-                smis.AddSmiles(smiles_clean)
-                inchis.append(inchi_clean)
-                inchikeys.append(inchikey_clean)
-                sdf_blocks.append((links[nid], mol_block))
-                fps.AddFingerprint(sub_fp)
-                p_sim_fps.append(sim_fp)
+                    smis.AddSmiles(smiles_clean)
+                    inchis.append(inchi_clean)
+                    inchikeys.append(inchikey_clean)
+                    formulas.append(formulas_clean)
+                    sdf_blocks.append((links[nid], mol_block))
+                    fps.AddFingerprint(sub_fp)
+                    p_sim_fps.append(sim_fp)
 
-                p_smols.append(smol)
-                p_smileses.append(smiles)
-                smis_no_stereo.append(smiles_no_stereo)
-                inchis_no_stereo.append(inchi_no_stereo)
-                descriptors_m[smiles] = desc_mordred
-                descriptors_r[smiles] = desc_rdkit
+                    p_smols.append(smol)
+                    p_smileses.append(smiles)
+                    smis_no_stereo.append(smiles_no_stereo)
+                    inchis_no_stereo.append(inchi_no_stereo)
+                    inchikeys_no_stereo.append(inchikey_no_stereo)
+                    # descriptors_m[smiles] = desc_mordred
+                    descriptors_r[smiles] = desc_rdkit
 
-                p_links.append(links[nid])
+                    p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")
 
     logging.info("Generating and exporting SDF")
@@ -154,17 +162,66 @@ def run(path: Path) -> None:
         "structure_library": library.Serialize(),
         "structure_library_h": library_h.Serialize(),
         "structure_id": {i[1]: i[0] for i in enumerate(p_links)},
-        "structure_ranges": structures_ranges,
     }
     # print(database)
-    # TODO: add BLOCKS table based on the ranges
-    # TODO: decide where to put InChI(Key)s
+
+    logging.info("Exporting primary table")
+    smiles_file_path = path / "structures_table.csv"
+    file_exists = smiles_file_path.exists()
+    with open(smiles_file_path, "a") as f:  # Append mode to avoid overwriting
+        csv_file = csv.writer(f)
+        if not file_exists:
+            # TODO check if we want the clean SMILES or not in this table
+            csv_file.writerow(
+                [
+                    "structure",
+                    "structure_smiles",
+                    "structure_smiles_no_stereo",
+                    "structure_inchi",
+                    "structure_inchi_no_stereo",
+                    "structure_inchikey",
+                    "structure_inchikey_no_stereo",
+                    "structure_formula",
+                ]
+            )
+        csv_file.writerows(
+            zip(
+                p_links,
+                p_smileses,
+                smiles_no_stereo,
+                inchis,
+                inchis_no_stereo,
+                inchikeys,
+                inchikeys_no_stereo,
+                formulas,
+            )
+        )
+
+    # TODO this is not finished.
+    logging.info("Exporting blocks table")
+    smiles_file_path = path / "structures_blocks_table.csv"
+    file_exists = smiles_file_path.exists()
+    with open(smiles_file_path, "a") as f:  # Append mode to avoid overwriting
+        csv_file = csv.writer(f)
+        if not file_exists:
+            csv_file.writerow(
+                [
+                    "structure",
+                    "block_range",
+                ]
+            )
+        csv_file.writerows(
+            zip(
+                structures_ranges,
+                structures_ranges.values(),
+            )
+        )
 
     logging.info("Exporting rdkit descriptors")
     export_descriptors_to_csv(descriptors_r, path / "descriptors_rdkit.csv")
 
-    logging.info("Exporting mordred descriptors")
-    export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
+    # logging.info("Exporting mordred descriptors")
+    # export_descriptors_to_csv(descriptors_m, path / "descriptors_mordred.csv")
 
     logging.info("Exporting processed smiles")
     smiles_file_path = path / "smiles_processed.csv"

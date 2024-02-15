@@ -5,10 +5,10 @@ properties:
   ids:
     description: |
       IDs
-    type: array
+    example: [ 158572 ]
     items:
       type: integer
-    example: [ 158572 ]
+    type: array
   objects:
     $ref: "./taxonObject.yaml"
   count:

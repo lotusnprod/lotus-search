@@ -1,0 +1,28 @@
+title: StructureId
+type: object
+properties:
+  chebi:
+    description: |
+      ChEBI identifier
+    example: 80907
+    type: integer
+  chembl:
+    description: |
+      ChEMBL identifier
+    example: "CHEMBL456137"
+    type: string
+  chemspider:
+    description: |
+      ChemSpider identifier
+    example: 141471
+    type: integer
+  kegg:
+    description: |
+      KEGG identifier
+    example: "C17071"
+    type: string
+  pubchem:
+    description: |
+      PubChem (CID) identifier
+    example: 161036
+    type: integer
