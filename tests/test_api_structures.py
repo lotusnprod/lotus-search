@@ -29,6 +29,26 @@ class TestApiStructures:
         assert result.objects is None
         assert result.description == "Structures matching the query"
 
+    async def test_search_error_giving_both_structure_and_formuka(self, data_model):
+        item = Item(
+            structure={"molecule": "C", "formula": "CH4"}, limit=10, modeEnum="objects"
+        )
+        with pytest.raises(Exception):
+            await search_structures(item=item, dm=data_model)
+
+    async def test_search_structures_formula(self, data_model):
+        item = Item(structure={"formula": "CH4"}, limit=10, modeEnum="objects")
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[3].smiles == "C"
+        assert result.description == "Structures matching the query"
+
+    async def test_search_structures_formula_empty(self, data_model):
+        item = Item(structure={"formula": "CH3"}, limit=10, modeEnum="ids")
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 0
+        assert result.description == "Structures matching the query"
+
     async def test_search_error_giving_both_structure_and_wid(self, data_model):
         item = Item(structure={"molecule": "C", "wid": 1})
         with pytest.raises(Exception):

@@ -25,6 +25,7 @@ class ReferenceItem(BaseModel):
 class StructureItem(BaseModel):
     wid: Optional[int] = None
     molecule: Optional[str] = None
+    formula: Optional[str] = None
     option: StructureOption = StructureOption()
     # limit: Optional[int] = None
 
@@ -56,6 +57,7 @@ class Item(BaseModel):
                     "structure": {
                         "wid": 27151406,
                         "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                        "formula": "C16H22O9",
                         "option": {
                             "substructure_search": True,
                             "similarity_level": 0.8,

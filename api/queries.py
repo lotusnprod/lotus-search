@@ -43,15 +43,18 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     wid = item.structure.wid
     molecule = item.structure.molecule
+    formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
 
-    if molecule and wid:
+    args = len(list(filter(lambda x: x is not None, [wid, molecule, formula])))
+
+    if args > 1:
         raise HTTPException(
             status_code=500,
-            detail=f"You cannot provide both 'molecule' and 'wid'",
+            detail=f"You cannot provide both ('molecule' or 'formula') and 'wid'",
         )
-    elif molecule is not None or wid is not None:
+    elif args > 0:
         # This needs to be explained in the API doc
         if wid:
             if wid in dm.structures_set():
@@ -68,7 +71,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-        else:
+        elif molecule:
             try:
                 results = dm.structure_search(molecule)
                 structures = {_id for _id, score in results if score >= sim}
@@ -77,6 +80,15 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+        else:
+            try:
+                structures = dm.get_structure_with_formula(formula)
+            except ValueError:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"The formula given is invalid: {formula}",
+                )
+
         return structures
 
     return structures

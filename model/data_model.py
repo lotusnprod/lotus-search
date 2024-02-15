@@ -182,6 +182,11 @@ class DataModel:
                 for row in result
             }
 
+    def get_structure_with_formula(self, formula: str) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(Structures.id).filter(Structures.formula == formula)
+            return {row[0] for row in result}
+
     def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
