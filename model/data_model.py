@@ -238,20 +238,30 @@ class DataModel:
             return {row[0] for row in result}
 
     def get_reference_object_from_dict_of_rids(
-        self, rid: Iterable[int]
-    ) -> dict[int, str]:
+        self, rids: Iterable[int]
+    ) -> dict[int, ReferenceObject]:
         with self.storage.session() as session:
-            result = session.query(References.id, References.doi).filter(
-                References.id.in_(rid)
-            )
-            return {row[0]: row[1] for row in result}
+            result = session.query(
+                References.id,
+                References.doi,
+            ).filter(References.id.in_(rids))
+            return {
+                row.id: ReferenceObject(
+                    doi=row.doi,
+                )
+                for row in result
+            }
 
-    def get_reference_object_from_rid(self, rid: int) -> str | None:
+    def get_reference_object_from_rid(self, rid: int) -> dict | None:
         with self.storage.session() as session:
-            result = session.get(References, rid)
-            if result is None:
+            row = session.get(References, rid)
+            if row is None:
                 return None
-            return result.doi
+            return {
+                row.id: ReferenceObject(
+                    doi=row.doi,
+                )
+            }
 
     def get_references_with_doi(self, doi: str) -> set[int]:
         with self.storage.session() as session:

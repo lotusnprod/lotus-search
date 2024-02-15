@@ -42,7 +42,7 @@ class TestDataModel:
         assert data_model.get_structure_object_from_sid(666) is None
 
     def test_get_reference_object_from_rid(self, data_model):
-        assert data_model.get_reference_object_from_rid(1) == "42.1/1"
+        assert data_model.get_reference_object_from_rid(1)[1].doi == "42.1/1"
         assert data_model.get_reference_object_from_rid(666) is None
 
     def test_get_references_of_taxon(self, data_model):

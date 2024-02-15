@@ -83,7 +83,7 @@ async def search_triplets(
         return TripletResult(
             triplets=triplets,
             references={
-                wid: ReferenceObject(doi=value)
+                wid: value
                 for wid, value in dm.get_reference_object_from_dict_of_rids(
                     [reference_id for reference_id, _, _ in triplets]
                 ).items()
@@ -168,7 +168,7 @@ async def search_references(
         return ReferenceResult(
             ids=dict_items.keys(),
             objects={
-                rid: ReferenceObject(doi=value) for rid, value in dict_items.items()
+                rid: value for rid, value in dict_items.items()
             },
             description="References matching the query",
             count=len(dict_items),
