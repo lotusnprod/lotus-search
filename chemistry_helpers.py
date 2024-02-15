@@ -72,6 +72,7 @@ def process_smiles(inp):
             smiles_clean = Chem.MolToSmiles(smol)
             inchi_clean = Chem.inchi.MolToInchi(smol)
             inchikey_clean = Chem.inchi.MolToInchiKey(smol)
+            formula_clean = Chem.rdMolDescriptors.CalcMolFormula(smol)
             mol_block = Chem.MolToMolBlock(smol)
             sim_fp = fingerprint(smol)
             sub_fp = Chem.PatternFingerprint(smol)
@@ -83,6 +84,7 @@ def process_smiles(inp):
             Chem.RemoveStereochemistry(smol)
             smiles_no_stereo = Chem.MolToSmiles(smol)
             inchi_no_stereo = Chem.inchi.MolToInchi(smol)
+            inchikey_no_stereo = Chem.inchi.MolToInchiKey(smol)
             return (
                 nid,
                 smiles,
@@ -90,6 +92,7 @@ def process_smiles(inp):
                 smiles_clean,
                 inchi_clean,
                 inchikey_clean,
+                formula_clean,
                 mol_block,
                 sim_fp,
                 sub_fp,
@@ -100,6 +103,7 @@ def process_smiles(inp):
                 sub_fp_h,
                 smiles_no_stereo,
                 inchi_no_stereo,
+                inchikey_no_stereo,
             )
         else:
             return None
