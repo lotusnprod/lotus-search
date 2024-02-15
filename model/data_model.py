@@ -10,6 +10,11 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
 
+from api.models import (
+    ReferenceObject,
+    StructureObject,
+    TaxonObject,
+)
 from chemistry_helpers import fingerprint, standardize
 from storage.models import (
     References,
@@ -121,19 +126,49 @@ class DataModel:
         # TODO use DB
         return set(self.db["structure_wid"])
 
-    def get_structure_object_from_sid(self, sid: int) -> str | None:
+    def get_structure_object_from_sid(self, sid: int) -> dict | None:
         with self.storage.session() as session:
-            out = session.get(Structures, sid)
-            if out is None:
+            row = session.get(Structures, sid)
+            if row is None:
                 return None
-            return out.smiles
+            return {
+                row.id: StructureObject(
+                    smiles=row.smiles,
+                    smiles_no_stereo=row.smiles_no_stereo,
+                    inchi=row.inchi,
+                    inchi_no_stereo=row.inchi_no_stereo,
+                    inchikey=row.inchikey,
+                    inchikey_no_stereo=row.inchikey_no_stereo,
+                    formula=row.formula,
+                )
+            }
 
-    def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
+    def get_structure_object_from_dict_of_sids(
+        self, sids: Iterable[int]
+    ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            result = session.query(Structures.id, Structures.smiles).filter(
-                Structures.id.in_(sids)
-            )
-            return {row[0]: row[1] for row in result}
+            result = session.query(
+                Structures.id,
+                Structures.smiles,
+                Structures.smiles_no_stereo,
+                Structures.inchi,
+                Structures.inchi_no_stereo,
+                Structures.inchikey,
+                Structures.inchikey_no_stereo,
+                Structures.formula,
+            ).filter(Structures.id.in_(sids))
+            return {
+                row.id: StructureObject(
+                    smiles=row.smiles,
+                    smiles_no_stereo=row.smiles_no_stereo,
+                    inchi=row.inchi,
+                    inchi_no_stereo=row.inchi_no_stereo,
+                    inchikey=row.inchikey,
+                    inchikey_no_stereo=row.inchikey_no_stereo,
+                    formula=row.formula,
+                )
+                for row in result
+            }
 
     def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
@@ -188,7 +223,8 @@ class DataModel:
 
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
-        smiles_dict = self.get_structure_object_from_dict_of_sids(wids)
+        structure_objects = self.get_structure_object_from_dict_of_sids(wids)
+        smiles_dict = {wid: structure_object.smiles for wid, structure_object in structure_objects.items()}
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]
@@ -201,7 +237,9 @@ class DataModel:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
 
-    def get_reference_object_from_dict_of_rids(self, rid: Iterable[int]) -> dict[int, str]:
+    def get_reference_object_from_dict_of_rids(
+        self, rid: Iterable[int]
+    ) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(References.id, References.doi).filter(
                 References.id.in_(rid)

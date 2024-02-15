@@ -38,7 +38,7 @@ class TestDataModel:
         assert data_model.get_ranks_string(666) == ""
 
     def test_get_structure_object_from_sid(self, data_model):
-        assert data_model.get_structure_object_from_sid(1) == "C[C@H](N)O"
+        assert data_model.get_structure_object_from_sid(1)[1].smiles == "C[C@H](N)O"
         assert data_model.get_structure_object_from_sid(666) is None
 
     def test_get_reference_object_from_rid(self, data_model):

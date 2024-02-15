@@ -89,7 +89,7 @@ async def search_triplets(
                 ).items()
             },
             structures={
-                wid: StructureObject(smiles=value)
+                wid: value
                 for wid, value in dm.get_structure_object_from_dict_of_sids(
                     [structure_id for _, structure_id, _ in triplets]
                 ).items()
@@ -122,7 +122,7 @@ async def search_structures(
         return StructureResult(
             ids=dict_items.keys(),
             objects={
-                sid: StructureObject(smiles=value) for sid, value in dict_items.items()
+                sid: value for sid, value in dict_items.items()
             },
             description="Structures matching the query",
             count=len(dict_items),
