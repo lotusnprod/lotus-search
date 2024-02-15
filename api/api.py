@@ -95,7 +95,7 @@ async def search_triplets(
                 ).items()
             },
             taxa={
-                wid: TaxonObject(name=value)
+                wid: value
                 for wid, value in dm.get_taxon_object_from_dict_of_tids(
                     [taxon_id for _, _, taxon_id in triplets]
                 ).items()
@@ -121,9 +121,7 @@ async def search_structures(
     if item.modeEnum == "objects":
         return StructureResult(
             ids=dict_items.keys(),
-            objects={
-                sid: value for sid, value in dict_items.items()
-            },
+            objects={sid: value for sid, value in dict_items.items()},
             description="Structures matching the query",
             count=len(dict_items),
         )
@@ -145,7 +143,7 @@ async def search_taxa(
     if item.modeEnum == "objects":
         return TaxonResult(
             ids=dict_items.keys(),
-            objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
+            objects={tid: value for tid, value in dict_items.items()},
             description="Taxa matching the query",
             count=len(dict_items),
         )
@@ -167,9 +165,7 @@ async def search_references(
     if item.modeEnum == "objects":
         return ReferenceResult(
             ids=dict_items.keys(),
-            objects={
-                rid: value for rid, value in dict_items.items()
-            },
+            objects={rid: value for rid, value in dict_items.items()},
             description="References matching the query",
             count=len(dict_items),
         )

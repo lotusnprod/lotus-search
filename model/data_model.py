@@ -58,19 +58,31 @@ class DataModel:
         return data
 
     ### Taxonomy
-    def get_taxon_object_from_dict_of_tids(self, tid: Iterable[int]) -> dict[int, str]:
+    def get_taxon_object_from_dict_of_tids(
+        self, tids: Iterable[int]
+    ) -> dict[int, TaxonObject]:
         with self.storage.session() as session:
-            result = session.query(TaxoNames.id, TaxoNames.name).filter(
-                TaxoNames.id.in_(tid)
-            )
-            return {row[0]: row[1] for row in result}
+            result = session.query(
+                TaxoNames.id,
+                TaxoNames.name,
+            ).filter(TaxoNames.id.in_(tids))
+            return {
+                row.id: TaxonObject(
+                    name=row.name,
+                )
+                for row in result
+            }
 
-    def get_taxon_object_from_tid(self, tid: int) -> str | None:
+    def get_taxon_object_from_tid(self, tid: int) -> dict | None:
         with self.storage.session() as session:
-            result = session.get(TaxoNames, tid)
-            if result is None:
+            row = session.get(TaxoNames, tid)
+            if row is None:
                 return None
-            return result.name
+            return {
+                row.id: TaxonObject(
+                    name=row.name,
+                )
+            }
 
     def get_taxa_with_name_matching(self, query: str, exact=False) -> set[int]:
         with self.storage.session() as session:
@@ -224,7 +236,10 @@ class DataModel:
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
         structure_objects = self.get_structure_object_from_dict_of_sids(wids)
-        smiles_dict = {wid: structure_object.smiles for wid, structure_object in structure_objects.items()}
+        smiles_dict = {
+            wid: structure_object.smiles
+            for wid, structure_object in structure_objects.items()
+        }
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]

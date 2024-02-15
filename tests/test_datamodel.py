@@ -13,7 +13,7 @@ class TestDataModel:
     # Eventually TODO add taxa_names_com
 
     def test_get_taxon_object_from_tid(self, data_model):
-        assert data_model.get_taxon_object_from_tid(1) == "Taxon 1"
+        assert data_model.get_taxon_object_from_tid(1)[1].name == "Taxon 1"
         assert data_model.get_taxon_object_from_tid(666) is None
 
     def test_get_rank_name_from_wid(self, data_model):
