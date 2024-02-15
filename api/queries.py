@@ -52,7 +52,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     if args > 1:
         raise HTTPException(
             status_code=500,
-            detail=f"You cannot provide both ('molecule' or 'formula') and 'wid'",
+            detail=f"You can only provide one of ('molecule', 'formula', 'wid')",
         )
     elif args > 0:
         # This needs to be explained in the API doc
