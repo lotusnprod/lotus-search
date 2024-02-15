@@ -50,12 +50,33 @@ def run(path: Path) -> None:
 
     logging.info(" Processed references")
 
-    with open(path / "smiles_processed.csv", "r") as f:
+    with open(path / "structures_table.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
+        # Get the indices of the columns
         id_index = headers.index("structure")
         smiles_index = headers.index("structure_smiles")
-        structures_dict = {int(row[id_index]): row[smiles_index] for row in reader}
+        # Add indices for new columns
+        smiles_no_stereo_index = headers.index("structure_smiles_no_stereo")
+        inchi_index = headers.index("structure_inchi")
+        inchi_no_stereo_index = headers.index("structure_inchi_no_stereo")
+        inchikey_index = headers.index("structure_inchikey")
+        inchikey_no_stereo_index = headers.index("structure_inchikey_no_stereo")
+        formula_index = headers.index("structure_formula")
+
+        structures_dict = {}
+        for row in reader:
+            struct_id = int(row[id_index])
+            structures_dict[struct_id] = {
+                "id": struct_id,
+                "smiles": row[smiles_index],
+                "smiles_no_stereo": row[smiles_no_stereo_index],
+                "inchi": row[inchi_index],
+                "inchi_no_stereo": row[inchi_no_stereo_index],
+                "inchikey": row[inchikey_index],
+                "inchikey_no_stereo": row[inchikey_no_stereo_index],
+                "formula": row[formula_index],
+            }
 
     logging.info(" Processed structures")
     with open(path / "taxa_names.csv", "r") as f:
@@ -104,9 +125,7 @@ def run(path: Path) -> None:
     for taxon, name in taxo_names_dict.items():
         taxo_names.append({"id": taxon, "name": name})
 
-    structures = []
-    for struct, smiles in structures_dict.items():
-        structures.append({"id": struct, "smiles": smiles})
+    structures = list(structures_dict.values())
 
     references = []
     for ref, doi in references_dict.items():

@@ -87,6 +87,12 @@ class ReferenceResult(BaseModel):
 
 class StructureObject(BaseModel):
     smiles: str
+    smiles_no_stereo: str
+    inchi: str
+    inchi_no_stereo: str
+    inchikey: str
+    inchikey_no_stereo: str
+    formula: str
 
 
 class StructureResult(BaseModel):

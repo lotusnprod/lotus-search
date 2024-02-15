@@ -66,9 +66,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
-                    insert(Structures), structures[i : i + self.list_limit // 2]
+                    insert(Structures).values(structures[i : i + self.list_limit // 2])
                 )
-
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
