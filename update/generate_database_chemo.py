@@ -188,7 +188,7 @@ def run(path: Path) -> None:
             zip(
                 p_links,
                 p_smileses,
-                smiles_no_stereo,
+                smis_no_stereo,
                 inchis,
                 inchis_no_stereo,
                 inchikeys,
