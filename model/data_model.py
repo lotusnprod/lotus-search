@@ -53,14 +53,14 @@ class DataModel:
         return data
 
     ### Taxonomy
-    def get_dict_of_tid_to_taxon_name(self, tid: Iterable[int]) -> dict[int, str]:
+    def get_taxon_object_from_dict_of_tids(self, tid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(TaxoNames.id, TaxoNames.name).filter(
                 TaxoNames.id.in_(tid)
             )
             return {row[0]: row[1] for row in result}
 
-    def get_taxon_name_from_tid(self, tid: int) -> str | None:
+    def get_taxon_object_from_tid(self, tid: int) -> str | None:
         with self.storage.session() as session:
             result = session.get(TaxoNames, tid)
             if result is None:
@@ -121,7 +121,7 @@ class DataModel:
         # TODO use DB
         return set(self.db["structure_wid"])
 
-    def get_structure_smiles_from_sid(self, sid: int) -> str | None:
+    def get_structure_object_from_sid(self, sid: int) -> str | None:
         with self.storage.session() as session:
             out = session.get(Structures, sid)
             if out is None:
@@ -188,7 +188,7 @@ class DataModel:
 
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
-        smiles_dict = self.get_dict_of_sid_to_smiles(wids)
+        smiles_dict = self.get_structure_object_from_dict_of_sids(wids)
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]
@@ -201,14 +201,14 @@ class DataModel:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
 
-    def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
+    def get_reference_object_from_dict_of_rids(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(References.id, References.doi).filter(
                 References.id.in_(rid)
             )
             return {row[0]: row[1] for row in result}
 
-    def get_reference_doi_from_rid(self, rid: int) -> str | None:
+    def get_reference_object_from_rid(self, rid: int) -> str | None:
         with self.storage.session() as session:
             result = session.get(References, rid)
             if result is None:
