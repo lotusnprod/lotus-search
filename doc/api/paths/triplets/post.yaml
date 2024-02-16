@@ -12,7 +12,6 @@ post:
       application/json:
         schema:
           $ref: "../../schemas/item.yaml"
-
   responses:
     '200':
       description: At least one triplet matching the given search could be found

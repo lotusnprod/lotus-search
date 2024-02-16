@@ -12,7 +12,6 @@ post:
       application/json:
         schema:
           $ref: "../../../schemas/autocomplete/taxaQuery.yaml"
-
   responses:
     '200':
       description: Matching taxa
