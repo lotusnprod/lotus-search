@@ -197,6 +197,14 @@ async def depiction_structure(
     }
 
 
+@app.get("/descriptors/")
+@version(1, 0)
+async def get_descriptors():
+    from rdkit.Chem import Descriptors
+
+    return [desc[0] for desc in Descriptors._descList]
+
+
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,

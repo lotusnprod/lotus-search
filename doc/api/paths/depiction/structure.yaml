@@ -12,7 +12,6 @@ post:
       application/json:
         schema:
           $ref: "../../schemas/depiction/depictStructureQuery.yaml"
-
   responses:
     '200':
       description: structure depiction

@@ -1,6 +1,10 @@
 title: StructureObject
 type: object
 properties:
+  descriptors:
+    description: |
+      RDkit descriptors
+    type: object
   inchi:
     description: |
       InChI (with stereochemistry)

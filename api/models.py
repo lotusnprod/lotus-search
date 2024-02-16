@@ -95,6 +95,7 @@ class StructureObject(BaseModel):
     inchikey: str
     inchikey_no_stereo: str
     formula: str
+    descriptors: Optional[Dict] = None
 
 
 class StructureResult(BaseModel):

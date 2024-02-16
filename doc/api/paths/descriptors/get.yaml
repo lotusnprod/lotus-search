@@ -1,0 +1,14 @@
+get:
+  operationId: get_descriptors
+  summary: Get list of descriptors
+  description: Retrieve a list of descriptors available in RDKit.
+  responses:
+    "200":
+      description: List of descriptors successfully retrieved
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            example: ["MaxAbsEStateIndex", "MaxEStateIndex", "MinAbsEStateIndex", ...]
