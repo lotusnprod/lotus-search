@@ -3,11 +3,16 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?class ?class_smiles WHERE {
     VALUES ?instance {
-        wd:Q47154513
-        wd:Q56256178
-        wd:Q17339814
-        wd:Q56256173
-        wd:Q74892521
+        wd:Q15711994 # group of isomeric entities
+        wd:Q17339814 # group or class of chemical substances
+        wd:Q47154513 # structural class of chemical entities
+        wd:Q55640599 # group of chemical entities
+        wd:Q56256173 # class of chemical entities with similar applications or functions
+        wd:Q56256178 # class of chemical entities with similar source or occurrence
+        wd:Q55662456 # group of ortho, meta, para isomers
+        wd:Q59199015 # group of stereoisomers
+        wd:Q72070508 # group or class of chemical entities
+        wd:Q74892521 # imprecise class of chemical entities
     }
     ?class wdt:P31 ?instance;
     wdt:P2017 ?class_smiles.
