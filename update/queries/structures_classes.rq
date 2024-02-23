@@ -2,7 +2,7 @@ PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
-SELECT DISTINCT ?structure ?class WHERE {
+SELECT ?structure ?class WHERE {
     VALUES ?instance {
         wd:Q47154513 # structural class of chemical entities
         wd:Q56256178 # class of chemical entities with similar source or occurrence
@@ -16,4 +16,4 @@ SELECT DISTINCT ?structure ?class WHERE {
     ?structure wdt:P279 ?class.
     FILTER (?class != wd:Q11173)
 }
-LIMIT 500000
+# LIMIT 500000
