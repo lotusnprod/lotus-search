@@ -36,9 +36,14 @@ def run(
                 return
             logging.error(f"Timeout for query from file {query_file}")
             raise TimeoutError(f"Failed to download query {query_file}....")
+
+    logging.info(f"Keeping unique lines")
+    lines = t.splitlines()
+    t_unique = "\n".join([lines[0]] + list(set(lines[1:])))
+
     logging.info(f"Writing to {path / output_file}")
     with open(path / output_file, "w") as f:
-        f.write(remove_wd_entity_prefix(text=t))
+        f.write(remove_wd_entity_prefix(text=t_unique))
 
 
 if __name__ == "__main__":
