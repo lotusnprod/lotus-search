@@ -11,6 +11,7 @@ class References(Base):
     doi: Mapped[str]
 
     __table_args__ = (
+        # TODO add other fields
         Index("reference_doi", "doi"),
         Index("reference_id", "id"),
     )

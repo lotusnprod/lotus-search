@@ -46,7 +46,23 @@ def run(path: Path) -> None:
         headers = next(reader)
         ref_index = headers.index("reference")
         doi_index = headers.index("reference_doi")
-        references_dict = {int(row[ref_index]): row[doi_index] for row in reader}
+        title_index = headers.index("reference_title")
+        date_index = headers.index("reference_date")
+        journal_index = headers.index("reference_journal")
+        journal_title_index = headers.index("journal_title")
+        references_dict = {
+            int(row[ref_index]): {
+                "doi": row[doi_index],
+                "title": row[title_index],
+                "date": row[date_index],
+                "journal": row[journal_index],
+            }
+            for row in reader
+        }
+        journals_dict = {
+            int(row[journal_index]): {"journal_title": row[journal_title_index]}
+            for row in reader
+        }
 
     logging.info(" Processed references")
 
@@ -109,8 +125,19 @@ def run(path: Path) -> None:
         structures.append({"id": struct, "smiles": smiles})
 
     references = []
-    for ref, doi in references_dict.items():
-        references.append({"id": ref, "doi": doi})
+    for ref, values in references_dict.items():
+        reference_info = {
+            "id": ref,
+            "doi": values["doi"],
+            "title": values["title"],
+            "date": values["date"],
+            "journal": values["journal"],
+        }
+        references.append(reference_info)
+
+    journals = []
+    for journal, title in journals_dict.items():
+        journals.append({"id": journal, "title": title})
 
     logging.info(" Processed dicts")
     storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
@@ -122,6 +149,8 @@ def run(path: Path) -> None:
     logging.info(" Structures inserted")
     storage.upsert_references(references)
     logging.info(" References inserted")
+    storage.upsert_journals(journals)
+    logging.info(" Journals inserted")
     storage.upsert_taxo_names(taxo_names)
     logging.info(" Taxo names inserted")
     storage.upsert_rank_names(ranks_names)

@@ -1,7 +1,7 @@
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
-SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
+SELECT ?structure ?structure_smiles ?canonical_smiles WHERE {
     # Using InChIKey (P235) to recognize chemicals.
     # Could also be
     # P31 wd:Q113145171 `type of a chemical entity`
@@ -17,4 +17,4 @@ SELECT DISTINCT ?structure ?structure_smiles ?canonical_smiles WHERE {
         ?structure wdt:P2017 ?structure_smiles.
     }
 }
-LIMIT 500000
+# LIMIT 500000
