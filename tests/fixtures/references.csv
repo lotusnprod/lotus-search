@@ -1,5 +1,5 @@
-reference,reference_doi
-1,42.1/1
-2,42.1/2
-3,42.1/3
-4,42.1/4
+reference,reference_doi,reference_title,reference_date,reference_journal,journal_title
+1,42.1/1,TITLE A with Gentiana lutea,2010-01-01T00:00:00Z,1,journal A
+2,42.1/2,TITLE B with Homo sapiens,2015-01-01T00:00:00Z,1,journal A
+3,42.1/3,TITLE C with sesquiterpene lactone,2020-01-01T00:00:00Z,2,journal B
+4,42.1/4,TITLE D with lactone,1999-01-01T00:00:00Z,3,journal C

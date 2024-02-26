@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 # Keep that this way so metadata gets all the tables
 from storage.models import (
     Base,
+    Journals,
     References,
     SchemaVersion,
     Structures,
@@ -20,7 +21,7 @@ from storage.models import (
 
 
 class Storage:
-    SCHEMA_VERSION = 4
+    SCHEMA_VERSION = 5
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -44,6 +45,15 @@ class Storage:
         with self.engine.connect() as connection:
             result = connection.execute(text(query))
         return result.fetchall()
+
+    def upsert_journals(self, journals: list[dict[str, object]]) -> None:
+        with self.session(autoflush=False) as session:
+            for i in range(0, len(journals), self.list_limit // 2):
+                session.execute(
+                    insert(Journals).values(),
+                    journals[i : i + self.list_limit // 2],
+                )
+            session.commit()
 
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
         with self.session(autoflush=False) as session:
