@@ -1,4 +1,5 @@
 from .base import Base
+from .journals import Journals
 from .references import References
 from .schema_version import SchemaVersion
 from .structures import Structures
