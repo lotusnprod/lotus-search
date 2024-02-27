@@ -31,15 +31,6 @@ TASKS = [
         },
     ),
     Task(
-        name="classes_inchi",
-        f=download_query_as_csv.run,
-        group=DownloadGroup,
-        params={
-            "query_file": "update/queries/classes_inchi.rq",
-            "output_file": "classes_inchi.csv",
-        },
-    ),
-    Task(
         name="classes_parents",
         f=download_query_as_csv.run,
         group=DownloadGroup,
