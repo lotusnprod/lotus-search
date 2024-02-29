@@ -41,6 +41,8 @@ def run(path: Path) -> None:
             )
     logging.info(" Processed triplets")
 
+    references_dict = {}
+    journals_dict = {}
     with open(path / "references.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
@@ -50,20 +52,18 @@ def run(path: Path) -> None:
         date_index = headers.index("reference_date")
         journal_index = headers.index("reference_journal")
         journal_title_index = headers.index("journal_title")
-        references_dict = {
-            int(row[ref_index]): {
+
+        for row in reader:
+            ref_id = int(row[ref_index])
+            references_dict[ref_id] = {
                 "doi": row[doi_index],
                 "title": row[title_index],
                 "date": row[date_index],
                 "journal": row[journal_index],
             }
-            for row in reader
-        }
-        journals_dict = {
-            int(row[journal_index]): row[journal_title_index] for row in reader
-        }
+            journals_dict[ref_id] = row[journal_title_index]
 
-    logging.info(" Processed references")
+    logging.info("Processed references and journals")
 
     with open(path / "smiles_processed.csv", "r") as f:
         reader = csv.reader(f)
