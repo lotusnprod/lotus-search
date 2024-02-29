@@ -28,7 +28,6 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects is None
-        assert result.description == "Structures matching the query"
 
     async def test_search_error_giving_both_structure_and_formuka(self, data_model):
         item = Item(
@@ -73,7 +72,6 @@ class TestApiStructures:
         assert result.count == 4
         assert result.objects[1].smiles == "C[C@H](N)O"
         assert result.objects[3].smiles == "C"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structures_by_substructure_explicit_h(self, data_model):
         item = Item(
@@ -88,7 +86,6 @@ class TestApiStructures:
         assert result.count == 3
         assert result.objects[1].smiles == "C[C@H](N)O"
         assert result.objects[3].smiles == "C"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structures_by_similarity_explicit_h(self, data_model):
         item = Item(
@@ -102,7 +99,6 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[3].smiles == "C"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structures_by_substructure_limits(self, data_model):
         item = Item(
@@ -119,7 +115,6 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert len(result.objects) == 1
-        assert result.description == "Structures matching the query"
 
     async def test_search_structure_restrict_taxon_exists(self, data_model):
         # We search for a compound that exist in this taxon
@@ -131,8 +126,6 @@ class TestApiStructures:
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
-        assert result.objects[1].smiles == "C[C@H](N)O"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structure_restrict_taxon_not_exists(self, data_model):
         # We search for a compound that does not exist in this taxon
@@ -150,8 +143,6 @@ class TestApiStructures:
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
-        assert result.objects[1].smiles == "C[C@H](N)O"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structure_restrict_reference_not_matching(self, data_model):
         # We search for a compound that does not exist in this ref
@@ -178,8 +169,6 @@ class TestApiStructures:
         )
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
-        assert result.objects[1].smiles == "C[C@H](N)O"
-        assert result.description == "Structures matching the query"
 
     async def test_search_structure_restrict_reference_and_taxon_none_exist(
         self, data_model

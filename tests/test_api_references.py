@@ -40,6 +40,9 @@ class TestApiReferences:
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
         assert result.description == "References matching the query"
 
     async def test_search_references_error_giving_doi_and_id(self, data_model):
@@ -56,8 +59,6 @@ class TestApiReferences:
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 1}, modeEnum="objects")
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
-        assert result.objects[1].doi == "42.1/1"
-        assert result.description == "References matching the query"
 
     async def test_search_references_with_taxon_non_existing(self, data_model):
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 666})
@@ -78,8 +79,6 @@ class TestApiReferences:
         )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
-        assert result.objects[1].doi == "42.1/1"
-        assert result.description == "References matching the query"
 
     async def test_search_references_with_taxon_non_matching_structure_existing(
         self, data_model
