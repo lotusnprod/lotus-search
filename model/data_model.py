@@ -128,6 +128,7 @@ class DataModel:
                 return None
             return out.smiles
 
+    # TODO rename to object?
     def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(Structures.id, Structures.smiles).filter(
@@ -201,11 +202,16 @@ class DataModel:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
 
+    # TODO rename to object?
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
-            result = session.query(References.id, References.doi).filter(
-                References.id.in_(rid)
-            )
+            result = session.query(
+                References.id,
+                References.doi,
+                References.title,
+                References.date,
+                References.journal,
+            ).filter(References.id.in_(rid))
             return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
@@ -221,6 +227,10 @@ class DataModel:
                 References.doi.like(f"%{doi}%")
             )
             return {row[0] for row in result}
+
+    # TODO ref from title
+    # TODO ref from date
+    # TODO ref from journal
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
@@ -331,6 +341,7 @@ class DataModel:
             result = session.query(TaxoNames.id, TaxoNames.name).all()
             return {row[1]: row[0] for row in result}
 
+    # TODO rename to object?
     def get_dict_of_taxa_from_name(self, taxon_name: str) -> dict[str, int]:
         with self.storage.session() as session:
             matcher = TaxoNames.name.like(f"{taxon_name}%")
