@@ -15,7 +15,7 @@ dm = DataModel()
 def title(wid=None):
     if wid is not None:
         try:
-            return f"LOTUS - {dm.get_taxon_name_from_tid(int(wid))}"
+            return f"LOTUS - {dm.get_taxon_object_from_tid(int(wid))}"
         except:
             pass
     return "LOTUS"
@@ -62,7 +62,7 @@ def layout(wid: int):
     except ValueError:
         return dbc.Container([])
 
-    taxon_name = dm.get_taxon_name_from_tid(wid)
+    taxon_name = dm.get_taxon_object_from_tid(wid)
     parent_ranks = dm.get_ranks_string(wid)
 
     taxonomic_info = ""
@@ -74,7 +74,7 @@ def layout(wid: int):
         for parent in tree:
             ranks = dm.get_ranks_string(parent[0])
 
-            tax_name = dm.get_taxon_name_from_tid(parent[0])
+            tax_name = dm.get_taxon_object_from_tid(parent[0])
             if tax_name is not None:
                 markdown += f"[{tax_name}{ranks}](/taxon/{parent[0]}) > "
         taxonomic_info = markdown.strip("> ")

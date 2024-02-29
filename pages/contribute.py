@@ -53,7 +53,7 @@ def enable_submit(value):
 def search_organism(name, n_clicks):
     if dash.ctx.triggered_id == "search_organism_contribution":
         results = dm.get_taxa_with_name_containing(name)
-        names = sorted([dm.get_taxon_name_from_tid(match) for match in results])
+        names = sorted([dm.get_taxon_object_from_tid(match) for match in results])
         return [{"label": name, "value": name} for name in names]
     return []
 
