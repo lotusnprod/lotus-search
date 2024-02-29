@@ -83,8 +83,8 @@ class Item(BaseModel):
 
 class ReferenceObject(BaseModel):
     doi: str
-    # title: str
-    # date: str
+    title: str
+    date: str
     # journal: str
 
 

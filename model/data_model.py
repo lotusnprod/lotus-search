@@ -9,7 +9,6 @@ import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
-
 from api.models import (
     ReferenceObject,
     StructureObject,
@@ -17,6 +16,7 @@ from api.models import (
 )
 from chemistry_helpers import fingerprint, standardize
 from storage.models import (
+    Journals,
     References,
     Structures,
     TaxoNames,
@@ -264,16 +264,41 @@ class DataModel:
             result = session.query(
                 References.id,
                 References.doi,
-                # References.title,
-                # References.date,
-                # References.journal,
+                References.title,
+                References.date,
+                References.journal,
             ).filter(References.id.in_(rids))
+
+            journal_ids = {row.journal for row in result}
+            print(journal_ids)
+
+            # TODO I DONT KNOW WHY THIS IS EMPTY (works for Structures or else)
+            journals = session.query(Journals).all()
+            print("Content of Journals table:")
+            for journal in journals:
+                print(journal)
+
+            # This fails because Journals table is empty?
+            journal_titles = {}
+            if journal_ids:  # Only query if there are journal IDs
+                result_journal = session.query(
+                    Journals.id,
+                    Journals.title,
+                ).filter(Journals.id.in_(journal_ids))
+                journal_titles = {
+                    journal.id: journal.title for journal in result_journal
+                }
+
+            print(journal_titles)
+
             return {
                 row.id: ReferenceObject(
                     doi=row.doi,
-                    # title=row.title,
-                    # date=row.date,
-                    # journal=row.journal,
+                    title=row.title,
+                    date=row.date,
+                    # journal=journal_titles.get(
+                    #     row.journal
+                    # ),  # Get journal title using journal ID
                 )
                 for row in result
             }
@@ -286,8 +311,8 @@ class DataModel:
             return {
                 row.id: ReferenceObject(
                     doi=row.doi,
-                    # title=row.title,
-                    # date=row.date,
+                    title=row.title,
+                    date=row.date,
                     # journal=row.journal,
                 )
             }

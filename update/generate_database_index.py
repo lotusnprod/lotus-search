@@ -60,8 +60,7 @@ def run(path: Path) -> None:
             for row in reader
         }
         journals_dict = {
-            int(row[journal_index]): {"journal_title": row[journal_title_index]}
-            for row in reader
+            int(row[journal_index]): row[journal_title_index] for row in reader
         }
 
     logging.info(" Processed references")
@@ -126,14 +125,15 @@ def run(path: Path) -> None:
 
     references = []
     for ref, values in references_dict.items():
-        reference_info = {
-            "id": ref,
-            "doi": values["doi"],
-            "title": values["title"],
-            "date": values["date"],
-            "journal": values["journal"],
-        }
-        references.append(reference_info)
+        references.append(
+            {
+                "id": ref,
+                "doi": values["doi"],
+                "title": values["title"],
+                "date": values["date"],
+                "journal": values["journal"],
+            }
+        )
 
     journals = []
     for journal, title in journals_dict.items():
