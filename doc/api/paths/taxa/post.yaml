@@ -13,13 +13,13 @@ post:
         schema:
           $ref: "../../schemas/item.yaml"
   responses:
-    '200':
+    "200":
       description: At least one taxon matching the given search could be found
       content:
         application/json:
           schema:
             $ref: '../../schemas/taxonResult.yaml'
-    '404':
+    "404":
       description: No taxon matching the given search could be found
       content:
         application/json:
@@ -29,3 +29,13 @@ post:
               message:
                 type: string
                 example: No taxon matching the given search could be found
+    "500":
+      description: Only one of ['wid', 'name'] should be provided
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Only one of ['wid', 'name'] should be provided

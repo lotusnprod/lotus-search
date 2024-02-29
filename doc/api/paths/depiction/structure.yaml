@@ -13,13 +13,13 @@ post:
         schema:
           $ref: "../../schemas/depiction/depictStructureQuery.yaml"
   responses:
-    '200':
+    "200":
       description: structure depiction
       content:
         application/json:
           schema:
             $ref: "../../schemas/depiction/depictStructureResponse.yaml"
-    '400':
+    "400":
       description: Probably some failure
       content:
         application/json:

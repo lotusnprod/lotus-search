@@ -13,13 +13,13 @@ post:
         schema:
           $ref: "../../schemas/item.yaml"
   responses:
-    '200':
+    "200":
       description: At least one triplet matching the given search could be found
       content:
         application/json:
           schema:
             $ref: '../../schemas/tripletResult.yaml'
-    '404':
+    "404":
       description: No triplet matching the given search could be found
       content:
         application/json:
