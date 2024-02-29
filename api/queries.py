@@ -40,6 +40,8 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
             return dm.get_reference_with_id(wid)
         elif doi:
             return dm.get_references_with_doi(doi)
+        elif title:
+            return dm.get_references_with_title(title)
         # else:
         #     return dm.get_references_with_title(title)
         # if date_min:
