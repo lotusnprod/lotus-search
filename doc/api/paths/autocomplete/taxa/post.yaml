@@ -12,15 +12,14 @@ post:
       application/json:
         schema:
           $ref: "../../../schemas/autocomplete/taxaQuery.yaml"
-
   responses:
-    '200':
+    "200":
       description: Matching taxa
       content:
         application/json:
           schema:
             $ref: "../../../schemas/autocomplete/taxaResult.yaml"
-    '400':
+    "400":
       description: Invalid query
       content:
         application/json:
