@@ -294,16 +294,22 @@ class DataModel:
     def get_reference_object_from_rid(self, rid: int) -> dict | None:
         return self.get_reference_object_from_dict_of_rids([rid])
 
-    # TODO ref from title
-    # TODO ref from date
-    # TODO ref from journal
-
     def get_references_with_doi(self, doi: str) -> set[int]:
         with self.storage.session() as session:
             result = session.query(References.id).filter(
                 References.doi.like(f"%{doi}%")
             )
             return {row[0] for row in result}
+
+    def get_references_with_title(self, title: str) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(References.id).filter(
+                References.title.like(f"%{title}%")
+            )
+            return {row[0] for row in result}
+
+    # TODO ref from date
+    # TODO ref from journal
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
