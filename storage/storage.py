@@ -21,7 +21,7 @@ from storage.models import (
 
 
 class Storage:
-    SCHEMA_VERSION = 4
+    SCHEMA_VERSION = 5
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -80,7 +80,6 @@ class Storage:
                     insert(Structures),
                     structures[i : i + self.list_limit // 2],
                 )
-
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
@@ -120,7 +119,6 @@ class Storage:
                         for item in parenting[i : i + self.list_limit // 2]
                     ],
                 )
-
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
