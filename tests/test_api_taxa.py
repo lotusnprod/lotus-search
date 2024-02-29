@@ -1,9 +1,10 @@
 import pytest
 
 from api.api import search_taxa
-from api.models import (  # ReferenceOption,
+from api.models import (
     Item,
     ReferenceItem,
+    ReferenceOption,
     StructureItem,
     StructureOption,
     TaxonItem,
