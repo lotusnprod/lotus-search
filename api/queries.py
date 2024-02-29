@@ -37,19 +37,21 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         )
     elif wid is not None or doi is not None or title is not None:
         if wid:
-            return dm.get_reference_with_id(wid)
+            references = dm.get_reference_with_id(wid)
         elif doi:
-            return dm.get_references_with_doi(doi)
+            references = dm.get_references_with_doi(doi)
         elif title:
-            return dm.get_references_with_title(title)
-        # else:
-        #     return dm.get_references_with_title(title)
+            references = dm.get_references_with_title(title)
+
+        # TODO decide if doing it in two steps (more expensive) or not?
+        # if journal:
+        #     TODO
         # if date_min:
         #     TODO
         # if date_max:
         #     TODO
-        # if journal:
-        #     TODO
+
+        return references
     else:
         return references
 
