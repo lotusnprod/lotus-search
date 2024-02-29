@@ -13,9 +13,15 @@ properties:
     default: ~
     example: "10.1080/1057563021000040466"
     type: string
+  title:
+    description: |
+      The title of the reference.
+    default: ~
+    example: "Iridoids from Seeds of Gentiana Lutea"
+    type: string
   # external_id:
   #   $ref: "./referenceId.yaml"
-  # option:
-  #   $ref: "./referenceOption.yaml"
+  option:
+    $ref: "./referenceOption.yaml"
   # filter:
   #   $ref: "./referenceFilter.yaml"

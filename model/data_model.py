@@ -203,9 +203,13 @@ class DataModel:
 
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
-            result = session.query(References.id, References.doi).filter(
-                References.id.in_(rid)
-            )
+            result = session.query(
+                References.id,
+                References.doi,
+                References.title,
+                References.date,
+                References.journal,
+            ).filter(References.id.in_(rid))
             return {row[0]: row[1] for row in result}
 
     def get_reference_doi_from_rid(self, rid: int) -> str | None:
@@ -221,6 +225,10 @@ class DataModel:
                 References.doi.like(f"%{doi}%")
             )
             return {row[0] for row in result}
+
+    # TODO ref from title
+    # TODO ref from date
+    # TODO ref from journal
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
