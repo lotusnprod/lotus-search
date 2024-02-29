@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from mordred import Calculator, descriptors
+# from mordred import Calculator, descriptors
 from rdkit import Chem
 from rdkit.Chem import Descriptors, rdFingerprintGenerator
 from rdkit.Chem.Draw import rdMolDraw2D
@@ -31,9 +31,9 @@ def fingerprint(mol):
     return fpgen.GetFingerprint(mol)
 
 
-# from https://github.com/mordred-descriptor/mordred/tree/develop/examples
-def get_mol_descriptors_mordred(mol):
-    return calc(mol).drop_missing().asdict()
+# # from https://github.com/mordred-descriptor/mordred/tree/develop/examples
+# def get_mol_descriptors_mordred(mol):
+#     return calc(mol).drop_missing().asdict()
 
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
@@ -112,6 +112,6 @@ def process_smiles(inp):
         return None
 
 
-calc = Calculator(descriptors)
+# calc = Calculator(descriptors)
 fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 uncharger = rdMolStandardize.Uncharger()
