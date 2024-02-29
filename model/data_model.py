@@ -128,6 +128,7 @@ class DataModel:
                 return None
             return out.smiles
 
+    # TODO rename to object?
     def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(Structures.id, Structures.smiles).filter(
@@ -201,6 +202,7 @@ class DataModel:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
 
+    # TODO rename to object?
     def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
         with self.storage.session() as session:
             result = session.query(
@@ -339,6 +341,7 @@ class DataModel:
             result = session.query(TaxoNames.id, TaxoNames.name).all()
             return {row[1]: row[0] for row in result}
 
+    # TODO rename to object?
     def get_dict_of_taxa_from_name(self, taxon_name: str) -> dict[str, int]:
         with self.storage.session() as session:
             matcher = TaxoNames.name.like(f"{taxon_name}%")
