@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Index
+from sqlalchemy import Index
 from sqlalchemy.orm import Mapped, mapped_column
 
 from storage.models.base import Base
