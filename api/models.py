@@ -85,7 +85,7 @@ class ReferenceObject(BaseModel):
     doi: str
     title: str
     date: str
-    # journal: str
+    journal: str
 
 
 class ReferenceResult(BaseModel):

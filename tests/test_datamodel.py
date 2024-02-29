@@ -14,7 +14,7 @@ class TestDataModel:
 
     def test_get_taxon_object_from_tid(self, data_model):
         assert data_model.get_taxon_object_from_tid(1)[1].name == "Taxon 1"
-        assert data_model.get_taxon_object_from_tid(666) is None
+        assert data_model.get_taxon_object_from_tid(666) == {}
 
     def test_get_rank_name_from_wid(self, data_model):
         assert data_model.get_rank_name_from_wid(100) == "genus"
@@ -39,11 +39,11 @@ class TestDataModel:
 
     def test_get_structure_object_from_sid(self, data_model):
         assert data_model.get_structure_object_from_sid(1)[1].smiles == "C[C@H](N)O"
-        assert data_model.get_structure_object_from_sid(666) is None
+        assert data_model.get_structure_object_from_sid(666) == {}
 
     def test_get_reference_object_from_rid(self, data_model):
         assert data_model.get_reference_object_from_rid(1)[1].doi == "42.1/1"
-        assert data_model.get_reference_object_from_rid(666) is None
+        assert data_model.get_reference_object_from_rid(666) == {}
 
     def test_get_references_of_taxon(self, data_model):
         assert len(data_model.get_references_of_taxon(1)) == 2
