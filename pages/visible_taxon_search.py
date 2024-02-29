@@ -22,7 +22,7 @@ def update_table(value):
 
     output = []
     for match in data.get_taxa_with_name_containing(value):
-        name = data.get_taxon_name_from_tid(match)
+        name = data.get_taxon_object_from_tid(match)
         matching_structures = data.get_structures_of_taxon(match)
         safe_name = name.replace("[", "").replace("]", "")
         output.append(

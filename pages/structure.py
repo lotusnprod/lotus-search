@@ -40,7 +40,7 @@ def layout(wid: int):
 
     name_id_list = []
     for t in dm.get_taxa_of_structure(wid):
-        name = dm.get_taxon_name_from_tid(t)
+        name = dm.get_taxon_object_from_tid(t)
         name_id_list.append([name, t])
     name_id_list = sorted(name_id_list, key=lambda x: x[0])
     table = [{"Taxon": f"[{x[0]}](/taxon/{x[1]})"} for x in name_id_list]
