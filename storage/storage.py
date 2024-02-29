@@ -50,7 +50,7 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(journals), self.list_limit // 2):
                 session.execute(
-                    insert(Journals).values(),
+                    insert(Journals),
                     journals[i : i + self.list_limit // 2],
                 )
             session.commit()
@@ -59,7 +59,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(triplets), self.list_limit // 3):
                 session.execute(
-                    insert(Triplets), triplets[i : i + self.list_limit // 3]
+                    insert(Triplets),
+                    triplets[i : i + self.list_limit // 3],
                 )
             session.commit()
 
@@ -76,7 +77,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
-                    insert(Structures).values(structures[i : i + self.list_limit // 2])
+                    insert(Structures),
+                    structures[i : i + self.list_limit // 2],
                 )
             session.commit()
 
@@ -84,7 +86,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoNames), taxo_names[i : i + self.list_limit // 2]
+                    insert(TaxoNames),
+                    taxo_names[i : i + self.list_limit // 2],
                 )
             session.commit()
 
@@ -92,7 +95,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoRankNames), ranks_names[i : i + self.list_limit // 2]
+                    insert(TaxoRankNames),
+                    ranks_names[i : i + self.list_limit // 2],
                 )
             session.commit()
 
@@ -100,7 +104,8 @@ class Storage:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_ranks), self.list_limit // 2):
                 session.execute(
-                    insert(TaxoRanks), taxo_ranks[i : i + self.list_limit // 2]
+                    insert(TaxoRanks),
+                    taxo_ranks[i : i + self.list_limit // 2],
                 )
             session.commit()
 

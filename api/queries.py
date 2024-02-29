@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from api.models import (  # ReferenceOption,
+from api.models import (
     Item,
     ReferenceItem,
     ReferenceOption,
