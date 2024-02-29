@@ -119,7 +119,6 @@ class Storage:
                         for item in parenting[i : i + self.list_limit // 2]
                     ],
                 )
-
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:

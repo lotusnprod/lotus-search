@@ -62,27 +62,27 @@ class DataModel:
         self, tids: Iterable[int]
     ) -> dict[int, TaxonObject]:
         with self.storage.session() as session:
-            result = session.query(
-                TaxoNames.id,
-                TaxoNames.name,
-            ).filter(TaxoNames.id.in_(tids))
-            return {
-                row.id: TaxonObject(
-                    name=row.name,
+            result = (
+                session.query(
+                    TaxoNames.id,
+                    TaxoNames.name,
                 )
-                for row in result
-            }
+                .filter(TaxoNames.id.in_(tids))
+                .all()
+            )
+
+            if result:
+                return {
+                    row.id: TaxonObject(
+                        name=row.name,
+                    )
+                    for row in result
+                }
+            else:
+                return {}
 
     def get_taxon_object_from_tid(self, tid: int) -> dict | None:
-        with self.storage.session() as session:
-            row = session.get(TaxoNames, tid)
-            if row is None:
-                return None
-            return {
-                row.id: TaxonObject(
-                    name=row.name,
-                )
-            }
+        return self.get_taxon_object_from_dict_of_tids([tid])
 
     def get_taxa_with_name_matching(self, query: str, exact=False) -> set[int]:
         with self.storage.session() as session:
@@ -139,48 +139,41 @@ class DataModel:
         return set(self.db["structure_wid"])
 
     def get_structure_object_from_sid(self, sid: int) -> dict | None:
-        with self.storage.session() as session:
-            row = session.get(Structures, sid)
-            if row is None:
-                return None
-            return {
-                row.id: StructureObject(
-                    smiles=row.smiles,
-                    smiles_no_stereo=row.smiles_no_stereo,
-                    inchi=row.inchi,
-                    inchi_no_stereo=row.inchi_no_stereo,
-                    inchikey=row.inchikey,
-                    inchikey_no_stereo=row.inchikey_no_stereo,
-                    formula=row.formula,
-                )
-            }
+        return self.get_structure_object_from_dict_of_sids([sid])
 
     def get_structure_object_from_dict_of_sids(
         self, sids: Iterable[int]
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            result = session.query(
-                Structures.id,
-                Structures.smiles,
-                Structures.smiles_no_stereo,
-                Structures.inchi,
-                Structures.inchi_no_stereo,
-                Structures.inchikey,
-                Structures.inchikey_no_stereo,
-                Structures.formula,
-            ).filter(Structures.id.in_(sids))
-            return {
-                row.id: StructureObject(
-                    smiles=row.smiles,
-                    smiles_no_stereo=row.smiles_no_stereo,
-                    inchi=row.inchi,
-                    inchi_no_stereo=row.inchi_no_stereo,
-                    inchikey=row.inchikey,
-                    inchikey_no_stereo=row.inchikey_no_stereo,
-                    formula=row.formula,
+            result = (
+                session.query(
+                    Structures.id,
+                    Structures.smiles,
+                    Structures.smiles_no_stereo,
+                    Structures.inchi,
+                    Structures.inchi_no_stereo,
+                    Structures.inchikey,
+                    Structures.inchikey_no_stereo,
+                    Structures.formula,
                 )
-                for row in result
-            }
+                .filter(Structures.id.in_(sids))
+                .all()
+            )
+            if result:
+                return {
+                    row.id: StructureObject(
+                        smiles=row.smiles,
+                        smiles_no_stereo=row.smiles_no_stereo,
+                        inchi=row.inchi,
+                        inchi_no_stereo=row.inchi_no_stereo,
+                        inchikey=row.inchikey,
+                        inchikey_no_stereo=row.inchikey_no_stereo,
+                        formula=row.formula,
+                    )
+                    for row in result
+                }
+            else:
+                return {}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:
@@ -261,24 +254,20 @@ class DataModel:
         self, rids: Iterable[int]
     ) -> dict[int, ReferenceObject]:
         with self.storage.session() as session:
-            result = session.query(
-                References.id,
-                References.doi,
-                References.title,
-                References.date,
-                References.journal,
-            ).filter(References.id.in_(rids))
+            result = (
+                session.query(
+                    References.id,
+                    References.doi,
+                    References.title,
+                    References.date,
+                    References.journal,
+                )
+                .filter(References.id.in_(rids))
+                .all()
+            )
 
             journal_ids = {row.journal for row in result}
-            print(journal_ids)
 
-            # TODO I DONT KNOW WHY THIS IS EMPTY (works for Structures or else)
-            journals = session.query(Journals).all()
-            print("Content of Journals table:")
-            for journal in journals:
-                print(journal)
-
-            # This fails because Journals table is empty?
             journal_titles = {}
             if journal_ids:  # Only query if there are journal IDs
                 result_journal = session.query(
@@ -289,33 +278,21 @@ class DataModel:
                     journal.id: journal.title for journal in result_journal
                 }
 
-            print(journal_titles)
-
-            return {
-                row.id: ReferenceObject(
-                    doi=row.doi,
-                    title=row.title,
-                    date=row.date,
-                    # journal=journal_titles.get(
-                    #     row.journal
-                    # ),  # Get journal title using journal ID
-                )
-                for row in result
-            }
+            if result:
+                return {
+                    row.id: ReferenceObject(
+                        doi=row.doi,
+                        title=row.title,
+                        date=row.date,
+                        journal=journal_titles.get(row.journal),
+                    )
+                    for row in result
+                }
+            else:
+                return {}
 
     def get_reference_object_from_rid(self, rid: int) -> dict | None:
-        with self.storage.session() as session:
-            row = session.get(References, rid)
-            if row is None:
-                return None
-            return {
-                row.id: ReferenceObject(
-                    doi=row.doi,
-                    title=row.title,
-                    date=row.date,
-                    # journal=row.journal,
-                )
-            }
+        return self.get_reference_object_from_dict_of_rids([rid])
 
     # TODO ref from title
     # TODO ref from date
