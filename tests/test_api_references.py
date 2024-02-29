@@ -35,7 +35,7 @@ class TestApiReferences:
         assert result.count == expected_total
         assert result.objects is None
 
-    async def test_search_references_pure_reference(self, data_model):
+    async def test_search_references_doi(self, data_model):
         item = Item(reference={"doi": "42.1/1"}, modeEnum="objects")
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
@@ -45,8 +45,33 @@ class TestApiReferences:
         assert result.objects[1].journal == "journal A"
         assert result.description == "References matching the query"
 
+    async def test_search_references_title(self, data_model):
+        item = Item(reference={"title": "TITLE A"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
+        assert result.description == "References matching the query"
+
+    async def test_search_references_title_no_hit(self, data_model):
+        item = Item(reference={"title": "Foo Bar"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
+
     async def test_search_references_error_giving_doi_and_id(self, data_model):
         item = Item(reference={"doi": "42.1/1", "wid": 1})
+        with pytest.raises(Exception):
+            await search_references(item=item, dm=data_model)
+
+    async def test_search_references_error_giving_doi_and_title(self, data_model):
+        item = Item(reference={"doi": "42.1/1", "title": "Foo"})
+        with pytest.raises(Exception):
+            await search_references(item=item, dm=data_model)
+
+    async def test_search_references_error_giving_id_and_title(self, data_model):
+        item = Item(reference={"wid": 1, "title": "Bar"})
         with pytest.raises(Exception):
             await search_references(item=item, dm=data_model)
 
@@ -54,6 +79,13 @@ class TestApiReferences:
         item = Item(taxon={"wid": "1"}, structure={"wid": 1})
         result = await search_references(item=item, dm=data_model)
         assert result.count == 2
+
+    async def test_search_references_from_taxon_structure_title(self, data_model):
+        item = Item(
+            reference={"title": "Foo Bar"}, taxon={"wid": "1"}, structure={"wid": 1}
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
 
     async def test_search_references_with_taxon_existing(self, data_model):
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 1}, modeEnum="objects")
