@@ -12,15 +12,14 @@ post:
       application/json:
         schema:
           $ref: "../../schemas/item.yaml"
-
   responses:
-    '200':
+    "200":
       description: At least one reference matching the given search could be found
       content:
         application/json:
           schema:
             $ref: '../../schemas/referenceResult.yaml'
-    '404':
+    "404":
       description: No reference matching the given search could be found
       content:
         application/json:
@@ -30,3 +29,13 @@ post:
               message:
                 type: string
                 example: No reference matching the given search could be found
+    "500":
+      description: Only one of ['wid', 'doi', 'title'] should be provided
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Only one of ['wid', 'doi', 'title'] should be provided

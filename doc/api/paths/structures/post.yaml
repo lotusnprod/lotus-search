@@ -12,15 +12,14 @@ post:
       application/json:
         schema:
           $ref: "../../schemas/item.yaml"
-
   responses:
-    '200':
+    "200":
       description: At least one structure matching the given search could be found
       content:
         application/json:
           schema:
             $ref: '../../schemas/structureResult.yaml'
-    '404':
+    "404":
       description: No structure matching the given query search be found
       content:
         application/json:
@@ -30,8 +29,8 @@ post:
               message:
                 type: string
                 example: No structure matching the given search could be found
-    '500':
-      description: The structure given is invalid
+    "500":
+      description: Only one of ['wid', 'molecule'] should be provided
       content:
         application/json:
           schema:
@@ -39,4 +38,4 @@ post:
             properties:
               message:
                 type: string
-                example: The structure given is invalid
+                example: Only one of ['wid', 'molecule'] should be provided

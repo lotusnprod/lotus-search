@@ -79,6 +79,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                 results = dm.structure_search_substructure(molecule)
                 structures = {_id for _id, _ in results}
             except ValueError:
+                # TODO how to handle the diff with the 500 code above?
                 raise HTTPException(
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
