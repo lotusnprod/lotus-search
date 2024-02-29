@@ -2,6 +2,7 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
+
 class ReferenceOption(BaseModel):
     date_min: Optional[str] = None
     date_max: Optional[str] = None
@@ -82,9 +83,9 @@ class Item(BaseModel):
 
 class ReferenceObject(BaseModel):
     doi: str
-    title: str
-    date: str
-    journal: str
+    # title: str
+    # date: str
+    # journal: str
 
 
 class ReferenceResult(BaseModel):
