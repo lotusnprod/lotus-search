@@ -84,20 +84,20 @@ async def search_triplets(
             triplets=triplets,
             references={
                 # TODO
-                wid: ReferenceObject(doi=value, title="None", date="None", journal="None")
-                for wid, value in dm.get_dict_of_rid_to_reference_doi(
+                wid: value
+                for wid, value in dm.get_reference_object_from_dict_of_rids(
                     [reference_id for reference_id, _, _ in triplets]
                 ).items()
             },
             structures={
-                wid: StructureObject(smiles=value)
-                for wid, value in dm.get_dict_of_sid_to_smiles(
+                wid: value
+                for wid, value in dm.get_structure_object_from_dict_of_sids(
                     [structure_id for _, structure_id, _ in triplets]
                 ).items()
             },
             taxa={
-                wid: TaxonObject(name=value)
-                for wid, value in dm.get_dict_of_tid_to_taxon_name(
+                wid: value
+                for wid, value in dm.get_taxon_object_from_dict_of_tids(
                     [taxon_id for _, _, taxon_id in triplets]
                 ).items()
             },
@@ -122,9 +122,7 @@ async def search_structures(
     if item.modeEnum == "objects":
         return StructureResult(
             ids=dict_items.keys(),
-            objects={
-                sid: StructureObject(smiles=value) for sid, value in dict_items.items()
-            },
+            objects={sid: value for sid, value in dict_items.items()},
             description="Structures matching the query",
             count=len(dict_items),
         )
@@ -146,7 +144,7 @@ async def search_taxa(
     if item.modeEnum == "objects":
         return TaxonResult(
             ids=dict_items.keys(),
-            objects={tid: TaxonObject(name=value) for tid, value in dict_items.items()},
+            objects={tid: value for tid, value in dict_items.items()},
             description="Taxa matching the query",
             count=len(dict_items),
         )
@@ -168,11 +166,8 @@ async def search_references(
     if item.modeEnum == "objects":
         return ReferenceResult(
             ids=dict_items.keys(),
-            objects={
-                # TODO
-                rid: ReferenceObject(doi=value, title="None", date="None", journal="None")
-                for rid, value in dict_items.items()
-            },
+            # TODO
+            objects={rid: value for rid, value in dict_items.items()},
             description="References matching the query",
             count=len(dict_items),
         )
