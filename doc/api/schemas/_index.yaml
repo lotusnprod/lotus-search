@@ -8,8 +8,8 @@ referenceItem:
   $ref: "./referenceItem.yaml"
 referenceObject:
   $ref: "./referenceObject.yaml"
-# referenceOption:
-#   $ref: "./referenceOption.yaml"
+referenceOption:
+  $ref: "./referenceOption.yaml"
 referenceResult:
   $ref: "./referenceResult.yaml"
 structureId:

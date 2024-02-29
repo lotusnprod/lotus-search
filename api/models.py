@@ -2,8 +2,11 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-# class ReferenceOption(BaseModel):
-#     TODO
+
+class ReferenceOption(BaseModel):
+    date_min: Optional[str] = None
+    date_max: Optional[str] = None
+    journal: Optional[str] = None
 
 
 class StructureOption(BaseModel):
@@ -18,7 +21,8 @@ class TaxonOption(BaseModel):
 class ReferenceItem(BaseModel):
     wid: Optional[int] = None
     doi: Optional[str] = None
-    # option: ReferenceOption = ReferenceOption()
+    title: Optional[str] = None
+    option: ReferenceOption = ReferenceOption()
     # limit: Optional[int] = None
 
 
@@ -50,9 +54,12 @@ class Item(BaseModel):
                     "reference": {
                         "wid": 44488598,
                         "doi": "10.1080/1057563021000040466",
-                        # "option": {
-                        #     "TODO": True,
-                        # },
+                        "title": "Iridoids from Seeds of Gentiana Lutea",
+                        "option": {
+                            "date_min": "1999-12-31",
+                            "date_max": "2024-01-01",
+                            "journal": "Natural Product Research",
+                        },
                     },
                     "structure": {
                         "wid": 27151406,
@@ -78,6 +85,9 @@ class Item(BaseModel):
 
 class ReferenceObject(BaseModel):
     doi: str
+    # title: str
+    # date: str
+    # journal: str
 
 
 class ReferenceResult(BaseModel):

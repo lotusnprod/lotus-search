@@ -264,10 +264,16 @@ class DataModel:
             result = session.query(
                 References.id,
                 References.doi,
+                # References.title,
+                # References.date,
+                # References.journal,
             ).filter(References.id.in_(rids))
             return {
                 row.id: ReferenceObject(
                     doi=row.doi,
+                    # title=row.title,
+                    # date=row.date,
+                    # journal=row.journal,
                 )
                 for row in result
             }
@@ -280,8 +286,15 @@ class DataModel:
             return {
                 row.id: ReferenceObject(
                     doi=row.doi,
+                    # title=row.title,
+                    # date=row.date,
+                    # journal=row.journal,
                 )
             }
+
+    # TODO ref from title
+    # TODO ref from date
+    # TODO ref from journal
 
     def get_references_with_doi(self, doi: str) -> set[int]:
         with self.storage.session() as session:

@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from api.models import (  # ReferenceOption,
     Item,
     ReferenceItem,
+    ReferenceOption,
     StructureItem,
     StructureOption,
     TaxonItem,
@@ -20,21 +21,35 @@ logging.basicConfig(
 
 def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching references."""
+    references = None
+
     wid = item.reference.wid
     doi = item.reference.doi
+    title = item.reference.title
+    date_min = item.reference.option.date_min
+    date_max = item.reference.option.date_max
+    journal = item.reference.option.journal
 
-    if doi and wid:
+    if len([param for param in [wid, doi, title] if param is not None]) >= 2:
         raise HTTPException(
             status_code=500,
-            detail=f"You cannot provide both 'doi' and 'wid'",
+            detail=f"Only one of ['wid', 'doi', 'title'] should be provided",
         )
-    elif wid is not None or doi is not None:
-        # This needs to be explained in the API doc
+    elif wid is not None or doi is not None or title is not None:
         if wid:
             return dm.get_reference_with_id(wid)
-        return dm.get_references_with_doi(doi)
-
-    return None
+        elif doi:
+            return dm.get_references_with_doi(doi)
+        # else:
+        #     return dm.get_references_with_title(title)
+        # if date_min:
+        #     TODO
+        # if date_max:
+        #     TODO
+        # if journal:
+        #     TODO
+    else:
+        return references
 
 
 def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
@@ -47,12 +62,12 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
 
-    args = len(list(filter(lambda x: x is not None, [wid, molecule, formula])))
+    args = len([param for param in [wid, molecule, formula] if param is not None])
 
     if args > 1:
         raise HTTPException(
             status_code=500,
-            detail=f"You can only provide one of ('molecule', 'formula', 'wid')",
+            detail=f"Only one of ['wid', 'molecule', 'formula'] should be provided",
         )
     elif args > 0:
         # This needs to be explained in the API doc
@@ -80,6 +95,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+
         else:
             try:
                 structures = dm.get_structure_with_formula(formula)
@@ -100,10 +116,10 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     name = item.taxon.name
     children = item.taxon.option.taxon_children
 
-    if name and wid:
+    if len([param for param in [wid, name] if param is not None]) >= 2:
         raise HTTPException(
             status_code=500,
-            detail=f"You cannot provide both 'name' and 'wid'",
+            detail=f"Only one of ['wid', 'name'] should be provided",
         )
     if wid is not None or name is not None:
         # This needs to be explained in the API doc
