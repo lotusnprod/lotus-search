@@ -10,6 +10,11 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
 
+from api.models import (
+    ReferenceObject,
+    StructureObject,
+    TaxonObject,
+)
 from chemistry_helpers import fingerprint, standardize
 from storage.models import (
     References,
@@ -53,19 +58,31 @@ class DataModel:
         return data
 
     ### Taxonomy
-    def get_dict_of_tid_to_taxon_name(self, tid: Iterable[int]) -> dict[int, str]:
+    def get_taxon_object_from_dict_of_tids(
+        self, tids: Iterable[int]
+    ) -> dict[int, TaxonObject]:
         with self.storage.session() as session:
-            result = session.query(TaxoNames.id, TaxoNames.name).filter(
-                TaxoNames.id.in_(tid)
-            )
-            return {row[0]: row[1] for row in result}
+            result = session.query(
+                TaxoNames.id,
+                TaxoNames.name,
+            ).filter(TaxoNames.id.in_(tids))
+            return {
+                row.id: TaxonObject(
+                    name=row.name,
+                )
+                for row in result
+            }
 
-    def get_taxon_name_from_tid(self, tid: int) -> str | None:
+    def get_taxon_object_from_tid(self, tid: int) -> dict | None:
         with self.storage.session() as session:
-            result = session.get(TaxoNames, tid)
-            if result is None:
+            row = session.get(TaxoNames, tid)
+            if row is None:
                 return None
-            return result.name
+            return {
+                row.id: TaxonObject(
+                    name=row.name,
+                )
+            }
 
     def get_taxa_with_name_matching(self, query: str, exact=False) -> set[int]:
         with self.storage.session() as session:
@@ -121,20 +138,54 @@ class DataModel:
         # TODO use DB
         return set(self.db["structure_wid"])
 
-    def get_structure_smiles_from_sid(self, sid: int) -> str | None:
+    def get_structure_object_from_sid(self, sid: int) -> dict | None:
         with self.storage.session() as session:
-            out = session.get(Structures, sid)
-            if out is None:
+            row = session.get(Structures, sid)
+            if row is None:
                 return None
-            return out.smiles
+            return {
+                row.id: StructureObject(
+                    smiles=row.smiles,
+                    # smiles_no_stereo=row.smiles_no_stereo,
+                    # inchi=row.inchi,
+                    # inchi_no_stereo=row.inchi_no_stereo,
+                    # inchikey=row.inchikey,
+                    # inchikey_no_stereo=row.inchikey_no_stereo,
+                    # formula=row.formula,
+                )
+            }
 
-    # TODO rename to object?
-    def get_dict_of_sid_to_smiles(self, sids: Iterable[int]) -> dict[int, str]:
+    def get_structure_object_from_dict_of_sids(
+        self, sids: Iterable[int]
+    ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            result = session.query(Structures.id, Structures.smiles).filter(
-                Structures.id.in_(sids)
-            )
-            return {row[0]: row[1] for row in result}
+            result = session.query(
+                Structures.id,
+                Structures.smiles,
+                # Structures.smiles_no_stereo,
+                # Structures.inchi,
+                # Structures.inchi_no_stereo,
+                # Structures.inchikey,
+                # Structures.inchikey_no_stereo,
+                # Structures.formula,
+            ).filter(Structures.id.in_(sids))
+            return {
+                row.id: StructureObject(
+                    smiles=row.smiles,
+                    # smiles_no_stereo=row.smiles_no_stereo,
+                    # inchi=row.inchi,
+                    # inchi_no_stereo=row.inchi_no_stereo,
+                    # inchikey=row.inchikey,
+                    # inchikey_no_stereo=row.inchikey_no_stereo,
+                    # formula=row.formula,
+                )
+                for row in result
+            }
+
+    def get_structure_with_formula(self, formula: str) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(Structures.id).filter(Structures.formula == formula)
+            return {row[0] for row in result}
 
     def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
         explicit_h = "[H]" in query
@@ -189,7 +240,11 @@ class DataModel:
 
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
         out = "Wikidata link\tSimilarity\tSmiles\n"
-        smiles_dict = self.get_dict_of_sid_to_smiles(wids)
+        structure_objects = self.get_structure_object_from_dict_of_sids(wids)
+        smiles_dict = {
+            wid: structure_object.smiles
+            for wid, structure_object in structure_objects.items()
+        }
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]
@@ -202,24 +257,44 @@ class DataModel:
             result = session.query(References.id).filter(References.id == rid)
             return {row[0] for row in result}
 
-    # TODO rename to object?
-    def get_dict_of_rid_to_reference_doi(self, rid: Iterable[int]) -> dict[int, str]:
+    def get_reference_object_from_dict_of_rids(
+        self, rids: Iterable[int]
+    ) -> dict[int, ReferenceObject]:
         with self.storage.session() as session:
             result = session.query(
                 References.id,
                 References.doi,
-                References.title,
-                References.date,
-                References.journal,
-            ).filter(References.id.in_(rid))
-            return {row[0]: row[1] for row in result}
+                # References.title,
+                # References.date,
+                # References.journal,
+            ).filter(References.id.in_(rids))
+            return {
+                row.id: ReferenceObject(
+                    doi=row.doi,
+                    # title=row.title,
+                    # date=row.date,
+                    # journal=row.journal,
+                )
+                for row in result
+            }
 
-    def get_reference_doi_from_rid(self, rid: int) -> str | None:
+    def get_reference_object_from_rid(self, rid: int) -> dict | None:
         with self.storage.session() as session:
-            result = session.get(References, rid)
-            if result is None:
+            row = session.get(References, rid)
+            if row is None:
                 return None
-            return result.doi
+            return {
+                row.id: ReferenceObject(
+                    doi=row.doi,
+                    # title=row.title,
+                    # date=row.date,
+                    # journal=row.journal,
+                )
+            }
+
+    # TODO ref from title
+    # TODO ref from date
+    # TODO ref from journal
 
     def get_references_with_doi(self, doi: str) -> set[int]:
         with self.storage.session() as session:
@@ -227,10 +302,6 @@ class DataModel:
                 References.doi.like(f"%{doi}%")
             )
             return {row[0] for row in result}
-
-    # TODO ref from title
-    # TODO ref from date
-    # TODO ref from journal
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
@@ -341,7 +412,6 @@ class DataModel:
             result = session.query(TaxoNames.id, TaxoNames.name).all()
             return {row[1]: row[0] for row in result}
 
-    # TODO rename to object?
     def get_dict_of_taxa_from_name(self, taxon_name: str) -> dict[str, int]:
         with self.storage.session() as session:
             matcher = TaxoNames.name.like(f"{taxon_name}%")
