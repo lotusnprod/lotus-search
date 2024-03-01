@@ -65,6 +65,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
+    desc = item.structure.option.descriptors
 
     args = len([param for param in [wid, molecule, formula] if param is not None])
 
@@ -109,6 +110,9 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The formula given is invalid: {formula}",
                 )
+        # TODO if desc(riptors)
+        # TODO decide the logic (as for journals). i.e. if querying again
+        # a second time or filtering directly
 
         return structures
 

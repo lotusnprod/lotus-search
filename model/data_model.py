@@ -175,6 +175,8 @@ class DataModel:
             else:
                 return {}
 
+    # TODO add descriptors
+
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:
             result = session.query(Structures.id).filter(Structures.formula == formula)

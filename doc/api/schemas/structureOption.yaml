@@ -1,6 +1,16 @@
 title: StructureOption
 type: object
 properties:
+  descriptors:
+    description: |
+      Search by descriptors. False by default, else a dictionary of the descriptors.
+    default: false
+    example: 
+      - false
+      - "{'NumHAcceptors_min': 1}" # all descriptors have "descriptor_min/max" format
+    type: 
+      - boolean
+      - object
   substructure_search:
     description: |
       Search by substructure.

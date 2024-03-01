@@ -10,6 +10,7 @@ class ReferenceOption(BaseModel):
 
 
 class StructureOption(BaseModel):
+    descriptors: bool|Dict = False
     substructure_search: bool = False
     similarity_level: float = 1.0
 
@@ -66,6 +67,7 @@ class Item(BaseModel):
                         "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
                         "formula": "C16H22O9",
                         "option": {
+                            "descriptors": False,
                             "substructure_search": True,
                             "similarity_level": 0.8,
                         },
