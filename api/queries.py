@@ -77,8 +77,6 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         else:
             references &= references_with_journal
 
-        # TODO if title
-
         return references
     else:
         return references

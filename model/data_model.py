@@ -301,13 +301,6 @@ class DataModel:
             )
             return {row[0] for row in result}
 
-    def get_references_with_title(self, title: str) -> set[int]:
-        with self.storage.session() as session:
-            result = session.query(References.id).filter(
-                References.title.like(f"%{title}%")
-            )
-            return {row[0] for row in result}
-
     def get_references_with_date(
         self, date_min: str = None, date_max: str = None
     ) -> set[int]:
@@ -334,6 +327,13 @@ class DataModel:
                     )
                 )
                 .all()
+            )
+            return {row[0] for row in result}
+
+    def get_references_with_title(self, title: str) -> set[int]:
+        with self.storage.session() as session:
+            result = session.query(References.id).filter(
+                References.title.like(f"%{title}%")
             )
             return {row[0] for row in result}
 

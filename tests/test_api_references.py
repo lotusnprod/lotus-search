@@ -192,6 +192,16 @@ class TestApiReferences:
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
 
+    async def test_search_references_title_unspecific(self, data_model):
+        item = Item(reference={"title": "with"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 4
+
+    async def test_search_references_title_lactone(self, data_model):
+        item = Item(reference={"title": "lactone"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 2
+
     async def test_search_references_error_giving_doi_and_id(self, data_model):
         item = Item(reference={"doi": "42.1/1", "wid": 1})
         with pytest.raises(Exception):
