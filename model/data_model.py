@@ -303,15 +303,41 @@ class DataModel:
             )
             return {row[0] for row in result}
 
+    def get_references_with_date(
+        self, date_min: str = None, date_max: str = None
+    ) -> set[int]:
+        with self.storage.session() as session:
+            query = session.query(References.id)
+            if date_min is not None and date_max is not None:
+                query = query.filter(References.date.between(date_min, date_max))
+            elif date_min is not None:
+                query = query.filter(References.date >= date_min)
+            elif date_max is not None:
+                query = query.filter(References.date <= date_max)
+            result = query.all()
+            return {row[0] for row in result}
+
+    def get_references_with_journal(self, journal_title: str) -> set[int]:
+        with self.storage.session() as session:
+            result = (
+                session.query(References.id)
+                .filter(
+                    References.journal.in_(
+                        session.query(Journals.id).filter(
+                            Journals.title.like(f"%{journal_title}%")
+                        )
+                    )
+                )
+                .all()
+            )
+            return {row[0] for row in result}
+
     def get_references_with_title(self, title: str) -> set[int]:
         with self.storage.session() as session:
             result = session.query(References.id).filter(
                 References.title.like(f"%{title}%")
             )
             return {row[0] for row in result}
-
-    # TODO ref from date
-    # TODO ref from journal
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set
