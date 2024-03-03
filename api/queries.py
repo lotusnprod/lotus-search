@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 
+from datetime import datetime
 from fastapi import HTTPException
 
 from api.models import (
@@ -18,6 +19,19 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+def parse_date(date_str: str) -> datetime:
+    # TODO this has to be explained in the API doc
+    formats = ["%Y", "%Y-%m", "%Y-%m-%d"]
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            pass
+        # TODO how to handle the diff with the 500 code above?
+    raise HTTPException(
+        status_code=500,
+        detail=f"Invalid date format",
+        )
 
 def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching references."""
@@ -43,13 +57,19 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         elif title:
             references = dm.get_references_with_title(title)
 
-        # TODO decide if doing it in two steps (more expensive) or not?
-        # if journal:
-        #     TODO
-        # if date_min:
-        #     TODO
-        # if date_max:
-        #     TODO
+    if date_min is not None or date_max is not None:
+        if date_min is not None:
+            date_min = parse_date(date_min)
+        if date_max is not None:
+            date_max = parse_date(date_max)
+        references_within_date_range = dm.get_references_with_date(date_min, date_max)
+        if references is None:
+            references = references_within_date_range
+        else:
+            references &= references_within_date_range
+
+    # if journal:
+    #     TODO
 
         return references
     else:
