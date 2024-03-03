@@ -308,7 +308,9 @@ class DataModel:
             )
             return {row[0] for row in result}
 
-    def get_references_with_date(self, date_min: str = None, date_max: str = None) -> set[int]:
+    def get_references_with_date(
+        self, date_min: str = None, date_max: str = None
+    ) -> set[int]:
         with self.storage.session() as session:
             query = session.query(References.id)
             if date_min is not None and date_max is not None:

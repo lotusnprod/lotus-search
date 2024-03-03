@@ -56,7 +56,10 @@ class TestApiReferences:
         assert result.description == "References matching the query"
 
     async def test_search_references_date_min_ok(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_min":"2000"}}, modeEnum="objects")
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_min": "2000"}},
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].doi == "42.1/1"
@@ -66,12 +69,18 @@ class TestApiReferences:
         assert result.description == "References matching the query"
 
     async def test_search_references_date_min_no(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_min":"2011"}}, modeEnum="objects")
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_min": "2011"}},
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
 
     async def test_search_references_date_max_ok(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_max":"2011"}}, modeEnum="objects")
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_max": "2011"}},
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].doi == "42.1/1"
@@ -81,12 +90,21 @@ class TestApiReferences:
         assert result.description == "References matching the query"
 
     async def test_search_references_date_max_no(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_max":"2000"}}, modeEnum="objects")
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_max": "2000"}},
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
 
     async def test_search_references_date_min_max_ok(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_min":"2000","date_max":"2011"}}, modeEnum="objects")
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {"date_min": "2000", "date_max": "2011"},
+            },
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[1].doi == "42.1/1"
@@ -96,7 +114,13 @@ class TestApiReferences:
         assert result.description == "References matching the query"
 
     async def test_search_references_date_min_max_no(self, data_model):
-        item = Item(reference={"title": "TITLE A", "option": {"date_min":"2011","date_max":"2024"}}, modeEnum="objects")
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {"date_min": "2011", "date_max": "2024"},
+            },
+            modeEnum="objects",
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
 

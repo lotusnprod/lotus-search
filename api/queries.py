@@ -19,6 +19,7 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+
 def parse_date(date_str: str) -> datetime:
     # TODO this has to be explained in the API doc
     formats = ["%Y", "%Y-%m", "%Y-%m-%d"]
@@ -31,7 +32,8 @@ def parse_date(date_str: str) -> datetime:
     raise HTTPException(
         status_code=500,
         detail=f"Invalid date format",
-        )
+    )
+
 
 def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
     """Returns the WID of matching references."""
@@ -68,8 +70,8 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         else:
             references &= references_within_date_range
 
-    # if journal:
-    #     TODO
+        # if journal:
+        #     TODO
 
         return references
     else:
