@@ -54,14 +54,13 @@ def run(path: Path) -> None:
         journal_title_index = headers.index("journal_title")
 
         for row in reader:
-            ref_id = int(row[ref_index])
-            references_dict[ref_id] = {
+            references_dict[int(row[ref_index])] = {
                 "doi": row[doi_index],
                 "title": row[title_index],
                 "date": row[date_index],
                 "journal": row[journal_index],
             }
-            journals_dict[ref_id] = row[journal_title_index]
+            journals_dict[int(row[journal_index])] = row[journal_title_index]
 
     logging.info("Processed references and journals")
 

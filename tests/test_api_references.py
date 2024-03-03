@@ -55,10 +55,152 @@ class TestApiReferences:
         assert result.objects[1].journal == "journal A"
         assert result.description == "References matching the query"
 
+    async def test_search_references_date_min(self, data_model):
+        item = Item(
+            reference={"option": {"date_min": "2000"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 3
+
+    async def test_search_references_date_max(self, data_model):
+        item = Item(
+            reference={"option": {"date_max": "2019"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 3
+
+    async def test_search_references_date_min_ok(self, data_model):
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_min": "2000"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
+        assert result.description == "References matching the query"
+
+    async def test_search_references_date_min_no(self, data_model):
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_min": "2011"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
+
+    async def test_search_references_date_max_ok(self, data_model):
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_max": "2011"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
+        assert result.description == "References matching the query"
+
+    async def test_search_references_date_max_no(self, data_model):
+        item = Item(
+            reference={"title": "TITLE A", "option": {"date_max": "2000"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
+
+    async def test_search_references_date_min_max_ok(self, data_model):
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {"date_min": "2000", "date_max": "2011"},
+            },
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
+        assert result.description == "References matching the query"
+
+    async def test_search_references_date_min_max_no(self, data_model):
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {"date_min": "2011", "date_max": "2024"},
+            },
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
+
+    async def test_search_references_journal_all(self, data_model):
+        item = Item(
+            reference={"option": {"journal": "journal"}},
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 4
+
+    async def test_search_references_journal_a(self, data_model):
+        item = Item(
+            reference={
+                "option": {"journal": "journal A"},
+            },
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 2
+
+    async def test_search_references_journal_ok(self, data_model):
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {
+                    "journal": "journal A",
+                },
+            },
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 1
+        assert result.objects[1].doi == "42.1/1"
+        assert result.objects[1].title == "TITLE A with Gentiana lutea"
+        assert result.objects[1].date == "2010-01-01T00:00:00Z"
+        assert result.objects[1].journal == "journal A"
+        assert result.description == "References matching the query"
+
+    async def test_search_references_journal_no(self, data_model):
+        item = Item(
+            reference={
+                "title": "TITLE A",
+                "option": {"journal": "journal B"},
+            },
+            modeEnum="objects",
+        )
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 0
+
     async def test_search_references_title_no_hit(self, data_model):
         item = Item(reference={"title": "Foo Bar"}, modeEnum="objects")
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
+
+    async def test_search_references_title_unspecific(self, data_model):
+        item = Item(reference={"title": "with"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 4
+
+    async def test_search_references_title_lactone(self, data_model):
+        item = Item(reference={"title": "lactone"}, modeEnum="objects")
+        result = await search_references(item=item, dm=data_model)
+        assert result.count == 2
 
     async def test_search_references_error_giving_doi_and_id(self, data_model):
         item = Item(reference={"doi": "42.1/1", "wid": 1})
