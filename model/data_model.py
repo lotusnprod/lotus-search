@@ -322,7 +322,20 @@ class DataModel:
             result = query.all()
             return {row[0] for row in result}
 
-    # TODO ref from journal
+    def get_references_with_journal(self, journal_title: str) -> set[int]:
+        with self.storage.session() as session:
+            result = (
+                session.query(References.id)
+                .filter(
+                    References.journal.in_(
+                        session.query(Journals.id).filter(
+                            Journals.title.like(f"%{journal_title}%")
+                        )
+                    )
+                )
+                .all()
+            )
+            return {row[0] for row in result}
 
     ### Mixonomy
     # Todo, we probably want to still return that as a set

@@ -70,8 +70,14 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         else:
             references &= references_within_date_range
 
-        # if journal:
-        #     TODO
+    if journal:
+        references_with_journal = dm.get_references_with_journal(journal)
+        if references is None:
+            references = references_with_journal
+        else:
+            references &= references_with_journal
+
+        # TODO if title
 
         return references
     else:
