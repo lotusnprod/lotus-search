@@ -142,23 +142,42 @@ class DataModel:
         return self.get_structure_object_from_dict_of_sids([sid])
 
     def get_structure_object_from_dict_of_sids(
-        self, sids: Iterable[int]
+        self,
+        sids: Iterable[int],
+        descriptors: bool | dict = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            result = (
-                session.query(
-                    Structures.id,
-                    Structures.smiles,
-                    Structures.smiles_no_stereo,
-                    Structures.inchi,
-                    Structures.inchi_no_stereo,
-                    Structures.inchikey,
-                    Structures.inchikey_no_stereo,
-                    Structures.formula,
+            if descriptors == True:
+                result = (
+                    session.query(
+                        Structures.id,
+                        Structures.smiles,
+                        Structures.smiles_no_stereo,
+                        Structures.inchi,
+                        Structures.inchi_no_stereo,
+                        Structures.inchikey,
+                        Structures.inchikey_no_stereo,
+                        Structures.formula,
+                    )
+                    .filter(Structures.id.in_(sids))
+                    .all()
                 )
-                .filter(Structures.id.in_(sids))
-                .all()
-            )
+            else:
+                # TODO also return descriptors based on the smiles in the respective table (TODO)
+                result = (
+                    session.query(
+                        Structures.id,
+                        Structures.smiles,
+                        Structures.smiles_no_stereo,
+                        Structures.inchi,
+                        Structures.inchi_no_stereo,
+                        Structures.inchikey,
+                        Structures.inchikey_no_stereo,
+                        Structures.formula,
+                    )
+                    .filter(Structures.id.in_(sids))
+                    .all()
+                )
             if result:
                 return {
                     row.id: StructureObject(
@@ -174,8 +193,6 @@ class DataModel:
                 }
             else:
                 return {}
-
-    # TODO add descriptors
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:

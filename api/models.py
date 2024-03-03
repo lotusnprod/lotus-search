@@ -10,7 +10,7 @@ class ReferenceOption(BaseModel):
 
 
 class StructureOption(BaseModel):
-    descriptors: bool|Dict = False
+    descriptors: bool | Dict = False
     substructure_search: bool = False
     similarity_level: float = 1.0
 

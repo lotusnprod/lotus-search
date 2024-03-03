@@ -276,7 +276,9 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_structure_object_from_dict_of_sids(ids)
+    return dm.get_structure_object_from_dict_of_sids(
+        ids, item.structure.option.descriptors
+    )
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
