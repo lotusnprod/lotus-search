@@ -20,13 +20,12 @@ classifiers =[
     "Framework :: tox",
     "Framework :: Sphinx",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only"
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 dash = "^2.16.0"
 dash-bootstrap-components = "^1.5.0"
 fastapi = "^0.109.2"
@@ -39,7 +38,7 @@ pandas = "^2.2.1"
 pydantic = "^2.6.3"
 requests = "^2.31.0"
 rdkit = "^2023.9.5"
-sqlalchemy = "^2.0.27"
+sqlalchemy = "^2.0.28"
 tqdm = "^4.66.2"
 uvicorn = "^0.27.1"
 
