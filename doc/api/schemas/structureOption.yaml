@@ -23,3 +23,9 @@ properties:
     default: 1.0
     example: 0.8
     type: number
+  sdf:
+    description: |
+      Return sdf.
+    default: false
+    example: false
+    type: boolean

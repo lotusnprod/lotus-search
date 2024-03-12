@@ -13,6 +13,7 @@ class StructureOption(BaseModel):
     descriptors: bool | Dict = False
     substructure_search: bool = False
     similarity_level: float = 1.0
+    sdf: bool = False
 
 
 class TaxonOption(BaseModel):
@@ -70,6 +71,7 @@ class Item(BaseModel):
                             "descriptors": False,
                             "substructure_search": True,
                             "similarity_level": 0.8,
+                            "sdf": False,
                         },
                     },
                     "taxon": {
@@ -108,6 +110,7 @@ class StructureObject(BaseModel):
     inchikey_no_stereo: str
     formula: str
     descriptors: Optional[Dict] = None
+    sdf: Optional[str] = None
 
 
 class StructureResult(BaseModel):
