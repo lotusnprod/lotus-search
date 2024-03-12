@@ -166,8 +166,8 @@ def run(path: Path) -> None:
     storage.upsert_structures(structures)
     logging.info(" Structures inserted")
     # TODO
-    # storage.upsert_descriptors(descriptors)
-    # logging.info(" Descriptors inserted")
+    # storage.upsert_structures_descriptors(descriptors)
+    # logging.info(" Structures descriptors inserted")
     storage.upsert_references(references)
     logging.info(" References inserted")
     storage.upsert_journals(journals)
