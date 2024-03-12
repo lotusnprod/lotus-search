@@ -26,7 +26,7 @@ classifiers =[
 
 [tool.poetry.dependencies]
 python = "^3.12"
-dash = "^2.16.0"
+dash = "^2.16.1"
 dash-bootstrap-components = "^1.5.0"
 fastapi = "^0.110.0"
 fastapi-versioning = "^0.10.0"
@@ -40,19 +40,19 @@ requests = "^2.31.0"
 rdkit = "^2023.9.5"
 sqlalchemy = "^2.0.28"
 tqdm = "^4.66.2"
-uvicorn = "^0.27.1"
+uvicorn = "^0.28.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
 coverage = "^7.4.3"
 isort = "^5.13.2"
-pytest = "^8.1.0"
-pytest-asyncio = "^0.23.5"
+pytest = "^8.1.1"
+pytest-asyncio = "^0.23.5.post1"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.12.0"
 pytest-xdist = "^3.5.0"
 requests-mock = "^1.11.0"
-tox = "^4.14.0"
+tox = "^4.14.1"
 
 [tool.poetry.scripts]
 start = "app:main"
