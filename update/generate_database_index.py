@@ -61,9 +61,23 @@ def run(path: Path) -> None:
                 "journal": row[journal_index],
             }
             journals_dict[int(row[journal_index])] = row[journal_title_index]
-
+    references = []
+    for ref, values in references_dict.items():
+        references.append(
+            {
+                "id": ref,
+                "doi": values["doi"],
+                "title": values["title"],
+                "date": values["date"],
+                "journal": values["journal"],
+            }
+        )
+    journals = []
+    for journal, title in journals_dict.items():
+        journals.append({"id": journal, "title": title})
     logging.info("Processed references and journals")
 
+    structures_dict = {}
     with open(path / "structures_table.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
@@ -77,8 +91,6 @@ def run(path: Path) -> None:
         inchikey_index = headers.index("structure_inchikey")
         inchikey_no_stereo_index = headers.index("structure_inchikey_no_stereo")
         formula_index = headers.index("structure_formula")
-
-        structures_dict = {}
         for row in reader:
             struct_id = int(row[id_index])
             structures_dict[struct_id] = {
@@ -91,22 +103,43 @@ def run(path: Path) -> None:
                 "inchikey_no_stereo": row[inchikey_no_stereo_index],
                 "formula": row[formula_index],
             }
-
+    structures = list(structures_dict.values())
     logging.info(" Processed structures")
+
+    # TODO this has not been tested, probably not working
+    descriptors_dict = {}
+    with open(path / "descriptors_rdkit.csv", "r") as f:
+        reader = csv.reader(f)
+        headers = next(reader)
+        smiles_index = headers.index("smiles")
+        # Excluding the SMILES column
+        descriptor_indices = range(1, len(headers))
+        for row in reader:
+            smiles = row[smiles_index]
+            # Assuming SMILES strings are unique identifiers
+            struct_id = smiles
+            descriptors_dict[struct_id] = {
+                headers[i]: float(row[i]) for i in descriptor_indices
+            }
+            # In case
+            descriptors_dict[struct_id]["smiles"] = smiles
+    descriptors = list(descriptors_dict.values())
+    logging.info("Processed descriptors")
+
     with open(path / "taxa_names.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
         taxon_index = headers.index("taxon")
         name_index = headers.index("taxon_name")
-
         taxo_names_dict = {int(row[taxon_index]): row[name_index] for row in reader}
-
+    taxo_names = []
+    for taxon, name in taxo_names_dict.items():
+        taxo_names.append({"id": taxon, "name": name})
     logging.info(" Processed taxa names")
 
     # Eventually TODO add taxa_names_com
 
     taxon_ranks_dict = {}
-
     with open(path / "ranks_names.csv", "r") as f:
         reader = csv.reader(f)
         headers = next(reader)
@@ -116,7 +149,6 @@ def run(path: Path) -> None:
         ranks_names = [
             {"id": int(row[rank_index]), "name": row[label_index]} for row in reader
         ]
-
     logging.info(" Processed rank names")
 
     with open(path / "taxa_ranks.csv", "r") as f:
@@ -124,50 +156,24 @@ def run(path: Path) -> None:
         headers = next(reader)
         taxon_index = headers.index("taxon")
         rank_index = headers.index("taxon_rank")
-
         for row in reader:
             rank_value = convert_to_int_safe(row[rank_index])
             if rank_value is not None:
                 taxon_ranks_dict[int(row[taxon_index])] = {rank_value}
-
-    logging.info(" Processed taxa ranks")
     taxo_ranks = []
     for taxon, ranks in taxon_ranks_dict.items():
         for rank in ranks:
             taxo_ranks.append({"id": taxon, "rank_id": rank})
-    taxo_names = []
-    for taxon, name in taxo_names_dict.items():
-        taxo_names.append({"id": taxon, "name": name})
-
-    structures = list(structures_dict.values())
-
-    references = []
-    for ref, values in references_dict.items():
-        references.append(
-            {
-                "id": ref,
-                "doi": values["doi"],
-                "title": values["title"],
-                "date": values["date"],
-                "journal": values["journal"],
-            }
-        )
-
-    journals = []
-    for journal, title in journals_dict.items():
-        journals.append({"id": journal, "title": title})
-
-    logging.info(" Processed dicts")
+    logging.info(" Processed taxa ranks")
+    
     storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
-
     storage.upsert_triplets(triplets)
     logging.info(" Triplets inserted")
     storage.upsert_structures(structures)
     logging.info(" Structures inserted")
-    # TODO
-    # storage.upsert_structures_descriptors(descriptors)
-    # logging.info(" Structures descriptors inserted")
+    storage.upsert_structures_descriptors(descriptors)
+    logging.info(" Structures descriptors inserted")
     storage.upsert_references(references)
     logging.info(" References inserted")
     storage.upsert_journals(journals)

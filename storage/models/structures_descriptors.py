@@ -1,5 +1,5 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Integer, String, Index, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
 from storage.models.base import Base
 
@@ -7,13 +7,14 @@ from storage.models.base import Base
 class StructuresDescriptors(Base):
     __tablename__ = "structures_descriptors"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    smiles: Mapped[str]
-    # TODO decide how to add the whole dict
+    # TODO this has not been tested, probably not working
+    id = Column(Integer, primary_key=True)
+    structure_id = Column(Integer, ForeignKey("structures.id"))
+    structure = relationship("Structures", backref="descriptors")
+    descriptor_name = Column(String)
+    descriptor_value = Column(Float)
 
-    # TODO
-    # __table_args__ = (Index("structure_id", "id"),)
+    __table_args__ = (Index("descriptor_id", "descriptor_name"),)
 
-    # TODO
-    # def __repr__(self):
-        # return f"StructuresDescriptors(id={self.id}, smiles={self.smiles})"
+    def __repr__(self):
+        return f"StructuresDescriptors(id={self.id}, structure_id={self.structure_id}, descriptor_name={self.descriptor_name}, descriptor_value={self.descriptor_value})"
