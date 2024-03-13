@@ -30,13 +30,13 @@ def find_structures_bytes_ranges(mmapped_file: mmap.mmap) -> Dict[int, Tuple[int
 
 def read_selected_ranges(
     mmapped_file: mmap.mmap, ranges_to_read: List[Tuple[int, int]]
-) -> List[str]:
+) -> str:
     selected_lines: Deque[str] = deque()
 
     for start, end in ranges_to_read:
         selected_lines.append(mmapped_file[start:end].decode())
 
-    return list(selected_lines)
+    return "".join(selected_lines)
 
 
 def write_mols_to_sdf(path: Path, sdf_blocks: Iterable[Tuple[int, str]]) -> None:

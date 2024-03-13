@@ -9,12 +9,10 @@ import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
-from api.models import (
-    ReferenceObject,
-    StructureObject,
-    TaxonObject,
-)
+
+from api.models import ReferenceObject, StructureObject, TaxonObject
 from chemistry_helpers import fingerprint, standardize
+from sdf_helpers import find_structures_bytes_ranges, mmap_file, read_selected_ranges
 from storage.models import (
     Journals,
     References,
@@ -38,6 +36,8 @@ requests_log.propagate = True
 class DataModel:
     def __init__(self, path: Path = Path("./data")):
         self.db = self.load_all_data(path)
+        self.sdf = self.load_sdf_data(path)
+        self.sdf_ranges = self.load_sdf_ranges(self.sdf)
         self.storage = Storage(path)
         self.taxa_name_db = self.preload_taxa()
         self.path = path
@@ -56,6 +56,18 @@ class DataModel:
         data["structure_library"] = new_lib
         data["structure_library_h"] = new_lib_h
         return data
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def load_sdf_data(cls, path: Path):
+        mmaped_sdf = mmap_file(path / "lotus.sdf")
+        return mmaped_sdf
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def load_sdf_ranges(cls, sdf):
+        ranges = find_structures_bytes_ranges(sdf)
+        return ranges
 
     ### Taxonomy
     def get_taxon_object_from_dict_of_tids(
@@ -141,10 +153,20 @@ class DataModel:
     def get_structure_object_from_sid(self, sid: int) -> dict | None:
         return self.get_structure_object_from_dict_of_sids([sid])
 
+    def get_structure_sdf_from_dict_of_sids(
+        self, sids: Iterable[int]
+    ) -> Iterable[tuple[int, str]]:
+        ranges = self.sdf_ranges
+        blocks = []
+        for sid in sids:
+            blocks.append(read_selected_ranges(self.sdf, [ranges[sid]]))
+        return "".join(blocks)
+
     def get_structure_object_from_dict_of_sids(
         self,
         sids: Iterable[int],
         descriptors: bool | dict = False,
+        sdf: bool = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
             if descriptors == True:
@@ -178,6 +200,10 @@ class DataModel:
                     .filter(Structures.id.in_(sids))
                     .all()
                 )
+            if sdf:
+                blocks = self.get_structure_sdf_from_dict_of_sids(sids)
+            else:
+                blocks = None
             if result:
                 return {
                     row.id: StructureObject(
@@ -188,6 +214,7 @@ class DataModel:
                         inchikey=row.inchikey,
                         inchikey_no_stereo=row.inchikey_no_stereo,
                         formula=row.formula,
+                        sdf=blocks,
                     )
                     for row in result
                 }

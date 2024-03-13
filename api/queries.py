@@ -1,7 +1,7 @@
 import logging
+from datetime import datetime
 from typing import Any
 
-from datetime import datetime
 from fastapi import HTTPException
 
 from api.models import (
@@ -91,7 +91,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
-    sdf = item.structure.option.sdf
     desc = item.structure.option.descriptors
 
     args = len([param for param in [wid, molecule, formula] if param is not None])
@@ -279,7 +278,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
     )
 
     return dm.get_structure_object_from_dict_of_sids(
-        ids, item.structure.option.descriptors
+        ids, item.structure.option.descriptors, item.structure.option.sdf
     )
 
 

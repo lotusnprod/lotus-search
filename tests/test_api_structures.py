@@ -100,6 +100,27 @@ class TestApiStructures:
         assert result.count == 1
         assert result.objects[3].smiles == "C"
 
+    async def test_search_structures_sdf(self, data_model):
+        item = Item(
+            structure={
+                "molecule": "C([H])([H])([H])([H])",
+                "option": {
+                    "sdf": True,
+                    "substructure_search": False,
+                },
+            },
+            limit=10,
+            modeEnum="objects",
+        )
+        result = await search_structures(item=item, dm=data_model)
+        assert result.count == 1
+        assert (
+            result.objects[3].sdf
+            == "\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"
+        )
+
+    # TODO test for multiple ones (SDF)
+
     async def test_search_structures_by_substructure_limits(self, data_model):
         item = Item(
             structure={"molecule": "C", "option": {"substructure_search": True}},
