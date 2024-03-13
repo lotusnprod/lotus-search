@@ -137,8 +137,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     detail=f"The formula given is invalid: {formula}",
                 )
 
-        # TODO if sdf
-
         # TODO if desc(riptors)
 
         return structures
@@ -278,7 +276,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
     )
 
     return dm.get_structure_object_from_dict_of_sids(
-        ids, item.structure.option.descriptors, item.structure.option.sdf
+        ids, item.structure.option.descriptors
     )
 
 

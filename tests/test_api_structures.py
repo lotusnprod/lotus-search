@@ -115,11 +115,24 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert (
-            result.objects[3].sdf
+            result.sdf
             == "\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"
         )
 
-    # TODO test for multiple ones (SDF)
+    async def test_search_structures_sdf_multiple(self, data_model):
+        item = Item(
+            structure={
+                "molecule": "C([H])([H])([H])",
+                "option": {"sdf": True, "substructure_search": True},
+            },
+            limit=10,
+            modeEnum="objects",
+        )
+        result = await search_structures(item=item, dm=data_model)
+        assert (
+            result.sdf
+            == "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  1  1  1\n  2  3  1  0\n  2  4  1  0\nM  END\n>  <WID>  (1) \n1\n\n\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  1  1  6\n  2  3  1  0\n  2  4  1  0\nM  END\n>  <WID>  (2) \n2\n\n\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"
+        )
 
     async def test_search_structures_by_substructure_limits(self, data_model):
         item = Item(

@@ -110,12 +110,12 @@ class StructureObject(BaseModel):
     inchikey_no_stereo: str
     formula: str
     descriptors: Optional[Dict] = None
-    sdf: Optional[str] = None
 
 
 class StructureResult(BaseModel):
     ids: List[int]
     objects: Optional[Dict[int, StructureObject]] = None
+    sdf: Optional[str] = None
     count: Optional[int]
     description: Optional[str]
 

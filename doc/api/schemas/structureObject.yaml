@@ -30,11 +30,6 @@ properties:
       Molecular formula
     example: "C16H22O9"
     type: string
-  sdf:
-    description: |
-      SDF
-    example: "\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"
-    type: string
   smiles:
     description: |
       SMILES (with stereochemistry)

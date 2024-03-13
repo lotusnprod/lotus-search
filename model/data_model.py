@@ -166,7 +166,6 @@ class DataModel:
         self,
         sids: Iterable[int],
         descriptors: bool | dict = False,
-        sdf: bool = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
             if descriptors == True:
@@ -200,10 +199,6 @@ class DataModel:
                     .filter(Structures.id.in_(sids))
                     .all()
                 )
-            if sdf:
-                blocks = self.get_structure_sdf_from_dict_of_sids(sids)
-            else:
-                blocks = None
             if result:
                 return {
                     row.id: StructureObject(
@@ -214,7 +209,6 @@ class DataModel:
                         inchikey=row.inchikey,
                         inchikey_no_stereo=row.inchikey_no_stereo,
                         formula=row.formula,
-                        sdf=blocks,
                     )
                     for row in result
                 }
