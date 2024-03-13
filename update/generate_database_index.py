@@ -165,7 +165,7 @@ def run(path: Path) -> None:
         for rank in ranks:
             taxo_ranks.append({"id": taxon, "rank_id": rank})
     logging.info(" Processed taxa ranks")
-    
+
     storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
     storage.upsert_triplets(triplets)

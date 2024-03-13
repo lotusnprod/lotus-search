@@ -84,7 +84,9 @@ class Storage:
             session.commit()
 
     # TODO this has not been tested, probably not working
-    def upsert_structures_descriptors(self, descriptors: list[dict[str, object]]) -> None:
+    def upsert_structures_descriptors(
+        self, descriptors: list[dict[str, object]]
+    ) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(descriptors), self.list_limit // 2):
                 session.execute(
