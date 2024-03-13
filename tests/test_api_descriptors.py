@@ -1,5 +1,4 @@
 import pytest
-
 from rdkit.Chem import Descriptors
 
 from api.api import get_descriptors
