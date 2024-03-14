@@ -108,6 +108,18 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
             else:
                 return set()
 
+        if desc:
+            try:
+                print("TODO")
+                # results = dm.get_structure_with_descriptors(descriptors)
+                # structures = {_id for _id, _ in results}
+            except ValueError:
+                # TODO how to handle the diff with the 500 code above?
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"The descriptors given are invalid: {descriptors}",
+                )
+
         if sub:
             try:
                 results = dm.structure_search_substructure(molecule)
@@ -118,6 +130,16 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+
+        elif formula:
+            try:
+                structures = dm.get_structure_with_formula(formula)
+            except ValueError:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"The formula given is invalid: {formula}",
+                )
+
         elif molecule:
             try:
                 results = dm.structure_search(molecule)
@@ -127,17 +149,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-
-        else:
-            try:
-                structures = dm.get_structure_with_formula(formula)
-            except ValueError:
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"The formula given is invalid: {formula}",
-                )
-
-        # TODO if desc(riptors)
 
         return structures
 
@@ -276,7 +287,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
     )
 
     return dm.get_structure_object_from_dict_of_sids(
-        ids, item.structure.option.descriptors
+        ids, item.structure.option.return_descriptors
     )
 
 

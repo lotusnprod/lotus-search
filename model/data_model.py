@@ -165,10 +165,11 @@ class DataModel:
     def get_structure_object_from_dict_of_sids(
         self,
         sids: Iterable[int],
-        descriptors: bool | dict = False,
+        return_descriptors: bool = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            if descriptors == True:
+            if return_descriptors:
+                # TODO
                 result = (
                     session.query(
                         Structures.id,
@@ -179,12 +180,12 @@ class DataModel:
                         Structures.inchikey,
                         Structures.inchikey_no_stereo,
                         Structures.formula,
+                        # TODO descriptors
                     )
                     .filter(Structures.id.in_(sids))
                     .all()
                 )
             else:
-                # TODO also return descriptors based on the smiles in the respective table (TODO)
                 result = (
                     session.query(
                         Structures.id,
@@ -209,11 +210,17 @@ class DataModel:
                         inchikey=row.inchikey,
                         inchikey_no_stereo=row.inchikey_no_stereo,
                         formula=row.formula,
+                        # TODO descriptors
                     )
                     for row in result
                 }
             else:
                 return {}
+
+    # def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
+    #     with self.storage.session() as session:
+    #         result = TODO
+    #         return {row[0] for row in result}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:
