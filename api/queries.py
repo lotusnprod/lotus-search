@@ -108,17 +108,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
             else:
                 return set()
 
-        if desc:
-            try:
-                results = dm.get_structure_with_descriptors(descriptors)
-                structures = {_id for _id, _ in results}
-            except ValueError:
-                # TODO how to handle the diff with the 500 code above?
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"The descriptors given are invalid: {descriptors}",
-                )
-
         if sub:
             try:
                 results = dm.structure_search_substructure(molecule)
@@ -148,6 +137,24 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+
+        if desc:
+            try:
+                results = dm.get_structure_with_descriptors(descriptors)
+                if results is not None:
+                    structures_with_descriptors = {_id for _id, _ in results}
+                else:
+                    structures_with_descriptors = None
+            except ValueError:
+                # TODO how to handle the diff with the 500 code above?
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"The descriptors given are invalid: {descriptors}",
+                )
+            if structures is None:
+                structures = structures_with_descriptors
+            else:
+                structures &= structures_with_descriptors
 
         return structures
 

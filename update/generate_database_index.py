@@ -106,7 +106,6 @@ def run(path: Path) -> None:
     structures = list(structures_dict.values())
     logging.info(" Processed structures")
 
-    # TODO this has not been tested, probably not working
     descriptors_dict = {}
     with open(path / "descriptors_rdkit.csv", "r") as f:
         reader = csv.reader(f)
@@ -116,14 +115,14 @@ def run(path: Path) -> None:
         descriptor_indices = range(1, len(headers))
         for row in reader:
             smiles = row[smiles_index]
-            # Assuming SMILES strings are unique identifiers
-            struct_id = smiles
-            descriptors_dict[struct_id] = {
-                headers[i]: float(row[i]) for i in descriptor_indices
-            }
-            # In case
-            descriptors_dict[struct_id]["smiles"] = smiles
-    descriptors = list(descriptors_dict.values())
+            # Create a dictionary for the current structure with SMILES as key
+            struct_data = {}
+            for i in descriptor_indices:
+                struct_data[headers[i]] = float(row[i])
+            # Add SMILES as a separate key
+            struct_data["smiles"] = smiles
+            # Add the structure data to the descriptors dictionary
+            descriptors_dict[smiles] = struct_data
     logging.info("Processed descriptors")
 
     with open(path / "taxa_names.csv", "r") as f:
@@ -172,7 +171,7 @@ def run(path: Path) -> None:
     logging.info(" Triplets inserted")
     storage.upsert_structures(structures)
     logging.info(" Structures inserted")
-    storage.upsert_structures_descriptors(descriptors)
+    storage.upsert_structures_descriptors(descriptors_dict)
     logging.info(" Structures descriptors inserted")
     storage.upsert_references(references)
     logging.info(" References inserted")

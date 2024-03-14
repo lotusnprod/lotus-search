@@ -36,6 +36,7 @@ requests_log.propagate = True
 class DataModel:
     def __init__(self, path: Path = Path("./data")):
         self.db = self.load_all_data(path)
+        # TODO add descriptors
         self.sdf = self.load_sdf_data(path)
         self.sdf_ranges = self.load_sdf_ranges(self.sdf)
         self.storage = Storage(path)
@@ -153,6 +154,16 @@ class DataModel:
     def get_structure_object_from_sid(self, sid: int) -> dict | None:
         return self.get_structure_object_from_dict_of_sids([sid])
 
+    def get_structure_descriptors_from_dict_of_sids(
+        self, sids: Iterable[int]
+    ) -> Iterable[tuple[int, str]]:
+        return print("TODO")
+        # ranges = self.sdf_ranges
+        # blocks = []
+        # for sid in sids:
+        #     blocks.append(read_selected_ranges(self.sdf, [ranges[sid]]))
+        # return "".join(blocks)
+
     def get_structure_sdf_from_dict_of_sids(
         self, sids: Iterable[int]
     ) -> Iterable[tuple[int, str]]:
@@ -168,38 +179,24 @@ class DataModel:
         return_descriptors: bool = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
-            if return_descriptors:
-                # TODO
-                result = (
-                    session.query(
-                        Structures.id,
-                        Structures.smiles,
-                        Structures.smiles_no_stereo,
-                        Structures.inchi,
-                        Structures.inchi_no_stereo,
-                        Structures.inchikey,
-                        Structures.inchikey_no_stereo,
-                        Structures.formula,
-                        # TODO descriptors
-                    )
-                    .filter(Structures.id.in_(sids))
-                    .all()
+            # TODO
+            # descriptors = {}
+            # if return_descriptors:
+            #     descriptors = self.get_structure_descriptors_from_dict_of_sids(sids)
+            result = (
+                session.query(
+                    Structures.id,
+                    Structures.smiles,
+                    Structures.smiles_no_stereo,
+                    Structures.inchi,
+                    Structures.inchi_no_stereo,
+                    Structures.inchikey,
+                    Structures.inchikey_no_stereo,
+                    Structures.formula,
                 )
-            else:
-                result = (
-                    session.query(
-                        Structures.id,
-                        Structures.smiles,
-                        Structures.smiles_no_stereo,
-                        Structures.inchi,
-                        Structures.inchi_no_stereo,
-                        Structures.inchikey,
-                        Structures.inchikey_no_stereo,
-                        Structures.formula,
-                    )
-                    .filter(Structures.id.in_(sids))
-                    .all()
-                )
+                .filter(Structures.id.in_(sids))
+                .all()
+            )
             if result:
                 return {
                     row.id: StructureObject(
@@ -210,7 +207,7 @@ class DataModel:
                         inchikey=row.inchikey,
                         inchikey_no_stereo=row.inchikey_no_stereo,
                         formula=row.formula,
-                        # TODO descriptors
+                        # descriptors=descriptors[row.id]
                     )
                     for row in result
                 }
@@ -221,37 +218,36 @@ class DataModel:
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         with self.storage.session() as session:
             query = session.query(Structures.id)
-            print(query)
 
             # Separate descriptors into min and max dictionaries
             min_descriptors = {
-                key: value for key, value in descriptors.items() if key.endswith("_min")
+                key[:-4]: value
+                for key, value in descriptors.items()
+                if key.endswith("_min")
             }
-            print(min_descriptors)
             max_descriptors = {
-                key: value for key, value in descriptors.items() if key.endswith("_max")
+                key[:-4]: value
+                for key, value in descriptors.items()
+                if key.endswith("_max")
             }
-            print(max_descriptors)
 
             # Create conditions for min and max values separately
             min_conditions = []
             for descriptor_name, min_value in min_descriptors.items():
-                actual_name = descriptor_name[:-4]  # Remove '_min' suffix
                 min_conditions.append(
                     and_(
                         Structures.id == StructuresDescriptors.structure_id,
-                        StructuresDescriptors.descriptor_name == actual_name,
+                        StructuresDescriptors.descriptor_name == descriptor_name,
                         StructuresDescriptors.descriptor_value >= min_value,
                     )
                 )
 
             max_conditions = []
             for descriptor_name, max_value in max_descriptors.items():
-                actual_name = descriptor_name[:-4]  # Remove '_max' suffix
                 max_conditions.append(
                     and_(
                         Structures.id == StructuresDescriptors.structure_id,
-                        StructuresDescriptors.descriptor_name == actual_name,
+                        StructuresDescriptors.descriptor_name == descriptor_name,
                         StructuresDescriptors.descriptor_value <= max_value,
                     )
                 )
@@ -262,7 +258,8 @@ class DataModel:
                 combined_conditions.append(or_(min_condition, max_condition))
 
             # Join all combined conditions using AND
-            query = query.join(StructuresDescriptors, and_(*combined_conditions))
+            if combined_conditions:
+                query = query.join(StructuresDescriptors, and_(*combined_conditions))
 
             query = query.group_by(Structures.id).having(
                 func.count() == len(descriptors)
