@@ -110,9 +110,8 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
         if desc:
             try:
-                print("TODO")
-                # results = dm.get_structure_with_descriptors(descriptors)
-                # structures = {_id for _id, _ in results}
+                results = dm.get_structure_with_descriptors(descriptors)
+                structures = {_id for _id, _ in results}
             except ValueError:
                 # TODO how to handle the diff with the 500 code above?
                 raise HTTPException(

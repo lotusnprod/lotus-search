@@ -11,7 +11,7 @@ from api.models import (
     TaxonOption,
 )
 
-from .common import data_model
+from tests.common import data_model
 
 
 @pytest.mark.usefixtures("data_model")

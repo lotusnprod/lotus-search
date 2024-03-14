@@ -217,10 +217,58 @@ class DataModel:
             else:
                 return {}
 
-    # def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
-    #     with self.storage.session() as session:
-    #         result = TODO
-    #         return {row[0] for row in result}
+    # TODO THIS IS NOT WORKING FOR NOW
+    def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
+        with self.storage.session() as session:
+            query = session.query(Structures.id)
+            print(query)
+
+            # Separate descriptors into min and max dictionaries
+            min_descriptors = {
+                key: value for key, value in descriptors.items() if key.endswith("_min")
+            }
+            print(min_descriptors)
+            max_descriptors = {
+                key: value for key, value in descriptors.items() if key.endswith("_max")
+            }
+            print(max_descriptors)
+
+            # Create conditions for min and max values separately
+            min_conditions = []
+            for descriptor_name, min_value in min_descriptors.items():
+                actual_name = descriptor_name[:-4]  # Remove '_min' suffix
+                min_conditions.append(
+                    and_(
+                        Structures.id == StructuresDescriptors.structure_id,
+                        StructuresDescriptors.descriptor_name == actual_name,
+                        StructuresDescriptors.descriptor_value >= min_value,
+                    )
+                )
+
+            max_conditions = []
+            for descriptor_name, max_value in max_descriptors.items():
+                actual_name = descriptor_name[:-4]  # Remove '_max' suffix
+                max_conditions.append(
+                    and_(
+                        Structures.id == StructuresDescriptors.structure_id,
+                        StructuresDescriptors.descriptor_name == actual_name,
+                        StructuresDescriptors.descriptor_value <= max_value,
+                    )
+                )
+
+            # Combine min and max conditions using OR for each descriptor
+            combined_conditions = []
+            for min_condition, max_condition in zip(min_conditions, max_conditions):
+                combined_conditions.append(or_(min_condition, max_condition))
+
+            # Join all combined conditions using AND
+            query = query.join(StructuresDescriptors, and_(*combined_conditions))
+
+            query = query.group_by(Structures.id).having(
+                func.count() == len(descriptors)
+            )
+            result = query.all()
+            return {row[0] for row in result}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:

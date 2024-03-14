@@ -11,7 +11,7 @@ from api.models import (
     TaxonOption,
 )
 
-from .common import data_model
+from tests.common import data_model
 
 
 @pytest.mark.usefixtures("data_model")
@@ -99,6 +99,70 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         assert result.objects[3].smiles == "C"
+
+    # TODO THESE ARE NOT WORKING FOR NOW
+    # async def test_search_structures_by_descriptor_simple(self, data_model):
+    #     item = Item(
+    #         structure={
+    #             "option": {
+    #                 "descriptors": {
+    #                     "NumHAcceptors_min": 1,
+    #                 }
+    #             },
+    #         },
+    #         limit=10,
+    #         modeEnum="objects",
+    #     )
+    #     result = await search_structures(item=item, dm=data_model)
+    #     assert result.count == 3
+
+    # async def test_search_structures_by_descriptor_double(self, data_model):
+    #     item = Item(
+    #         structure={
+    #             "option": {
+    #                 "descriptors": {
+    #                     "NumHAcceptors_min": 1,
+    #                     "NumHeteroatoms_max": 2,
+    #                 }
+    #             },
+    #         },
+    #         limit=10,
+    #         modeEnum="objects",
+    #     )
+    #     result = await search_structures(item=item, dm=data_model)
+    #     assert result.count == 2
+
+    # async def test_search_structures_by_descriptor_triple(self, data_model):
+    #     item = Item(
+    #         structure={
+    #             "option": {
+    #                 "descriptors": {
+    #                     "NumHAcceptors_min": 1,
+    #                     "NumHeteroatoms_max": 2,
+    #                     "MolLogP_max": -1,
+    #                 }
+    #             },
+    #         },
+    #         limit=10,
+    #         modeEnum="objects",
+    #     )
+    #     result = await search_structures(item=item, dm=data_model)
+    #     assert result.count == 0
+
+    # async def test_search_structures_descriptors(self, data_model):
+    #     item = Item(
+    #         structure={
+    #             "wid": 1,
+    #             "option": {
+    #                 "return_descriptors": True,
+    #             },
+    #         },
+    #         limit=10,
+    #         modeEnum="objects",
+    #     )
+    #     result = await search_structures(item=item, dm=data_model)
+    #     assert result.count == 1
+    #     assert result.objects[1].descriptors.MaxAbsEStateIndex == 7.833333333333334
 
     async def test_search_structures_sdf(self, data_model):
         item = Item(
