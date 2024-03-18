@@ -139,6 +139,7 @@ def run(path: Path) -> None:
         journals.append({"id": journal, "title": title})
 
     logging.info(" Processed dicts")
+    logging.info(" Generating taxonomy, might take long")
     storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
 
