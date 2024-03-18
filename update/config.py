@@ -12,16 +12,6 @@ MergingGroup = Group(name="merging", parallel=False)
 
 TASKS = [
     Task(
-        name="lotus_enhanced",
-        f=download_query_as_csv.run,
-        group=DownloadGroup,
-        params={
-            "query_file": "update/queries/triplets_enhanced.rq",
-            "url": "https://qlever.cs.uni-freiburg.de/api/wikidata",
-            "output_file": "lotus_enhanced.csv",
-        },
-    ),
-    Task(
         name="classes_cxsmiles",
         f=download_query_as_csv.run,
         group=DownloadGroup,
