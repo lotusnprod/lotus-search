@@ -233,7 +233,11 @@ class DataModel:
     # TODO THIS IS NOT WORKING FOR NOW
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         with self.storage.session() as session:
-            query = session.query(StructuresDescriptors.structure_id).distinct()
+            query = session.query(
+                StructuresDescriptors.structure_id,
+                StructuresDescriptors.descriptor_name,
+                StructuresDescriptors.descriptor_value,
+            )
 
             # Separate descriptors into min and max dictionaries
             min_descriptors = {}
@@ -248,15 +252,20 @@ class DataModel:
 
             # Process min descriptors
             for descriptor_name, min_value in min_descriptors.items():
-                min_condition = StructuresDescriptors.descriptor_name == descriptor_name
-                min_condition &= StructuresDescriptors.descriptor_value >= min_value
+                min_condition = and_(
+                    StructuresDescriptors.descriptor_name == descriptor_name,
+                    StructuresDescriptors.descriptor_value >= min_value,
+                )
                 combined_conditions.append(min_condition)
 
             # Process max descriptors
             for descriptor_name, max_value in max_descriptors.items():
-                max_condition = StructuresDescriptors.descriptor_name == descriptor_name
-                max_condition &= StructuresDescriptors.descriptor_value <= max_value
+                max_condition = and_(
+                    StructuresDescriptors.descriptor_name == descriptor_name,
+                    StructuresDescriptors.descriptor_value <= max_value,
+                )
                 combined_conditions.append(max_condition)
+
             # Combine all conditions using logical AND
             if combined_conditions:
                 query = query.filter(and_(*combined_conditions))
