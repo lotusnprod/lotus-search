@@ -60,7 +60,10 @@ def run(path: Path) -> None:
                 "date": row[date_index],
                 "journal": row[journal_index],
             }
-            journals_dict[int(row[journal_index])] = row[journal_title_index]
+            journal_id = int(row[journal_index])
+            journal_title = row[journal_title_index]
+            if journal_id not in journals_dict:
+                journals_dict[journal_id] = journal_title
 
     logging.info("Processed references and journals")
 
