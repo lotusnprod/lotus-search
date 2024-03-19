@@ -6,9 +6,10 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?reference ?reference_doi ?reference_title ?reference_date ?reference_journal ?journal_title WHERE {
   [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference. hint:Prior hint:rangeSafe true.
-  ?reference wdt:P356 ?reference_doi;
-             wdt:P1476 ?reference_title;
-             wdt:P577 ?reference_date;
-             wdt:P1433 ?reference_journal.
+  ?reference wdt:P356  ?reference_doi.
+  ?reference wdt:P1476 ?reference_title.
+  ?reference wdt:P577  ?reference_date.
+  ?reference wdt:P1433 ?reference_journal.
+  ?reference_journal wdt:P1476 ?journal_title.
 }
 # LIMIT 200000
