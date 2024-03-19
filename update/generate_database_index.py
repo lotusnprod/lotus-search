@@ -60,21 +60,11 @@ def run(path: Path) -> None:
                 "date": row[date_index],
                 "journal": row[journal_index],
             }
-            journals_dict[int(row[journal_index])] = row[journal_title_index]
-    references = []
-    for ref, values in references_dict.items():
-        references.append(
-            {
-                "id": ref,
-                "doi": values["doi"],
-                "title": values["title"],
-                "date": values["date"],
-                "journal": values["journal"],
-            }
-        )
-    journals = []
-    for journal, title in journals_dict.items():
-        journals.append({"id": journal, "title": title})
+            journal_id = int(row[journal_index])
+            journal_title = row[journal_title_index]
+            if journal_id not in journals_dict:
+                journals_dict[journal_id] = journal_title
+
     logging.info("Processed references and journals")
 
     structures_dict = {}
@@ -159,12 +149,38 @@ def run(path: Path) -> None:
             rank_value = convert_to_int_safe(row[rank_index])
             if rank_value is not None:
                 taxon_ranks_dict[int(row[taxon_index])] = {rank_value}
+
+    logging.info(" Processed taxa ranks")
     taxo_ranks = []
     for taxon, ranks in taxon_ranks_dict.items():
         for rank in ranks:
             taxo_ranks.append({"id": taxon, "rank_id": rank})
-    logging.info(" Processed taxa ranks")
+    taxo_names = []
+    for taxon, name in taxo_names_dict.items():
+        taxo_names.append({"id": taxon, "name": name})
 
+    structures = []
+    for struct, smiles in structures_dict.items():
+        structures.append({"id": struct, "smiles": smiles})
+
+    references = []
+    for ref, values in references_dict.items():
+        references.append(
+            {
+                "id": ref,
+                "doi": values["doi"],
+                "title": values["title"],
+                "date": values["date"],
+                "journal": values["journal"],
+            }
+        )
+
+    journals = []
+    for journal, title in journals_dict.items():
+        journals.append({"id": journal, "title": title})
+
+    logging.info(" Processed dicts")
+    logging.info(" Generating taxonomy, might take long")
     storage.upsert_taxo_parenting(generate_taxon_parents_with_distance(path))
     logging.info(" Taxo parenting inserted")
     storage.upsert_triplets(triplets)
