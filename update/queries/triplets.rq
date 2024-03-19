@@ -11,4 +11,4 @@ SELECT ?structure ?taxon ?reference WHERE {
               (prov:wasDerivedFrom/pr:P248) ?reference;
     ]. hint:Prior hint:rangeSafe true.
 }
-LIMIT 750000
+# LIMIT 750000

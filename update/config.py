@@ -57,15 +57,6 @@ TASKS = [
         },
     ),
     Task(
-        name="journals",
-        f=download_query_as_csv.run,
-        group=DownloadGroup,
-        params={
-            "query_file": "update/queries/journals.rq",
-            "output_file": "journals.csv",
-        },
-    ),
-    Task(
         name="ranks_names",
         f=download_query_as_csv.run,
         group=DownloadGroup,
