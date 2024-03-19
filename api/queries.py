@@ -91,7 +91,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
-    desc = item.structure.option.descriptors
+    descriptors = item.structure.option.descriptors
 
     args = len([param for param in [wid, molecule, formula] if param is not None])
 
@@ -138,13 +138,10 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     detail=f"The structure given is invalid: {molecule}",
                 )
 
-        if desc:
+        if descriptors:
             try:
                 results = dm.get_structure_with_descriptors(descriptors)
-                if results is not None:
-                    structures_with_descriptors = {_id for _id, _ in results}
-                else:
-                    structures_with_descriptors = None
+                structures_with_descriptors = {_id for _id, _ in results}
             except ValueError:
                 # TODO how to handle the diff with the 500 code above?
                 raise HTTPException(

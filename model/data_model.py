@@ -9,6 +9,7 @@ import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
+from sqlalchemy import and_, or_, func
 
 from api.models import ReferenceObject, StructureObject, TaxonObject
 from chemistry_helpers import fingerprint, standardize
@@ -17,6 +18,7 @@ from storage.models import (
     Journals,
     References,
     Structures,
+    StructuresDescriptors,
     TaxoNames,
     TaxoParents,
     TaxoRankNames,
@@ -157,12 +159,27 @@ class DataModel:
     def get_structure_descriptors_from_dict_of_sids(
         self, sids: Iterable[int]
     ) -> Iterable[tuple[int, str]]:
-        return print("TODO")
-        # ranges = self.sdf_ranges
-        # blocks = []
-        # for sid in sids:
-        #     blocks.append(read_selected_ranges(self.sdf, [ranges[sid]]))
-        # return "".join(blocks)
+        # TODO THIS HAS NOT BEEN TESTED AND IS PROBABLY NOT WORKING
+        with self.storage.session() as session:
+            result = (
+                session.query(
+                    StructuresDescriptors.descriptor_name,
+                    StructuresDescriptors.descriptor_value,
+                )
+                .filter(StructuresDescriptors.structure_id.in_(sids))
+                .all()
+            )
+            print(result)
+            result_dict = {}
+            if result:
+                for descriptor_name, descriptor_value in result:
+                    if descriptor_name in result_dict:
+                        result_dict[descriptor_name].append(descriptor_value)
+                    else:
+                        result_dict[descriptor_name] = [descriptor_value]
+                return result_dict
+            else:
+                return result_dict
 
     def get_structure_sdf_from_dict_of_sids(
         self, sids: Iterable[int]
@@ -217,9 +234,6 @@ class DataModel:
     # TODO THIS IS NOT WORKING FOR NOW
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         with self.storage.session() as session:
-            query = session.query(Structures.id)
-
-            # Separate descriptors into min and max dictionaries
             min_descriptors = {
                 key[:-4]: value
                 for key, value in descriptors.items()
@@ -231,41 +245,21 @@ class DataModel:
                 if key.endswith("_max")
             }
 
-            # Create conditions for min and max values separately
-            min_conditions = []
+            conditions = []
             for descriptor_name, min_value in min_descriptors.items():
-                min_conditions.append(
-                    and_(
-                        Structures.id == StructuresDescriptors.structure_id,
-                        StructuresDescriptors.descriptor_name == descriptor_name,
-                        StructuresDescriptors.descriptor_value >= min_value,
-                    )
-                )
+                max_value = max_descriptors.get(descriptor_name)
+                condition = StructuresDescriptors.descriptor_name == descriptor_name
+                condition &= StructuresDescriptors.descriptor_value >= min_value
+                if max_value is not None:
+                    condition &= StructuresDescriptors.descriptor_value <= max_value
+                conditions.append(condition)
 
-            max_conditions = []
-            for descriptor_name, max_value in max_descriptors.items():
-                max_conditions.append(
-                    and_(
-                        Structures.id == StructuresDescriptors.structure_id,
-                        StructuresDescriptors.descriptor_name == descriptor_name,
-                        StructuresDescriptors.descriptor_value <= max_value,
-                    )
-                )
-
-            # Combine min and max conditions using OR for each descriptor
-            combined_conditions = []
-            for min_condition, max_condition in zip(min_conditions, max_conditions):
-                combined_conditions.append(or_(min_condition, max_condition))
-
-            # Join all combined conditions using AND
-            if combined_conditions:
-                query = query.join(StructuresDescriptors, and_(*combined_conditions))
-
-            query = query.group_by(Structures.id).having(
-                func.count() == len(descriptors)
+            result = (
+                session.query(StructuresDescriptors.structure_id)
+                .filter(and_(*conditions))
             )
-            result = query.all()
-            return {row[0] for row in result}
+
+            return {row[0] for row in result.all()}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:
