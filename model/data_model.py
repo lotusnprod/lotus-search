@@ -233,11 +233,7 @@ class DataModel:
     # TODO THIS IS NOT WORKING FOR NOW
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         with self.storage.session() as session:
-            query = session.query(
-                StructuresDescriptors.structure_id,
-                StructuresDescriptors.descriptor_name,
-                StructuresDescriptors.descriptor_value,
-            )
+            query = session.query(StructuresDescriptors.structure_id)
 
             # Separate descriptors into min and max dictionaries
             min_descriptors = {}
@@ -246,31 +242,35 @@ class DataModel:
                 descriptor_name = key[:-4]  # Remove "_min" or "_max" suffix
                 if key.endswith("_min"):
                     min_descriptors[descriptor_name] = value
-                elif key.endswith("_max"):
+                if key.endswith("_max"):
                     max_descriptors[descriptor_name] = value
-            combined_conditions = []
 
-            # Process min descriptors
+            # Apply min and max filters separately
+            query_min = None
             for descriptor_name, min_value in min_descriptors.items():
-                min_condition = and_(
+                min_condition = (
                     StructuresDescriptors.descriptor_name == descriptor_name,
                     StructuresDescriptors.descriptor_value >= min_value,
                 )
-                combined_conditions.append(min_condition)
+                query_min = query.filter(and_(*min_condition))
 
-            # Process max descriptors
+            query_max = None
             for descriptor_name, max_value in max_descriptors.items():
-                max_condition = and_(
+                max_condition = (
                     StructuresDescriptors.descriptor_name == descriptor_name,
                     StructuresDescriptors.descriptor_value <= max_value,
                 )
-                combined_conditions.append(max_condition)
+                query_max = query.filter(and_(*max_condition))
 
-            # Combine all conditions using logical AND
-            if combined_conditions:
-                query = query.filter(and_(*combined_conditions))
-
-            result = query.all()
+            # Intersect the results of min and max queries
+            if query_min is not None and query_max is not None:
+                result = query_min.intersect(query_max).all()
+            elif query_min is not None:
+                result = query_min.all()
+            elif query_max is not None:
+                result = query_max.all()
+            else:
+                result = query.all()
             return {row[0] for row in result}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
