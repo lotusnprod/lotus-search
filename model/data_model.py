@@ -9,16 +9,16 @@ import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
 from sqlalchemy.orm import aliased
-from api.models import (
-    ReferenceObject,
-    StructureObject,
-    TaxonObject,
-)
+from sqlalchemy import and_, or_, func
+
+from api.models import ReferenceObject, StructureObject, TaxonObject
 from chemistry_helpers import fingerprint, standardize
+from sdf_helpers import find_structures_bytes_ranges, mmap_file, read_selected_ranges
 from storage.models import (
     Journals,
     References,
     Structures,
+    StructuresDescriptors,
     TaxoNames,
     TaxoParents,
     TaxoRankNames,
@@ -38,6 +38,9 @@ requests_log.propagate = True
 class DataModel:
     def __init__(self, path: Path = Path("./data")):
         self.db = self.load_all_data(path)
+        # TODO add descriptors
+        self.sdf = self.load_sdf_data(path)
+        self.sdf_ranges = self.load_sdf_ranges(self.sdf)
         self.storage = Storage(path)
         self.taxa_name_db = self.preload_taxa()
         self.path = path
@@ -56,6 +59,18 @@ class DataModel:
         data["structure_library"] = new_lib
         data["structure_library_h"] = new_lib_h
         return data
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def load_sdf_data(cls, path: Path):
+        mmaped_sdf = mmap_file(path / "lotus.sdf")
+        return mmaped_sdf
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def load_sdf_ranges(cls, sdf):
+        ranges = find_structures_bytes_ranges(sdf)
+        return ranges
 
     ### Taxonomy
     def get_taxon_object_from_dict_of_tids(
@@ -141,20 +156,59 @@ class DataModel:
     def get_structure_object_from_sid(self, sid: int) -> dict | None:
         return self.get_structure_object_from_dict_of_sids([sid])
 
-    def get_structure_object_from_dict_of_sids(
+    def get_structure_descriptors_from_dict_of_sids(
         self, sids: Iterable[int]
+    ) -> Iterable[tuple[int, str]]:
+        # TODO THIS HAS NOT BEEN TESTED ON MULTIPLES
+        with self.storage.session() as session:
+            result = (
+                session.query(
+                    StructuresDescriptors.descriptor_name,
+                    StructuresDescriptors.descriptor_value,
+                )
+                .filter(StructuresDescriptors.structure_id.in_(sids))
+                .distinct()
+                .all()
+            )
+            result_dict = {}
+            if result:
+                for descriptor_name, descriptor_value in result:
+                    if descriptor_name in result_dict:
+                        result_dict[descriptor_name].append(descriptor_value)
+                    else:
+                        result_dict[descriptor_name] = [descriptor_value]
+                return result_dict
+            else:
+                return result_dict
+
+    def get_structure_sdf_from_dict_of_sids(
+        self, sids: Iterable[int]
+    ) -> Iterable[tuple[int, str]]:
+        ranges = self.sdf_ranges
+        blocks = []
+        for sid in sids:
+            blocks.append(read_selected_ranges(self.sdf, [ranges[sid]]))
+        return "".join(blocks)
+
+    def get_structure_object_from_dict_of_sids(
+        self,
+        sids: Iterable[int],
+        return_descriptors: bool = False,
     ) -> dict[int, StructureObject]:
         with self.storage.session() as session:
+            descriptors = {}
+            if return_descriptors:
+                descriptors = self.get_structure_descriptors_from_dict_of_sids(sids)
             result = (
                 session.query(
                     Structures.id,
                     Structures.smiles,
-                    # Structures.smiles_no_stereo,
-                    # Structures.inchi,
-                    # Structures.inchi_no_stereo,
-                    # Structures.inchikey,
-                    # Structures.inchikey_no_stereo,
-                    # Structures.formula,
+                    Structures.smiles_no_stereo,
+                    Structures.inchi,
+                    Structures.inchi_no_stereo,
+                    Structures.inchikey,
+                    Structures.inchikey_no_stereo,
+                    Structures.formula,
                 )
                 .filter(Structures.id.in_(sids))
                 .all()
@@ -163,17 +217,61 @@ class DataModel:
                 return {
                     row.id: StructureObject(
                         smiles=row.smiles,
-                        # smiles_no_stereo=row.smiles_no_stereo,
-                        # inchi=row.inchi,
-                        # inchi_no_stereo=row.inchi_no_stereo,
-                        # inchikey=row.inchikey,
-                        # inchikey_no_stereo=row.inchikey_no_stereo,
-                        # formula=row.formula,
+                        smiles_no_stereo=row.smiles_no_stereo,
+                        inchi=row.inchi,
+                        inchi_no_stereo=row.inchi_no_stereo,
+                        inchikey=row.inchikey,
+                        inchikey_no_stereo=row.inchikey_no_stereo,
+                        formula=row.formula,
+                        descriptors=descriptors,
                     )
                     for row in result
                 }
             else:
                 return {}
+
+    # TODO THIS IS NOT WORKING FOR NOW
+    def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
+        with self.storage.session() as session:
+            query = session.query(StructuresDescriptors.structure_id)
+
+            # Separate descriptors into min and max dictionaries
+            min_descriptors = {}
+            max_descriptors = {}
+            for key, value in descriptors.items():
+                descriptor_name = key[:-4]  # Remove "_min" or "_max" suffix
+                if key.endswith("_min"):
+                    min_descriptors[descriptor_name] = value
+                if key.endswith("_max"):
+                    max_descriptors[descriptor_name] = value
+
+            # Apply min and max filters separately
+            query_min = None
+            for descriptor_name, min_value in min_descriptors.items():
+                min_condition = (
+                    StructuresDescriptors.descriptor_name == descriptor_name,
+                    StructuresDescriptors.descriptor_value >= min_value,
+                )
+                query_min = query.filter(and_(*min_condition))
+
+            query_max = None
+            for descriptor_name, max_value in max_descriptors.items():
+                max_condition = (
+                    StructuresDescriptors.descriptor_name == descriptor_name,
+                    StructuresDescriptors.descriptor_value <= max_value,
+                )
+                query_max = query.filter(and_(*max_condition))
+
+            # Intersect the results of min and max queries
+            if query_min is not None and query_max is not None:
+                result = query_min.intersect(query_max).all()
+            elif query_min is not None:
+                result = query_min.all()
+            elif query_max is not None:
+                result = query_max.all()
+            else:
+                result = query.all()
+            return {row[0] for row in result}
 
     def get_structure_with_formula(self, formula: str) -> set[int]:
         with self.storage.session() as session:

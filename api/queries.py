@@ -1,7 +1,7 @@
 import logging
+from datetime import datetime
 from typing import Any
 
-from datetime import datetime
 from fastapi import HTTPException
 
 from api.models import (
@@ -88,15 +88,19 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     wid = item.structure.wid
     molecule = item.structure.molecule
+    formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
+    descriptors = item.structure.option.descriptors
 
-    if len([param for param in [wid, molecule] if param is not None]) >= 2:
+    args = len([param for param in [wid, molecule, formula] if param is not None])
+
+    if args > 1:
         raise HTTPException(
             status_code=500,
-            detail=f"Only one of ['wid', 'molecule'] should be provided",
+            detail=f"Only one of ['wid', 'molecule', 'formula'] should be provided",
         )
-    elif molecule is not None or wid is not None:
+    elif args > 0:
         # This needs to be explained in the API doc
         if wid:
             if wid in dm.structures_set():
@@ -114,7 +118,17 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-        else:
+
+        elif formula:
+            try:
+                structures = dm.get_structure_with_formula(formula)
+            except ValueError:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"The formula given is invalid: {formula}",
+                )
+
+        elif molecule:
             try:
                 results = dm.structure_search(molecule)
                 structures = {_id for _id, score in results if score >= sim}
@@ -123,7 +137,22 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=500,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+
         return structures
+
+    if descriptors is not None:
+        try:
+            structures_with_descriptors = dm.get_structure_with_descriptors(descriptors)
+        except ValueError:
+            # TODO how to handle the diff with the 500 code above?
+            raise HTTPException(
+                status_code=500,
+                detail=f"The descriptors given are invalid: {descriptors}",
+            )
+        if structures is None:
+            structures = structures_with_descriptors
+        else:
+            structures &= structures_with_descriptors
 
     return structures
 
@@ -259,7 +288,9 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_structure_object_from_dict_of_sids(ids)
+    return dm.get_structure_object_from_dict_of_sids(
+        ids, item.structure.option.return_descriptors
+    )
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:

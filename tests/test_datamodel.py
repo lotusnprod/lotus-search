@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from .common import data_model, setup_from_fixture
+from tests.common import data_model, setup_from_fixture
 
 
 @pytest.mark.usefixtures("data_model")

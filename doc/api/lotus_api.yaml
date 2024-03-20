@@ -22,6 +22,8 @@ paths:
     $ref: "./paths/autocomplete/taxa/post.yaml"
   /depiction/structure:
     $ref: "./paths/depiction/structure.yaml"
+  /descriptors:
+    $ref: "./paths/descriptors/get.yaml"
 components:
   schemas:
     Item:

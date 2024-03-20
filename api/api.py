@@ -118,7 +118,15 @@ async def search_structures(
 ) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
-    if item.modeEnum == "objects":
+    if item.structure.option.sdf:
+        return StructureResult(
+            ids=dict_items.keys(),
+            objects={sid: value for sid, value in dict_items.items()},
+            sdf=dm.get_structure_sdf_from_dict_of_sids(dict_items),
+            description="Structures matching the query",
+            count=len(dict_items),
+        )
+    elif item.modeEnum == "objects":
         return StructureResult(
             ids=dict_items.keys(),
             objects={sid: value for sid, value in dict_items.items()},
@@ -195,6 +203,14 @@ async def depiction_structure(
             depiction_structure.structure, highlight=depiction_structure.highlight
         )
     }
+
+
+@app.get("/descriptors/")
+@version(1, 0)
+async def get_descriptors():
+    from rdkit.Chem import Descriptors
+
+    return [desc[0] for desc in Descriptors._descList]
 
 
 LOGGING_CONFIG = {
