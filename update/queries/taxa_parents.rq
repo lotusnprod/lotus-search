@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?parent {
   ?taxon wdt:P171 ?parent. hint:Prior hint:rangeSafe true.
 }
-LIMIT 5000000
+# LIMIT 5000000

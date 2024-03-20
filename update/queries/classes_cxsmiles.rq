@@ -17,3 +17,4 @@ SELECT ?class ?class_cxsmiles WHERE {
     ?class wdt:P31 ?instance;
     wdt:P10718 ?class_cxsmiles.
 }
+# LIMIT 10000

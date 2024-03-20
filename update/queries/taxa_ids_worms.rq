@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?taxon_id_worms WHERE {
     ?taxon wdt:P850 ?taxon_id_worms. hint:Prior hint:rangeSafe true. # int
 }
-LIMIT 1000000
+# LIMIT 1000000

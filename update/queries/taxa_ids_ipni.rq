@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?taxon_id_ipni WHERE {
     ?taxon wdt:P961 ?taxon_id_ipni. hint:Prior hint:rangeSafe true. # str
 }
-LIMIT 1500000
+# LIMIT 1500000

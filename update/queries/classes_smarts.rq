@@ -17,3 +17,4 @@ SELECT ?class ?class_smarts WHERE {
     ?class wdt:P31 ?instance;
     wdt:P8533 ?class_smarts.
 }
+# LIMIT 10000

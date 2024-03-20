@@ -20,3 +20,4 @@ SELECT ?class ?classLabel ?parent WHERE {
     OPTIONAL { ?class wdt:P279 ?parent. }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }
+# LIMIT 10000
