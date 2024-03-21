@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?taxon_id_ncbi WHERE {
     ?taxon wdt:P685 ?taxon_id_ncbi. hint:Prior hint:rangeSafe true. # int
 }
-LIMIT 1000000
+# LIMIT 1000000

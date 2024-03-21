@@ -12,6 +12,7 @@ from storage.models import (
     References,
     SchemaVersion,
     Structures,
+    StructuresDescriptors,
     TaxoNames,
     TaxoParents,
     TaxoRankNames,
@@ -80,6 +81,33 @@ class Storage:
                     insert(Structures),
                     structures[i : i + self.list_limit // 2],
                 )
+            session.commit()
+
+    def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
+        with self.session(autoflush=False) as session:
+            for smiles, descriptor_data in descriptors.items():
+                # Query the Structures table to find structures with the matching SMILES
+                structures = session.query(Structures).filter_by(smiles=smiles).all()
+                # print(f"Found {len(structures)} structure(s) with SMILES '{smiles}'")
+
+                if structures:
+                    for structure in structures:
+                        for (
+                            descriptor_name,
+                            descriptor_value,
+                        ) in descriptor_data.items():
+                            # Exclude "smiles" from being added as a descriptor
+                            if descriptor_name != "smiles":
+                                descriptor = StructuresDescriptors(
+                                    structure_id=structure.id,
+                                    descriptor_name=descriptor_name,
+                                    descriptor_value=descriptor_value,
+                                )
+                                session.add(descriptor)
+                                # print(f"Added descriptor: {descriptor_name} = {descriptor_value}")
+                # else:
+                # Handle the case where structure(s) with the given SMILES is not found
+                # print(f"Structure(s) with SMILES {smiles} not found.")
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:

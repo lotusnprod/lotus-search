@@ -1,6 +1,18 @@
 title: StructureOption
 type: object
 properties:
+  descriptors:
+    description: |
+      Search by descriptors. Dictionary of the descriptors. All descriptors have "descriptor_min/max" format.
+    default: ~
+    example: {"NumHAcceptors_min": 1}
+    type: object
+  return_descriptors:
+    description: |
+      Return descriptors.
+    default: False
+    example: False
+    type: boolean
   substructure_search:
     description: |
       Search by substructure.
@@ -13,3 +25,9 @@ properties:
     default: 1.0
     example: 0.8
     type: number
+  sdf:
+    description: |
+      Return sdf.
+    default: false
+    example: false
+    type: boolean
