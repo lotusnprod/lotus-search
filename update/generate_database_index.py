@@ -119,14 +119,25 @@ def run(path: Path) -> None:
         descriptor_indices = range(1, len(headers))
         for row in reader:
             smiles = row[smiles_index]
-            # Create a dictionary for the current structure with SMILES as key
-            struct_data = {}
-            for i in descriptor_indices:
-                struct_data[headers[i]] = float(row[i])
-            # Add SMILES as a separate key
-            struct_data["smiles"] = smiles
-            # Add the structure data to the descriptors dictionary
-            descriptors_dict[smiles] = struct_data
+            if smiles:
+                # Create a dictionary for the current structure with SMILES as key
+                struct_data = {}
+                for i in descriptor_indices:
+                    # Check if the value is not an empty string before converting to float
+                    value = row[i]
+                    if value:
+                        struct_data[headers[i]] = float(value)
+                    else:
+                        # Handle empty value (perhaps set it to None or another default value)
+                        logging.warning("Empty descriptor found in row: {}".format(row))
+                        struct_data[headers[i]] = None  # or any default value you prefer
+                # Add SMILES as a separate key
+                struct_data["smiles"] = smiles
+                # Add the structure data to the descriptors dictionary
+                descriptors_dict[smiles] = struct_data
+            else:
+                # Handle empty SMILES
+                logging.warning("Empty SMILES found in row: {}".format(row))
     logging.info("Processed descriptors")
 
     with open(path / "taxa_names.csv", "r") as f:
