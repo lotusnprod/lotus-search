@@ -445,7 +445,7 @@ class DataModel:
         if recursive:
             with self.storage.session() as session:
                 # if exist
-                result = session.query(TaxoParents.id).filter(
+                result = session.query(TaxoParents.child_id).filter(
                     TaxoParents.parent_id == tid
                 )
 
@@ -521,14 +521,16 @@ class DataModel:
         with self.storage.session() as session:
             # Recursive query to fetch all children for the given taxon ID
             recursive_query = (
-                session.query(TaxoParents.id)
+                session.query(TaxoParents.child_id)
                 .filter(TaxoParents.parent_id == tid)
                 .cte(name="recursive_query", recursive=True)
             )
 
             alias = aliased(TaxoParents)
             recursive_query = recursive_query.union_all(
-                session.query(alias.id).filter(alias.parent_id == recursive_query.c.id)
+                session.query(alias.child_id).filter(
+                    alias.parent_id == recursive_query.c.child_id
+                )
             )
 
             result = set(session.query(recursive_query).all())

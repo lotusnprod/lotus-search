@@ -1,5 +1,4 @@
-from sqlalchemy import Index, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Index, Integer, UniqueConstraint
 
 from storage.models.base import Base
 
@@ -7,10 +6,10 @@ from storage.models.base import Base
 class Triplets(Base):
     __tablename__ = "triplets"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    reference_id: Mapped[int]
-    structure_id: Mapped[int]
-    taxon_id: Mapped[int]
+    id = Column(Integer, primary_key=True)
+    reference_id = Column(Integer)
+    structure_id = Column(Integer)
+    taxon_id = Column(Integer)
 
     __table_args__ = (
         Index("r", "reference_id"),

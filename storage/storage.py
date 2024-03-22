@@ -22,7 +22,7 @@ from storage.models import (
 
 
 class Storage:
-    SCHEMA_VERSION = 5
+    SCHEMA_VERSION = 6
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -143,7 +143,12 @@ class Storage:
                 session.execute(
                     insert(TaxoParents),
                     [
-                        {"id": item[0], "parent_id": item[1], "distance": item[2]}
+                        {
+                            "id": item[0],
+                            "child_id": item[1],
+                            "parent_id": item[2],
+                            "distance": item[3],
+                        }
                         for item in parenting[i : i + self.list_limit // 2]
                     ],
                 )

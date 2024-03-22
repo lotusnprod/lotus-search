@@ -1,5 +1,4 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
 
 from storage.models.base import Base
 
@@ -7,17 +6,17 @@ from storage.models.base import Base
 class TaxoParents(Base):
     __tablename__ = "taxo_parents"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    parent_id: Mapped[int] = mapped_column(primary_key=True)
-    distance: Mapped[int]
+    id = Column(Integer, primary_key=True)
+    child_id = Column(Integer, ForeignKey("triplets.taxon_id"))
+    parent_id = Column(Integer)
+    distance = Column(Integer)
 
     __table_args__ = (
         Index("taxo_parent_id", "id"),
+        Index("taxo_parent_child_id", "child_id"),
         Index("taxo_parent_parent_id", "parent_id"),
-        Index("taxo_parent_ids", "id", "parent_id"),
-        Index("taxo_parent_distance_with_id", "distance", "id"),
-        Index("taxo_parent_distance_with_parent_id", "distance", "parent_id"),
+        Index("taxo_parent_distance_id", "distance"),
     )
 
     def __repr__(self):
-        return f"TaxoParents(id={self.id}, parent_id={self.parent_id}, distance={self.distance})"
+        return f"TaxoParents(id={self.id}, child_id={self.child_id}, parent_id={self.parent_id}, distance={self.distance})"
