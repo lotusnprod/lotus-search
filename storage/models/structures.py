@@ -1,5 +1,4 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
 
 from storage.models.base import Base
 
@@ -7,14 +6,14 @@ from storage.models.base import Base
 class Structures(Base):
     __tablename__ = "structures"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    smiles: Mapped[str]
-    smiles_no_stereo: Mapped[str]
-    inchi: Mapped[str]
-    inchi_no_stereo: Mapped[str]
-    inchikey: Mapped[str]
-    inchikey_no_stereo: Mapped[str]
-    formula: Mapped[str]
+    id = Column(Integer, ForeignKey("triplets.structure_id"), primary_key=True)
+    smiles = Column(String)
+    smiles_no_stereo = Column(String)
+    inchi = Column(String)
+    inchi_no_stereo = Column(String)
+    inchikey = Column(String)
+    inchikey_no_stereo = Column(String)
+    formula = Column(String)
 
     __table_args__ = (Index("structure_id", "id"),)
 

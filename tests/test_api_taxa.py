@@ -10,7 +10,6 @@ from api.models import (
     TaxonItem,
     TaxonOption,
 )
-
 from tests.common import data_model
 
 

@@ -1,5 +1,4 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
 
 from storage.models.base import Base
 
@@ -7,8 +6,8 @@ from storage.models.base import Base
 class Journals(Base):
     __tablename__ = "journals"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str]
+    id = Column(Integer, ForeignKey("references.journal"), primary_key=True)
+    title = Column(String)
 
     __table_args__ = (Index("journal_id", "id"),)
 

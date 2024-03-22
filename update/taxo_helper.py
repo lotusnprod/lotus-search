@@ -47,6 +47,8 @@ def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int
                 if neighbor not in visited:
                     queue.append(neighbor)
                     visited[neighbor] = current_distance + 1
-                    distances.append((node, neighbor, current_distance + 1))
+                    distances.append(
+                        (len(distances) + 1, node, neighbor, current_distance + 1)
+                    )
 
     return distances

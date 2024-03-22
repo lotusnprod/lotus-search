@@ -191,6 +191,7 @@ def run(path: Path) -> None:
     logging.info(" Triplets inserted")
     storage.upsert_structures(structures)
     logging.info(" Structures inserted")
+    logging.info(" Inserting descriptors, might take long")
     storage.upsert_structures_descriptors(descriptors_dict)
     logging.info(" Structures descriptors inserted")
     storage.upsert_references(references)
