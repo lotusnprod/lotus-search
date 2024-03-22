@@ -8,8 +8,8 @@ from pathlib import Path
 import requests
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdSubstructLibrary
+from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import aliased
-from sqlalchemy import and_, or_, func
 
 from api.models import ReferenceObject, StructureObject, TaxonObject
 from chemistry_helpers import fingerprint, standardize
