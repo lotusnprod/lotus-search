@@ -1,5 +1,3 @@
-## TODO update
-
 ## Structures
 
 ### Get all the structures that match the query
@@ -55,3 +53,5 @@ curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' ht
 ```shell
 curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure": {"molecule": "Cl", "option": {"substructure_search": true}}, "taxon": {"name": "Gentiana septemfida"}, "reference": {"doi": "10.1021/NP50081A018"}}'
 ```
+
+### TODO add new ones to showcase formula/descriptors/journal search
