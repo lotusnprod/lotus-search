@@ -85,29 +85,26 @@ class Storage:
 
     def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
         with self.session(autoflush=False) as session:
+            smiles_set = set(descriptors.keys())
+            structures_query = session.query(Structures).filter(Structures.smiles.in_(smiles_set)).all()
+            smiles_to_structure_id = {structure.smiles: structure.id for structure in structures_query}
+            
+            descriptors_to_add = []
             for smiles, descriptor_data in descriptors.items():
-                # Query the Structures table to find structures with the matching SMILES
-                structures = session.query(Structures).filter_by(smiles=smiles).all()
-                # print(f"Found {len(structures)} structure(s) with SMILES '{smiles}'")
+                structure_id = smiles_to_structure_id.get(smiles)
+                if structure_id is not None:
+                    for descriptor_name, descriptor_value in descriptor_data.items():
+                        if descriptor_name != "smiles":
+                            descriptor = StructuresDescriptors(
+                                structure_id=structure_id,
+                                descriptor_name=descriptor_name,
+                                descriptor_value=descriptor_value
+                            )
+                            descriptors_to_add.append(descriptor)
+            
+            if descriptors_to_add:
+                session.bulk_save_objects(descriptors_to_add)
 
-                if structures:
-                    for structure in structures:
-                        for (
-                            descriptor_name,
-                            descriptor_value,
-                        ) in descriptor_data.items():
-                            # Exclude "smiles" from being added as a descriptor
-                            if descriptor_name != "smiles":
-                                descriptor = StructuresDescriptors(
-                                    structure_id=structure.id,
-                                    descriptor_name=descriptor_name,
-                                    descriptor_value=descriptor_value,
-                                )
-                                session.add(descriptor)
-                                # print(f"Added descriptor: {descriptor_name} = {descriptor_value}")
-                # else:
-                # Handle the case where structure(s) with the given SMILES is not found
-                # print(f"Structure(s) with SMILES {smiles} not found.")
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
