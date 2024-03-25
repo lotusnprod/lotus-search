@@ -22,6 +22,8 @@ structureOption:
   $ref: "./structureOption.yaml"
 structureResult:
   $ref: "./structureResult.yaml"
+taxonId:
+  $ref: "./taxonId.yaml"
 taxonItem:
   $ref: "./taxonItem.yaml"
 taxonObject:
