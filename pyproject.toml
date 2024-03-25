@@ -38,7 +38,7 @@ pandas = "^2.2.1"
 pydantic = "^2.6.4"
 requests = "^2.31.0"
 rdkit = "^2023.9.5"
-sqlalchemy = "^2.0.28"
+sqlalchemy = "^2.0.29"
 tqdm = "^4.66.2"
 uvicorn = "^0.29.0"
 
