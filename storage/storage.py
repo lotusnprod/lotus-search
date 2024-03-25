@@ -86,9 +86,15 @@ class Storage:
     def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
         with self.session(autoflush=False) as session:
             smiles_set = set(descriptors.keys())
-            structures_query = session.query(Structures).filter(Structures.smiles.in_(smiles_set)).all()
-            smiles_to_structure_id = {structure.smiles: structure.id for structure in structures_query}
-            
+            structures_query = (
+                session.query(Structures)
+                .filter(Structures.smiles.in_(smiles_set))
+                .all()
+            )
+            smiles_to_structure_id = {
+                structure.smiles: structure.id for structure in structures_query
+            }
+
             descriptors_to_add = []
             for smiles, descriptor_data in descriptors.items():
                 structure_id = smiles_to_structure_id.get(smiles)
@@ -98,10 +104,10 @@ class Storage:
                             descriptor = StructuresDescriptors(
                                 structure_id=structure_id,
                                 descriptor_name=descriptor_name,
-                                descriptor_value=descriptor_value
+                                descriptor_value=descriptor_value,
                             )
                             descriptors_to_add.append(descriptor)
-            
+
             if descriptors_to_add:
                 session.bulk_save_objects(descriptors_to_add)
 

@@ -1,0 +1,7 @@
+PREFIX hint: <http://www.bigdata.com/queryHints#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT ?structure ?structure_id_splash WHERE {
+    ?structure wdt:P4964 ?structure_id_splash. hint:Prior hint:rangeSafe true. # int
+}
+# LIMIT 2000000
