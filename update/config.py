@@ -93,6 +93,15 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_cas",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_cas.rq",
+            "output_file": "structures_ids_cas.csv",
+        },
+    ),
+    Task(
         name="structures_ids_chebi",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -120,6 +129,15 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_csd",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_csd.rq",
+            "output_file": "structures_ids_csd.csv",
+        },
+    ),
+    Task(
         name="structures_ids_kegg",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -129,12 +147,57 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_massbank",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_massbank.rq",
+            "output_file": "structures_ids_massbank.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_nmrshiftdb",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_nmrshiftdb.rq",
+            "output_file": "structures_ids_nmrshiftdb.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_pdb_ligand",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_pdb_ligand.rq",
+            "output_file": "structures_ids_pdb_ligand.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_pdb_structure",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_pdb_structure.rq",
+            "output_file": "structures_ids_pdb_structure.csv",
+        },
+    ),
+    Task(
         name="structures_ids_pubchem",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
             "query_file": "update/queries/structures_ids_pubchem.rq",
             "output_file": "structures_ids_pubchem.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_splash",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_splash.rq",
+            "output_file": "structures_ids_splash.csv",
         },
     ),
     Task(

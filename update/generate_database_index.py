@@ -111,6 +111,8 @@ def run(path: Path) -> None:
     #     structures.append({"id": struct, "smiles": smiles})
     logging.info(" Processed structures")
 
+    # TODO add all structure IDs (See #50)
+
     descriptors_dict = {}
     with open(path / "descriptors_rdkit.csv", "r") as f:
         reader = csv.reader(f)
@@ -131,7 +133,9 @@ def run(path: Path) -> None:
                     else:
                         # Handle empty value (perhaps set it to None or another default value)
                         logging.warning("Empty descriptor found in row: {}".format(row))
-                        struct_data[headers[i]] = None  # or any default value you prefer
+                        struct_data[headers[i]] = (
+                            None  # or any default value you prefer
+                        )
                 # Add SMILES as a separate key
                 struct_data["smiles"] = smiles
                 # Add the structure data to the descriptors dictionary
@@ -153,6 +157,8 @@ def run(path: Path) -> None:
     logging.info(" Processed taxa names")
 
     # Eventually TODO add taxa_names_com
+
+    # TODO add all taxon IDs (See #50)
 
     taxon_ranks_dict = {}
     with open(path / "ranks_names.csv", "r") as f:
