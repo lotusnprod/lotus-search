@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?taxon_rank WHERE {
     ?taxon wdt:P105 ?taxon_rank. hint:Prior hint:rangeSafe true.
 }
-LIMIT 5000000
+# LIMIT 5000000

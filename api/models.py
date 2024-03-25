@@ -10,8 +10,11 @@ class ReferenceOption(BaseModel):
 
 
 class StructureOption(BaseModel):
+    descriptors: Optional[Dict[str, int]] = None
+    return_descriptors: bool = False
     substructure_search: bool = False
     similarity_level: float = 1.0
+    sdf: bool = False
 
 
 class TaxonOption(BaseModel):
@@ -29,6 +32,7 @@ class ReferenceItem(BaseModel):
 class StructureItem(BaseModel):
     wid: Optional[int] = None
     molecule: Optional[str] = None
+    formula: Optional[str] = None
     option: StructureOption = StructureOption()
     # limit: Optional[int] = None
 
@@ -63,9 +67,13 @@ class Item(BaseModel):
                     "structure": {
                         "wid": 27151406,
                         "molecule": "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O",
+                        "formula": "C16H22O9",
                         "option": {
+                            "descriptors": {"NumHAcceptors_min": 1},
+                            "return_descriptors": False,
                             "substructure_search": True,
                             "similarity_level": 0.8,
+                            "sdf": False,
                         },
                     },
                     "taxon": {
@@ -97,11 +105,19 @@ class ReferenceResult(BaseModel):
 
 class StructureObject(BaseModel):
     smiles: str
+    smiles_no_stereo: str
+    inchi: str
+    inchi_no_stereo: str
+    inchikey: str
+    inchikey_no_stereo: str
+    formula: str
+    descriptors: Optional[Dict] = None
 
 
 class StructureResult(BaseModel):
     ids: List[int]
     objects: Optional[Dict[int, StructureObject]] = None
+    sdf: Optional[str] = None
     count: Optional[int]
     description: Optional[str]
 

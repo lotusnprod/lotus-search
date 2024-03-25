@@ -1,5 +1,4 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
 
 from storage.models.base import Base
 
@@ -7,11 +6,11 @@ from storage.models.base import Base
 class References(Base):
     __tablename__ = "references"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    doi: Mapped[str]
-    title: Mapped[str]
-    date: Mapped[str]
-    journal: Mapped[int]
+    id = Column(Integer, ForeignKey("triplets.reference_id"), primary_key=True)
+    doi = Column(String)
+    title = Column(String)
+    date = Column(String)
+    journal = Column(Integer)
 
     __table_args__ = (
         Index("reference_doi", "doi"),

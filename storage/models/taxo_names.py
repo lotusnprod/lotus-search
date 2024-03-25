@@ -1,5 +1,4 @@
-from sqlalchemy import Index
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
 
 from storage.models.base import Base
 
@@ -7,8 +6,8 @@ from storage.models.base import Base
 class TaxoNames(Base):
     __tablename__ = "taxo_names"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    id = Column(Integer, ForeignKey("triplets.taxon_id"), primary_key=True)
+    name = Column(String)
 
     __table_args__ = (
         Index("taxo_name_id", "id"),

@@ -4,4 +4,4 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?taxon ?taxon_id_eol WHERE {
     ?taxon wdt:P830 ?taxon_id_eol. hint:Prior hint:rangeSafe true. # int
 }
-LIMIT 1500000
+# LIMIT 1500000

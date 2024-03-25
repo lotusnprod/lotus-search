@@ -1,8 +1,8 @@
 import logging
+from datetime import datetime
 from typing import Any
 
-from datetime import datetime
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from api.models import (
     Item,
@@ -28,9 +28,8 @@ def parse_date(date_str: str) -> datetime:
             return datetime.strptime(date_str, fmt)
         except ValueError:
             pass
-        # TODO how to handle the diff with the 500 code above?
     raise HTTPException(
-        status_code=500,
+        status_code=status.HTTP_400_BAD_REQUEST,
         detail=f"Invalid date format",
     )
 
@@ -48,7 +47,7 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     if len([param for param in [wid, doi, title] if param is not None]) >= 2:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Only one of ['wid', 'doi', 'title'] should be provided",
         )
     elif wid is not None or doi is not None or title is not None:
@@ -88,15 +87,19 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
     wid = item.structure.wid
     molecule = item.structure.molecule
+    formula = item.structure.formula
     sub = item.structure.option.substructure_search
     sim = item.structure.option.similarity_level
+    descriptors = item.structure.option.descriptors
 
-    if len([param for param in [wid, molecule] if param is not None]) >= 2:
+    args = len([param for param in [wid, molecule, formula] if param is not None])
+
+    if args > 1:
         raise HTTPException(
-            status_code=500,
-            detail=f"Only one of ['wid', 'molecule'] should be provided",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Only one of ['wid', 'molecule', 'formula'] should be provided",
         )
-    elif molecule is not None or wid is not None:
+    elif args > 0:
         # This needs to be explained in the API doc
         if wid:
             if wid in dm.structures_set():
@@ -109,21 +112,44 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                 results = dm.structure_search_substructure(molecule)
                 structures = {_id for _id, _ in results}
             except ValueError:
-                # TODO how to handle the diff with the 500 code above?
                 raise HTTPException(
-                    status_code=500,
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-        else:
+
+        elif formula:
+            try:
+                structures = dm.get_structure_with_formula(formula)
+            except ValueError:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"The formula given is invalid: {formula}",
+                )
+
+        elif molecule:
             try:
                 results = dm.structure_search(molecule)
                 structures = {_id for _id, score in results if score >= sim}
             except ValueError:
                 raise HTTPException(
-                    status_code=500,
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=f"The structure given is invalid: {molecule}",
                 )
+
         return structures
+
+    if descriptors is not None:
+        try:
+            structures_with_descriptors = dm.get_structure_with_descriptors(descriptors)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"The descriptors given are invalid: {descriptors}",
+            )
+        if structures is None:
+            structures = structures_with_descriptors
+        else:
+            structures &= structures_with_descriptors
 
     return structures
 
@@ -136,7 +162,7 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
 
     if len([param for param in [wid, name] if param is not None]) >= 2:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Only one of ['wid', 'name'] should be provided",
         )
     if wid is not None or name is not None:
@@ -259,7 +285,9 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_structure_object_from_dict_of_sids(ids)
+    return dm.get_structure_object_from_dict_of_sids(
+        ids, item.structure.option.return_descriptors
+    )
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:

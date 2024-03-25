@@ -137,12 +137,17 @@ def run(path: Path) -> None:
                     p_sim_fps.append(sim_fp)
 
                     p_smols.append(smol)
-                    p_smileses.append(smiles)
+                    # TODO check which one to use
+                    # See #109
+                    # p_smileses.append(smiles)
+                    p_smileses.append(smiles_clean)
                     smis_no_stereo.append(smiles_no_stereo)
                     inchis_no_stereo.append(inchi_no_stereo)
                     inchikeys_no_stereo.append(inchikey_no_stereo)
-                    # descriptors_m[smiles] = desc_mordred
-                    descriptors_r[smiles] = desc_rdkit
+                    # descriptors_m[smiles_clean] = desc_mordred
+                    # TODO check which one to use
+                    # See #109
+                    descriptors_r[smiles_clean] = desc_rdkit
 
                     p_links.append(links[nid])
     logging.info("Finished generating the chemical libraries")

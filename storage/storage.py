@@ -12,6 +12,7 @@ from storage.models import (
     References,
     SchemaVersion,
     Structures,
+    StructuresDescriptors,
     TaxoNames,
     TaxoParents,
     TaxoRankNames,
@@ -21,7 +22,7 @@ from storage.models import (
 
 
 class Storage:
-    SCHEMA_VERSION = 5
+    SCHEMA_VERSION = 6
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -82,6 +83,36 @@ class Storage:
                 )
             session.commit()
 
+    def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
+        with self.session(autoflush=False) as session:
+            smiles_set = set(descriptors.keys())
+            structures_query = (
+                session.query(Structures)
+                .filter(Structures.smiles.in_(smiles_set))
+                .all()
+            )
+            smiles_to_structure_id = {
+                structure.smiles: structure.id for structure in structures_query
+            }
+
+            descriptors_to_add = []
+            for smiles, descriptor_data in descriptors.items():
+                structure_id = smiles_to_structure_id.get(smiles)
+                if structure_id is not None:
+                    for descriptor_name, descriptor_value in descriptor_data.items():
+                        if descriptor_name != "smiles":
+                            descriptor = StructuresDescriptors(
+                                structure_id=structure_id,
+                                descriptor_name=descriptor_name,
+                                descriptor_value=descriptor_value,
+                            )
+                            descriptors_to_add.append(descriptor)
+
+            if descriptors_to_add:
+                session.bulk_save_objects(descriptors_to_add)
+
+            session.commit()
+
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
@@ -115,7 +146,12 @@ class Storage:
                 session.execute(
                     insert(TaxoParents),
                     [
-                        {"id": item[0], "parent_id": item[1], "distance": item[2]}
+                        {
+                            "id": item[0],
+                            "child_id": item[1],
+                            "parent_id": item[2],
+                            "distance": item[3],
+                        }
                         for item in parenting[i : i + self.list_limit // 2]
                     ],
                 )

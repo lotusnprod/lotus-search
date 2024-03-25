@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from time import sleep
 
-from update.common import WD_URL, remove_wd_entity_prefix, sparql_to_csv
+from update.common import QLEVER_URL, WD_URL, remove_wd_entity_prefix, sparql_to_csv
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -27,15 +27,13 @@ def run(
             run(path, query_file, output_file, retry - 1, url)
             return
         else:
-            if url != WD_URL:
-                logging.warning(
-                    f"Timeout for query from file {query_file} on url {url} retrying with {WD_URL}"
-                )
-                sleep(20)
-                run(path, query_file, output_file, 3, WD_URL)
-                return
-            logging.error(f"Timeout for query from file {query_file}")
-            raise TimeoutError(f"Failed to download query {query_file}....")
+            logging.warning(
+                f"Timeout for query from file {query_file} on url {url} retrying with {QLEVER_URL}"
+            )
+            run(path, query_file, output_file, 1, QLEVER_URL)
+            return
+        logging.error(f"Timeout for query from file {query_file}")
+        raise TimeoutError(f"Failed to download query {query_file}....")
 
     logging.info(f"Keeping unique lines")
     lines = t.splitlines()
