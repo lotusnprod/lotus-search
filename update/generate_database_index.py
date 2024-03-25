@@ -13,6 +13,7 @@ logging.basicConfig(
 
 def run(path: Path) -> None:
     storage = Storage(path)
+    # TODO change this
     storage.drop_and_create_tables()
     taxa = set()  # So we can get only the parenting that we care about
     triplets = []
@@ -198,8 +199,10 @@ def run(path: Path) -> None:
     logging.info(" References inserted")
     storage.upsert_journals(journals)
     logging.info(" Journals inserted")
+    logging.info(" Inserting taxo names, might take long")
     storage.upsert_taxo_names(taxo_names)
     logging.info(" Taxo names inserted")
+    logging.info(" Inserting taxo ranks, might take long")
     storage.upsert_rank_names(ranks_names)
     logging.info(" Rank names inserted")
     storage.upsert_taxo_ranks(taxo_ranks)
