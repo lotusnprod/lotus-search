@@ -137,7 +137,8 @@ def run(path: Path) -> None:
                     p_sim_fps.append(sim_fp)
 
                     p_smols.append(smol)
-                    p_smileses.append(smiles)
+                    # TODO check which one to use
+                    p_smileses.append(smiles_clean)
                     smis_no_stereo.append(smiles_no_stereo)
                     inchis_no_stereo.append(inchi_no_stereo)
                     inchikeys_no_stereo.append(inchikey_no_stereo)

@@ -1,6 +1,4 @@
-### TODO update
-
-###  Empty query should be fast or fail
+### Query structures - empty
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -8,8 +6,7 @@ Content-Type: application/json
 { }
 
 
-
-### Query 1
+### Query structures - taxon wid
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -21,7 +18,8 @@ Content-Type: application/json
   }
 }
 
-### Query 1
+
+### Query structures - smiles
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -34,8 +32,7 @@ Content-Type: application/json
 }
 
 
-
-### Query 2
+### Query structures - structure wid and taxon wid and reference wid
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -55,9 +52,8 @@ Content-Type: application/json
   }
 }
 
-###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/structures -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
+### Query structures - substructure Cl and taxon Gentiana septemfida and reference 10.1021/NP50081A018
 POST http://127.0.0.1:5000/v1_0/structures
 Accept: application/json
 Content-Type: application/json
@@ -81,172 +77,8 @@ Content-Type: application/json
   }
 }
 
-###
 
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
-POST http://127.0.0.1:5000/v1_0/taxa
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "wid": 27151406
-  },
-  "taxon":
-  {
-    "wid": 158572
-  },
-  "reference":
-  { 
-    "wid": 44488598
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/taxa -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
-POST http://127.0.0.1:5000/v1_0/taxa
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "molecule": "Cl",
-    "option": 
-    {
-      "substructure_search": true
-    }
-  },
-  "taxon":
-  {
-    "name": "Gentiana septemfida"
-  },
-  "reference":
-  { 
-    "doi": "10.1021/NP50081A018"
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
-POST http://127.0.0.1:5000/v1_0/references
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "wid": 27151406
-  },
-  "taxon":
-  {
-    "wid": 158572
-  },
-  "reference":
-  { 
-    "wid": 44488598
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
-POST http://127.0.0.1:5000/v1_0/references
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "molecule": "Cl",
-    "option": 
-    {
-      "substructure_search": true
-    }
-  },
-  "taxon":
-  {
-    "name": "Gentiana septemfida"
-  },
-  "reference":
-  { 
-    "doi": "10.1021/NP50081A018"
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/references -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
-POST http://127.0.0.1:5000/v1_0/references
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "molecule": "C",
-    "option": 
-    {
-      "substructure_search": true
-    }
-  },
-  "limit": 0,
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure_wid": 27151406, "taxon_wid": 158572 ,"reference_wid": 44488598}'
-POST http://127.0.0.1:5000/v1_0/triplets
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "wid": 27151406
-  },
-  "taxon":
-  {
-    "wid": 158572
-  },
-  "reference":
-  { 
-    "wid": 44488598
-  }
-}
-
-###
-
-# curl -XPOST -H 'Accept: application/json' -H 'Content-Type: application/json' http://127.0.0.1:5000/v1_0/triplets -d '{"structure":"Cl", "substructure_search": true, "taxon_name": "Gentiana septemfida", "reference_doi": "10.1021/NP50081A018"}'
-POST http://127.0.0.1:5000/v1_0/triplets
-Accept: application/json
-Content-Type: application/json
-
-{
-  "structure": 
-  {
-    "molecule": "Cl",
-    "option": 
-    {
-      "substructure_search": true
-    }
-  },
-  "taxon":
-  {
-    "name": "Gentiana septemfida"
-  },
-  "reference":
-  { 
-    "doi": "10.1021/NP50081A018"
-  }
-}
-
-###
-# Taxa by name
+### Query taxa - taxon name
 POST http://127.0.0.1:5000/v1_0/taxa
 Accept: application/json
 Content-Type: application/json
@@ -254,3 +86,144 @@ Content-Type: application/json
 {
   "taxon_name": "Ta"
 }
+
+
+### Query taxa - structure wid and taxon wid and reference wid
+POST http://127.0.0.1:5000/v1_0/taxa
+### Query taxa - structure wid and taxon wid and reference wid
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
+}
+
+
+### Query taxa - substructure Cl and taxon Gentiana septemfida and reference 10.1021/NP50081A018
+POST http://127.0.0.1:5000/v1_0/taxa
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  }
+}
+
+
+### Query taxa - structure wid and taxon wid and reference wid
+POST http://127.0.0.1:5000/v1_0/references
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
+}
+
+
+### Query references - substructure Cl and taxon Gentiana septemfida and reference 10.1021/NP50081A018
+POST http://127.0.0.1:5000/v1_0/references
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  }
+}
+
+
+### Query triplets - structure wid and taxon wid and reference wid
+POST http://127.0.0.1:5000/v1_0/triplets
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "wid": 27151406
+  },
+  "taxon":
+  {
+    "wid": 158572
+  },
+  "reference":
+  { 
+    "wid": 44488598
+  }
+}
+
+
+### Query triplets - substructure Cl and taxon Gentiana septemfida and reference 10.1021/NP50081A018
+POST http://127.0.0.1:5000/v1_0/triplets
+Accept: application/json
+Content-Type: application/json
+
+{
+  "structure": 
+  {
+    "molecule": "Cl",
+    "option": 
+    {
+      "substructure_search": true
+    }
+  },
+  "taxon":
+  {
+    "name": "Gentiana septemfida"
+  },
+  "reference":
+  { 
+    "doi": "10.1021/NP50081A018"
+  }
+}
+
+### TODO add some others to showcase formula/descriptors/journal search
