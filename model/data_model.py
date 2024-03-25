@@ -159,7 +159,6 @@ class DataModel:
     def get_structure_descriptors_from_dict_of_sids(
         self, sids: Iterable[int]
     ) -> Iterable[tuple[int, str]]:
-        # TODO THIS HAS NOT BEEN TESTED ON MULTIPLES
         with self.storage.session() as session:
             result = (
                 session.query(
@@ -230,7 +229,6 @@ class DataModel:
             else:
                 return {}
 
-    # TODO THIS IS NOT WORKING FOR NOW
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         with self.storage.session() as session:
             query = session.query(StructuresDescriptors.structure_id)
