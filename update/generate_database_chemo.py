@@ -138,6 +138,8 @@ def run(path: Path) -> None:
 
                     p_smols.append(smol)
                     # TODO check which one to use
+                    # See #109
+                    # p_smileses.append(smiles)
                     p_smileses.append(smiles_clean)
                     smis_no_stereo.append(smiles_no_stereo)
                     inchis_no_stereo.append(inchi_no_stereo)
