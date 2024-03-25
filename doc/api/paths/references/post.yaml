@@ -18,9 +18,9 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../../schemas/referenceResult.yaml'
-    "404":
-      description: No reference matching the given search could be found
+            $ref: "../../schemas/referenceResult.yaml"
+    "400":
+      description: Bad request
       content:
         application/json:
           schema:
@@ -28,14 +28,6 @@ post:
             properties:
               message:
                 type: string
-                example: No reference matching the given search could be found
-    "500":
-      description: Only one of ['wid', 'doi', 'title'] should be provided
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Only one of ['wid', 'doi', 'title'] should be provided
+                example: 
+                  - Invalid date format
+                  - Only one of ['wid', 'doi', 'title'] should be provided

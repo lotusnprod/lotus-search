@@ -18,9 +18,9 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../../schemas/structureResult.yaml'
-    "404":
-      description: No structure matching the given query search be found
+            $ref: "../../schemas/structureResult.yaml"
+    "400":
+      description: Bad request
       content:
         application/json:
           schema:
@@ -28,9 +28,9 @@ post:
             properties:
               message:
                 type: string
-                example: No structure matching the given search could be found
-    "500":
-      description: Only one of ['wid', 'molecule'] should be provided
+                example: Only one of ['wid', 'molecule', 'formula'] should be provided
+    "422":
+      description: Unprocessable entity
       content:
         application/json:
           schema:
@@ -38,4 +38,7 @@ post:
             properties:
               message:
                 type: string
-                example: Only one of ['wid', 'molecule'] should be provided
+                example: 
+                  - The structure given is invalid
+                  - The formula given is invalid
+                  - The descriptors given are invalid
