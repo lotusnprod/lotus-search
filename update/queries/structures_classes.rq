@@ -10,10 +10,10 @@ SELECT ?structure ?class WHERE {
         wd:Q56256173 # class of chemical entities with similar applications or functions
         wd:Q74892521 # imprecise class of chemical entities
     }
-    ?class wdt:P31 ?instance.
-    ?structure p:P235 []. hint:Prior hint:rangeSafe true.
-    ?structure p:P703 [].
-    ?structure wdt:P279 ?class.
+    ?class wdt:P31 ?instance. hint:Prior hint:runFirst TRUE.
+    ?structure p:P235 []. hint:Prior hint:rangeSafe TRUE.
+    ?structure p:P703 []. hint:Prior hint:rangeSafe TRUE.
+    ?structure wdt:P279 ?class. hint:Prior hint:rangeSafe TRUE.
     FILTER (?class != wd:Q11173)
 }
 # LIMIT 500000

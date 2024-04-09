@@ -1,5 +1,6 @@
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX hint: <http://www.bigdata.com/queryHints#>
 
 SELECT ?class ?class_inchi WHERE {
     VALUES ?instance {
@@ -14,7 +15,7 @@ SELECT ?class ?class_inchi WHERE {
         wd:Q72070508 # group or class of chemical entities
         wd:Q74892521 # imprecise class of chemical entities
     }
-    ?class wdt:P31 ?instance;
-    wdt:P234 ?class_inchi.
+    ?class wdt:P31 ?instance. hint:Prior hint:runFirst TRUE.
+    ?class wdt:P234 ?class_inchi. hint:Prior hint:rangeSafe TRUE.
 }
 # LIMIT 10000

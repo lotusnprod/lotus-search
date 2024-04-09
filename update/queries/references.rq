@@ -5,7 +5,7 @@ PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?reference ?reference_doi ?reference_title ?reference_date ?reference_journal ?journal_title WHERE {
-  [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference. hint:Prior hint:rangeSafe true.
+  [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference. hint:Prior hint:rangeSafe TRUE.
   ?reference wdt:P356  ?reference_doi.
   ?reference wdt:P1476 ?reference_title.
   ?reference wdt:P577  ?reference_date.

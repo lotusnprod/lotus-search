@@ -2,6 +2,6 @@ PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_csd WHERE {
-    ?structure wdt:P11375 ?structure_id_csd. hint:Prior hint:rangeSafe true. # int
+    ?structure wdt:P11375 ?structure_id_csd. hint:Prior hint:rangeSafe TRUE. # int
 }
 # LIMIT 2000000

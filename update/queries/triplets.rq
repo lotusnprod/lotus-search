@@ -9,6 +9,6 @@ SELECT ?structure ?taxon ?reference WHERE {
     p:P703 [
       ps:P703 ?taxon;
               (prov:wasDerivedFrom/pr:P248) ?reference;
-    ]. hint:Prior hint:rangeSafe true.
+    ]. hint:Prior hint:rangeSafe TRUE.
 }
 # LIMIT 750000

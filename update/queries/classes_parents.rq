@@ -2,6 +2,7 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX hint: <http://www.bigdata.com/queryHints#>
 
 SELECT ?class ?classLabel ?parent WHERE {
     VALUES ?instance {
@@ -16,7 +17,7 @@ SELECT ?class ?classLabel ?parent WHERE {
         wd:Q72070508 # group or class of chemical entities
         wd:Q74892521 # imprecise class of chemical entities
     }
-    ?class wdt:P31 ?instance.
+    ?class wdt:P31 ?instance. hint:Prior hint:runFirst TRUE.
     OPTIONAL { ?class wdt:P279 ?parent. }
     SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }

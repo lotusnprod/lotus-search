@@ -1,9 +1,10 @@
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX hint: <http://www.bigdata.com/queryHints#>
 
 SELECT ?rank ?rankLabel WHERE {
-    ?rank wdt:P31 wd:Q427626.
+    ?rank wdt:P31 wd:Q427626. hint:Prior hint:rangeSafe TRUE.
     SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
 # LIMIT 200

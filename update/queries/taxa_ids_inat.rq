@@ -2,6 +2,6 @@ PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_id_inat WHERE {
-    ?taxon wdt:P3151 ?taxon_id_inat. # int
+    ?taxon wdt:P3151 ?taxon_id_inat. hint:Prior hint:rangeSafe TRUE. # int
 }
 # LIMIT 1000000

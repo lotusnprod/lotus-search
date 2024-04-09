@@ -2,6 +2,6 @@ PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?parent {
-  ?taxon wdt:P171 ?parent. hint:Prior hint:rangeSafe true.
+  ?taxon wdt:P171 ?parent. hint:Prior hint:rangeSafe TRUE.
 }
 # LIMIT 5000000
