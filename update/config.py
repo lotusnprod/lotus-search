@@ -138,12 +138,30 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_hmdb",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_hmdb.rq",
+            "output_file": "structures_ids_hmdb.csv",
+        },
+    ),
+    Task(
         name="structures_ids_kegg",
         f=download_query_as_csv.run,
         group=DownloadGroup,
         params={
             "query_file": "update/queries/structures_ids_kegg.rq",
             "output_file": "structures_ids_kegg.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_knapsack",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_knapsack.rq",
+            "output_file": "structures_ids_knapsack.csv",
         },
     ),
     Task(
@@ -162,6 +180,15 @@ TASKS = [
         params={
             "query_file": "update/queries/structures_ids_nmrshiftdb.rq",
             "output_file": "structures_ids_nmrshiftdb.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_npatlas",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_npatlas.rq",
+            "output_file": "structures_ids_npatlas.csv",
         },
     ),
     Task(
