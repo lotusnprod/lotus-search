@@ -1,0 +1,9 @@
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX hint: <http://www.bigdata.com/queryHints#>
+
+SELECT ?structure ?stereoisomer WHERE {
+    ?structure wdt:P6185 ?stereoisomer. hint:Prior hint:runFirst TRUE.
+    ?structure p:P703 []. hint:Prior hint:rangeSafe TRUE.
+}
+# LIMIT 500000
