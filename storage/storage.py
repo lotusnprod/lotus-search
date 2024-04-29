@@ -140,7 +140,7 @@ class Storage:
                 )
             session.commit()
 
-    def upsert_taxo_parenting(self, parenting: list[tuple[int, int, int]]) -> None:
+    def upsert_taxo_parenting(self, parenting: list[tuple[int, int, int, int]]) -> None:
         with self.session(autoflush=False) as session:
             for i in range(0, len(parenting), self.list_limit // 2):
                 session.execute(
