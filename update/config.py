@@ -228,6 +228,15 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_surechembl",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_surechembl.rq",
+            "output_file": "structures_ids_surechembl.csv",
+        },
+    ),
+    Task(
         name="structures_ids_zinc",
         f=download_query_as_csv.run,
         group=DownloadGroup,
