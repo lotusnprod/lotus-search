@@ -39,7 +39,7 @@ pydantic = "^2.7.1"
 requests = "^2.31.0"
 rdkit = "^2023.9.6"
 sqlalchemy = "^2.0.29"
-tqdm = "^4.66.3"
+tqdm = "^4.66.4"
 uvicorn = "^0.29.0"
 
 [tool.poetry.group.dev.dependencies]
