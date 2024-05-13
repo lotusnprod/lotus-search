@@ -138,6 +138,51 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_drugbank",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_drugbank.rq",
+            "output_file": "structures_ids_drugbank.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_dsstox_compound",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_dsstox_compound.rq",
+            "output_file": "structures_ids_dsstox_compound.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_dsstox_substance",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_dsstox_substance.rq",
+            "output_file": "structures_ids_dsstox_substance.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_ec",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_ec.rq",
+            "output_file": "structures_ids_ec.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_echa",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_echa.rq",
+            "output_file": "structures_ids_echa.csv",
+        },
+    ),
+    Task(
         name="structures_ids_hmdb",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -162,6 +207,15 @@ TASKS = [
         params={
             "query_file": "update/queries/structures_ids_knapsack.rq",
             "output_file": "structures_ids_knapsack.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_lipidmaps",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_lipidmaps.rq",
+            "output_file": "structures_ids_lipidmaps.csv",
         },
     ),
     Task(
@@ -192,6 +246,15 @@ TASKS = [
         },
     ),
     Task(
+        name="structures_ids_nsc",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_nsc.rq",
+            "output_file": "structures_ids_nsc.csv",
+        },
+    ),
+    Task(
         name="structures_ids_pdb_ligand",
         f=download_query_as_csv.run,
         group=DownloadGroup,
@@ -207,6 +270,15 @@ TASKS = [
         params={
             "query_file": "update/queries/structures_ids_pdb_structure.rq",
             "output_file": "structures_ids_pdb_structure.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_probes_and_drugs",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_probes_and_drugs.rq",
+            "output_file": "structures_ids_probes_and_drugs.csv",
         },
     ),
     Task(
@@ -234,6 +306,33 @@ TASKS = [
         params={
             "query_file": "update/queries/structures_ids_surechembl.rq",
             "output_file": "structures_ids_surechembl.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_swisslipids",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_swisslipids.rq",
+            "output_file": "structures_ids_swisslipids.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_unichem",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_unichem.rq",
+            "output_file": "structures_ids_unichem.csv",
+        },
+    ),
+    Task(
+        name="structures_ids_unii",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/structures_ids_unii.rq",
+            "output_file": "structures_ids_unii.csv",
         },
     ),
     Task(

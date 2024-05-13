@@ -1,0 +1,6 @@
+PREFIX hint: <http://www.bigdata.com/queryHints#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT ?structure ?structure_id_nsc WHERE {
+    ?structure wdt:P2840 ?structure_id_nsc. hint:Prior hint:rangeSafe TRUE. # int
+}
