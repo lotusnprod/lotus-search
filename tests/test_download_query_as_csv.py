@@ -83,7 +83,7 @@ class TestRunQueryToCSV:
         with patch(
             "update.download_query_as_csv.sparql_to_csv"
         ) as mock_sparql_to_csv, patch(
-            "update.download_query_as_csv.remove_wd_entity_prefix"
+            "update.download_query_as_csv.remove_wd_entity_prefix_and_Q"
         ) as mock_remove_wd_entity_prefix:
             mock_sparql_to_csv.return_value = "valid result"
             mock_remove_wd_entity_prefix.return_value = "expected result"

@@ -4,7 +4,12 @@ import sys
 from pathlib import Path
 from time import sleep
 
-from update.common import QLEVER_URL, WD_URL, remove_wd_entity_prefix, sparql_to_csv
+from update.common import (
+    QLEVER_URL,
+    WD_URL,
+    remove_wd_entity_prefix_and_Q,
+    sparql_to_csv,
+)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -41,7 +46,7 @@ def run(
 
     logging.info(f"Writing to {path / output_file}")
     with open(path / output_file, "w") as f:
-        f.write(remove_wd_entity_prefix(text=t_unique))
+        f.write(remove_wd_entity_prefix_and_Q(text=t_unique))
 
 
 if __name__ == "__main__":

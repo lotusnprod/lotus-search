@@ -1,6 +1,10 @@
 from requests_mock import Mocker
 
-from update.common import remove_wd_entity_prefix, sparql_to_csv
+from update.common import (
+    remove_wd_entity_prefix,
+    remove_wd_entity_prefix_and_Q,
+    sparql_to_csv,
+)
 
 
 class TestWdSparqlToCsv:
@@ -26,8 +30,22 @@ class TestWdSparqlToCsv:
 class TestRemoveWdEntityPrefix:
     def test_removes_prefix(self):
         result = remove_wd_entity_prefix("http://www.wikidata.org/entity/Q123")
-        assert result == "123"
+        assert result == "Q123"
 
     def test_does_not_remove_other_text(self):
         result = remove_wd_entity_prefix("http://www.wikidata.org/entity/Q123/other")
+        assert result == "Q123/other"
+
+    def test_removes_prefix_2(self):
+        result = remove_wd_entity_prefix_and_Q("http://www.wikidata.org/entity/Q123")
+        assert result == "123"
+
+    def test_does_not_remove_other_text_2(self):
+        result = remove_wd_entity_prefix_and_Q(
+            "http://www.wikidata.org/entity/Q123/other"
+        )
         assert result == "123/other"
+
+    def test_removes_prefix_3(self):
+        result = remove_wd_entity_prefix_and_Q("http://www.wikidata.org/entity/P123")
+        assert result == "P123"

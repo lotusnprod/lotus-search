@@ -19,4 +19,9 @@ def sparql_to_csv(query: str, url: str = WD_URL, as_post: bool = False) -> str:
 
 
 def remove_wd_entity_prefix(text: str) -> str:
-    return text.replace("http://www.wikidata.org/entity/Q", "")
+
+    return text.replace("http://www.wikidata.org/entity/", "")
+
+
+def remove_wd_entity_prefix_and_Q(text: str) -> str:
+    return remove_wd_entity_prefix(text).replace("Q", "")
