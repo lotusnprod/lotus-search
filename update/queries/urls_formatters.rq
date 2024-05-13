@@ -1,0 +1,46 @@
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX hint: <http://www.bigdata.com/queryHints#>
+
+SELECT * WHERE { 
+  # All properties we use with a formatter URL
+  VALUES ?property {
+    wd:P231   # STRUCTURE CAS
+    wd:P233   # STRUCTURE SMILES (canonical)
+    wd:P234   # STRUCTURE InChI
+    wd:P235   # STRUCTURE InChIKey
+    wd:P356   # REFERENCE DOI
+    wd:P592   # STRUCTURE ChEMBL
+    wd:P638   # STRUCTURE PDB structure
+    wd:P661   # STRUCTURE ChemSpider
+    wd:P662   # STRUCTURE PubChem CID
+    wd:P683   # STRUCTURE ChEBI
+    wd:P665   # STRUCTURE KEGG
+    wd:P685   # TAXON     NCBI
+    wd:P815   # TAXON     ITIS
+    wd:P830   # TAXON     EOL
+    wd:P846   # TAXON     GBIF
+    wd:P850   # TAXON     WoRMS
+    wd:P960   # TAXON     TROPICOS
+    wd:P961   # TAXON     IPNI
+    wd:P2017  # STRUCTURE SMILES (isomeric)
+    wd:P2057  # STRUCTURE HMDB
+    wd:P2064  # STRUCTURE KNApSAcK
+    wd:P2084  # STRUCTURE ZINC
+    wd:P2877  # STRUCTURE SureChEMBL
+    wd:P3151  # TAXON     iNat
+    wd:P3636  # STRUCTURE PDB ligand
+    wd:P4964  # STRUCTURE SPLASH
+    wd:P5037  # TAXON     PoWO
+    wd:P5055  # TAXON     IRMNG
+    wd:P6689  # STRUCTURE MassBank
+    wd:P7715  # TAXON     WFO
+    wd:P7746  # STRUCTURE NPAtlas
+    wd:P8533  # STRUCTURE SMARTS
+    wd:P9157  # TAXON     OTL
+    wd:P9405  # STRUCTURE NMRShiftDB
+    wd:P10718 # STRUCTURE CXSMILES
+    wd:P11375 # STRUCTURE CSD
+  }
+  ?property wdt:P1630 ?formatter. hint:Prior hint:rangeSafe TRUE.
+}

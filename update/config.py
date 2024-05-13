@@ -408,6 +408,15 @@ TASKS = [
         },
     ),
     Task(
+        name="urls_formatters",
+        f=download_query_as_csv.run,
+        group=DownloadGroup,
+        params={
+            "query_file": "update/queries/urls_formatters.rq",
+            "output_file": "urls_formatters.csv",
+        },
+    ),
+    Task(
         name="generate_database_chemo",
         f=generate_database_chemo.run,
         group=DatabaseGroup,
