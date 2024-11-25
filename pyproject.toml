@@ -81,6 +81,9 @@ asyncio_mode = "auto"
 filterwarnings = [
     "ignore:The module rdkit.Chem.MolStandardize:DeprecationWarning"
 ]
+pythonpath = [
+  ".", "src",
+]
 testpaths = "tests"
 
 [tool.isort]
