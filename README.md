@@ -31,11 +31,11 @@ make tests
 
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
 
-- Install dependencies using poetry
-    - If you do not have poetry installed:
-        - `curl -sSL https://install.python-poetry.org | python3 -`
+- Install dependencies using uv
+    - If you do not have uv installed:
+        - `curl -LsSf https://astral.sh/uv/install.sh | sh`
     - Then:
-        - `poetry self update && poetry update && poetry install`
+        - `uv sync`
 - Run `python update.py` (takes a few minutes)
 - Run `uvicorn main:app --reload` (almost instant)
 

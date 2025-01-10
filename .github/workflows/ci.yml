@@ -10,35 +10,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up python
-        uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: '3.12'
-      - name: Load cached Poetry installation
-        id: cached-poetry
-        uses: actions/cache@v4
-        with:
-          path: ~/.local
-          key: poetry-0
-      - name: Load cached env
-        id: cached-env
-        uses: actions/cache@v4
-        with:
-          path: /home/runner/.cache/pypoetry/virtualenvs
-          key: venv-0
-      - name: Install Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --all-groups
       - name: Run tests for PR
-        env:
-          PYTHONDONTWRITEBYTECODE: 1
         run: |
-          poetry install
-          poetry run pytest --cov-config=.coveragerc --cov=.
-          poetry run coverage xml
+          uv run pytest --cov-config=.coveragerc --cov=.
+          uv run coverage xml
+
       - name: Get Cover
         if: github.event_name == 'pull_request'
         uses: orgoro/coverage@v3.2
@@ -46,7 +34,7 @@ jobs:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.98
-      - name: Run tests
+
+      - name: Run coverage report
         if: github.event_name != 'pull_request'
-        run: |
-          poetry run coverage report
+        run: uv run coverage report
