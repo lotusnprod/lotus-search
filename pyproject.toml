@@ -10,7 +10,7 @@ authors = [
     {name = "Jonathan Bisson", email = "bjonnh-git@bjonnh.net"},
     {name = "Adriano Rutz", email = "adafede@gmail.com"},
 ]
-requires-python = "<3.13,>=3.12"
+requires-python = "<3.14.0,>=3.13.0"
 keywords = [
     "LinkedOpenData",
     "LOTUS",
@@ -26,7 +26,7 @@ classifiers = [
     "Framework :: tox",
     "Framework :: Sphinx",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
 ]
 license = {text = "LICENSE"}
@@ -43,10 +43,10 @@ dependencies = [
     "numpy<3.0.0,>=2.2.1",
     "orjson<4.0.0,>=3.10.14",
     "pandas<3.0.0,>=2.2.3",
-    "pydantic<3.0.0,>=2.10.4",
+    "pydantic<3.0.0,>=2.10.5",
     "requests<3.0.0,>=2.32.3",
     "rdkit<2025.0.0,>=2024.9.4",
-    "sqlalchemy<3.0.0,>=2.0.36",
+    "sqlalchemy<3.0.0,>=2.0.37",
     "tqdm<5.0.0,>=4.67.1",
     "uvicorn<1.0.0,>=0.34.0",
 ]
