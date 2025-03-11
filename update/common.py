@@ -23,18 +23,7 @@ def remove_wd_entity_prefix(text: str) -> str:
 
 
 def remove_wd_entity_prefix_and_Q(text: str) -> str:
-    """
-    Removes the Wikidata entity prefix and then, if the identifier starts with a 'Q',
-    removes the 'Q' so that only the numeric portion remains.
-    
-    If the identifier starts with an 'L' (a lexeme), returns None to signal that
-    lexemes should be excluded.
-    """
     cleaned = remove_wd_entity_prefix(text)
-    if cleaned.startswith("L"):
-        # Exclude lexeme identifiers.
+    if cleaned.startswith("L"):  # Exclude lexemes
         return None
-    if cleaned.startswith("Q"):
-        # Remove the leading "Q" for Q-entities.
-        cleaned = cleaned[1:]
-    return cleaned
+    return cleaned.replace("Q", "")
