@@ -2,14 +2,29 @@ PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX pr: <http://www.wikidata.org/prop/reference/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX wdsubgraph: <https://query.wikidata.org/subgraph/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?reference ?reference_doi ?reference_title ?reference_date ?reference_journal ?journal_title WHERE {
-  [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference. hint:Prior hint:rangeSafe TRUE.
-  ?reference wdt:P356  ?reference_doi.
-  ?reference wdt:P1476 ?reference_title.
-  ?reference wdt:P577  ?reference_date.
-  ?reference wdt:P1433 ?reference_journal.
-  ?reference_journal wdt:P1476 ?journal_title.
+  {
+    SELECT DISTINCT ?reference WHERE {
+      [ p:P235 []; ] (p:P703/prov:wasDerivedFrom/pr:P248) ?reference.
+    }
+  }
+  {
+    SELECT DISTINCT ?reference ?reference_doi ?reference_title ?reference_date ?reference_journal WHERE {
+      SERVICE wdsubgraph:scholarly_articles {
+        ?reference wdt:P356  ?reference_doi.
+        ?reference wdt:P1476 ?reference_title.
+        ?reference wdt:P577  ?reference_date.
+        ?reference wdt:P1433 ?reference_journal.
+      }
+    }
+  }
+  {
+    SELECT DISTINCT ?reference_journal ?journal_title WHERE {
+      ?reference_journal wdt:P1476 ?journal_title.
+    }
+  }
 }
 # LIMIT 200000
