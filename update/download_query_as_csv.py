@@ -42,11 +42,22 @@ def run(
 
     logging.info(f"Keeping unique lines")
     lines = t.splitlines()
-    t_unique = "\n".join([lines[0]] + list(set(lines[1:])))
+    header = lines[0]  # Save the header line
+    unique_content_lines = list(set(lines[1:]))  # Get unique content lines
+
+    # Process each line separately
+    processed_lines = [header]  # Start with the header
+    for line in unique_content_lines:
+        processed_line = remove_wd_entity_prefix_and_Q(text=line)
+        if processed_line is not None:  # Only add non-None results
+            processed_lines.append(processed_line)
+
+    # Join all processed lines
+    t_processed = "\n".join(processed_lines)
 
     logging.info(f"Writing to {path / output_file}")
     with open(path / output_file, "w") as f:
-        f.write(remove_wd_entity_prefix_and_Q(text=t_unique))
+        f.write(t_processed)
 
 
 if __name__ == "__main__":
