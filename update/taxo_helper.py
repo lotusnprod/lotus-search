@@ -8,47 +8,40 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-
 # See https://www.wikidata.org/wiki/Q2576881
-def convert_to_int_safe(s: str) -> int | None:
-    try:
-        result = int(s)
-        return result
-    except ValueError:
-        logging.error(f"{s} is not a valid integer.")
-        return None
-
 
 def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int, int]]:
     graph = defaultdict(list)
-    distances: list = []
+
     with open(path / "taxa_parents.csv", "r") as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        taxon_index = headers.index("taxon")
-        parent_index = headers.index("parent")
-
+        reader = csv.DictReader(f)
         for row in reader:
-            taxon_id = convert_to_int_safe(row[taxon_index])
-            parent_id = convert_to_int_safe(row[parent_index])
-
-            if taxon_id is None or parent_id is None:
+            try:
+                taxon_id = int(row["taxon"])
+                parent_id = int(row["parent"])
+                graph[taxon_id].append(parent_id)
+            except (ValueError, KeyError):
+                logging.error(f"Invalid row: {row}")
                 continue
-            graph[taxon_id].append(parent_id)
-    # Good ol' BFS
-    for node in list(graph.keys()):
-        visited = {node: 0}
-        queue = deque([node])
-        while queue:
-            current_node = queue.popleft()
-            current_distance = visited[current_node]
 
-            for neighbor in graph[current_node]:
+    distances = []
+    distance_id = 1
+
+    # Good ol' BFS
+    for source_node in graph:
+        visited = {}
+        queue = deque([(source_node, 0)])  # (node, distance)
+        visited[source_node] = 0
+
+        while queue:
+            current_node, current_distance = queue.popleft()
+            
+            for neighbor in graph.get(current_node, []):
                 if neighbor not in visited:
-                    queue.append(neighbor)
-                    visited[neighbor] = current_distance + 1
-                    distances.append(
-                        (len(distances) + 1, node, neighbor, current_distance + 1)
-                    )
+                    next_distance = current_distance + 1
+                    visited[neighbor] = next_distance
+                    queue.append((neighbor, next_distance))
+                    distances.append((distance_id, source_node, neighbor, next_distance))
+                    distance_id += 1
 
     return distances

@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 from storage.storage import Storage
-from update.taxo_helper import convert_to_int_safe, generate_taxon_parents_with_distance
+from update.taxo_helper import generate_taxon_parents_with_distance
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -160,34 +160,44 @@ def run(path: Path) -> None:
 
     # TODO add all IDs and formatters (See #50)
 
-    taxon_ranks_dict = {}
+    # Process rank names
+    ranks_names = []
     with open(path / "ranks_names.csv", "r") as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        rank_index = headers.index("rank")
-        label_index = headers.index("rankLabel")
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                ranks_names.append({
+                    "id": int(row["rank"]), 
+                    "name": row["rankLabel"]
+                })
+            except (ValueError, KeyError) as e:
+                logging.error(f"Invalid row: {row}")
+                continue
 
-        ranks_names = [
-            {"id": int(row[rank_index]), "name": row[label_index]} for row in reader
-        ]
-    taxo_names = []
-    for taxon, name in taxo_names_dict.items():
-        taxo_names.append({"id": taxon, "name": name})
+    # Process taxon names
+    taxo_names = [{"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()]
     logging.info(" Processed rank names")
 
+    # Process taxon ranks
+    taxon_ranks_dict = {}
     with open(path / "taxa_ranks.csv", "r") as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        taxon_index = headers.index("taxon")
-        rank_index = headers.index("taxon_rank")
+        reader = csv.DictReader(f)
         for row in reader:
-            rank_value = convert_to_int_safe(row[rank_index])
-            if rank_value is not None:
-                taxon_ranks_dict[int(row[taxon_index])] = {rank_value}
-    taxo_ranks = []
-    for taxon, ranks in taxon_ranks_dict.items():
-        for rank in ranks:
-            taxo_ranks.append({"id": taxon, "rank_id": rank})
+            try:
+                taxon_id = int(row["taxon"])
+                rank_value = int(row["taxon_rank"])
+                taxon_ranks_dict[taxon_id] = {rank_value}
+            except (ValueError, KeyError) as e:
+                logging.error(f"Invalid row: {row}")
+                continue
+
+    # Create final taxon ranks list
+    taxo_ranks = [
+        {"id": taxon, "rank_id": rank}
+        for taxon, ranks in taxon_ranks_dict.items()
+        for rank in ranks
+    ]
+
     logging.info(" Processed taxa ranks")
     logging.info(" Processed dicts")
 
