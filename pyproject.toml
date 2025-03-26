@@ -36,17 +36,17 @@ readme = "README.md"
 dependencies = [
     "dash<3.0.0,>=2.18.2",
     "dash-bootstrap-components<2.0.0,>=1.7.1",
-    "fastapi<1.0.0,>=0.115.8",
+    "fastapi<1.0.0,>=0.115.12",
     "fastapi-versioning<1.0.0,>=0.10.0",
-    "flask-caching<3.0.0,>=2.3.0",
+    "flask-caching<3.0.0,>=2.3.1",
     "gunicorn<24.0.0,>=23.0.0",
     "numpy<3.0.0,>=2.2.2",
     "orjson<4.0.0,>=3.10.15",
     "pandas<3.0.0,>=2.2.3",
     "pydantic<3.0.0,>=2.10.5",
     "requests<3.0.0,>=2.32.3",
-    "rdkit<2025.0.0,>=2024.9.4",
-    "sqlalchemy<3.0.0,>=2.0.37",
+    "rdkit<2025.0.0,>=2024.9.6",
+    "sqlalchemy<3.0.0,>=2.0.39",
     "tqdm<5.0.0,>=4.67.1",
     "uvicorn<1.0.0,>=0.34.0",
 ]
@@ -54,15 +54,15 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black<26.0.0,>=25.1.0",
-    "coverage<8.0.0,>=7.6.10",
-    "isort<7.0.0,>=6.0.0",
-    "pytest<9.0.0,>=8.3.4",
-    "pytest-asyncio<1.0.0,>=0.25.3",
+    "coverage<8.0.0,>=7.7.1",
+    "isort<7.0.0,>=6.0.1",
+    "pytest<9.0.0,>=8.3.5",
+    "pytest-asyncio<1.0.0,>=0.26.0",
     "pytest-cov<7.0.0,>=6.0.0",
     "pytest-mock<4.0.0,>=3.14.0",
     "pytest-xdist<4.0.0,>=3.6.1",
     "requests-mock<2.0.0,>=1.12.1",
-    "tox<5.0.0,>=4.24.1",
+    "tox<5.0.0,>=4.24.2",
 ]
 
 [project.scripts]
