@@ -34,7 +34,7 @@ readme = "README.md"
 
 
 dependencies = [
-    "dash<3.0.0,>=2.18.2",
+    "dash>=2.18.2,<4.0.0",
     "dash-bootstrap-components<2.0.0,>=1.7.1",
     "fastapi<1.0.0,>=0.115.12",
     "fastapi-versioning<1.0.0,>=0.10.0",
