@@ -13,7 +13,7 @@ SELECT ?reference ?reference_doi ?reference_title ?reference_date ?reference_jou
   }
   {
     SELECT DISTINCT ?reference ?reference_doi ?reference_title ?reference_date ?reference_journal WHERE {
-      SERVICE wdsubgraph:scholarly_articles {
+      SERVICE <https://query-scholarly.wikidata.org/sparql> {
         ?reference wdt:P356  ?reference_doi.
         ?reference wdt:P1476 ?reference_title.
         ?reference wdt:P577  ?reference_date.
