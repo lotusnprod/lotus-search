@@ -34,13 +34,13 @@ readme = "README.md"
 
 
 dependencies = [
-    "dash<4.0.0,>=3.0.2",
-    "dash-bootstrap-components<3.0.0,>=2.0.0",
+    "dash<4.0.0,>=3.0.4",
+    "dash-bootstrap-components<3.0.0,>=2.0.2",
     "fastapi<1.0.0,>=0.115.12",
     "fastapi-versioning<1.0.0,>=0.10.0",
     "flask-caching<3.0.0,>=2.3.1",
     "gunicorn<24.0.0,>=23.0.0",
-    "numpy<3.0.0,>=2.2.4",
+    "numpy<3.0.0,>=2.2.5",
     "orjson<4.0.0,>=3.10.16",
     "pandas<3.0.0,>=2.2.3",
     "pydantic<3.0.0,>=2.10.5",
@@ -48,7 +48,7 @@ dependencies = [
     "rdkit<2026.0.0,>=2025.3.1",
     "sqlalchemy<3.0.0,>=2.0.40",
     "tqdm<5.0.0,>=4.67.1",
-    "uvicorn<1.0.0,>=0.34.0",
+    "uvicorn<1.0.0,>=0.34.2",
 ]
 
 [dependency-groups]
