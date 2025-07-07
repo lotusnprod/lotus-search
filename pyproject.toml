@@ -34,13 +34,13 @@ readme = "README.md"
 
 
 dependencies = [
-    "dash<4.0.0,>=3.0.4",
+    "dash<4.0.0,>=3.1.1",
     "dash-bootstrap-components<3.0.0,>=2.0.3",
-    "fastapi<1.0.0,>=0.115.12",
+    "fastapi<1.0.0,>=0.116.0",
     "fastapi-versioning<1.0.0,>=0.10.0",
     "flask-caching<3.0.0,>=2.3.1",
     "gunicorn<24.0.0,>=23.0.0",
-    "numpy<3.0.0,>=2.3.0",
+    "numpy<3.0.0,>=2.3.1",
     "orjson<4.0.0,>=3.10.18",
     "pandas<3.0.0,>=2.3.0",
     "pydantic<3.0.0,>=2.10.5",
@@ -48,21 +48,21 @@ dependencies = [
     "rdkit<2026.0.0,>=2025.3.3",
     "sqlalchemy<3.0.0,>=2.0.41",
     "tqdm<5.0.0,>=4.67.1",
-    "uvicorn<1.0.0,>=0.34.3",
+    "uvicorn<1.0.0,>=0.35.0",
 ]
 
 [dependency-groups]
 dev = [
     "black<26.0.0,>=25.1.0",
-    "coverage<8.0.0,>=7.9.1",
+    "coverage<8.0.0,>=7.9.2",
     "isort<7.0.0,>=6.0.1",
-    "pytest<9.0.0,>=8.4.0",
+    "pytest<9.0.0,>=8.4.1",
     "pytest-asyncio<2.0.0,>=1.0.0",
     "pytest-cov<7.0.0,>=6.2.1",
     "pytest-mock<4.0.0,>=3.14.1",
-    "pytest-xdist<4.0.0,>=3.7.0",
+    "pytest-xdist<4.0.0,>=3.8.0",
     "requests-mock<2.0.0,>=1.12.1",
-    "tox<5.0.0,>=4.26.0",
+    "tox<5.0.0,>=4.27.0",
 ]
 
 [project.scripts]
