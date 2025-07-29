@@ -1,3 +1,4 @@
+---
 type: object
 properties:
   structure:
@@ -5,7 +6,9 @@ properties:
     description: |
       A SMILES string to depict.
   highlight:
-    type: ['null', string]
+    type:
+      - "null"
+      - string
     description: |
       A SMILES string to highlight in the structure. If not provided, the
       structure will be depicted without highlighting.

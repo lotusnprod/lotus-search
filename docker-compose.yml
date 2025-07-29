@@ -1,25 +1,22 @@
-# A docker-compose file for a two services system. One is the backend, with the Dockerfile in this directory
-# the other one is inside frontend.
-
-version: '3.8'
+---
+version: "3.8"
 services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile.local
     ports:
-      - "5000:5000"
+      - 5000:5000
     volumes:
       - .:/app
       - backend_data:/app/data
   frontend:
     build: frontend/
     ports:
-      - "3000:3000"
+      - 3000:3000
     volumes:
       - ./frontend/src:/app/src
     depends_on:
       - backend
-
 volumes:
-    backend_data:
+  backend_data: null

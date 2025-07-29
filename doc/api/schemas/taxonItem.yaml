@@ -1,22 +1,23 @@
+---
 title: TaxonItem
 type: object
 properties:
   wid:
     description: |
       Wikidata identifier of the taxon (without the Q).
-    default: ~
+    default: null
     example: 158572
     type: integer
   name:
     description: |
       The name searched (can be partial and slightly incorrect).
-    default: ~
+    default: null
     # The mistake is on purpose
-    example: "Gentiana luteha"
+    example: Gentiana luteha
     type: string
   # external_id:
-  #   $ref: "./taxonId.yaml"
+  #   $ref: ./taxonId.yaml
   option:
-    $ref: "./taxonOption.yaml"
+    $ref: ./taxonOption.yaml
   # filter:
-  #   $ref: "./taxonFilter.yaml"
+  #   $ref: ./taxonFilter.yaml

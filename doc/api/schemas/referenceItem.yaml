@@ -1,27 +1,28 @@
+---
 title: ReferenceItem
 type: object
 properties:
   wid:
     description: |
       Wikidata identifier of the reference (without the Q).
-    default: ~
+    default: null
     example: 44488598
     type: integer
   doi:
     description: |
       The DOI of the reference.
-    default: ~
-    example: "10.1080/1057563021000040466"
+    default: null
+    example: 10.1080/1057563021000040466
     type: string
   title:
     description: |
       The title of the reference.
-    default: ~
-    example: "Iridoids from Seeds of Gentiana Lutea"
+    default: null
+    example: Iridoids from Seeds of Gentiana Lutea
     type: string
   # external_id:
-  #   $ref: "./referenceId.yaml"
+  #   $ref: ./referenceId.yaml
   option:
-    $ref: "./referenceOption.yaml"
+    $ref: ./referenceOption.yaml
   # filter:
-  #   $ref: "./referenceFilter.yaml"
+  #   $ref: ./referenceFilter.yaml

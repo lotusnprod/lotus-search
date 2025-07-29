@@ -1,16 +1,19 @@
+---
 title: ReferenceResult
 type: object
-required: ["ids"]
+required:
+  - ids
 properties:
   ids:
     description: |
       IDs
     type: array
     items:
-      example: [ 44488598 ]
+      example:
+        - 44488598
       type: integer
   objects:
-    $ref: "./referenceObject.yaml"
+    $ref: ./referenceObject.yaml
   count:
     description: |
       Count

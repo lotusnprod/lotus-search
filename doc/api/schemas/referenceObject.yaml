@@ -1,25 +1,26 @@
+---
 title: ReferenceObject
 type: object
 properties:
   doi:
     description: |
       DOI
-    example: "10.1080/1057563021000040466"
+    example: 10.1080/1057563021000040466
     type: string
   title:
     description: |
       The title of the reference.
-    example: "Iridoids from Seeds of Gentiana Lutea"
+    example: Iridoids from Seeds of Gentiana Lutea
     type: string
   date:
     description: |
       The date of the reference.
-    example: "2003-08"
+    example: 2003-08
     type: string
   journal:
     description: |
       The journal of the reference.
-    example: "Natural Product Research"
+    example: Natural Product Research
     type: string
   # external_ids:
-  #   $ref: "./referenceId.yaml"
+  #   $ref: ./referenceId.yaml

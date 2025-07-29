@@ -1,6 +1,6 @@
+---
 extends:
   - recommended
-
 apis:
   core@v2:
     root: ./lotus_api.yaml

@@ -1,6 +1,7 @@
+---
 post:
   operationId: autocomplete_taxa
-  security: [ ]
+  security: []
   summary: |
     Autocomplete taxa names when given a portion of the name
   description: |
@@ -11,14 +12,14 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/autocomplete/taxaQuery.yaml"
+          $ref: ../../../schemas/autocomplete/taxaQuery.yaml
   responses:
     "200":
       description: Matching taxa
       content:
         application/json:
           schema:
-            $ref: "../../../schemas/autocomplete/taxaResult.yaml"
+            $ref: ../../../schemas/autocomplete/taxaResult.yaml
     "400":
       description: Invalid query
       content:

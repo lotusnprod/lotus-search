@@ -1,10 +1,11 @@
+---
 title: TaxonObject
 type: object
 properties:
   col:
     description: |
       Catalogue Of Life ID
-    example: "6KB7S"
+    example: 6KB7S
     type: string
   eol:
     description: |
@@ -24,7 +25,7 @@ properties:
   ipni:
     description: |
       International Plant Names Index ID
-    example: "368453-1"
+    example: 368453-1
     type: string
   irmng:
     description: |
@@ -49,7 +50,7 @@ properties:
   powo:
     description: |
       Plants of the World Online ID
-    example: "urn:lsid:ipni.org:names:368453-1"
+    example: urn:lsid:ipni.org:names:368453-1
     type: string
   tropicos:
     description: |
@@ -59,7 +60,7 @@ properties:
   wfo:
     description: |
       World Flora Online ID
-    example: "wfo-0000697915"
+    example: wfo-0000697915
     type: string
   worms:
     description: |

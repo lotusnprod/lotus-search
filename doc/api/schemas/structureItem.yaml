@@ -1,27 +1,28 @@
+---
 title: StructureItem
 type: object
 properties:
   wid:
     description: |
       Wikidata identifier of the structure (without the Q).
-    default: ~
+    default: null
     example: 3613679
     type: integer
   molecule:
     description: |
       A MOL file or SMILES of the structure of the structure or part of it.
-    default: ~
-    example: "C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O"
+    default: null
+    example: C=C[C@@H]1[C@@H]2CCOC(=O)C2=CO[C@H]1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)OC(=O)C4=C(C=C(C=C4C5=CC(=CC=C5)O)O)O
     type: string
   formula:
     description: |
       A chemical formula
-    default: ~
-    example: "C16H22O9"
+    default: null
+    example: C16H22O9
     type: string
   # external_id:
-  #   $ref: "./structureId.yaml"
+  #   $ref: ./structureId.yaml
   option:
-    $ref: "./structureOption.yaml"
+    $ref: ./structureOption.yaml
   # filter:
-  #   $ref: "./structureFilter.yaml"
+  #   $ref: ./structureFilter.yaml

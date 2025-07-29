@@ -1,17 +1,20 @@
+---
 title: StructureOption
 type: object
 properties:
   descriptors:
-    description: |
-      Search by descriptors. Dictionary of the descriptors. All descriptors have "descriptor_min/max" format.
-    default: ~
-    example: {"NumHAcceptors_min": 1}
+    description: >
+      Search by descriptors. Dictionary of the descriptors. All
+      descriptors have "descriptor_min/max" format.
+    default: null
+    example:
+      NumHAcceptors_min: 1
     type: object
   return_descriptors:
     description: |
       Return descriptors.
-    default: False
-    example: False
+    default: false
+    example: false
     type: boolean
   substructure_search:
     description: |
@@ -20,9 +23,10 @@ properties:
     example: false
     type: boolean
   similarity_level:
-    description: |
-      Similarity level cut-off (basic tanimoto-like search). Does nothing is substructure_search is true.
-    default: 1.0
+    description: >
+      Similarity level cut-off (basic tanimoto-like search). Does nothing
+      is substructure_search is true.
+    default: 1
     example: 0.8
     type: number
   sdf:

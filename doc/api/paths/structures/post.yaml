@@ -1,24 +1,26 @@
+---
 post:
   operationId: search_structures
-  security: [ ]
+  security: []
   summary: |
     Search structures using parameters
-  description: |
-    Search structures. Additional parameters allow to specify the kind of search and the parameters.
+  description: >
+    Search structures. Additional parameters allow to specify the kind
+    of search and the parameters.
   requestBody:
     description: Query
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../schemas/item.yaml"
+          $ref: ../../schemas/item.yaml
   responses:
     "200":
       description: At least one structure matching the given search could be found
       content:
         application/json:
           schema:
-            $ref: "../../schemas/structureResult.yaml"
+            $ref: ../../schemas/structureResult.yaml
     "400":
       description: Bad request
       content:
@@ -38,7 +40,7 @@ post:
             properties:
               message:
                 type: string
-                example: 
+                example:
                   - The structure given is invalid
                   - The formula given is invalid
                   - The descriptors given are invalid

@@ -2,45 +2,47 @@
 openapi: 3.1.0
 info:
   title: LOTUS FastAPI
-  description: "\nLOTUSFast API helps you do awesome stuff. \U0001F680\n"
+  description: |
+    
+    LOTUSFast API helps you do awesome stuff. 🚀
   license:
     name: Apache 2.0
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: "1.0"
 servers:
-  - url: "https://search.nprod.net/v1_0"
+  - url: https://search.nprod.net/v1_0
 paths:
   /references:
-    $ref: "./paths/references/post.yaml"
+    $ref: ./paths/references/post.yaml
   /structures:
-    $ref: "./paths/structures/post.yaml"
+    $ref: ./paths/structures/post.yaml
   /taxa:
-    $ref: "./paths/taxa/post.yaml"
+    $ref: ./paths/taxa/post.yaml
   /triplets:
-    $ref: "./paths/triplets/post.yaml"
+    $ref: ./paths/triplets/post.yaml
   /autocomplete/taxa:
-    $ref: "./paths/autocomplete/taxa/post.yaml"
+    $ref: ./paths/autocomplete/taxa/post.yaml
   /depiction/structure:
-    $ref: "./paths/depiction/structure.yaml"
+    $ref: ./paths/depiction/structure.yaml
   /descriptors:
-    $ref: "./paths/descriptors/get.yaml"
+    $ref: ./paths/descriptors/get.yaml
 components:
   schemas:
     Item:
-      $ref: "./schemas/item.yaml"
+      $ref: ./schemas/item.yaml
     # ReferenceInfo:
-    #   $ref: "./schemas/referenceInfo.yaml"
+    #   $ref: ./schemas/referenceInfo.yaml
     ReferenceResult:
-      $ref: "./schemas/referenceResult.yaml"
+      $ref: ./schemas/referenceResult.yaml
     # StructureInfo:
-    #   $ref: "./schemas/structureInfo.yaml"
+    #   $ref: ./schemas/structureInfo.yaml
     StructureResult:
-      $ref: "./schemas/structureResult.yaml"
+      $ref: ./schemas/structureResult.yaml
     # TaxonInfo:
-    #   $ref: "./schemas/taxonInfo.yaml"
+    #   $ref: ./schemas/taxonInfo.yaml
     TaxonResult:
-      $ref: "./schemas/taxonResult.yaml"
+      $ref: ./schemas/taxonResult.yaml
     TripletResult:
-      $ref: "./schemas/tripletResult.yaml"
+      $ref: ./schemas/tripletResult.yaml
     HTTPValidationError:
-      $ref: "./schemas/validationError.yaml"
+      $ref: ./schemas/validationError.yaml

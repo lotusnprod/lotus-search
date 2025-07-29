@@ -1,18 +1,19 @@
+---
 title: TaxonOption
 type: object
 properties:
   date_min:
     description: |
       The oldest allowed date of the reference.
-    example: "1999-12-31"
+    example: 1999-12-31
     type: string
   date_max:
     description: |
       The most recent allowed date of the reference.
-    example: "2024-01-01"
+    example: 2024-01-01
     type: string
   journal:
     description: |
       The journal of the reference.
-    example: "Natural Product Research"
+    example: Natural Product Research
     type: string

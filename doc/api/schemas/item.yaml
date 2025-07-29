@@ -1,16 +1,17 @@
+---
 title: Item
 type: object
 properties:
   # reference:
-  #   $ref: "./referenceItem.yaml"
+  #   $ref: ./referenceItem.yaml
   structure:
-    $ref: "./structureItem.yaml"
+    $ref: ./structureItem.yaml
   taxon:
-    $ref: "./taxonItem.yaml"
+    $ref: ./taxonItem.yaml
   limit:
-    $ref: "./limit.yaml"
+    $ref: ./limit.yaml
   modeEnum:
     title: ModeEnum
-    default: "objects"
-    example: "ids"
+    default: objects
+    example: ids
     type: string

@@ -1,3 +1,4 @@
+---
 get:
   operationId: get_descriptors
   summary: Get list of descriptors
@@ -11,4 +12,8 @@ get:
             type: array
             items:
               type: string
-            example: ["MaxAbsEStateIndex", "MaxEStateIndex", "MinAbsEStateIndex", ...]
+            example:
+              - MaxAbsEStateIndex
+              - MaxEStateIndex
+              - MinAbsEStateIndex
+              - ...

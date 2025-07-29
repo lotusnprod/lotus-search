@@ -1,24 +1,26 @@
+---
 post:
   operationId: search_triplets
-  security: [ ]
+  security: []
   summary: |
     Search triplets using parameters
-  description: |
-    Search triplets using parameters. Additional parameters allow to specify the kind of search and the parameters.
+  description: >
+    Search triplets using parameters. Additional parameters allow to
+    specify the kind of search and the parameters.
   requestBody:
     description: Query
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../schemas/item.yaml"
+          $ref: ../../schemas/item.yaml
   responses:
     "200":
       description: At least one triplet matching the given search could be found
       content:
         application/json:
           schema:
-            $ref: '../../schemas/tripletResult.yaml'
+            $ref: ../../schemas/tripletResult.yaml
     "404":
       description: No triplet matching the given search could be found
       content:

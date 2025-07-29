@@ -1,23 +1,28 @@
+---
 title: TripletResult
 type: object
-required: ["triplets"]
+required:
+  - triplets
 properties:
   triplets:
     title: Triplets
     description: |
       Triplets of reference, structure and taxon IDs
-    example : [ [44488598, 27151406, 158572] ]
+    example:
+      - - 44488598
+        - 27151406
+        - 158572
     items:
       type: array
       items:
         type: integer
     type: array
   references:
-    $ref: "./referenceObject.yaml"
+    $ref: ./referenceObject.yaml
   structures:
-    $ref: "./structureObject.yaml"
+    $ref: ./structureObject.yaml
   taxa:
-    $ref: "./taxonObject.yaml"
+    $ref: ./taxonObject.yaml
   count:
     description: |
       Count

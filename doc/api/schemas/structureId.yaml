@@ -1,3 +1,4 @@
+---
 title: StructureId
 type: object
 properties:
@@ -9,7 +10,7 @@ properties:
   chembl:
     description: |
       ChEMBL identifier
-    example: "CHEMBL456137"
+    example: CHEMBL456137
     type: string
   chemspider:
     description: |
@@ -19,7 +20,7 @@ properties:
   kegg:
     description: |
       KEGG identifier
-    example: "C17071"
+    example: C17071
     type: string
   pubchem:
     description: |

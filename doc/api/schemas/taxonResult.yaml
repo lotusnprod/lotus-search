@@ -1,16 +1,19 @@
+---
 title: TaxonResult
 type: object
-required: ["ids"]
+required:
+  - ids
 properties:
   ids:
     description: |
       IDs
-    example: [ 158572 ]
+    example:
+      - 158572
     items:
       type: integer
     type: array
   objects:
-    $ref: "./taxonObject.yaml"
+    $ref: ./taxonObject.yaml
   count:
     description: |
       Count

@@ -1,24 +1,26 @@
+---
 post:
   operationId: search_references
-  security: [ ]
+  security: []
   summary: |
     Search references using parameters
-  description: |
-    Search references using parameters. Additional parameters allow to specify the kind of search and the parameters.
+  description: >
+    Search references using parameters. Additional parameters allow to
+    specify the kind of search and the parameters.
   requestBody:
     description: Query
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../schemas/item.yaml"
+          $ref: ../../schemas/item.yaml
   responses:
     "200":
       description: At least one reference matching the given search could be found
       content:
         application/json:
           schema:
-            $ref: "../../schemas/referenceResult.yaml"
+            $ref: ../../schemas/referenceResult.yaml
     "400":
       description: Bad request
       content:
@@ -28,6 +30,6 @@ post:
             properties:
               message:
                 type: string
-                example: 
+                example:
                   - Invalid date format
                   - Only one of ['wid', 'doi', 'title'] should be provided

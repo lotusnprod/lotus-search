@@ -1,38 +1,39 @@
+---
 item:
-  $ref: "./item.yaml"
+  $ref: ./item.yaml
 limit:
-  $ref: "./limit.yaml"
+  $ref: ./limit.yaml
 referenceId:
-  $ref: "./referenceId.yaml"
+  $ref: ./referenceId.yaml
 referenceItem:
-  $ref: "./referenceItem.yaml"
+  $ref: ./referenceItem.yaml
 referenceObject:
-  $ref: "./referenceObject.yaml"
+  $ref: ./referenceObject.yaml
 referenceOption:
-  $ref: "./referenceOption.yaml"
+  $ref: ./referenceOption.yaml
 referenceResult:
-  $ref: "./referenceResult.yaml"
+  $ref: ./referenceResult.yaml
 structureId:
-  $ref: "./structureId.yaml"
+  $ref: ./structureId.yaml
 structureItem:
-  $ref: "./structureItem.yaml"
+  $ref: ./structureItem.yaml
 structureObject:
-  $ref: "./structureObject.yaml"
+  $ref: ./structureObject.yaml
 structureOption:
-  $ref: "./structureOption.yaml"
+  $ref: ./structureOption.yaml
 structureResult:
-  $ref: "./structureResult.yaml"
+  $ref: ./structureResult.yaml
 taxonId:
-  $ref: "./taxonId.yaml"
+  $ref: ./taxonId.yaml
 taxonItem:
-  $ref: "./taxonItem.yaml"
+  $ref: ./taxonItem.yaml
 taxonObject:
-  $ref: "./taxonObject.yaml"
+  $ref: ./taxonObject.yaml
 taxonOption:
-  $ref: "./taxonOption.yaml"
+  $ref: ./taxonOption.yaml
 taxonResult:
-  $ref: "./taxonResult.yaml"
+  $ref: ./taxonResult.yaml
 tripletResult:
-  $ref: "./tripletResult.yaml"
+  $ref: ./tripletResult.yaml
 validationError:
-  $ref: "./validationError.yaml"
+  $ref: ./validationError.yaml

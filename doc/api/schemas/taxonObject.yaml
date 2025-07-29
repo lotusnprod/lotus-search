@@ -1,10 +1,11 @@
+---
 title: TaxonObject
 type: object
 properties:
   name:
     description: |
       Name
-    example: "Gentiana lutea"
+    example: Gentiana lutea
     type: string
   # external_id:
-  #   $ref: "./taxonId.yaml"
+  #   $ref: ./taxonId.yaml
