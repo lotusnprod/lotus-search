@@ -85,42 +85,32 @@ def layout(wid: int):
 
     warning = f"Found {nb_matches} structures"
 
-    return dbc.Container(
-        [
-            dcc.Store(
-                id="matching-ids",
-                data={
-                    "matching_structures": matching_structures,
-                    "taxon_name": taxon_name,
-                },
+    return dbc.Container([
+        dcc.Store(
+            id="matching-ids",
+            data={
+                "matching_structures": matching_structures,
+                "taxon_name": taxon_name,
+            },
+        ),
+        dbc.Row([
+            dash.html.H1(f"{taxon_name}{parent_ranks}"),
+            dcc.Markdown(taxonomic_info),
+            dash.html.Hr(),
+            dcc.Markdown(f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})"),
+        ]),
+        dbc.Row([
+            dbc.Col([dbc.Alert(warning, color="primary")]),
+            dbc.Col([dbc.Button("Download SMILES", id="btn-download")]),
+        ]),
+        dcc.Download(id="download"),
+        dbc.Row([
+            dbc.Pagination(
+                id="pagination",
+                max_value=math.ceil(nb_matches / PAGE_SIZE),
+                fully_expanded=False,
+                size="sm",
             ),
-            dbc.Row(
-                [
-                    dash.html.H1(f"{taxon_name}{parent_ranks}"),
-                    dcc.Markdown(taxonomic_info),
-                    dash.html.Hr(),
-                    dcc.Markdown(
-                        f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})"
-                    ),
-                ]
-            ),
-            dbc.Row(
-                [
-                    dbc.Col([dbc.Alert(warning, color="primary")]),
-                    dbc.Col([dbc.Button("Download SMILES", id="btn-download")]),
-                ]
-            ),
-            dcc.Download(id="download"),
-            dbc.Row(
-                [
-                    dbc.Pagination(
-                        id="pagination",
-                        max_value=math.ceil(nb_matches / PAGE_SIZE),
-                        fully_expanded=False,
-                        size="sm",
-                    ),
-                ]
-            ),
-            dbc.Spinner(id="loading-structures-tsv", children=[dbc.Row(id="cards")]),
-        ]
-    )
+        ]),
+        dbc.Spinner(id="loading-structures-tsv", children=[dbc.Row(id="cards")]),
+    ])

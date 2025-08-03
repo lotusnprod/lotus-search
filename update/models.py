@@ -1,8 +1,8 @@
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict
 
 
 @dataclass
@@ -16,7 +16,7 @@ class Task:
     name: str
     f: Callable | None
     group: Group
-    params: Dict[str, str] = field(default_factory=dict)
+    params: dict[str, str] = field(default_factory=dict)
 
     def matches_name(self, name):
         return self.name == name or self.group.name == name

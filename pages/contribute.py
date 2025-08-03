@@ -59,61 +59,55 @@ def search_organism(name, n_clicks):
 
 
 tab1_content = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Label("Draw the structure and press 'Add'"),
-            plotly_dash_ketcher.PlotlyDashKetcher(
-                id="ketcher-contrib", buttonLabel="Add"
-            ),
-            dbc.Form(
-                id="organism_part_row",
-                children=[
-                    dbc.Label(
-                        "Organism name (mandatory)", html_for="organism_contribution"
-                    ),
-                    dbc.Input(
-                        id="organism_contribution",
-                        placeholder="Enter the organism name",
-                        disabled=True,
-                    ),
-                    dbc.Button(
-                        id="search_organism_contribution",
-                        children=["Search organism"],
-                        color="primary",
-                        disabled=True,
-                    ),
-                    dbc.Select(
-                        id="matching_organisms_contribution_select",
-                        options=[],
-                        placeholder="Click on Search organism and select organism from this list (optional)",
-                    ),
-                ],
-            ),
-            html.Div(
-                id="doi_part_row",
-                children=[
-                    dbc.Label("Publication reference (mandatory)", html_for="doi"),
-                    dbc.Input(
-                        id="doi",
-                        placeholder="Enter the publication reference (DOI is prefered)",
-                        disabled=True,
-                    ),
-                ],
-            ),
-            html.Div(
-                id="submit_part_row",
-                children=[
-                    dbc.Button(
-                        id="submit_contribution_single",
-                        children=["Submit"],
-                        color="success",
-                        disabled=True,
-                    ),
-                    dbc.Row(id="result_contribution_single"),
-                ],
-            ),
-        ]
-    ),
+    dbc.CardBody([
+        dbc.Label("Draw the structure and press 'Add'"),
+        plotly_dash_ketcher.PlotlyDashKetcher(id="ketcher-contrib", buttonLabel="Add"),
+        dbc.Form(
+            id="organism_part_row",
+            children=[
+                dbc.Label("Organism name (mandatory)", html_for="organism_contribution"),
+                dbc.Input(
+                    id="organism_contribution",
+                    placeholder="Enter the organism name",
+                    disabled=True,
+                ),
+                dbc.Button(
+                    id="search_organism_contribution",
+                    children=["Search organism"],
+                    color="primary",
+                    disabled=True,
+                ),
+                dbc.Select(
+                    id="matching_organisms_contribution_select",
+                    options=[],
+                    placeholder="Click on Search organism and select organism from this list (optional)",
+                ),
+            ],
+        ),
+        html.Div(
+            id="doi_part_row",
+            children=[
+                dbc.Label("Publication reference (mandatory)", html_for="doi"),
+                dbc.Input(
+                    id="doi",
+                    placeholder="Enter the publication reference (DOI is prefered)",
+                    disabled=True,
+                ),
+            ],
+        ),
+        html.Div(
+            id="submit_part_row",
+            children=[
+                dbc.Button(
+                    id="submit_contribution_single",
+                    children=["Submit"],
+                    color="success",
+                    disabled=True,
+                ),
+                dbc.Row(id="result_contribution_single"),
+            ],
+        ),
+    ]),
     className="mt-3",
 )
 
@@ -161,15 +155,13 @@ def submit(n_clicks, email, structure, organism, selected_organism, reference):
                 color="danger",
             )
 
-        js = json.dumps(
-            {
-                "molecule": structure,
-                "organism": organism,
-                "selected_organism": selected_organism,
-                "reference": reference,
-                "email": email,
-            }
-        )
+        js = json.dumps({
+            "molecule": structure,
+            "organism": organism,
+            "selected_organism": selected_organism,
+            "reference": reference,
+            "email": email,
+        })
         with open(f"contributions/{time.time()}_{uuid.uuid4()}.json", "w") as f:
             f.write(js)
         return dbc.Alert(
@@ -193,9 +185,7 @@ def update_output(email, content, name):
                 color="danger",
             )
         if not name.endswith(".csv") or not name.endswith(".tsv"):
-            return dbc.Alert(
-                f"Sorry your file {name} is not a CSV or TSV file.", color="danger"
-            )
+            return dbc.Alert(f"Sorry your file {name} is not a CSV or TSV file.", color="danger")
         basename = f"contributions/{time.time()}_{uuid.uuid4()}"
         with open(f"{basename}.xsv", "w") as f:
             f.write(content)
@@ -210,10 +200,9 @@ def update_output(email, content, name):
 
 
 tab2_content = dbc.Card(
-    dbc.CardBody(
-        [
-            dcc.Markdown(
-                """You are even more awesome!
+    dbc.CardBody([
+        dcc.Markdown(
+            """You are even more awesome!
 
 So if you have way too many structures to add, you can send us directly a TSV or CSV file with the following three columns:
 
@@ -226,70 +215,57 @@ We will only be able to add from articles we have access to (we have accesses fr
 Priority will be given to articles that are open access.
 
 Please make sure that it is formatted properly and that the values are quoted (even if they don't contain commas)""",
-                className="card-text",
-            ),
-            dcc.Upload(
-                id="upload-data",
-                children=dbc.Button(["Drag and Drop or Select Files"]),
-                style={
-                    "width": "100%",
-                    "height": "60px",
-                    "lineHeight": "60px",
-                    "borderWidth": "1px",
-                    "borderStyle": "solid",
-                    "borderColor": "#ccc",
-                    "borderRadius": "5px",
-                    "textAlign": "center",
-                    "margin": "10px",
-                },
-                multiple=False,
-            ),
-            dbc.Row(id="output-data-upload"),
-        ]
-    ),
+            className="card-text",
+        ),
+        dcc.Upload(
+            id="upload-data",
+            children=dbc.Button(["Drag and Drop or Select Files"]),
+            style={
+                "width": "100%",
+                "height": "60px",
+                "lineHeight": "60px",
+                "borderWidth": "1px",
+                "borderStyle": "solid",
+                "borderColor": "#ccc",
+                "borderRadius": "5px",
+                "textAlign": "center",
+                "margin": "10px",
+            },
+            multiple=False,
+        ),
+        dbc.Row(id="output-data-upload"),
+    ]),
     className="mt-3",
 )
 
 
 def layout():
-    return dbc.Container(
-        [
-            html.H1("Awesome, lets add it"),
-            dbc.Row(
-                [
-                    html.Div(
-                        "That means you will be able to help us improve the data quality of LOTUS. We trust that you have checked that it is not already present in the database and that your molecule is drawn correctly."
-                    )
-                ]
-            ),
-            html.Hr(),
-            dbc.Form(
-                [
-                    html.Div(
-                        [
-                            dbc.Label("Your email (optional)", html_for="email"),
-                            dbc.Input(
-                                id="email",
-                                type="email",
-                                placeholder="Enter email (optional)",
-                            ),
-                            dbc.FormText(
-                                "We will contact you if we have questions, or to let you know it is added. Your contribution may also be prioritized.",
-                                color="secondary",
-                            ),
-                        ]
-                    )
-                ]
-            ),
-            dbc.Row(
-                [
-                    dbc.Tabs(
-                        [
-                            dbc.Tab(tab1_content, label="I have a single structure"),
-                            dbc.Tab(tab2_content, label="I have multiple structures"),
-                        ]
-                    )
-                ]
-            ),
-        ]
-    )
+    return dbc.Container([
+        html.H1("Awesome, lets add it"),
+        dbc.Row([
+            html.Div(
+                "That means you will be able to help us improve the data quality of LOTUS. We trust that you have checked that it is not already present in the database and that your molecule is drawn correctly."
+            )
+        ]),
+        html.Hr(),
+        dbc.Form([
+            html.Div([
+                dbc.Label("Your email (optional)", html_for="email"),
+                dbc.Input(
+                    id="email",
+                    type="email",
+                    placeholder="Enter email (optional)",
+                ),
+                dbc.FormText(
+                    "We will contact you if we have questions, or to let you know it is added. Your contribution may also be prioritized.",
+                    color="secondary",
+                ),
+            ])
+        ]),
+        dbc.Row([
+            dbc.Tabs([
+                dbc.Tab(tab1_content, label="I have a single structure"),
+                dbc.Tab(tab2_content, label="I have multiple structures"),
+            ])
+        ]),
+    ])

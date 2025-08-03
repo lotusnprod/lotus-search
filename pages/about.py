@@ -6,4 +6,4 @@ dash.register_page(__name__, path="/about", order=99)
 
 
 def layout():
-    return dbc.Container([dash.dcc.Markdown(open("README.md", "r").read())])
+    return dbc.Container([dash.dcc.Markdown(open("README.md").read())])
