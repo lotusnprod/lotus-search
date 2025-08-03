@@ -33,19 +33,17 @@ _this_module = _sys.modules[__name__]
 
 _js_dist = []
 
-_js_dist.extend(
-    [
-        {"relative_package_path": "plotly_dash_ketcher.js", "namespace": package_name},
-        {
-            "relative_package_path": "plotly_dash_ketcher.js.map",
-            "namespace": package_name,
-            "dynamic": True,
-        },
-    ]
-)
+_js_dist.extend([
+    {"relative_package_path": "plotly_dash_ketcher.js", "namespace": package_name},
+    {
+        "relative_package_path": "plotly_dash_ketcher.js.map",
+        "namespace": package_name,
+        "dynamic": True,
+    },
+])
 
 _css_dist = []
 
 for _component in __all__:
-    setattr(locals()[_component], "_js_dist", _js_dist)
-    setattr(locals()[_component], "_css_dist", _css_dist)
+    locals()[_component]._js_dist = _js_dist
+    locals()[_component]._css_dist = _css_dist

@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 # from mordred import Calculator, descriptors
 from rdkit import Chem
@@ -108,7 +107,7 @@ def process_smiles(inp):
         else:
             return None
     except:
-        logging.error(f"Failed to process: {smiles}")
+        logging.exception(f"Failed to process: {smiles}")
         return None
 
 
