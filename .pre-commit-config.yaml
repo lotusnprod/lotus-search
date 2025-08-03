@@ -1,6 +1,7 @@
+---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v5.0.0"
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -20,36 +21,28 @@ repos:
         exclude: ^.devcontainer/devcontainer.json
       - id: pretty-format-json
         exclude: ^.devcontainer/devcontainer.json
-        args: [--autofix]
+        args:
+          - --autofix
       - id: debug-statements
-      - id: double-quote-string-fixer
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: pretty-format-json
       - id: trailing-whitespace
-
-  -   repo: https://github.com/asottile/pyupgrade
-      rev: v3.20.0
-      hooks:
-      -   id: pyupgrade
-
-  -   repo: https://github.com/asottile/add-trailing-comma
-      rev: v3.2.0
-      hooks:
-      -   id: add-trailing-comma
-
-  -  repo: https://github.com/hhatto/autopep8
-     rev: v2.3.2
-     hooks:
-     -   id: autopep8
-
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v3.2.0
+    hooks:
+      - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.7
     hooks:
       - id: ruff-check
-        args: [ --fix ]
+        args:
+          - --fix
       - id: ruff-format
-
   - repo: https://github.com/crate-ci/typos
     rev: v1.34.0
     hooks:

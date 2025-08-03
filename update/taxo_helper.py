@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import csv
 import logging
 from collections import defaultdict, deque

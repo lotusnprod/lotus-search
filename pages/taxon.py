@@ -16,7 +16,7 @@ def title(wid=None):
     if wid is not None:
         try:
             return f"LOTUS - {dm.get_taxon_object_from_tid(int(wid))}"
-        except:
+        except Exception:
             pass
     return "LOTUS"
 

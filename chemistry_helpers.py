@@ -43,7 +43,7 @@ def get_mol_descriptors_rdkit(mol):
         # some of the descriptor functions can throw errors if they fail, catch those here:
         try:
             val = fn(mol)
-        except:
+        except Exception:
             # print the error message:
             import traceback
 
@@ -106,7 +106,7 @@ def process_smiles(inp):
             )
         else:
             return None
-    except:
+    except Exception:
         logging.exception(f"Failed to process: {smiles}")
         return None
 
