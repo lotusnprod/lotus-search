@@ -216,7 +216,11 @@ class TestApiReferences:
         assert result.count == 2
 
     async def test_search_references_from_taxon_structure_title(self, data_model):
-        item = Item(reference={"title": "Foo Bar"}, taxon={"wid": "1"}, structure={"wid": 1})
+        item = Item(
+            reference={"title": "Foo Bar"},
+            taxon={"wid": "1"},
+            structure={"wid": 1},
+        )
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0
 
@@ -245,7 +249,10 @@ class TestApiReferences:
         result = await search_references(item=item, dm=data_model)
         assert result.count == 1
 
-    async def test_search_references_with_taxon_non_matching_structure_existing(self, data_model):
+    async def test_search_references_with_taxon_non_matching_structure_existing(
+        self,
+        data_model,
+    ):
         item = Item(reference={"doi": "42.1/1"}, taxon={"wid": 2}, structure={"wid": 1})
         result = await search_references(item=item, dm=data_model)
         assert result.count == 0

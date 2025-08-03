@@ -22,7 +22,10 @@ from api.queries import (
 from chemistry_helpers import molecule_svg
 from model.data_model import DataModel
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
@@ -69,7 +72,10 @@ async def lifespan(_: FastAPI):
 
 @app.post("/triplets")
 @version(1, 0)
-async def search_triplets(item: Item, dm: DataModel = Depends(get_data_model)) -> TripletResult:
+async def search_triplets(
+    item: Item,
+    dm: DataModel = Depends(get_data_model),
+) -> TripletResult:
     triplets = get_triplets_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -106,7 +112,10 @@ async def search_triplets(item: Item, dm: DataModel = Depends(get_data_model)) -
 
 @app.post("/structures")
 @version(1, 0)
-async def search_structures(item: Item, dm: DataModel = Depends(get_data_model)) -> StructureResult:
+async def search_structures(
+    item: Item,
+    dm: DataModel = Depends(get_data_model),
+) -> StructureResult:
     dict_items = get_structures_for_item(item, dm)
 
     if item.structure.option.sdf:
@@ -134,7 +143,10 @@ async def search_structures(item: Item, dm: DataModel = Depends(get_data_model))
 
 @app.post("/taxa")
 @version(1, 0)
-async def search_taxa(item: Item, dm: DataModel = Depends(get_data_model)) -> TaxonResult:
+async def search_taxa(
+    item: Item,
+    dm: DataModel = Depends(get_data_model),
+) -> TaxonResult:
     dict_items = get_taxa_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -154,7 +166,10 @@ async def search_taxa(item: Item, dm: DataModel = Depends(get_data_model)) -> Ta
 
 @app.post("/references")
 @version(1, 0)
-async def search_references(item: Item, dm: DataModel = Depends(get_data_model)) -> ReferenceResult:
+async def search_references(
+    item: Item,
+    dm: DataModel = Depends(get_data_model),
+) -> ReferenceResult:
     dict_items = get_references_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -174,7 +189,10 @@ async def search_references(item: Item, dm: DataModel = Depends(get_data_model))
 
 @app.post("/autocomplete/taxa")
 @version(1, 0)
-async def autocomplete_taxa(inp: AutocompleteTaxa, dm: DataModel = Depends(get_data_model)) -> dict[str, int]:
+async def autocomplete_taxa(
+    inp: AutocompleteTaxa,
+    dm: DataModel = Depends(get_data_model),
+) -> dict[str, int]:
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
 
@@ -183,7 +201,12 @@ async def autocomplete_taxa(inp: AutocompleteTaxa, dm: DataModel = Depends(get_d
 async def depiction_structure(
     depiction_structure: DepictionStructure,
 ) -> dict[str, str]:
-    return {"svg": molecule_svg(depiction_structure.structure, highlight=depiction_structure.highlight)}
+    return {
+        "svg": molecule_svg(
+            depiction_structure.structure,
+            highlight=depiction_structure.highlight,
+        ),
+    }
 
 
 @app.get("/descriptors/")
@@ -215,4 +238,9 @@ LOGGING_CONFIG = {
     },
 }
 
-app = VersionedFastAPI(app, enable_latest=True, log_config=LOGGING_CONFIG, lifespan=lifespan)
+app = VersionedFastAPI(
+    app,
+    enable_latest=True,
+    log_config=LOGGING_CONFIG,
+    lifespan=lifespan,
+)

@@ -4,7 +4,10 @@ import logging
 from collections import defaultdict, deque
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 # See https://www.wikidata.org/wiki/Q2576881
 
@@ -40,7 +43,12 @@ def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int
                     next_distance = current_distance + 1
                     visited[neighbor] = next_distance
                     queue.append((neighbor, next_distance))
-                    distances.append((distance_id, source_node, neighbor, next_distance))
+                    distances.append((
+                        distance_id,
+                        source_node,
+                        neighbor,
+                        next_distance,
+                    ))
                     distance_id += 1
 
     return distances

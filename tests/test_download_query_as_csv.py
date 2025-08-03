@@ -38,10 +38,19 @@ class TestRunQueryToCSV:
             with patch("update.download_query_as_csv.sleep") as mock_sleep:
                 run(self.path, self.query_file, self.output_file, url="foo")
                 assert mock_sparql_to_csv.call_count == 5
-                urls = [arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list]
-                as_post = [arg_list[1]["as_post"] for arg_list in mock_sparql_to_csv.call_args_list]
+                urls = [
+                    arg_list[1]["url"] for arg_list in mock_sparql_to_csv.call_args_list
+                ]
+                as_post = [
+                    arg_list[1]["as_post"]
+                    for arg_list in mock_sparql_to_csv.call_args_list
+                ]
                 assert as_post == [False, False, True, True, True]
-                assert urls == ["foo"] * 3 + ["https://qlever.cs.uni-freiburg.de/api/wikidata"] * 2
+                assert (
+                    urls
+                    == ["foo"] * 3
+                    + ["https://qlever.cs.uni-freiburg.de/api/wikidata"] * 2
+                )
                 assert self.output_file.read_text() == "valid result"
                 assert mock_sleep.call_count == 2
                 sleep_times = [arg_list[0][0] for arg_list in mock_sleep.call_args_list]
@@ -73,7 +82,9 @@ class TestRunQueryToCSV:
     def test_writes_expected_result(self):
         with (
             patch("update.download_query_as_csv.sparql_to_csv") as mock_sparql_to_csv,
-            patch("update.download_query_as_csv.remove_wd_entity_prefix_and_Q") as mock_remove_wd_entity_prefix,
+            patch(
+                "update.download_query_as_csv.remove_wd_entity_prefix_and_Q",
+            ) as mock_remove_wd_entity_prefix,
         ):
             # Simulate SPARQL query output with a header and duplicate lines
             mock_sparql_to_csv.return_value = "header\nline1\nline2\nline3"

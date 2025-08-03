@@ -8,7 +8,10 @@ from pathlib import Path
 from update.config import TASKS
 from update.taskrunner import TaskRunner
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -16,7 +19,11 @@ if __name__ == "__main__":
     parser.add_argument("--stop", help="Stop at this task/group")
     parser.add_argument("--skip", help="Run everything except this task/group")
     parser.add_argument("--list", action="store_true", help="List tasks")
-    parser.add_argument("--data", default="data", help="Path for data, defaults to ./data")
+    parser.add_argument(
+        "--data",
+        default="data",
+        help="Path for data, defaults to ./data",
+    )
     args = parser.parse_args()
 
     multiprocessing.freeze_support()

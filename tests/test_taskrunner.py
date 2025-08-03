@@ -45,7 +45,10 @@ class TestTaskRunner:
         runner = TaskRunner(tasks, tmp_path)
         runner.run_tasks(parallel=True)
         assert mock_call.run.call_count == 2
-        mock_call.run.assert_has_calls([call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)])
+        mock_call.run.assert_has_calls([
+            call(foo="bar", path=tmp_path),
+            call(foo="bim", path=tmp_path),
+        ])
 
     def test_multiple_tasks_different_groups(self, tmp_path):
         mock_call = Mock()
@@ -59,7 +62,10 @@ class TestTaskRunner:
         runner = TaskRunner(tasks, tmp_path)
         runner.run_tasks(parallel=True)
         assert mock_call.run.call_count == 2
-        mock_call.run.assert_has_calls([call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)])
+        mock_call.run.assert_has_calls([
+            call(foo="bar", path=tmp_path),
+            call(foo="bim", path=tmp_path),
+        ])
 
     def test_multiple_tasks_only_one_task(self, tmp_path):
         mock_call = Mock()

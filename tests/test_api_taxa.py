@@ -23,7 +23,10 @@ class TestApiTaxa:
         assert result.objects is None
 
     async def test_taxa_children_id(self, data_model):
-        item = Item(taxon={"wid": 5, "option": {"taxon_children": True}}, modeEnum="objects")
+        item = Item(
+            taxon={"wid": 5, "option": {"taxon_children": True}},
+            modeEnum="objects",
+        )
         result = await search_taxa(item=item, dm=data_model)
         assert result.count == 4
         assert result.objects[1].name == "Taxon 1"

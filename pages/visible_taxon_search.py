@@ -4,7 +4,13 @@ import dash
 from dash import Input, Output, callback, dash_table, dcc
 from model.model import DataModel
 
-dash.register_page(__name__, name="Taxon search", top_nav=True, path="/taxa/search", order=1)
+dash.register_page(
+    __name__,
+    name="Taxon search",
+    top_nav=True,
+    path="/taxa/search",
+    order=1,
+)
 
 data = DataModel()
 

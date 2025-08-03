@@ -19,6 +19,4 @@ class TaxoParents(Base):
     )
 
     def __repr__(self):
-        return (
-            f"TaxoParents(id={self.id}, child_id={self.child_id}, parent_id={self.parent_id}, distance={self.distance})"
-        )
+        return f"TaxoParents(id={self.id}, child_id={self.child_id}, parent_id={self.parent_id}, distance={self.distance})"

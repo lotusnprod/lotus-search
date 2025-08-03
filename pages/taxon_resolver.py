@@ -7,7 +7,13 @@ import dash
 from dash import Input, Output, State, callback, dcc, html
 from model.model import DataModel
 
-dash.register_page(__name__, name="Taxon resolver", top_nav=True, path="/taxon_resolver", order=70)
+dash.register_page(
+    __name__,
+    name="Taxon resolver",
+    top_nav=True,
+    path="/taxon_resolver",
+    order=70,
+)
 
 dm = DataModel()
 
@@ -31,7 +37,15 @@ def search_taxon(query: str, n_clicks: int, n_submit: int) -> Any:
     except Exception as e:
         print(f"Big fail while requesting GN {e}")
         return [], dcc.Markdown(f"Error while requesting GN, please retry. ({e})")
-    table_header = [html.Thead(html.Tr([html.Th("Accepted name"), html.Th("Database"), html.Th("Match type")]))]
+    table_header = [
+        html.Thead(
+            html.Tr([
+                html.Th("Accepted name"),
+                html.Th("Database"),
+                html.Th("Match type"),
+            ]),
+        ),
+    ]
     outputs = []
     try:
         if "names" not in data:
@@ -57,7 +71,9 @@ def search_taxon(query: str, n_clicks: int, n_submit: int) -> Any:
 
                 outputs.append(
                     html.Tr([
-                        html.Td(dcc.Markdown(f"[{name}](/taxa/search?name={quote(name)})")),
+                        html.Td(
+                            dcc.Markdown(f"[{name}](/taxa/search?name={quote(name)})"),
+                        ),
                         html.Td(dcc.Markdown(db_match)),
                         html.Td(dcc.Markdown(match_type)),
                     ]),

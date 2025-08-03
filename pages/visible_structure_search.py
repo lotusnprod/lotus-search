@@ -9,12 +9,23 @@ import plotly_dash_ketcher
 from dash import Input, Output, callback, dcc
 from model.model import DataModel
 
-dash.register_page(__name__, name="Structure search", top_nav=True, path="/structures/search", order=2)
+dash.register_page(
+    __name__,
+    name="Structure search",
+    top_nav=True,
+    path="/structures/search",
+    order=2,
+)
 
 dm = DataModel()
 
 
-def get_matching_ids(query: str, ss_mode: bool, chirality: bool, level: float) -> list[tuple[int, float]]:
+def get_matching_ids(
+    query: str,
+    ss_mode: bool,
+    chirality: bool,
+    level: float,
+) -> list[tuple[int, float]]:
     if query:
         try:
             # Sometimes ketcher gives really invalid smiles like with theobromine
@@ -56,7 +67,10 @@ def download_structures(n_clicks, data):
     if dash.ctx.triggered_id == "btn-download-structures":
         filename = "structures.tsv"
         return dict(
-            content=dm.structure_get_tsv_from_scores(data["matching_structures"], data["scores"]),
+            content=dm.structure_get_tsv_from_scores(
+                data["matching_structures"],
+                data["scores"],
+            ),
             filename=filename,
         )
 
@@ -76,7 +90,13 @@ def download_structures(n_clicks, data):
         Input("pagination-structure-search", "active_page"),
     ],
 )
-def search_structure_cards(molecule: str, ss_mode: bool, chirality: bool, similarity: float, active_page: int):
+def search_structure_cards(
+    molecule: str,
+    ss_mode: bool,
+    chirality: bool,
+    similarity: float,
+    active_page: int,
+):
     data = {}
     scores = get_matching_ids(molecule, ss_mode, chirality, similarity)
     n_scores = len(scores)

@@ -23,7 +23,11 @@ class TestApiStructures:
         assert result.objects is None
 
     async def test_search_error_giving_both_structure_and_formuka(self, data_model):
-        item = Item(structure={"molecule": "C", "formula": "CH4"}, limit=10, modeEnum="objects")
+        item = Item(
+            structure={"molecule": "C", "formula": "CH4"},
+            limit=10,
+            modeEnum="objects",
+        )
         with pytest.raises(Exception):
             await search_structures(item=item, dm=data_model)
 
@@ -153,7 +157,10 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
 
-    async def test_search_structures_by_descriptor_double_min_max_diff(self, data_model):
+    async def test_search_structures_by_descriptor_double_min_max_diff(
+        self,
+        data_model,
+    ):
         item = Item(
             structure={
                 "option": {
@@ -169,7 +176,10 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 2
 
-    async def test_search_structures_by_descriptor_double_min_max_same(self, data_model):
+    async def test_search_structures_by_descriptor_double_min_max_same(
+        self,
+        data_model,
+    ):
         item = Item(
             structure={
                 "option": {
@@ -199,7 +209,9 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
         # TODO this is not optimal
-        assert result.objects[1].descriptors["MaxAbsEStateIndex"][0] == 7.833333333333334
+        assert (
+            result.objects[1].descriptors["MaxAbsEStateIndex"][0] == 7.833333333333334
+        )
 
     async def test_search_structures_sdf(self, data_model):
         item = Item(
@@ -291,7 +303,10 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 0
 
-    async def test_search_structure_restrict_reference_and_taxon_both_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_both_exist(
+        self,
+        data_model,
+    ):
         # We search for a compound that exist in this taxon
         item = Item(
             structure={"molecule": "CC(N)O"},
@@ -303,7 +318,10 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 1
 
-    async def test_search_structure_restrict_reference_and_taxon_none_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_none_exist(
+        self,
+        data_model,
+    ):
         # We search for a compound that exist in this taxon
         item = Item(
             structure={"molecule": "CC(N)O"},
@@ -314,7 +332,10 @@ class TestApiStructures:
         result = await search_structures(item=item, dm=data_model)
         assert result.count == 0
 
-    async def test_search_structure_restrict_reference_and_taxon_one_exist(self, data_model):
+    async def test_search_structure_restrict_reference_and_taxon_one_exist(
+        self,
+        data_model,
+    ):
         # We search for a compound that exist in this taxon
         item = Item(
             structure={"molecule": "CC(N)O"},

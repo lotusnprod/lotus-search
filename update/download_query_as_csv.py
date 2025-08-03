@@ -11,10 +11,19 @@ from update.common import (
     sparql_to_csv,
 )
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
-def run(path: Path, query_file: Path, output_file: Path, retry: int = 3, url: str = WD_URL) -> None:
+def run(
+    path: Path,
+    query_file: Path,
+    output_file: Path,
+    retry: int = 3,
+    url: str = WD_URL,
+) -> None:
     with open(query_file) as qf:
         query = qf.read()
 
@@ -30,7 +39,9 @@ def run(path: Path, query_file: Path, output_file: Path, retry: int = 3, url: st
             run(path, query_file, output_file, retry - 1, url)
             return
         else:
-            logging.warning(f"Timeout for query from file {query_file} on url {url} retrying with {QLEVER_URL}")
+            logging.warning(
+                f"Timeout for query from file {query_file} on url {url} retrying with {QLEVER_URL}",
+            )
             run(path, query_file, output_file, 1, QLEVER_URL)
             return
         logging.error(f"Timeout for query from file {query_file}")

@@ -41,7 +41,9 @@ class TestRemoveWdEntityPrefix:
         assert result == "123"
 
     def test_does_not_remove_other_text_2(self):
-        result = remove_wd_entity_prefix_and_Q("http://www.wikidata.org/entity/Q123/other")
+        result = remove_wd_entity_prefix_and_Q(
+            "http://www.wikidata.org/entity/Q123/other",
+        )
         assert result == "123/other"
 
     def test_removes_prefix_3(self):

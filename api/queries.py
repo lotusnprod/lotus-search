@@ -9,7 +9,10 @@ from api.models import (
 )
 from model.data_model import DataModel
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def parse_date(date_str: str) -> datetime:
@@ -160,10 +163,18 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     if wid is not None or name is not None:
         # This needs to be explained in the API doc
         if wid:
-            return {child for child in dm.get_taxon_children_by_id(wid)} if children else dm.get_taxon_by_id(wid)
+            return (
+                {child for child in dm.get_taxon_children_by_id(wid)}
+                if children
+                else dm.get_taxon_by_id(wid)
+            )
         elif name:
             t = dm.get_taxa_with_name_matching(name)
-            return {child for tt in t for child in dm.get_taxon_children_by_id(tt)} if children else t
+            return (
+                {child for tt in t for child in dm.get_taxon_children_by_id(tt)}
+                if children
+                else t
+            )
 
     return None
 
@@ -269,7 +280,10 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_structure_object_from_dict_of_sids(ids, item.structure.option.return_descriptors)
+    return dm.get_structure_object_from_dict_of_sids(
+        ids,
+        item.structure.option.return_descriptors,
+    )
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:

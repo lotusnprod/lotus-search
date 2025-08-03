@@ -6,7 +6,10 @@ from pathlib import Path
 from storage.storage import Storage
 from update.taxo_helper import generate_taxon_parents_with_distance
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def run(path: Path) -> None:
@@ -165,7 +168,9 @@ def run(path: Path) -> None:
                 continue
 
     # Process taxon names
-    taxo_names = [{"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()]
+    taxo_names = [
+        {"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()
+    ]
     logging.info(" Processed rank names")
 
     # Process taxon ranks
@@ -182,7 +187,11 @@ def run(path: Path) -> None:
                 continue
 
     # Create final taxon ranks list
-    taxo_ranks = [{"id": taxon, "rank_id": rank} for taxon, ranks in taxon_ranks_dict.items() for rank in ranks]
+    taxo_ranks = [
+        {"id": taxon, "rank_id": rank}
+        for taxon, ranks in taxon_ranks_dict.items()
+        for rank in ranks
+    ]
 
     logging.info(" Processed taxa ranks")
     logging.info(" Processed dicts")

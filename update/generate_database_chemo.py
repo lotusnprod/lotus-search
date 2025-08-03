@@ -16,7 +16,10 @@ from chemistry_helpers import process_smiles
 from sdf_helpers import find_structures_bytes_ranges, mmap_file, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 def export_descriptors_to_csv(descriptors: dict, path: Path) -> None:
@@ -90,8 +93,13 @@ def run(path: Path) -> None:
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(process_smiles, smiles): smiles for smiles in enumerate(smileses)}
-        results = tuple(tqdm(as_completed(futures), total=len(smileses), desc="Processing SMILES"))
+        futures = {
+            executor.submit(process_smiles, smiles): smiles
+            for smiles in enumerate(smileses)
+        }
+        results = tuple(
+            tqdm(as_completed(futures), total=len(smileses), desc="Processing SMILES"),
+        )
         for future in results:
             if future is not None:
                 result = future.result()

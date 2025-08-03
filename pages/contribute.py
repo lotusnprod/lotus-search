@@ -65,7 +65,10 @@ tab1_content = dbc.Card(
         dbc.Form(
             id="organism_part_row",
             children=[
-                dbc.Label("Organism name (mandatory)", html_for="organism_contribution"),
+                dbc.Label(
+                    "Organism name (mandatory)",
+                    html_for="organism_contribution",
+                ),
                 dbc.Input(
                     id="organism_contribution",
                     placeholder="Enter the organism name",
@@ -185,7 +188,10 @@ def update_output(email, content, name):
                 color="danger",
             )
         if not name.endswith(".csv") or not name.endswith(".tsv"):
-            return dbc.Alert(f"Sorry your file {name} is not a CSV or TSV file.", color="danger")
+            return dbc.Alert(
+                f"Sorry your file {name} is not a CSV or TSV file.",
+                color="danger",
+            )
         basename = f"contributions/{time.time()}_{uuid.uuid4()}"
         with open(f"{basename}.xsv", "w") as f:
             f.write(content)

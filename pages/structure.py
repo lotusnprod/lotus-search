@@ -50,7 +50,9 @@ def layout(wid: int):
         dbc.Row([
             dash.html.H1(f"Q{wid}"),
             dash.html.Hr(),
-            dcc.Markdown(f"[Wikidata page of Q{wid}](https://www.wikidata.org/entity/Q{wid})"),
+            dcc.Markdown(
+                f"[Wikidata page of Q{wid}](https://www.wikidata.org/entity/Q{wid})",
+            ),
             dbc.Row([
                 dbc.Col([html.Img(src=img_data)]),
             ]),

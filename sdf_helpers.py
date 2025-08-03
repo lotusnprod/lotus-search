@@ -28,7 +28,10 @@ def find_structures_bytes_ranges(mmapped_file: mmap.mmap) -> dict[int, tuple[int
     return structures_ranges
 
 
-def read_selected_ranges(mmapped_file: mmap.mmap, ranges_to_read: list[tuple[int, int]]) -> str:
+def read_selected_ranges(
+    mmapped_file: mmap.mmap,
+    ranges_to_read: list[tuple[int, int]],
+) -> str:
     selected_lines: deque[str] = deque()
 
     for start, end in ranges_to_read:
@@ -54,7 +57,9 @@ def main():
     structures_ranges = find_structures_bytes_ranges(mmapped_file)
     # print(structures_ranges)
     start_time = time.time()
-    ranges_to_read = [structures_ranges[key] for key in list(structures_ranges.keys())[:100000]]
+    ranges_to_read = [
+        structures_ranges[key] for key in list(structures_ranges.keys())[:100000]
+    ]
     if ranges_to_read:
         selected_lines = read_selected_ranges(mmapped_file, ranges_to_read)
     else:

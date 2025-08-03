@@ -97,7 +97,9 @@ def layout(wid: int):
             dash.html.H1(f"{taxon_name}{parent_ranks}"),
             dcc.Markdown(taxonomic_info),
             dash.html.Hr(),
-            dcc.Markdown(f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})"),
+            dcc.Markdown(
+                f"[Wikidata page of {taxon_name}](https://www.wikidata.org/entity/Q{wid})",
+            ),
         ]),
         dbc.Row([
             dbc.Col([dbc.Alert(warning, color="primary")]),
