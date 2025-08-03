@@ -10,11 +10,11 @@ stop:
 
 
 tests: start
-	docker compose run -e PYTHONDONTWRITEBYTECODE=1 backend poetry run pytest --cov-config=.coveragerc --cov=.
+	docker compose run -e PYTHONDONTWRITEBYTECODE=1 backend uv run pytest --cov-config=.coveragerc --cov=.
 
 fix: start
-	docker compose run backend poetry run black .
-	docker compose run backend poetry run isort .
+	docker compose run backend uv run black .
+	docker compose run backend uv run isort .
 
 .PHONY: clean_data clean_db
 clean_data:
