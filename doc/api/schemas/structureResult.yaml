@@ -18,13 +18,13 @@ properties:
     description: |
       SDF
     example: |2+
-      
+
            RDKit          2D
 
         1  0  0  0  0  0  0  0  0  0999 V2000
           0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
       M  END
-      >  <WID>  (3) 
+      >  <WID>  (3)
       3
 
     type: string

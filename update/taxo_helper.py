@@ -10,6 +10,7 @@ logging.basicConfig(
 
 # See https://www.wikidata.org/wiki/Q2576881
 
+
 def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int, int]]:
     graph = defaultdict(list)
 
@@ -35,13 +36,15 @@ def generate_taxon_parents_with_distance(path: Path) -> list[tuple[int, int, int
 
         while queue:
             current_node, current_distance = queue.popleft()
-            
+
             for neighbor in graph.get(current_node, []):
                 if neighbor not in visited:
                     next_distance = current_distance + 1
                     visited[neighbor] = next_distance
                     queue.append((neighbor, next_distance))
-                    distances.append((distance_id, source_node, neighbor, next_distance))
+                    distances.append(
+                        (distance_id, source_node, neighbor, next_distance)
+                    )
                     distance_id += 1
 
     return distances

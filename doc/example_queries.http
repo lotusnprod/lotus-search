@@ -12,7 +12,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "taxon": 
+  "taxon":
   {
     "wid": 158572
   }
@@ -25,7 +25,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "molecule": "c1ccccc1"
   }
@@ -38,7 +38,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "wid": 27151406
   },
@@ -47,7 +47,7 @@ Content-Type: application/json
     "wid": 158572
   },
   "reference":
-  { 
+  {
     "wid": 44488598
   }
 }
@@ -59,10 +59,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "molecule": "Cl",
-    "option": 
+    "option":
     {
       "substructure_search": true
     }
@@ -72,7 +72,7 @@ Content-Type: application/json
     "name": "Gentiana septemfida"
   },
   "reference":
-  { 
+  {
     "doi": "10.1021/NP50081A018"
   }
 }
@@ -84,7 +84,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "wid": 27151406
   },
@@ -93,7 +93,7 @@ Content-Type: application/json
     "wid": 158572
   },
   "reference":
-  { 
+  {
     "wid": 44488598
   }
 }
@@ -105,10 +105,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "molecule": "Cl",
-    "option": 
+    "option":
     {
       "substructure_search": true
     }
@@ -118,7 +118,7 @@ Content-Type: application/json
     "name": "Gentiana septemfida"
   },
   "reference":
-  { 
+  {
     "doi": "10.1021/NP50081A018"
   }
 }
@@ -130,7 +130,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "wid": 27151406
   },
@@ -139,7 +139,7 @@ Content-Type: application/json
     "wid": 158572
   },
   "reference":
-  { 
+  {
     "wid": 44488598
   }
 }
@@ -151,10 +151,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "molecule": "Cl",
-    "option": 
+    "option":
     {
       "substructure_search": true
     }
@@ -164,7 +164,7 @@ Content-Type: application/json
     "name": "Gentiana septemfida"
   },
   "reference":
-  { 
+  {
     "doi": "10.1021/NP50081A018"
   }
 }
@@ -176,7 +176,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "wid": 27151406
   },
@@ -185,7 +185,7 @@ Content-Type: application/json
     "wid": 158572
   },
   "reference":
-  { 
+  {
     "wid": 44488598
   }
 }
@@ -197,10 +197,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "structure": 
+  "structure":
   {
     "molecule": "Cl",
-    "option": 
+    "option":
     {
       "substructure_search": true
     }
@@ -210,7 +210,7 @@ Content-Type: application/json
     "name": "Gentiana septemfida"
   },
   "reference":
-  { 
+  {
     "doi": "10.1021/NP50081A018"
   }
 }

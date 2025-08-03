@@ -70,16 +70,16 @@ class TestUpdate:
             4: (993, 1153),
             6: (1158, 1567),
         }
-        assert (
-            ranges == ranges_expected
-        ), f"Content mismatch between {ranges} and {ranges_expected}"
+        assert ranges == ranges_expected, (
+            f"Content mismatch between {ranges} and {ranges_expected}"
+        )
 
         ranges_to_read = [ranges[key] for key in list(ranges.keys())]
         block = read_selected_ranges(mmaped_sdf_generated, [ranges_to_read[2]])
         block_expected = """\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"""
-        assert (
-            block == block_expected
-        ), f"Content mismatch between {block} and {block_expected}"
+        assert block == block_expected, (
+            f"Content mismatch between {block} and {block_expected}"
+        )
 
     def test_table_exist(self, data_model):
         assert (data_model.path / "structures_table.csv").exists()

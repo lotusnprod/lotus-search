@@ -166,16 +166,15 @@ def run(path: Path) -> None:
         reader = csv.DictReader(f)
         for row in reader:
             try:
-                ranks_names.append({
-                    "id": int(row["rank"]), 
-                    "name": row["rankLabel"]
-                })
+                ranks_names.append({"id": int(row["rank"]), "name": row["rankLabel"]})
             except (ValueError, KeyError) as e:
                 logging.error(f"Invalid row: {row}")
                 continue
 
     # Process taxon names
-    taxo_names = [{"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()]
+    taxo_names = [
+        {"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()
+    ]
     logging.info(" Processed rank names")
 
     # Process taxon ranks

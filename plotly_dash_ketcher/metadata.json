@@ -1,8 +1,17 @@
 {
   "src/ts/components/PlotlyDashKetcher.tsx": {
-    "displayName": "PlotlyDashKetcher",
     "description": "",
+    "displayName": "PlotlyDashKetcher",
+    "isContext": false,
     "props": {
+      "buttonLabel": {
+        "description": "",
+        "required": false,
+        "type": {
+          "name": "string",
+          "raw": "string"
+        }
+      },
       "id": {
         "description": "Unique ID to identify this component in Dash callbacks.",
         "required": false,
@@ -19,14 +28,6 @@
           "raw": "string"
         }
       },
-      "buttonLabel": {
-        "description": "",
-        "required": false,
-        "type": {
-          "name": "string",
-          "raw": "string"
-        }
-      },
       "setProps": {
         "description": "Update props to trigger callbacks.",
         "required": true,
@@ -35,7 +36,6 @@
           "raw": "(props: Record<string, any>) => void"
         }
       }
-    },
-    "isContext": false
+    }
   }
 }

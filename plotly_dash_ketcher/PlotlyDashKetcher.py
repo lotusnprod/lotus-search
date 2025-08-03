@@ -27,7 +27,7 @@ class PlotlyDashKetcher(Component):
         id=Component.UNDEFINED,
         molecule=Component.UNDEFINED,
         buttonLabel=Component.UNDEFINED,
-        **kwargs
+        **kwargs,
     ):
         self._prop_names = ["id", "buttonLabel", "molecule"]
         self._valid_wildcard_attributes = []

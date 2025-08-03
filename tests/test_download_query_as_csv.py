@@ -80,17 +80,20 @@ class TestRunQueryToCSV:
     #             assert sleep_times == [5, 5]
 
     def test_writes_expected_result(self):
-        with patch(
-            "update.download_query_as_csv.sparql_to_csv"
-        ) as mock_sparql_to_csv, patch(
-            "update.download_query_as_csv.remove_wd_entity_prefix_and_Q"
-        ) as mock_remove_wd_entity_prefix:
+        with (
+            patch("update.download_query_as_csv.sparql_to_csv") as mock_sparql_to_csv,
+            patch(
+                "update.download_query_as_csv.remove_wd_entity_prefix_and_Q"
+            ) as mock_remove_wd_entity_prefix,
+        ):
             # Simulate SPARQL query output with a header and duplicate lines
             mock_sparql_to_csv.return_value = "header\nline1\nline2\nline3"
-            
+
             # Mock `remove_wd_entity_prefix_and_Q` to return processed values
             def mock_process(text):
-                return f"processed_{text}" if text != "line2" else None  # Simulate None return for "line2"
+                return (
+                    f"processed_{text}" if text != "line2" else None
+                )  # Simulate None return for "line2"
 
             mock_remove_wd_entity_prefix.side_effect = mock_process
 

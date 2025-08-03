@@ -1,7 +1,7 @@
 PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
-SELECT ?taxon ?taxon_name_com (LANG(?taxon_name_com) AS ?lang) WHERE { 
+SELECT ?taxon ?taxon_name_com (LANG(?taxon_name_com) AS ?lang) WHERE {
     ?taxon wdt:P1843 ?taxon_name_com. hint:Prior hint:rangeSafe TRUE.
 }
 # LIMIT 2000000

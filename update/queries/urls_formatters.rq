@@ -2,7 +2,7 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX hint: <http://www.bigdata.com/queryHints#>
 
-SELECT * WHERE { 
+SELECT * WHERE {
   # All properties we use with a formatter URL
   VALUES ?property {
     wd:P231   # STRUCTURE CAS

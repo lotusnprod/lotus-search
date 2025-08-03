@@ -18,13 +18,13 @@
     - Full coverage
 
 ### 2023-12-30
-    
+
     - Move the taxo to the DB
     - Fix the merging bug (making blocks of 1000 for now so A. can use it, will find a better way)
     - Some refactoring
 
 ### 2023-12-27
-    
+
     - More refactoring of SQLite
     - Move DOIs and SMILESes to the DB
 
@@ -58,7 +58,7 @@
         you can run with `--only xxx`, `--stop xxx` or `--skip xxx` to:
         - only execute xxx
         - stop before xxx
-        - skip xxx 
+        - skip xxx
         Where xxx can be a task or a group name
         Task/Groups descriptions can be listed with `--list`
     - Fix a potential abuse if taxon contains a comma in `generate_database_taxo.py`
@@ -66,4 +66,3 @@
 ## Release
 
 ### 0.1.2
-
