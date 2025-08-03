@@ -7,7 +7,7 @@ from api.models import (
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures("data_model")
+@pytest.mark.usefixtures(data_model)
 class TestApiStructures:
     async def test_search_structures_pure_structure(self, data_model):
         item = Item(structure={"molecule": "C"}, limit=10, modeEnum="objects")

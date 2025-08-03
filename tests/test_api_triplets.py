@@ -3,11 +3,12 @@ import pytest
 from api.api import search_triplets
 from api.models import (
     Item,
+    TripletResult,
 )
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures("data_model")
+@pytest.mark.usefixtures(data_model)
 class TestApiTriplets:
     async def test_triplets_all(self, data_model):
         item = Item(modeEnum="objects")

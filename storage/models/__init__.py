@@ -1,11 +1,11 @@
-from .base import Base
-from .journals import Journals
-from .references import References
-from .schema_version import SchemaVersion
-from .structures import Structures
-from .structures_descriptors import StructuresDescriptors
-from .taxo_names import TaxoNames
-from .taxo_parents import TaxoParents
-from .taxo_rank_names import TaxoRankNames
-from .taxo_ranks import TaxoRanks
-from .triplets import Triplets
+from .base import Base as Base
+from .journals import Journals as Journals
+from .references import References as References
+from .schema_version import SchemaVersion as SchemaVersion
+from .structures import Structures as Structures
+from .structures_descriptors import StructuresDescriptors as StructuresDescriptors
+from .taxo_names import TaxoNames as TaxoNames
+from .taxo_parents import TaxoParents as TaxoParents
+from .taxo_rank_names import TaxoRankNames as TaxoRankNames
+from .taxo_ranks import TaxoRanks as TaxoRanks
+from .triplets import Triplets as Triplets

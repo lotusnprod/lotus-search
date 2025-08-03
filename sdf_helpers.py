@@ -60,13 +60,14 @@ def main():
     ranges_to_read = [
         structures_ranges[key] for key in list(structures_ranges.keys())[:100000]
     ]
+    selected_lines = []
     if ranges_to_read:
         selected_lines = read_selected_ranges(mmapped_file, ranges_to_read)
     else:
         logging.info("No '$$$$' occurrences found in the file.")
     end_time = time.time()
     logging.info(f"Time taken to get the blocks: {end_time - start_time} seconds")
-    # print(selected_lines)
+    return selected_lines
 
 
 if __name__ == "__main__":

@@ -44,16 +44,12 @@ class TestUpdate:
     def test_sdf(self, data_model):
         generated_sdf_path = data_model.path / "lotus.sdf"
 
-        # Not working anymore because of the append mechanism
-        # fixture_sdf_path = "tests/fixtures/lotus.sdf"
-        # with open(generated_sdf_path, "r") as f:
-        #     sdf = f.read()
-        # # If you need to update, set r to w below, and do fo.write(sdf)
+        # # If you need to update, set r to w below, and do foo.write(sdf)
         # # don't forget to remove it after
-        # # with open(fixture_sdf_path, "w") as fo: ## Promise I'll remove that before committing
-        # #    sdf_fixture = fo.write(sdf)
-        # with open(fixture_sdf_path, "r") as fo:
-        #     sdf_fixture = fo.read()
+        # # with open(fixture_sdf_path, "w") as foo: ## Promise I'll remove that before committing
+        # #    sdf_fixture = foo.write(sdf)
+        # with open(fixture_sdf_path, "r") as foo:
+        #     sdf_fixture = foo.read()
 
         # assert (
         #     sdf == sdf_fixture
@@ -86,6 +82,7 @@ class TestUpdate:
 
     def test_table(self, data_model):
         with open(data_model.path / "structures_table.csv", "rb") as f:
+            f
             # TODO test content
             pass
 
@@ -94,6 +91,7 @@ class TestUpdate:
 
     def test_blocks(self, data_model):
         with open(data_model.path / "structures_blocks_table.csv", "rb") as f:
+            f
             # TODO test content
             pass
 
@@ -102,6 +100,7 @@ class TestUpdate:
 
     def test_descriptors(self, data_model):
         with open(data_model.path / "descriptors_rdkit.csv", "rb") as f:
+            f
             # TODO test content
             pass
 
@@ -110,5 +109,6 @@ class TestUpdate:
 
     def test_processed(self, data_model):
         with open(data_model.path / "smiles_processed.csv", "rb") as f:
+            f
             # TODO test content
             pass

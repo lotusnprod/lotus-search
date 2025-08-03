@@ -5,7 +5,7 @@ from api.models import DepictionStructure
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures("data_model")
+@pytest.mark.usefixtures(data_model)
 class TestApiDepictionStructure:
     @pytest.mark.asyncio
     async def test_depiction_structure(self, data_model):

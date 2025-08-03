@@ -7,7 +7,7 @@ from api.models import (
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures("data_model")
+@pytest.mark.usefixtures(data_model)
 class TestApiTaxa:
     async def test_taxa_simple(self, data_model):
         item = Item(taxon={"name": "Taxon 1"}, modeEnum="objects")

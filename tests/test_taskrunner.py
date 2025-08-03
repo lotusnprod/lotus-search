@@ -7,12 +7,12 @@ from update.models import Group, Task
 from update.taskrunner import TaskRunner
 
 
-def f1(foo: "", path: Path):  # pragma: no cover
+def f1(foo: str, path: Path):  # pragma: no cover
     with open(path / "file1", "w") as f:
         f.write(foo)
 
 
-def f2(foo: "", path: Path):  # pragma: no cover
+def f2(foo: str, path: Path):  # pragma: no cover
     with open(path / "file2", "w") as f:
         f.write(foo)
 
