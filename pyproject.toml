@@ -76,12 +76,7 @@ documentation = "https://github.com/lotusnprod/lotus-search"
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
-[tool.setuptools]
-py-modules = ["lotus_search"]
-
 [tool.mypy]
-files = ["lotus_search"]
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true
@@ -151,4 +146,3 @@ skip_empty = true
 
 [tool.coverage.run]
 branch = true
-source = ["lotus_search"]
