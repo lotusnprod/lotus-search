@@ -38,4 +38,4 @@ class PlotlyDashKetcher(Component):
         _locals.update(kwargs)  # For wildcard attrs and excess named props
         args = {k: _locals[k] for k in _explicit_args}
 
-        super(PlotlyDashKetcher, self).__init__(**args)
+        super().__init__(**args)

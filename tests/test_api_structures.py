@@ -97,7 +97,7 @@ class TestApiStructures:
                 "option": {
                     "descriptors": {
                         "NumHAcceptors_min": 1,
-                    }
+                    },
                 },
             },
             limit=10,
@@ -112,7 +112,7 @@ class TestApiStructures:
                 "option": {
                     "descriptors": {
                         "NumHAcceptors_max": 1,
-                    }
+                    },
                 },
             },
             limit=10,
@@ -128,7 +128,7 @@ class TestApiStructures:
                     "descriptors": {
                         "NumHAcceptors_max": 1,
                         "NumHeteroatoms_max": 0,
-                    }
+                    },
                 },
             },
             limit=10,
@@ -144,7 +144,7 @@ class TestApiStructures:
                     "descriptors": {
                         "NumHAcceptors_min": 1,
                         "NumHeteroatoms_min": 3,
-                    }
+                    },
                 },
             },
             limit=10,
@@ -160,7 +160,7 @@ class TestApiStructures:
                     "descriptors": {
                         "NumHAcceptors_min": 1,
                         "NumHeteroatoms_max": 2,
-                    }
+                    },
                 },
             },
             limit=10,
@@ -176,7 +176,7 @@ class TestApiStructures:
                     "descriptors": {
                         "NumHeteroatoms_min": 1,
                         "NumHeteroatoms_max": 2,
-                    }
+                    },
                 },
             },
             limit=10,

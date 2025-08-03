@@ -60,7 +60,7 @@ def search_taxon(query: str, n_clicks: int, n_submit: int) -> Any:
                         html.Td(dcc.Markdown(f"[{name}](/taxa/search?name={quote(name)})")),
                         html.Td(dcc.Markdown(db_match)),
                         html.Td(dcc.Markdown(match_type)),
-                    ])
+                    ]),
                 )
 
         return table_header + [html.Tbody(outputs)], ""
@@ -81,10 +81,10 @@ This service is using the [Global Names Resolver API](https://verifier.globalnam
 It supports fuzzy matching, for example *Jentiana lutea* will match *Gentiana lutea*.
 
 It does not support vernacular names (E.g. tomato) so you will need to use the systematic name (*Solanum lycopersicum*)
-                    """
+                    """,
                 ),
                 color="success",
-            )
+            ),
         ]),
         dbc.Form(
             [
@@ -93,8 +93,8 @@ It does not support vernacular names (E.g. tomato) so you will need to use the s
                         dbc.Label(
                             "Search for taxon:",
                             html_for="input-on-submit-taxon-resolver",
-                        )
-                    ])
+                        ),
+                    ]),
                 ]),
                 dbc.Row([
                     dbc.Col([
@@ -102,8 +102,8 @@ It does not support vernacular names (E.g. tomato) so you will need to use the s
                             id="input-on-submit-taxon-resolver",
                             type="text",
                             value="",
-                        )
-                    ])
+                        ),
+                    ]),
                 ]),
             ],
             id="taxon-resolver-form",
@@ -114,8 +114,8 @@ It does not support vernacular names (E.g. tomato) so you will need to use the s
                     id="submit-button-taxon-resolver",
                     children="Search",
                     color="primary",
-                )
-            ])
+                ),
+            ]),
         ]),
         html.Div(id="taxon-resolver-alert"),
         dbc.Spinner(

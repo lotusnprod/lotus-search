@@ -59,9 +59,9 @@ class TestUpdate:
         #     sdf == sdf_fixture
         # ), f"Content mismatch between {generated_sdf_path} and {fixture_sdf_path}"
 
-        mmaped_sdf_generated = mmap_file(generated_sdf_path)
+        mapped_sdf_generated = mmap_file(generated_sdf_path)
 
-        ranges = find_structures_bytes_ranges(mmaped_sdf_generated)
+        ranges = find_structures_bytes_ranges(mapped_sdf_generated)
         # Hard to find bytes manually
         ranges_expected = {
             1: (0, 409),
@@ -73,7 +73,7 @@ class TestUpdate:
         assert ranges == ranges_expected, f"Content mismatch between {ranges} and {ranges_expected}"
 
         ranges_to_read = [ranges[key] for key in list(ranges.keys())]
-        block = read_selected_ranges(mmaped_sdf_generated, [ranges_to_read[2]])
+        block = read_selected_ranges(mapped_sdf_generated, [ranges_to_read[2]])
         block_expected = """\n     RDKit          2D\n\n  1  0  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\nM  END\n>  <WID>  (3) \n3\n\n"""
         assert block == block_expected, f"Content mismatch between {block} and {block_expected}"
 

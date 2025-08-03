@@ -63,8 +63,8 @@ class DataModel:
     @classmethod
     @functools.cache
     def load_sdf_data(cls, path: Path):
-        mmaped_sdf = mmap_file(path / "lotus.sdf")
-        return mmaped_sdf
+        mapped_sdf = mmap_file(path / "lotus.sdf")
+        return mapped_sdf
 
     @classmethod
     @functools.cache
@@ -72,7 +72,7 @@ class DataModel:
         ranges = find_structures_bytes_ranges(sdf)
         return ranges
 
-    ### Taxonomy
+    # Taxonomy
     def get_taxon_object_from_dict_of_tids(self, tids: Iterable[int]) -> dict[int, TaxonObject]:
         with self.storage.session() as session:
             result = (
@@ -145,7 +145,7 @@ class DataModel:
             ranks = ""
         return ranks
 
-    ### Structureonomy
+    # Structureonomy
     @functools.cache
     def structures_set(self) -> set[int]:
         # TODO use DB
@@ -282,9 +282,9 @@ class DataModel:
         fp = fingerprint(mol)
         return mol, fp, explicit_h
 
-    ## COMMENT (AR): Should we rename this to structure_search_from_smiles
-    ## and have same for InChI and co and then wrap them to a `structure_search`
-    ## with inchi = "InChI=1S/" in query ...
+    # COMMENT (AR): Should we rename this to structure_search_from_smiles
+    # and have same for InChI and co and then wrap them to a `structure_search`
+    # with inchi = "InChI=1S/" in query ...
     def structure_search(self, query: str) -> list[tuple[int, float]]:
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
 
@@ -329,7 +329,7 @@ class DataModel:
             out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
-    ### Biblionomy
+    # Biblionomy
     def get_reference_with_id(self, rid: int) -> set[int]:
         with self.storage.session() as session:
             result = session.query(References.id).filter(References.id == rid)
@@ -397,7 +397,9 @@ class DataModel:
             result = (
                 session.query(References.id)
                 .filter(
-                    References.journal.in_(session.query(Journals.id).filter(Journals.title.like(f"%{journal_title}%")))
+                    References.journal.in_(
+                        session.query(Journals.id).filter(Journals.title.like(f"%{journal_title}%"))
+                    ),
                 )
                 .all()
             )
@@ -408,7 +410,7 @@ class DataModel:
             result = session.query(References.id).filter(References.title.like(f"%{title}%"))
             return {row[0] for row in result}
 
-    ### Mixonomy
+    # Mixonomy
     # Todo, we probably want to still return that as a set
     def get_structures_of_taxon(self, tid: int, recursive: bool = True) -> set[int]:
         matching_structures = self.storage.get_generic_of_generic(Triplets.structure_id, Triplets.taxon_id, tid)
@@ -477,12 +479,12 @@ class DataModel:
 
             alias = aliased(TaxoParents)
             recursive_query = recursive_query.union_all(
-                session.query(alias.child_id).filter(alias.parent_id == recursive_query.c.child_id)
+                session.query(alias.child_id).filter(alias.parent_id == recursive_query.c.child_id),
             )
 
             result = set(session.query(recursive_query).all())
 
-            ## This is working but not recursively to get all children
+            # This is working but not recursively to get all children
             # result = session.query(TaxoParents.id).filter(
             #     TaxoParents.parent_id == tid
             # )

@@ -27,7 +27,7 @@ class TestTaskRunner:
                 f=mock_call.run,
                 params={"foo": "bar"},
                 group=Group(name="group1", parallel=False),
-            )
+            ),
         ]
         runner = TaskRunner(tasks, tmp_path)
         runner.run_tasks(parallel=True)

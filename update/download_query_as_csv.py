@@ -19,7 +19,9 @@ def run(path: Path, query_file: Path, output_file: Path, retry: int = 3, url: st
         query = qf.read()
 
     t = sparql_to_csv(
-        query=query, url=url, as_post=(retry == 1)
+        query=query,
+        url=url,
+        as_post=(retry == 1),
     )  # The last retry we do a POST just in case the cache was polluted
     if "java.util.concurrent.TimeoutException" in t:
         if retry > 1:

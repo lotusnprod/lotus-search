@@ -70,7 +70,7 @@ def layout(wid: int):
                             "presentation": "markdown",
                         },
                     ],
-                )
+                ),
             ]),
         ]),
     ])

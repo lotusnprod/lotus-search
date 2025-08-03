@@ -2,21 +2,55 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v5.0.0"
     hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-builtin-literals
       - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-illegal-windows-names
       - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
       - id: check-toml
+      - id: check-xml
       - id: check-yaml
       - id: check-json
         exclude: ^.devcontainer/devcontainer.json
       - id: pretty-format-json
         exclude: ^.devcontainer/devcontainer.json
         args: [--autofix]
+      - id: debug-statements
+      - id: double-quote-string-fixer
       - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: pretty-format-json
       - id: trailing-whitespace
 
+  -   repo: https://github.com/asottile/pyupgrade
+      rev: v3.20.0
+      hooks:
+      -   id: pyupgrade
+
+  -   repo: https://github.com/asottile/add-trailing-comma
+      rev: v3.2.0
+      hooks:
+      -   id: add-trailing-comma
+
+  -  repo: https://github.com/hhatto/autopep8
+     rev: v2.3.2
+     hooks:
+     -   id: autopep8
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.11.5"
+    rev: v0.12.7
     hooks:
-      - id: ruff
-        args: [--exit-non-zero-on-fix]
+      - id: ruff-check
+        args: [ --fix ]
       - id: ruff-format
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.34.0
+    hooks:
+      - id: typos

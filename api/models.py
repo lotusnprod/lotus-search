@@ -81,9 +81,9 @@ class Item(BaseModel):
                     },
                     "limit": 1000,
                     "modeEnum": "ids",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 

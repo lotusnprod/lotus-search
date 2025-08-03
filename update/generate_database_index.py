@@ -127,7 +127,8 @@ def run(path: Path) -> None:
                     else:
                         # Handle empty value (perhaps set it to None or another default value)
                         logging.warning(f"Empty descriptor found in row: {row}")
-                        struct_data[headers[i]] = None  # or any default value you prefer
+                        # or any default value you prefer
+                        struct_data[headers[i]] = None
                 # Add SMILES as a separate key
                 struct_data["smiles"] = smiles
                 # Add the structure data to the descriptors dictionary

@@ -40,10 +40,10 @@ def layout(name: str = ""):
                     """
             Type a part of the name of the organism you are looking for, for example *ana lutea* will match **Gentiana lutea**.
 
-            If you do not find your organism name, use the [Taxon resolver](/taxon_resolver) as it may have a new accepted name"""
+            If you do not find your organism name, use the [Taxon resolver](/taxon_resolver) as it may have a new accepted name""",
                 ),
                 color="success",
-            )
+            ),
         ]),
         dbc.Row([dbc.Col([dbc.Label("Search for taxon name containing:")])]),
         dbc.Row([dbc.Col([dbc.Input(id="input-on-submit", type="text", value=name)])]),
@@ -65,6 +65,6 @@ def layout(name: str = ""):
                     {"name": "Rank ", "id": "Rank"},
                     {"name": "structures", "id": "structures"},
                 ],
-            )
+            ),
         ]),
     ])

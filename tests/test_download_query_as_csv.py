@@ -80,7 +80,8 @@ class TestRunQueryToCSV:
 
             # Mock `remove_wd_entity_prefix_and_Q` to return processed values
             def mock_process(text):
-                return f"processed_{text}" if text != "line2" else None  # Simulate None return for "line2"
+                # Simulate None return for "line2"
+                return f"processed_{text}" if text != "line2" else None
 
             mock_remove_wd_entity_prefix.side_effect = mock_process
 

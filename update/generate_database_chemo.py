@@ -149,8 +149,8 @@ def run(path: Path) -> None:
     write_mols_to_sdf(path / "lotus.sdf", sdf_blocks)
 
     logging.info("Indexing SDF")
-    mmaped_sdf = mmap_file(path / "lotus.sdf")
-    structures_ranges = find_structures_bytes_ranges(mmaped_sdf)
+    mapped_sdf = mmap_file(path / "lotus.sdf")
+    structures_ranges = find_structures_bytes_ranges(mapped_sdf)
 
     logging.info("Generating database")
     database = {
@@ -191,7 +191,7 @@ def run(path: Path) -> None:
                 inchikeys_no_stereo,
                 formulas,
                 strict=False,
-            )
+            ),
         )
 
     # TODO this is not finished.
@@ -210,7 +210,7 @@ def run(path: Path) -> None:
                 structures_ranges,
                 structures_ranges.values(),
                 strict=False,
-            )
+            ),
         )
 
     logging.info("Exporting rdkit descriptors")

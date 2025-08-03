@@ -90,7 +90,7 @@ tab1_content = dbc.Card(
                 dbc.Label("Publication reference (mandatory)", html_for="doi"),
                 dbc.Input(
                     id="doi",
-                    placeholder="Enter the publication reference (DOI is prefered)",
+                    placeholder="Enter the publication reference (DOI is preferred)",
                     disabled=True,
                 ),
             ],
@@ -244,8 +244,8 @@ def layout():
         html.H1("Awesome, lets add it"),
         dbc.Row([
             html.Div(
-                "That means you will be able to help us improve the data quality of LOTUS. We trust that you have checked that it is not already present in the database and that your molecule is drawn correctly."
-            )
+                "That means you will be able to help us improve the data quality of LOTUS. We trust that you have checked that it is not already present in the database and that your molecule is drawn correctly.",
+            ),
         ]),
         html.Hr(),
         dbc.Form([
@@ -260,12 +260,12 @@ def layout():
                     "We will contact you if we have questions, or to let you know it is added. Your contribution may also be prioritized.",
                     color="secondary",
                 ),
-            ])
+            ]),
         ]),
         dbc.Row([
             dbc.Tabs([
                 dbc.Tab(tab1_content, label="I have a single structure"),
                 dbc.Tab(tab2_content, label="I have multiple structures"),
-            ])
+            ]),
         ]),
     ])

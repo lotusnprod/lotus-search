@@ -106,10 +106,10 @@ def layout():
                     """
 Draw a molecule (or substructure) below.
 You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` for caffeine).
-                    """
+                    """,
                 ),
                 color="success",
-            )
+            ),
         ]),
         dcc.Store(
             id="structure-search-data",
@@ -156,7 +156,7 @@ You can also simply copy/paste a SMILES (such as `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` 
                     size="lg",
                     first_last=True,
                     previous_next=True,
-                )
+                ),
             ),
         ]),
         dbc.Spinner(
