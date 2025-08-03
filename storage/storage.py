@@ -31,9 +31,7 @@ class Storage:
         self.db_path = str((path / "index.db").absolute())
         self.engine = create_engine(f"sqlite:///{self.db_path}")
         # Check if the schema table exists if not, call create
-        new_db = self.query(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'"
-        )
+        new_db = self.query("SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'")
 
         if len(new_db) == 0:
             self.create_tables()
@@ -86,14 +84,8 @@ class Storage:
     def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
         with self.session(autoflush=False) as session:
             smiles_set = set(descriptors.keys())
-            structures_query = (
-                session.query(Structures)
-                .filter(Structures.smiles.in_(smiles_set))
-                .all()
-            )
-            smiles_to_structure_id = {
-                structure.smiles: structure.id for structure in structures_query
-            }
+            structures_query = session.query(Structures).filter(Structures.smiles.in_(smiles_set)).all()
+            smiles_to_structure_id = {structure.smiles: structure.id for structure in structures_query}
 
             descriptors_to_add = []
             for smiles, descriptor_data in descriptors.items():
@@ -168,9 +160,7 @@ class Storage:
 
         with self.session() as session:
             for i in range(0, len(items_set), self.list_limit):
-                result = session.query(out).filter(
-                    inp.in_(items_set[i : i + self.list_limit])
-                )
+                result = session.query(out).filter(inp.in_(items_set[i : i + self.list_limit]))
                 output |= {row[0] for row in result}
 
         return output
@@ -189,9 +179,7 @@ class Storage:
                 filters += [Triplets.structure_id.in_(structure_ids)]
             if taxon_ids is not None:
                 filters += [Triplets.taxon_id.in_(taxon_ids)]
-            result = session.query(
-                Triplets.reference_id, Triplets.structure_id, Triplets.taxon_id
-            )
+            result = session.query(Triplets.reference_id, Triplets.structure_id, Triplets.taxon_id)
 
             if len(filters) > 0:
                 result = result.filter(*filters)

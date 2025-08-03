@@ -6,18 +6,10 @@ from fastapi import HTTPException, status
 
 from api.models import (
     Item,
-    ReferenceItem,
-    ReferenceOption,
-    StructureItem,
-    StructureOption,
-    TaxonItem,
-    TaxonOption,
 )
 from model.data_model import DataModel
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def parse_date(date_str: str) -> datetime:
@@ -30,7 +22,7 @@ def parse_date(date_str: str) -> datetime:
             pass
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail=f"Invalid date format",
+        detail="Invalid date format",
     )
 
 
@@ -48,7 +40,7 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
     if len([param for param in [wid, doi, title] if param is not None]) >= 2:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Only one of ['wid', 'doi', 'title'] should be provided",
+            detail="Only one of ['wid', 'doi', 'title'] should be provided",
         )
     elif wid is not None or doi is not None or title is not None:
         if wid:
@@ -97,7 +89,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     if args > 1:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Only one of ['wid', 'molecule', 'formula'] should be provided",
+            detail="Only one of ['wid', 'molecule', 'formula'] should be provided",
         )
     elif args > 0:
         # This needs to be explained in the API doc
@@ -163,23 +155,15 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     if len([param for param in [wid, name] if param is not None]) >= 2:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Only one of ['wid', 'name'] should be provided",
+            detail="Only one of ['wid', 'name'] should be provided",
         )
     if wid is not None or name is not None:
         # This needs to be explained in the API doc
         if wid:
-            return (
-                {child for child in dm.get_taxon_children_by_id(wid)}
-                if children
-                else dm.get_taxon_by_id(wid)
-            )
+            return {child for child in dm.get_taxon_children_by_id(wid)} if children else dm.get_taxon_by_id(wid)
         elif name:
             t = dm.get_taxa_with_name_matching(name)
-            return (
-                {child for tt in t for child in dm.get_taxon_children_by_id(tt)}
-                if children
-                else t
-            )
+            return {child for tt in t for child in dm.get_taxon_children_by_id(tt)} if children else t
 
     return None
 
@@ -285,9 +269,7 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         limit=item.limit,
     )
 
-    return dm.get_structure_object_from_dict_of_sids(
-        ids, item.structure.option.return_descriptors
-    )
+    return dm.get_structure_object_from_dict_of_sids(ids, item.structure.option.return_descriptors)
 
 
 def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:

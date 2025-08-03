@@ -45,9 +45,7 @@ class TestTaskRunner:
         runner = TaskRunner(tasks, tmp_path)
         runner.run_tasks(parallel=True)
         assert mock_call.run.call_count == 2
-        mock_call.run.assert_has_calls(
-            [call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)]
-        )
+        mock_call.run.assert_has_calls([call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)])
 
     def test_multiple_tasks_different_groups(self, tmp_path):
         mock_call = Mock()
@@ -61,9 +59,7 @@ class TestTaskRunner:
         runner = TaskRunner(tasks, tmp_path)
         runner.run_tasks(parallel=True)
         assert mock_call.run.call_count == 2
-        mock_call.run.assert_has_calls(
-            [call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)]
-        )
+        mock_call.run.assert_has_calls([call(foo="bar", path=tmp_path), call(foo="bim", path=tmp_path)])
 
     def test_multiple_tasks_only_one_task(self, tmp_path):
         mock_call = Mock()
@@ -148,15 +144,13 @@ class TestTaskRunner:
         captured_output = StringIO()
         sys.stdout = captured_output
         runner.list_tasks()
-        assert captured_output.getvalue() == "\n".join(
-            [
-                "Tasks grouped by parallel groups:",
-                "",
-                "group1 > task1 ",
-                "group2 > task2 ",
-                "",
-            ]
-        )
+        assert captured_output.getvalue() == "\n".join([
+            "Tasks grouped by parallel groups:",
+            "",
+            "group1 > task1 ",
+            "group2 > task2 ",
+            "",
+        ])
 
     def test_list_tasks_same_group(self, tmp_path):
         mock_call = Mock()
@@ -170,9 +164,12 @@ class TestTaskRunner:
         captured_output = StringIO()
         sys.stdout = captured_output
         runner.list_tasks()
-        assert captured_output.getvalue() == "\n".join(
-            ["Tasks grouped by parallel groups:", "", "group1 > task1 task2 ", ""]
-        )
+        assert captured_output.getvalue() == "\n".join([
+            "Tasks grouped by parallel groups:",
+            "",
+            "group1 > task1 task2 ",
+            "",
+        ])
 
     def test_parallelism(self, tmp_path):
         # We need to have side effects here to test parallelism as it creates new processes

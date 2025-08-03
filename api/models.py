@@ -1,16 +1,14 @@
-from typing import Dict, List, Optional, Union
-
 from pydantic import BaseModel
 
 
 class ReferenceOption(BaseModel):
-    date_min: Optional[str] = None
-    date_max: Optional[str] = None
-    journal: Optional[str] = None
+    date_min: str | None = None
+    date_max: str | None = None
+    journal: str | None = None
 
 
 class StructureOption(BaseModel):
-    descriptors: Optional[Dict[str, int]] = None
+    descriptors: dict[str, int] | None = None
     return_descriptors: bool = False
     substructure_search: bool = False
     similarity_level: float = 1.0
@@ -22,24 +20,24 @@ class TaxonOption(BaseModel):
 
 
 class ReferenceItem(BaseModel):
-    wid: Optional[int] = None
-    doi: Optional[str] = None
-    title: Optional[str] = None
+    wid: int | None = None
+    doi: str | None = None
+    title: str | None = None
     option: ReferenceOption = ReferenceOption()
     # limit: Optional[int] = None
 
 
 class StructureItem(BaseModel):
-    wid: Optional[int] = None
-    molecule: Optional[str] = None
-    formula: Optional[str] = None
+    wid: int | None = None
+    molecule: str | None = None
+    formula: str | None = None
     option: StructureOption = StructureOption()
     # limit: Optional[int] = None
 
 
 class TaxonItem(BaseModel):
-    wid: Optional[int] = None
-    name: Optional[str] = None
+    wid: int | None = None
+    name: str | None = None
     option: TaxonOption = TaxonOption()
     # limit: Optional[int] = None
 
@@ -48,7 +46,7 @@ class Item(BaseModel):
     reference: ReferenceItem = ReferenceItem()
     structure: StructureItem = StructureItem()
     taxon: TaxonItem = TaxonItem()
-    limit: Optional[int] = None
+    limit: int | None = None
     modeEnum: str = "objects"
     model_config = {
         "json_schema_extra": {
@@ -97,10 +95,10 @@ class ReferenceObject(BaseModel):
 
 
 class ReferenceResult(BaseModel):
-    ids: List[int]
-    objects: Optional[Dict[int, ReferenceObject]] = None
-    count: Optional[int]
-    description: Optional[str]
+    ids: list[int]
+    objects: dict[int, ReferenceObject] | None = None
+    count: int | None
+    description: str | None
 
 
 class StructureObject(BaseModel):
@@ -111,15 +109,15 @@ class StructureObject(BaseModel):
     inchikey: str
     inchikey_no_stereo: str
     formula: str
-    descriptors: Optional[Dict] = None
+    descriptors: dict | None = None
 
 
 class StructureResult(BaseModel):
-    ids: List[int]
-    objects: Optional[Dict[int, StructureObject]] = None
-    sdf: Optional[str] = None
-    count: Optional[int]
-    description: Optional[str]
+    ids: list[int]
+    objects: dict[int, StructureObject] | None = None
+    sdf: str | None = None
+    count: int | None
+    description: str | None
 
 
 class TaxonObject(BaseModel):
@@ -127,19 +125,19 @@ class TaxonObject(BaseModel):
 
 
 class TaxonResult(BaseModel):
-    ids: List[int]
-    objects: Optional[Dict[int, TaxonObject]] = None
-    count: Optional[int]
-    description: Optional[str]
+    ids: list[int]
+    objects: dict[int, TaxonObject] | None = None
+    count: int | None
+    description: str | None
 
 
 class TripletResult(BaseModel):
-    triplets: List[List[int]]
-    references: Optional[Dict[int, ReferenceObject]] = None
-    structures: Optional[Dict[int, StructureObject]] = None
-    taxa: Optional[Dict[int, TaxonObject]] = None
-    count: Optional[int]
-    description: Optional[str]
+    triplets: list[list[int]]
+    references: dict[int, ReferenceObject] | None = None
+    structures: dict[int, StructureObject] | None = None
+    taxa: dict[int, TaxonObject] | None = None
+    count: int | None
+    description: str | None
 
 
 class AutocompleteTaxa(BaseModel):

@@ -16,9 +16,7 @@ from chemistry_helpers import process_smiles
 from sdf_helpers import find_structures_bytes_ranges, mmap_file, write_mols_to_sdf
 
 RDLogger.DisableLog("rdApp.*")
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def export_descriptors_to_csv(descriptors: dict, path: Path) -> None:
@@ -37,7 +35,7 @@ def load_processed_smiles(path: Path) -> set:
     processed_smiles_set: set = set()
     processed_smiles_file = path / "smiles_processed.csv"
     if processed_smiles_file.exists():
-        with open(processed_smiles_file, "r") as f:
+        with open(processed_smiles_file) as f:
             reader = csv.reader(f)
             next(reader)  # Skip header
             processed_smiles_set.update(row[1] for row in reader)
@@ -48,7 +46,7 @@ def run(path: Path) -> None:
     processed_smiles_set = load_processed_smiles(path)
     smileses = []
     links = []
-    with open(path / "structures.csv", "r") as f:
+    with open(path / "structures.csv") as f:
         reader = csv.reader(f)
         next(reader)
         # for row in islice(reader, 100):
@@ -92,13 +90,8 @@ def run(path: Path) -> None:
 
     logging.info("Generating the chemical libraries")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        futures = {
-            executor.submit(process_smiles, smiles): smiles
-            for smiles in enumerate(smileses)
-        }
-        results = tuple(
-            tqdm(as_completed(futures), total=len(smileses), desc="Processing SMILES")
-        )
+        futures = {executor.submit(process_smiles, smiles): smiles for smiles in enumerate(smileses)}
+        results = tuple(tqdm(as_completed(futures), total=len(smileses), desc="Processing SMILES"))
         for future in results:
             if future is not None:
                 result = future.result()
@@ -177,18 +170,16 @@ def run(path: Path) -> None:
         csv_file = csv.writer(f)
         if not file_exists:
             # TODO check if we want the clean SMILES or not in this table
-            csv_file.writerow(
-                [
-                    "structure",
-                    "structure_smiles",
-                    "structure_smiles_no_stereo",
-                    "structure_inchi",
-                    "structure_inchi_no_stereo",
-                    "structure_inchikey",
-                    "structure_inchikey_no_stereo",
-                    "structure_formula",
-                ]
-            )
+            csv_file.writerow([
+                "structure",
+                "structure_smiles",
+                "structure_smiles_no_stereo",
+                "structure_inchi",
+                "structure_inchi_no_stereo",
+                "structure_inchikey",
+                "structure_inchikey_no_stereo",
+                "structure_formula",
+            ])
         csv_file.writerows(
             zip(
                 p_links,
@@ -199,6 +190,7 @@ def run(path: Path) -> None:
                 inchikeys,
                 inchikeys_no_stereo,
                 formulas,
+                strict=False,
             )
         )
 
@@ -209,16 +201,15 @@ def run(path: Path) -> None:
     with open(smiles_file_path, "a") as f:  # Append mode to avoid overwriting
         csv_file = csv.writer(f)
         if not file_exists:
-            csv_file.writerow(
-                [
-                    "structure",
-                    "block_range",
-                ]
-            )
+            csv_file.writerow([
+                "structure",
+                "block_range",
+            ])
         csv_file.writerows(
             zip(
                 structures_ranges,
                 structures_ranges.values(),
+                strict=False,
             )
         )
 
@@ -237,7 +228,7 @@ def run(path: Path) -> None:
         if not file_exists:
             csv_file.writerow(["structure", "structure_smiles"])
         # from the two arrays p_links and p_smileses respectively
-        csv_file.writerows(zip(p_links, p_smileses))
+        csv_file.writerows(zip(p_links, p_smileses, strict=False))
 
     logging.info("Exporting database")
     with open(path / "database_chemo.pkl", "wb") as f:

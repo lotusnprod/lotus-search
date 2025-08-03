@@ -3,12 +3,6 @@ import pytest
 from api.api import search_triplets
 from api.models import (
     Item,
-    ReferenceItem,
-    ReferenceOption,
-    StructureItem,
-    StructureOption,
-    TaxonItem,
-    TaxonOption,
 )
 from tests.common import data_model
 

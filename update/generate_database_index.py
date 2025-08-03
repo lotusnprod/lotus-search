@@ -6,9 +6,7 @@ from pathlib import Path
 from storage.storage import Storage
 from update.taxo_helper import generate_taxon_parents_with_distance
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def run(path: Path) -> None:
@@ -18,7 +16,7 @@ def run(path: Path) -> None:
     taxa = set()  # So we can get only the parenting that we care about
     triplets = []
     dedup = set()
-    with open(path / "triplets.csv", "r") as f:
+    with open(path / "triplets.csv") as f:
         reader = csv.reader(f)
         headers = next(reader)
         ref_index = headers.index("reference")
@@ -33,18 +31,16 @@ def run(path: Path) -> None:
             if (ref, struct, taxon) in dedup:
                 continue
             dedup.add((ref, struct, taxon))
-            triplets.append(
-                {
-                    "reference_id": int(row[ref_index]),
-                    "structure_id": int(row[struct_index]),
-                    "taxon_id": int(row[taxon_index]),
-                }
-            )
+            triplets.append({
+                "reference_id": int(row[ref_index]),
+                "structure_id": int(row[struct_index]),
+                "taxon_id": int(row[taxon_index]),
+            })
     logging.info(" Processed triplets")
 
     references_dict = {}
     journals_dict = {}
-    with open(path / "references.csv", "r") as f:
+    with open(path / "references.csv") as f:
         reader = csv.reader(f)
         headers = next(reader)
         ref_index = headers.index("reference")
@@ -64,15 +60,13 @@ def run(path: Path) -> None:
             journals_dict[int(row[journal_index])] = row[journal_title_index]
     references = []
     for ref, values in references_dict.items():
-        references.append(
-            {
-                "id": ref,
-                "doi": values["doi"],
-                "title": values["title"],
-                "date": values["date"],
-                "journal": values["journal"],
-            }
-        )
+        references.append({
+            "id": ref,
+            "doi": values["doi"],
+            "title": values["title"],
+            "date": values["date"],
+            "journal": values["journal"],
+        })
 
     journals = []
     for journal, title in journals_dict.items():
@@ -80,7 +74,7 @@ def run(path: Path) -> None:
     logging.info("Processed references and journals")
 
     structures_dict = {}
-    with open(path / "structures_table.csv", "r") as f:
+    with open(path / "structures_table.csv") as f:
         reader = csv.reader(f)
         headers = next(reader)
         # Get the indices of the columns
@@ -114,7 +108,7 @@ def run(path: Path) -> None:
     # TODO add all IDs and formatters (See #50)
 
     descriptors_dict = {}
-    with open(path / "descriptors_rdkit.csv", "r") as f:
+    with open(path / "descriptors_rdkit.csv") as f:
         reader = csv.reader(f)
         headers = next(reader)
         smiles_index = headers.index("smiles")
@@ -132,20 +126,18 @@ def run(path: Path) -> None:
                         struct_data[headers[i]] = float(value)
                     else:
                         # Handle empty value (perhaps set it to None or another default value)
-                        logging.warning("Empty descriptor found in row: {}".format(row))
-                        struct_data[headers[i]] = (
-                            None  # or any default value you prefer
-                        )
+                        logging.warning(f"Empty descriptor found in row: {row}")
+                        struct_data[headers[i]] = None  # or any default value you prefer
                 # Add SMILES as a separate key
                 struct_data["smiles"] = smiles
                 # Add the structure data to the descriptors dictionary
                 descriptors_dict[smiles] = struct_data
             else:
                 # Handle empty SMILES
-                logging.warning("Empty SMILES found in row: {}".format(row))
+                logging.warning(f"Empty SMILES found in row: {row}")
     logging.info("Processed descriptors")
 
-    with open(path / "taxa_names.csv", "r") as f:
+    with open(path / "taxa_names.csv") as f:
         reader = csv.reader(f)
         headers = next(reader)
         taxon_index = headers.index("taxon")
@@ -162,40 +154,34 @@ def run(path: Path) -> None:
 
     # Process rank names
     ranks_names = []
-    with open(path / "ranks_names.csv", "r") as f:
+    with open(path / "ranks_names.csv") as f:
         reader = csv.DictReader(f)
         for row in reader:
             try:
                 ranks_names.append({"id": int(row["rank"]), "name": row["rankLabel"]})
-            except (ValueError, KeyError) as e:
-                logging.error(f"Invalid row: {row}")
+            except (ValueError, KeyError):
+                logging.exception(f"Invalid row: {row}")
                 continue
 
     # Process taxon names
-    taxo_names = [
-        {"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()
-    ]
+    taxo_names = [{"id": taxon, "name": name} for taxon, name in taxo_names_dict.items()]
     logging.info(" Processed rank names")
 
     # Process taxon ranks
     taxon_ranks_dict = {}
-    with open(path / "taxa_ranks.csv", "r") as f:
+    with open(path / "taxa_ranks.csv") as f:
         reader = csv.DictReader(f)
         for row in reader:
             try:
                 taxon_id = int(row["taxon"])
                 rank_value = int(row["taxon_rank"])
                 taxon_ranks_dict[taxon_id] = {rank_value}
-            except (ValueError, KeyError) as e:
-                logging.error(f"Invalid row: {row}")
+            except (ValueError, KeyError):
+                logging.exception(f"Invalid row: {row}")
                 continue
 
     # Create final taxon ranks list
-    taxo_ranks = [
-        {"id": taxon, "rank_id": rank}
-        for taxon, ranks in taxon_ranks_dict.items()
-        for rank in ranks
-    ]
+    taxo_ranks = [{"id": taxon, "rank_id": rank} for taxon, ranks in taxon_ranks_dict.items() for rank in ranks]
 
     logging.info(" Processed taxa ranks")
     logging.info(" Processed dicts")
