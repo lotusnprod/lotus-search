@@ -40,9 +40,7 @@ dependencies = [
     "fastapi-versioning<1.0.0,>=0.10.0",
     "flask-caching<3.0.0,>=2.3.1",
     "gunicorn<24.0.0,>=23.0.0",
-    "numpy<3.0.0,>=2.3.2",
     "orjson<4.0.0,>=3.10.18",
-    "pandas<3.0.0,>=2.3.0",
     "pydantic<3.0.0,>=2.10.5",
     "requests<3.0.0,>=2.32.3",
     "rdkit<2026.0.0,>=2025.3.5",
@@ -83,6 +81,7 @@ skip_empty = true
 branch = true
 
 [tool.mypy]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
