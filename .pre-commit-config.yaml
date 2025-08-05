@@ -28,6 +28,35 @@ repos:
       - id: mixed-line-ending
       - id: pretty-format-json
       - id: trailing-whitespace
+  - repo: https://github.com/openstack/bashate
+    rev: 2.1.1
+    hooks:
+      - id: bashate
+  - repo: https://github.com/fpgmaas/deptry
+    rev: 0.23.1
+    hooks:
+      - id: deptry
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.2
+    hooks:
+      - id: check-github-workflows
+      - id: check-taskfile
+  - repo: https://github.com/mrtazz/checkmake.git
+    rev: 0.2.2
+    hooks:
+      - id: checkmake
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+  - repo: https://github.com/markdownlint/markdownlint
+    rev: v0.12.0
+    hooks:
+      - id: markdownlint
+  - repo: https://github.com/shssoichiro/oxipng
+    rev: v9.1.5
+    hooks:
+      - id: oxipng
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.20.0
     hooks:
@@ -47,3 +76,19 @@ repos:
     rev: v1.34.0
     hooks:
       - id: typos
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.4.2
+    hooks:
+      - id: sqlfluff-fix
+      - id: sqlfluff-lint
+  - repo: local
+    hooks:
+      - id: ty-check
+        name: ty-check
+        language: python
+        entry: ty check
+        additional_dependencies: [ty]

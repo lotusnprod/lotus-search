@@ -23,6 +23,7 @@ docker-compose up --build
 The web server is then available on <http://localhost:3000> and the API on <http://localhost:5000>.
 
 ### Run tests
+
 ```
 make tests
 ```
@@ -32,10 +33,10 @@ make tests
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
 
 - Install dependencies using uv
-    - If you do not have uv installed:
-        - `curl -LsSf https://astral.sh/uv/install.sh | sh`
-    - Then:
-        - `uv sync`
+  - If you do not have uv installed:
+    - `curl -LsSf https://astral.sh/uv/install.sh | sh`
+  - Then:
+    - `uv sync`
 - Run `python update.py` (takes a few minutes)
 - Run `uvicorn main:app --reload` (almost instant)
 

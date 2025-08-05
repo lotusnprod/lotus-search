@@ -3,7 +3,6 @@
 Start the API (in the root directory):
 $ uvicorn api:app --reload --port 5000
 
-
 Install pnpm
 
 $ pnpm install
