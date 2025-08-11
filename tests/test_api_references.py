@@ -7,7 +7,7 @@ from api.models import (
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures(data_model)
+@pytest.mark.usefixtures("data_model")
 class TestApiReferences:
     async def test_search_with_limits(self, data_model):
         expected_total = 4

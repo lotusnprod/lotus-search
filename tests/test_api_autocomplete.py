@@ -5,7 +5,7 @@ from api.models import AutocompleteTaxa
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures(data_model)
+@pytest.mark.usefixtures("data_model")
 class TestApiAutocomplete:
     @pytest.mark.asyncio
     async def test_taxa_autocomplete(self, data_model):

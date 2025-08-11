@@ -5,7 +5,7 @@ import pytest
 from tests.common import data_model, setup_from_fixture
 
 
-@pytest.mark.usefixtures(data_model)
+@pytest.mark.usefixtures("data_model")
 class TestDataModel:
     def test_make_coverage_happy(self, tmp_path):
         setup_from_fixture(tmp_path)

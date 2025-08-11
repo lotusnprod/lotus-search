@@ -8,7 +8,7 @@ from api.models import (
 from tests.common import data_model
 
 
-@pytest.mark.usefixtures(data_model)
+@pytest.mark.usefixtures("data_model")
 class TestApiTriplets:
     async def test_triplets_all(self, data_model):
         item = Item(modeEnum="objects")
