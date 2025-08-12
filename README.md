@@ -1,3 +1,5 @@
+# README
+
 ## Description
 
 This application is available on [Nprod.net](https://search.nprod.net)
@@ -33,10 +35,10 @@ make tests
 To run it yourself, the source is available at: <https://github.com/lotusnprod/lotus-search>:
 
 - Install dependencies using uv
-  - If you do not have uv installed:
-    - `curl -LsSf https://astral.sh/uv/install.sh | sh`
-  - Then:
-    - `uv sync`
+    - If you do not have uv installed:
+        - `curl -LsSf https://astral.sh/uv/install.sh | sh`
+    - Then:
+        - `uv sync`
 - Run `python update.py` (takes a few minutes)
 - Run `uvicorn main:app --reload` (almost instant)
 

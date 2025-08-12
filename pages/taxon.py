@@ -2,8 +2,8 @@ import math
 from typing import Any
 
 import dash_bootstrap_components as dbc
-from dash_common import generate_structures_cards
-from dash_config import PAGE_SIZE
+from .dash_common import generate_structures_cards
+from .dash_config import PAGE_SIZE
 
 import dash
 from dash import Input, Output, callback, dcc

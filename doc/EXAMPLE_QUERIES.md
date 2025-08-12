@@ -1,3 +1,5 @@
+# Example queries
+
 ## Structures
 
 ### Get all the structures that match the query

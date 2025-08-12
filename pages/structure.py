@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 import dash_bootstrap_components as dbc
-from dash_common import get_svg_of_wid
+from .dash_common import get_svg_of_wid
 
 import dash
 from dash import dash_table, dcc, html
