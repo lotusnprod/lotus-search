@@ -1,8 +1,8 @@
 import math
 
 import dash_bootstrap_components as dbc
-from .dash_common import generate_structures_cards
-from .dash_config import PAGE_SIZE
+from dash_common import generate_structures_cards
+from dash_config import PAGE_SIZE
 
 import dash
 import plotly_dash_ketcher
