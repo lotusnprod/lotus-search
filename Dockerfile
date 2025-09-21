@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxtst6 \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install uv
-COPY uv.lock pyproject.toml ./
+COPY uv.lock pyproject.toml README.md ./
 RUN --mount=type=cache,target=/root/.cache/pdm uv sync
 RUN mkdir /app
 RUN adduser --system --no-create-home nonroot
