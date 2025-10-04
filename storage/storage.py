@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from sqlalchemy import create_engine, insert, text
 from sqlalchemy.orm import sessionmaker
@@ -22,7 +22,9 @@ from storage.models import (
 
 
 class Storage:
-    SCHEMA_VERSION = 6
+    """Lightweight wrapper over SQLAlchemy engine/session for SQLite access."""
+
+    SCHEMA_VERSION = 6  # Increment when schema changes (enforced in update pipeline)
 
     def __init__(self, path: Path):
         self.con = sqlite3.connect(path / "index.db")
@@ -38,16 +40,19 @@ class Storage:
         if len(new_db) == 0:
             self.create_tables()
 
-    def session(self, autoflush=True):
+    def session(self, autoflush: bool = True):
+        """Create a new session."""
         Session = sessionmaker(bind=self.engine, autoflush=autoflush)
         return Session()
 
-    def query(self, query: str):
+    def query(self, query: str):  # type: ignore[no-untyped-def]
+        """Execute a query and return all results."""
         with self.engine.connect() as connection:
             result = connection.execute(text(query))
         return result.fetchall()
 
     def upsert_journals(self, journals: list[dict[str, object]]) -> None:
+        """Upsert journals data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(journals), self.list_limit // 2):
                 session.execute(
@@ -57,6 +62,7 @@ class Storage:
             session.commit()
 
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
+        """Upsert triplets data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(triplets), self.list_limit // 3):
                 session.execute(
@@ -66,6 +72,7 @@ class Storage:
             session.commit()
 
     def upsert_references(self, references: list[dict[str, object]]) -> None:
+        """Upsert references data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(references), self.list_limit // 2):
                 session.execute(
@@ -75,6 +82,7 @@ class Storage:
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, object]]) -> None:
+        """Upsert structures data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
@@ -84,6 +92,7 @@ class Storage:
             session.commit()
 
     def upsert_structures_descriptors(self, descriptors: dict[str, dict]) -> None:
+        """Upsert structures descriptors data."""
         with self.session(autoflush=False) as session:
             smiles_set = set(descriptors.keys())
             structures_query = (
@@ -114,6 +123,7 @@ class Storage:
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
+        """Upsert taxonomy names data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
@@ -123,6 +133,7 @@ class Storage:
             session.commit()
 
     def upsert_rank_names(self, ranks_names: list[dict[str, object]]) -> None:
+        """Upsert taxonomy rank names data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
@@ -132,6 +143,7 @@ class Storage:
             session.commit()
 
     def upsert_taxo_ranks(self, taxo_ranks: list[dict[str, int]]) -> None:
+        """Upsert taxonomy ranks data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_ranks), self.list_limit // 2):
                 session.execute(
@@ -141,6 +153,7 @@ class Storage:
             session.commit()
 
     def upsert_taxo_parenting(self, parenting: list[tuple[int, int, int, int]]) -> None:
+        """Upsert taxonomy parenting data."""
         with self.session(autoflush=False) as session:
             for i in range(0, len(parenting), self.list_limit // 2):
                 session.execute(
@@ -158,13 +171,15 @@ class Storage:
             session.commit()
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
+        """Get generic items of a generic item."""
         with self.session() as session:
             result = session.query(out).filter(inp == item).distinct()
             return {row[0] for row in result}
 
     def get_generics_of_generics(self, out: Any, inp: Any, items: set[int]) -> set[int]:
+        """Get generics of multiple generic items."""
         items_set = list(items)
-        output = set()
+        output: set[int] = set()
 
         with self.session() as session:
             for i in range(0, len(items_set), self.list_limit):
@@ -181,6 +196,7 @@ class Storage:
         structure_ids: set[int] | None,
         taxon_ids: set[int] | None,
     ) -> set[tuple[int, int, int]]:
+        """Get triplets for given reference, structure, and taxon IDs."""
         with self.session() as session:
             filters = []
             if reference_ids is not None:
@@ -201,11 +217,13 @@ class Storage:
             return {(row[0], row[1], row[2]) for row in result}
 
     def create_tables(self):
+        """Create database tables and initial schema version entry."""
         Base.metadata.create_all(self.engine)
         with self.session() as session:
             session.add(SchemaVersion(version=self.SCHEMA_VERSION))
             session.commit()
 
     def drop_and_create_tables(self):
+        """Drop and recreate all database tables."""
         Base.metadata.drop_all(self.engine)
         self.create_tables()

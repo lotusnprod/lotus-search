@@ -1,7 +1,6 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_id_otl WHERE {
-    ?taxon wdt:P9157 ?taxon_id_otl. hint:Prior hint:rangeSafe TRUE. # int
+    ?taxon wdt:P9157 ?taxon_id_otl. # int
 }
 # LIMIT 2000000

@@ -1,7 +1,6 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_zinc WHERE {
-    ?structure wdt:P2084 ?structure_id_zinc. hint:Prior hint:rangeSafe TRUE. # int
+    ?structure wdt:P2084 ?structure_id_zinc. # int
 }
 # LIMIT 2000000

@@ -7,7 +7,7 @@ from dash_config import PAGE_SIZE
 import dash
 import plotly_dash_ketcher
 from dash import Input, Output, callback, dcc
-from model.model import DataModel
+from dash.data_provider import get_data_model
 
 dash.register_page(
     __name__,
@@ -17,7 +17,7 @@ dash.register_page(
     order=2,
 )
 
-dm = DataModel()
+dm = get_data_model()
 
 
 def get_matching_ids(
@@ -103,7 +103,7 @@ def search_structure_cards(
     if n_scores > 0:
         warning = f"Found {n_scores} matching structures"
     else:
-        warning = "No matching structures found"
+        warning = "No matching structures found. Try relaxing similarity, disabling substructure mode, or simplifying the query."
     data["matching_structures"] = [score[0] for score in scores]
     data["scores"] = [score[1] for score in scores]
     style_pagination = {"display": "none" if n_scores == 0 else "flex"}

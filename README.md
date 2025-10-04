@@ -42,6 +42,41 @@ To run it yourself, the source is available at: <https://github.com/lotusnprod/l
 - Run `python update.py` (takes a few minutes)
 - Run `uvicorn main:app --reload` (almost instant)
 
+## Performance & Benchmarks
+
+Lightweight, opt-in micro benchmarks are available to help detect regressions in
+common hot paths (taxonomy lookups, structure searches, SDF extraction).
+
+Run after preparing data (i.e. after `python update.py` has generated the `data/` directory):
+
+```bash
+make bench
+```
+
+Environment variables:
+
+- `BENCH_ITER` (default 200) controls repetition count for cached taxonomy lookups.
+
+Sample output (JSON lines):
+
+```json
+{"benchmark": "taxa_name_matching_first", "seconds": 0.0123, "size": 42}
+{"benchmark": "taxa_name_matching_cached", "seconds": 0.00001, "size": 42}
+{"benchmark": "structure_similarity", "seconds": 0.0042, "size": 1200}
+```
+
+Caching / Optimization notes:
+
+- Several pure taxonomy helper methods now use `functools.lru_cache` to reduce repeat
+  DB round-trips during interactive browsing. These caches are per-process and safe
+  because the underlying dataset is immutable at runtime.
+- SDF block retrieval is streamlined to a single join over memory-mapped slices—same
+  ordering/content, fewer Python allocations.
+- A single `DataModel` instance is re-used across Dash pages (legacy import path via
+  `model.model` retained for compatibility) to avoid redundant large in-memory loads.
+
+All changes preserve existing API outputs and test expectations (see test suite).
+
 ## Authors
 
 [Adriano Rutz](https://adafede.github.io), is the one that pushed me into that, we are both part of the team behind

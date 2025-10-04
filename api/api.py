@@ -27,6 +27,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
+# High-level API description (kept identical for external documentation)
 description = """
 LOTUSFast API helps you do awesome stuff. 🚀
 """
@@ -35,12 +36,12 @@ data_model: None | DataModel = None
 
 
 def get_data_model() -> DataModel:
-    """
-    A bit messy, but that way we can inject our own in tests
-    :return:
+    """Return the singleton DataModel instance.
+
+    This indirection allows tests to inject a controlled DataModel.
     """
     global data_model
-    return data_model
+    return data_model  # type: ignore[return-value]
 
 
 app = FastAPI(
@@ -63,7 +64,13 @@ app = FastAPI(
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(_: FastAPI):  # type: ignore[override]
+    """FastAPI lifespan context to create and clean-up the DataModel.
+
+    The DataModel loads all required databases on startup and is cleared
+    on shutdown to free resources. This maintains prior behavior while
+    making lifecycle explicit.
+    """
     global data_model
     data_model = DataModel()
     yield
@@ -76,6 +83,11 @@ async def search_triplets(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> TripletResult:
+    """Search for triplets (reference, structure, taxon) matching input constraints.
+
+    Returned fields mirror existing behavior. If modeEnum == 'objects',
+    expanded reference/structure/taxon objects are included.
+    """
     triplets = get_triplets_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -116,6 +128,11 @@ async def search_structures(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> StructureResult:
+    """Search structures constrained by structure / taxon / reference facets.
+
+    If option.sdf is true an SDF block is returned. If modeEnum == 'objects'
+    structure objects are expanded; else only IDs are returned.
+    """
     dict_items = get_structures_for_item(item, dm)
 
     if item.structure.option.sdf:
@@ -147,6 +164,7 @@ async def search_taxa(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> TaxonResult:
+    """Search taxa constrained by taxon / structure / reference inputs."""
     dict_items = get_taxa_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -170,6 +188,7 @@ async def search_references(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> ReferenceResult:
+    """Search references constrained by reference / structure / taxon inputs."""
     dict_items = get_references_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -193,6 +212,7 @@ async def autocomplete_taxa(
     inp: AutocompleteTaxa,
     dm: DataModel = Depends(get_data_model),
 ) -> dict[str, int]:
+    """Simple prefix autocomplete for taxon names (returns {name: id})."""
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
 
@@ -201,6 +221,7 @@ async def autocomplete_taxa(
 async def depiction_structure(
     depiction_structure: DepictionStructure,
 ) -> dict[str, str]:
+    """Return an SVG depiction for a provided structure string."""
     return {
         "svg": molecule_svg(
             depiction_structure.structure,
@@ -212,6 +233,7 @@ async def depiction_structure(
 @app.get("/descriptors/")
 @version(1, 0)
 async def get_descriptors():
+    """Return the list of available RDKit descriptor names."""
     from rdkit.Chem import Descriptors
 
     return [desc[0] for desc in Descriptors._descList]

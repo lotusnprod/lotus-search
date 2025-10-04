@@ -1,7 +1,6 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_id_tropicos WHERE {
-    ?taxon wdt:P960 ?taxon_id_tropicos. hint:Prior hint:rangeSafe TRUE. # int
+    ?taxon wdt:P960 ?taxon_id_tropicos. # int
 }
 # LIMIT 1000000

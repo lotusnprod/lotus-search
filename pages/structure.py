@@ -5,9 +5,9 @@ from dash_common import get_svg_of_wid
 
 import dash
 from dash import dash_table, dcc, html
-from model.model import DataModel
+from dash.data_provider import get_data_model
 
-dm = DataModel()
+dm = get_data_model()
 
 
 def title(wid=None):
@@ -29,11 +29,11 @@ dash.register_page(
 
 def layout(wid: int):
     if wid is None:
-        return dbc.Container([])
+        return dbc.Container([dbc.Alert("No structure ID provided.", color="warning")])
     try:
         wid = int(wid)
     except ValueError:
-        return dbc.Container([])
+        return dbc.Container([dbc.Alert("Invalid structure ID.", color="danger")])
 
     img = get_svg_of_wid(wid)
     img_data = f"data:image/svg+xml,{quote(img)}"
@@ -46,6 +46,8 @@ def layout(wid: int):
     table = [{"Taxon": f"[{x[0]}](/taxon/{x[1]})"} for x in name_id_list]
     n_tax = len(name_id_list)
     warning = f"Found in {n_tax} {'taxa' if n_tax > 1 else 'taxon'}"
+    if n_tax == 0:
+        warning = "No taxa recorded for this structure"
     return dbc.Container([
         dbc.Row([
             dash.html.H1(f"Q{wid}"),
@@ -54,7 +56,7 @@ def layout(wid: int):
                 f"[Wikidata page of Q{wid}](https://www.wikidata.org/entity/Q{wid})",
             ),
             dbc.Row([
-                dbc.Col([html.Img(src=img_data)]),
+                dbc.Col([html.Img(src=img_data, alt=f"Structure depiction Q{wid}")]),
             ]),
             dbc.Row([dbc.Alert(warning, color="primary")]),
             dbc.Row([

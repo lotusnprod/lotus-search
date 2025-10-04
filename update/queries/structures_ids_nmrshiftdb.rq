@@ -1,7 +1,6 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_nmrshiftdb WHERE {
-    ?structure wdt:P9405 ?structure_id_nmrshiftdb. hint:Prior hint:rangeSafe TRUE. # int
+    ?structure wdt:P9405 ?structure_id_nmrshiftdb. # int
 }
 # LIMIT 2000000

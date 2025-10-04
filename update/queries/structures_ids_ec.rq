@@ -1,6 +1,5 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_ec WHERE {
-    ?structure wdt:P232 ?structure_id_ec. hint:Prior hint:rangeSafe TRUE. # str
+    ?structure wdt:P232 ?structure_id_ec. # str
 }

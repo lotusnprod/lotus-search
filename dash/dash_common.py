@@ -7,9 +7,10 @@ from flask_caching import Cache
 
 from chemistry_helpers import molecule_svg
 from dash import dcc, get_app, html
-from model.model import DataModel
+from dash.data_provider import get_data_model
 
-dm = DataModel()
+# Central shared DataModel (cached)
+dm = get_data_model()
 
 cache = Cache(
     get_app().server,
@@ -22,6 +23,7 @@ cache = Cache(
 
 @cache.memoize(timeout=3600)
 def get_svg_of_wid(j: int, molecule: str | None = None) -> str:
+    """Return SVG (as text) for structure WID, optionally with a highlight molecule."""
     return molecule_svg(dm.get_structure_object_from_sid(j), molecule)
 
 
@@ -69,7 +71,7 @@ def generate_structures_cards(
         taxa_count = get_number_of_taxa_for_structure(j)
         card = dbc.Card(
             [
-                dbc.CardImg(src=img_data, top=True),
+                dbc.CardImg(src=img_data, top=True, alt=f"Structure Q{j}"),
                 dbc.CardBody([
                     html.H4(f"Q{j}", className="card-title"),
                     html.P(
@@ -83,11 +85,12 @@ def generate_structures_cards(
                         "structure page",
                         color="primary",
                         href=f"/structure/{j}",
+                        size="sm",
                     ),
                     *extras,
                 ]),
             ],
-            style={"width": "18rem"},
+            class_name="lotus-structure-card",
         )
         cards.append(card)
 

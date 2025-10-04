@@ -1,7 +1,6 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?taxon ?taxon_rank WHERE {
-    ?taxon wdt:P105 ?taxon_rank. hint:Prior hint:rangeSafe TRUE.
+    ?taxon wdt:P105 ?taxon_rank.
 }
 # LIMIT 5000000

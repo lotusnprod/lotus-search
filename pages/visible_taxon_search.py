@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 
 import dash
 from dash import Input, Output, callback, dash_table, dcc
-from model.model import DataModel
+from dash.data_provider import get_data_model
 
 dash.register_page(
     __name__,
@@ -12,7 +12,7 @@ dash.register_page(
     order=1,
 )
 
-data = DataModel()
+data = get_data_model()
 
 
 @callback(
@@ -21,8 +21,10 @@ data = DataModel()
 )
 def update_table(value):
     global data
-    if value == "" or len(value) < 3:
+    if value == "" or value is None:
         return None
+    if len(value) < 3:
+        return []
 
     output = []
     for match in data.get_taxa_with_name_containing(value):

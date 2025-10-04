@@ -1,0 +1,10 @@
+/* Custom Lotus Dash styles */
+.lotus-structure-card { width: 18rem; margin: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.lotus-structure-card .card-title { font-size: 1.05rem; }
+.navbar { font-weight: 500; }
+body { background-color: #f8f9fb; }
+/* Responsive card grid helper (cards usually wrapped in rows) */
+@media (min-width: 992px) {
+  #structure-search-results, #cards { display: flex; flex-wrap: wrap; }
+}
+

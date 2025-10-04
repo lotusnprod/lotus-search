@@ -4,6 +4,7 @@ import logging
 import pickle
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Any, Dict, Iterable as It, List, Tuple, Set
 
 import requests
 from rdkit import Chem, DataStructs
@@ -36,18 +37,38 @@ requests_log.propagate = True
 
 
 class DataModel:
+    """In-memory + SQLite accessor for LOTUS search functionalities.
+
+    Responsibilities:
+      - Load binary pre-computed structure similarity & substructure libraries.
+      - Provide lazy / cached access to large SDF file and byte ranges.
+      - Offer domain-specific query helpers combining SQLAlchemy queries
+        and in-memory similarity/substructure search.
+
+    The underlying SQLite dataset is treated as immutable for the life of the
+    instance; therefore selective method-level caching is safe where used.
+    """
+
     def __init__(self, path: Path = Path("./data")):
         self.db = self.load_all_data(path)
-        # TODO add descriptors
+        # Preload SDF memory map + byte ranges for efficient SDF block extraction
         self.sdf = self.load_sdf_data(path)
         self.sdf_ranges = self.load_sdf_ranges(self.sdf)
         self.storage = Storage(path)
         self.taxa_name_db = self.preload_taxa()
         self.path = path
 
+    # ------------------------------ Loading ---------------------------------
     @classmethod
     @functools.cache
     def load_all_data(cls, path: Path):
+        """Load pickled data that embeds RDKit substructure libraries.
+
+        The pickled payload stores the binary stream of two SubstructLibrary
+        instances (with & without explicit hydrogens). They are reconstructed
+        here to avoid re-computation. Cached at the class level to reuse
+        across multiple DataModel instances (e.g. in tests).
+        """
         with open(path / "database_chemo.pkl", "rb") as f:
             data = pickle.load(f)
         new_lib = rdSubstructLibrary.SubstructLibrary()
@@ -63,20 +84,26 @@ class DataModel:
     @classmethod
     @functools.cache
     def load_sdf_data(cls, path: Path):
+        """Memory-map the main SDF file (heavy file, so mmap is efficient)."""
         mapped_sdf = mmap_file(path / "lotus.sdf")
         return mapped_sdf
 
     @classmethod
     @functools.cache
-    def load_sdf_ranges(cls, sdf):
+    def load_sdf_ranges(cls, sdf):  # type: ignore[no-untyped-def]
+        """Pre-compute (and cache) byte ranges for each SDF record."""
         ranges = find_structures_bytes_ranges(sdf)
         return ranges
 
-    # Taxonomy
+    # ----------------------------- Taxonomy ---------------------------------
     def get_taxon_object_from_dict_of_tids(
         self,
         tids: Iterable[int],
     ) -> dict[int, TaxonObject]:
+        """Return TaxonObject mapping for provided taxon IDs.
+
+        Returns an empty dict if none found.
+        """
         with self.storage.session() as session:
             result = (
                 session.query(
@@ -86,81 +113,78 @@ class DataModel:
                 .filter(TaxoNames.id.in_(tids))
                 .all()
             )
-
             if result:
-                return {
-                    row.id: TaxonObject(
-                        name=row.name,
-                    )
-                    for row in result
-                }
-            else:
-                return {}
+                return {row.id: TaxonObject(name=row.name) for row in result}
+            return {}
 
-    def get_taxon_object_from_tid(self, tid: int) -> dict | None:
+    @functools.lru_cache(maxsize=10000)
+    def get_taxon_object_from_tid(self, tid: int) -> dict | None:  # legacy signature
         return self.get_taxon_object_from_dict_of_tids([tid])
 
-    def get_taxa_with_name_matching(self, query: str, exact=False) -> set[int]:
+    @functools.lru_cache(maxsize=20000)
+    def get_taxa_with_name_matching(self, query: str, exact: bool = False) -> set[int]:
+        """Return IDs of taxa whose names match the query.
+
+        If exact is False a case-sensitive SQL LIKE %query% is used.
+        """
         with self.storage.session() as session:
-            if exact:
-                matcher = TaxoNames.name == query
-            else:
-                matcher = TaxoNames.name.like(f"%{query}%")
+            matcher = TaxoNames.name == query if exact else TaxoNames.name.like(f"%{query}%")
             result = session.query(TaxoNames.id).filter(matcher)
             return {row[0] for row in result}
 
+    @functools.lru_cache(maxsize=50000)
     def get_rank_name_from_wid(self, wid: int) -> str | None:
         with self.storage.session() as session:
             result = session.get(TaxoRankNames, wid)
-            if result is None:
-                return None
-            return result.name
+            return None if result is None else result.name
 
-    def resolve_taxon(self, query: str) -> any:
-        query = {
+    def resolve_taxon(self, query: str) -> Any:
+        """Call Global Names resolver (best-effort, network errors swallowed)."""
+        payload = {
             "nameStrings": [query],
             "withVernaculars": False,
             "withCapitalization": True,
             "withAllMatches": True,
         }
-        log.debug(f"Querying GN resolver... {query}")
-
+        log.debug(f"Querying GN resolver... {payload}")
         try:
             response = requests.post(
                 "https://verifier.globalnames.org/api/v1/verifications",
-                json=query,
+                json=payload,
                 headers={"Content-Type": "application/json"},
             )
-        except Exception as e:
+        except Exception as e:  # pragma: no cover - network failure resilience
             log.error(f"Impossible to connect to GN resolver {e}.")
             return None
         log.debug(response.json())
         return response.json()
 
+    @functools.lru_cache(maxsize=50000)
     def get_ranks_string(self, wid: int) -> str:
         with self.storage.session() as session:
             result = session.query(TaxoRanks.rank_id).filter(TaxoRanks.id == wid)
             rank_ids = [row[0] for row in result]
-        if len(rank_ids) > 0:
+        if rank_ids:
             n_ranks = [self.get_rank_name_from_wid(int(it)) for it in rank_ids]
             ranks = " (" + ", ".join(set(n_ranks)) + ")"
         else:
             ranks = ""
         return ranks
 
-    # Structureonomy
+    # --------------------------- Structureonomy -----------------------------
     @functools.cache
     def structures_set(self) -> set[int]:
-        # TODO use DB
+        """Return a cached set of all known structure WIDs."""
         return set(self.db["structure_wid"])
 
-    def get_structure_object_from_sid(self, sid: int) -> dict | None:
+    def get_structure_object_from_sid(self, sid: int) -> dict | None:  # legacy
         return self.get_structure_object_from_dict_of_sids([sid])
 
     def get_structure_descriptors_from_dict_of_sids(
         self,
         sids: Iterable[int],
-    ) -> Iterable[tuple[int, str]]:
+    ) -> dict[str, list[Any]]:
+        """Return descriptor name -> list of values for given structure IDs."""
         with self.storage.session() as session:
             result = (
                 session.query(
@@ -171,34 +195,29 @@ class DataModel:
                 .distinct()
                 .all()
             )
-            result_dict = {}
+            result_dict: dict[str, list[Any]] = {}
             if result:
                 for descriptor_name, descriptor_value in result:
-                    if descriptor_name in result_dict:
-                        result_dict[descriptor_name].append(descriptor_value)
-                    else:
-                        result_dict[descriptor_name] = [descriptor_value]
-                return result_dict
-            else:
-                return result_dict
+                    result_dict.setdefault(descriptor_name, []).append(descriptor_value)
+            return result_dict
 
     def get_structure_sdf_from_dict_of_sids(
         self,
         sids: Iterable[int],
-    ) -> Iterable[tuple[int, str]]:
+    ) -> str:
+        """Return concatenated SDF blocks for the provided structure IDs."""
         ranges = self.sdf_ranges
-        blocks = []
-        for sid in sids:
-            blocks.append(read_selected_ranges(self.sdf, [ranges[sid]]))
-        return "".join(blocks)
+        mm = self.sdf
+        return "".join(mm[start:end].decode() for sid in sids for (start, end) in (ranges[sid],))
 
     def get_structure_object_from_dict_of_sids(
         self,
         sids: Iterable[int],
         return_descriptors: bool = False,
     ) -> dict[int, StructureObject]:
+        """Return StructureObject mapping (optionally with descriptors)."""
         with self.storage.session() as session:
-            descriptors = {}
+            descriptors: dict[str, list[Any]] = {}
             if return_descriptors:
                 descriptors = self.get_structure_descriptors_from_dict_of_sids(sids)
             result = (
@@ -229,24 +248,24 @@ class DataModel:
                     )
                     for row in result
                 }
-            else:
-                return {}
+            return {}
 
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
+        """Return structure IDs matching descriptor min/max constraints.
+
+        Input descriptors dict uses the pattern <DescriptorName>_min / _max.
+        """
         with self.storage.session() as session:
             query = session.query(StructuresDescriptors.structure_id)
-
-            # Separate descriptors into min and max dictionaries
-            min_descriptors = {}
-            max_descriptors = {}
+            min_descriptors: dict[str, Any] = {}
+            max_descriptors: dict[str, Any] = {}
             for key, value in descriptors.items():
-                descriptor_name = key[:-4]  # Remove "_min" or "_max" suffix
+                descriptor_name = key[:-4]
                 if key.endswith("_min"):
                     min_descriptors[descriptor_name] = value
                 if key.endswith("_max"):
                     max_descriptors[descriptor_name] = value
 
-            # Apply min and max filters separately
             query_min = None
             for descriptor_name, min_value in min_descriptors.items():
                 min_condition = (
@@ -263,7 +282,6 @@ class DataModel:
                 )
                 query_max = query.filter(and_(*max_condition))
 
-            # Intersect the results of min and max queries
             if query_min is not None and query_max is not None:
                 result = query_min.intersect(query_max).all()
             elif query_min is not None:
@@ -279,28 +297,21 @@ class DataModel:
             result = session.query(Structures.id).filter(Structures.formula == formula)
             return {row[0] for row in result}
 
-    def structure_get_mol_fp_and_explicit(self, query: str) -> tuple[any, any, bool]:
+    def structure_get_mol_fp_and_explicit(self, query: str):  # type: ignore[no-untyped-def]
+        """Return (mol, fingerprint, explicit_h_present) for a SMILES query."""
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
         p.removeHs = not explicit_h
         mol = Chem.MolFromSmiles(query, p)
-
         if not explicit_h:
             mol = standardize(mol)
-
         fp = fingerprint(mol)
         return mol, fp, explicit_h
 
-    # COMMENT (AR): Should we rename this to structure_search_from_smiles
-    # and have same for InChI and co and then wrap them to a `structure_search`
-    # with inchi = "InChI=1S/" in query ...
     def structure_search(self, query: str) -> list[tuple[int, float]]:
+        """Similarity search (Tanimoto) returning list of (WID, score)."""
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
-
-        if explicit_h:
-            db = self.db["structure_sim_h_fps"]
-        else:
-            db = self.db["structure_sim_fps"]
+        db = self.db["structure_sim_h_fps"] if explicit_h else self.db["structure_sim_fps"]
         scores = DataStructs.BulkTanimotoSimilarity(fp, db)
         return [
             (wid, score)
@@ -312,15 +323,18 @@ class DataModel:
         query: str,
         chirality: bool = False,
     ) -> list[tuple[int, float]]:
-        mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
+        """Substructure search returning (WID, tanimoto_score) list.
 
+        The tanimoto score is computed between the query fingerprint and the
+        stored fingerprint for each match; original ordering preserved.
+        """
+        mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
         if explicit_h:
             db = self.db["structure_library_h"]
             fp_db = self.db["structure_sim_h_fps"]
         else:
             db = self.db["structure_library"]
             fp_db = self.db["structure_sim_fps"]
-
         iids = db.GetMatches(
             mol,
             numThreads=-1,
@@ -328,27 +342,24 @@ class DataModel:
             useQueryQueryMatches=True,
             useChirality=chirality,
         )
-        # TODO letting WID for now (also in data_structures) but to keep in mind
         new_keys = [self.db["structure_wid"][iid] for iid in iids]
-        out = []
+        out: list[tuple[int, float]] = []
         for iid, wid in zip(iids, new_keys, strict=False):
             out.append((wid, DataStructs.TanimotoSimilarity(fp, fp_db[iid])))
         return out
 
-    def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:
+    def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:  # type: ignore[no-untyped-def]
+        """Return TSV string for similarity results (Wikidata URL, score, SMILES)."""
         out = "Wikidata link\tSimilarity\tSmiles\n"
         structure_objects = self.get_structure_object_from_dict_of_sids(wids)
-        smiles_dict = {
-            wid: structure_object.smiles
-            for wid, structure_object in structure_objects.items()
-        }
+        smiles_dict = {wid: structure_object.smiles for wid, structure_object in structure_objects.items()}
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]
             out += f"http://www.wikidata.org/entity/Q{wid}\t{score:.3f}\t{smiles}\n"
         return out
 
-    # Biblionomy
+    # ----------------------------- Biblionomy -------------------------------
     def get_reference_with_id(self, rid: int) -> set[int]:
         with self.storage.session() as session:
             result = session.query(References.id).filter(References.id == rid)
@@ -370,19 +381,14 @@ class DataModel:
                 .filter(References.id.in_(rids))
                 .all()
             )
-
             journal_ids = {row.journal for row in result}
-
             journal_titles = {}
-            if journal_ids:  # Only query if there are journal IDs
+            if journal_ids:
                 result_journal = session.query(
                     Journals.id,
                     Journals.title,
                 ).filter(Journals.id.in_(journal_ids))
-                journal_titles = {
-                    journal.id: journal.title for journal in result_journal
-                }
-
+                journal_titles = {journal.id: journal.title for journal in result_journal}
             if result:
                 return {
                     row.id: ReferenceObject(
@@ -393,10 +399,9 @@ class DataModel:
                     )
                     for row in result
                 }
-            else:
-                return {}
+            return {}
 
-    def get_reference_object_from_rid(self, rid: int) -> dict | None:
+    def get_reference_object_from_rid(self, rid: int) -> dict | None:  # legacy
         return self.get_reference_object_from_dict_of_rids([rid])
 
     def get_references_with_doi(self, doi: str) -> set[int]:

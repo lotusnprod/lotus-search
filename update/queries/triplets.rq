@@ -1,4 +1,3 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX pr: <http://www.wikidata.org/prop/reference/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -8,7 +7,8 @@ SELECT ?structure ?taxon ?reference WHERE {
   ?structure p:P235 [];
     p:P703 [
       ps:P703 ?taxon;
-              (prov:wasDerivedFrom/pr:P248) ?reference;
-    ]. hint:Prior hint:rangeSafe TRUE.
+      prov:wasDerivedFrom [
+      pr:P248 ?reference ];
+    ].
 }
 # LIMIT 750000

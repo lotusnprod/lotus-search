@@ -1,6 +1,5 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_lipidmaps WHERE {
-    ?structure wdt:P2063 ?structure_id_lipidmaps. hint:Prior hint:rangeSafe TRUE. # str
+    ?structure wdt:P2063 ?structure_id_lipidmaps. # str
 }

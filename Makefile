@@ -1,4 +1,4 @@
-.PHONY: all start stop test tests clean fix clean_data clean_db
+.PHONY: all start stop test tests clean fix clean_data clean_db bench
 
 # Standard targets
 all: start
@@ -26,3 +26,6 @@ clean_data:
 
 clean_db:
 	docker compose run backend rm -rf /app/data/index.db
+
+bench:
+	uv run python -m benchmarks.benchmark_basic

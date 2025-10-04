@@ -1,6 +1,5 @@
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 
 SELECT * WHERE {
   # All properties we use with a formatter URL
@@ -53,5 +52,5 @@ SELECT * WHERE {
     wd:P11199 # STRUCTURE Probes And Drugs
     wd:P11375 # STRUCTURE CSD
   }
-  ?property wdt:P1630 ?formatter. hint:Prior hint:rangeSafe TRUE.
+  ?property wdt:P1630 ?formatter.
 }

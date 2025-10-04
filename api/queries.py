@@ -14,24 +14,43 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
+# Type alias for clarity
+IDSet = set[int]
+
 
 def parse_date(date_str: str) -> datetime:
+    """Parse a flexible date string into a datetime.
+
+    Accepted formats (progressively tried):
+      - YYYY
+      - YYYY-MM
+      - YYYY-MM-DD
+
+    Raises
+    ------
+    HTTPException (400): if the date does not match any accepted format.
+    """
     # TODO this has to be explained in the API doc
     formats = ["%Y", "%Y-%m", "%Y-%m-%d"]
     for fmt in formats:
         try:
             return datetime.strptime(date_str, fmt)
         except ValueError:
-            pass
+            continue
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail="Invalid date format",
     )
 
 
-def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
-    """Returns the WID of matching references."""
-    references = None
+def references_from_reference_in_item(dm: DataModel, item: Item) -> IDSet | None:
+    """Return matching reference IDs based on the reference sub-object of an Item.
+
+    Only one of wid / doi / title can be provided (validated here).
+    Additional filters (date range, journal) are applied as intersections.
+    Returns None if no identifying criteria are supplied.
+    """
+    references: IDSet | None = None
 
     wid = item.reference.wid
     doi = item.reference.doi
@@ -59,26 +78,34 @@ def references_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | N
         if date_max is not None:
             date_max = parse_date(date_max)
         references_within_date_range = dm.get_references_with_date(date_min, date_max)
-        if references is None:
-            references = references_within_date_range
-        else:
-            references &= references_within_date_range
+        references = (
+            references_within_date_range
+            if references is None
+            else references & references_within_date_range
+        )
 
     if journal:
         references_with_journal = dm.get_references_with_journal(journal)
-        if references is None:
-            references = references_with_journal
-        else:
-            references &= references_with_journal
-
+        references = (
+            references_with_journal
+            if references is None
+            else references & references_with_journal
+        )
         return references
     else:
         return references
 
 
-def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
-    """Returns the WID of matching structures."""
-    structures = None
+def structures_from_structure_in_item(dm: DataModel, item: Item) -> IDSet | None:
+    """Return matching structure IDs based on the structure sub-object of an Item.
+
+    Rules
+    -----
+    - Only one of wid / molecule / formula may be provided.
+    - Substructure and similarity searches are delegated to the data model.
+    - Descriptor filters (if provided) are intersected with previous results.
+    """
+    structures: IDSet | None = None
 
     wid = item.structure.wid
     molecule = item.structure.molecule
@@ -97,6 +124,7 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
     elif args > 0:
         # This needs to be explained in the API doc
         if wid:
+            # Direct ID test — only return the set if the structure exists
             if wid in dm.structures_set():
                 return {wid}
             else:
@@ -104,14 +132,13 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
 
         if sub:
             try:
-                results = dm.structure_search_substructure(molecule)
+                results = dm.structure_search_substructure(molecule)  # type: ignore[arg-type]
                 structures = {_id for _id, _ in results}
             except ValueError:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-
         elif formula:
             try:
                 structures = dm.get_structure_with_formula(formula)
@@ -120,7 +147,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=f"The formula given is invalid: {formula}",
                 )
-
         elif molecule:
             try:
                 results = dm.structure_search(molecule)
@@ -130,7 +156,6 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail=f"The structure given is invalid: {molecule}",
                 )
-
         return structures
 
     if descriptors is not None:
@@ -141,16 +166,17 @@ def structures_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | N
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=f"The descriptors given are invalid: {descriptors}",
             )
-        if structures is None:
-            structures = structures_with_descriptors
-        else:
-            structures &= structures_with_descriptors
+        structures = (
+            structures_with_descriptors
+            if structures is None
+            else structures & structures_with_descriptors
+        )
 
     return structures
 
 
-def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
-    """Returns the WID of matching taxa."""
+def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> IDSet | None:
+    """Return matching taxon IDs based on the taxon sub-object of an Item."""
     wid = item.taxon.wid
     name = item.taxon.name
     children = item.taxon.option.taxon_children
@@ -179,98 +205,92 @@ def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
     return None
 
 
-def references_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def references_from_structure_in_item(dm: DataModel, item: Item) -> IDSet | None:
     structures = structures_from_structure_in_item(dm, item)
-
     if structures is None:
         return None
-
     return dm.get_references_of_structures(structures)
 
 
-def references_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def references_from_taxon_in_item(dm: DataModel, item: Item) -> IDSet | None:
     taxa = taxa_from_taxon_in_item(dm, item)
-
     if taxa is None:
         return None
-
     return dm.get_references_of_taxa(taxa)
 
 
-def structures_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def structures_from_reference_in_item(dm: DataModel, item: Item) -> IDSet | None:
     references = references_from_reference_in_item(dm, item)
-
     if references is None:
         return None
-
     return dm.get_structures_of_references(references)
 
 
-def structures_from_taxon_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def structures_from_taxon_in_item(dm: DataModel, item: Item) -> IDSet | None:
     taxa = taxa_from_taxon_in_item(dm, item)
-
     if taxa is None:
         return None
 
     # TODO Set recursive=True to have all the structures from the parents too?
     #      We may have issues if we have a lot, and it will require a bit more work to get it with the db
     #      We could also have all the parenting relations in the DB and it would be much much faster
-    out = set()
+    # NOTE: Structures aggregated per taxon then unioned.
+    out: IDSet = set()
     for taxon in taxa:
         out.update(dm.get_structures_of_taxon(taxon))
-
     return out
 
 
-def taxa_from_structure_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def taxa_from_structure_in_item(dm: DataModel, item: Item) -> IDSet | None:
     structures = structures_from_structure_in_item(dm, item)
-
     if structures is None:
         return None
-
     return dm.get_taxa_of_structures(structures)
 
 
-def taxa_from_reference_in_item(dm: DataModel, item: Item) -> set[int] | None:
+def taxa_from_reference_in_item(dm: DataModel, item: Item) -> IDSet | None:
     references = references_from_reference_in_item(dm, item)
-
     if references is None:
         return None
-
     return dm.get_taxa_of_references(references)
 
 
-def combine_and_filter_outputs(sets: list[set], limit: int) -> list[int]:
-    non_none_outputs = [s for s in sets if s is not None]
+def combine_and_filter_outputs(sets: list[IDSet | None], limit: int) -> list[int]:
+    """Intersect provided non-None ID sets and apply limit.
 
+    If all inputs are None (i.e. no constraints) an empty list is returned.
+    A limit of 0 means "no truncation".
+    """
+    non_none_outputs: list[IDSet] = [s for s in sets if s is not None]
     items = list(set.intersection(*non_none_outputs) if non_none_outputs else set())
-
     if limit == 0:
         return items
-    else:
-        return items[:limit]
+    return items[:limit]
 
 
 def apply_limit(item: Item, items: list[Any] | set[Any]) -> list[Any]:
+    """Return a list of items respecting the limit semantics (0 = no truncation)."""
     lim = item.limit
-
     if lim == 0:
         return list(items)
-    else:
-        return list(items)[:lim]
+    return list(items)[:lim]
 
 
 def get_triplets_for_item(item: Item, dm: DataModel) -> list[tuple[int, int, int]]:
+    """Return triplets matching the combined item constraints (respecting limit)."""
     triplets_set = dm.get_triplets_for(
         reference_ids=references_from_reference_in_item(dm, item),
         structure_ids=structures_from_structure_in_item(dm, item),
         taxon_ids=taxa_from_taxon_in_item(dm, item),
     )
-
     return apply_limit(item, triplets_set)
 
 
-def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
+def get_structures_for_item(item: Item, dm: DataModel):  # type: ignore[override]
+    """Resolve matching structure IDs (intersection) and fetch their objects.
+
+    Returned dictionary mapping ID -> StructureObject is produced by the DataModel.
+    """
     ids = combine_and_filter_outputs(
         [
             structures_from_structure_in_item(dm, item),
@@ -279,14 +299,14 @@ def get_structures_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         ],
         limit=item.limit,
     )
-
     return dm.get_structure_object_from_dict_of_sids(
         ids,
         item.structure.option.return_descriptors,
     )
 
 
-def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
+def get_taxa_for_item(item: Item, dm: DataModel):  # type: ignore[override]
+    """Resolve matching taxon IDs (intersection) and fetch their objects."""
     ids = combine_and_filter_outputs(
         [
             taxa_from_taxon_in_item(dm, item),
@@ -295,11 +315,11 @@ def get_taxa_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         ],
         limit=item.limit,
     )
-
     return dm.get_taxon_object_from_dict_of_tids(ids)
 
 
-def get_references_for_item(item: Item, dm: DataModel) -> dict[int, str]:
+def get_references_for_item(item: Item, dm: DataModel):  # type: ignore[override]
+    """Resolve matching reference IDs (intersection) and fetch their objects."""
     ids = combine_and_filter_outputs(
         [
             references_from_reference_in_item(dm, item),
@@ -308,5 +328,4 @@ def get_references_for_item(item: Item, dm: DataModel) -> dict[int, str]:
         ],
         limit=item.limit,
     )
-
     return dm.get_reference_object_from_dict_of_rids(ids)

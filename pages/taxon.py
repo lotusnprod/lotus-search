@@ -7,9 +7,9 @@ from dash_config import PAGE_SIZE
 
 import dash
 from dash import Input, Output, callback, dcc
-from model.model import DataModel
+from dash.data_provider import get_data_model
 
-dm = DataModel()
+dm = get_data_model()
 
 
 def title(wid=None):
@@ -56,11 +56,11 @@ def func(n_clicks, data):
 
 def layout(wid: int):
     if wid is None:
-        return dbc.Container([])
+        return dbc.Container([dbc.Alert("No taxon ID provided.", color="warning")])
     try:
         wid = int(wid)
     except ValueError:
-        return dbc.Container([])
+        return dbc.Container([dbc.Alert("Invalid taxon ID.", color="danger")])
 
     taxon_name = dm.get_taxon_object_from_tid(wid)
     parent_ranks = dm.get_ranks_string(wid)
@@ -84,6 +84,8 @@ def layout(wid: int):
     nb_matches = len(matching_structures)
 
     warning = f"Found {nb_matches} structures"
+    if nb_matches == 0:
+        warning = "No structures recorded for this taxon"
 
     return dbc.Container([
         dcc.Store(

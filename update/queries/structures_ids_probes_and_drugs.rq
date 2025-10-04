@@ -1,6 +1,5 @@
-PREFIX hint: <http://www.bigdata.com/queryHints#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_probes_and_drugs WHERE {
-    ?structure wdt:P11199 ?structure_id_probes_and_drugs. hint:Prior hint:rangeSafe TRUE. # str
+    ?structure wdt:P11199 ?structure_id_probes_and_drugs. # str
 }
