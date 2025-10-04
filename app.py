@@ -4,6 +4,7 @@ Provides a `main()` function so the pyproject script `start = "app:main"` works.
 It simply runs the FastAPI application defined in `api.api` using uvicorn.
 (No change to existing API or Dash functionality.)
 """
+
 from __future__ import annotations
 
 import uvicorn
@@ -27,4 +28,3 @@ def main() -> None:  # pragma: no cover - thin wrapper
 
 if __name__ == "__main__":  # pragma: no cover
     main()
-

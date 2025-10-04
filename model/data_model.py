@@ -128,7 +128,9 @@ class DataModel:
         If exact is False a case-sensitive SQL LIKE %query% is used.
         """
         with self.storage.session() as session:
-            matcher = TaxoNames.name == query if exact else TaxoNames.name.like(f"%{query}%")
+            matcher = (
+                TaxoNames.name == query if exact else TaxoNames.name.like(f"%{query}%")
+            )
             result = session.query(TaxoNames.id).filter(matcher)
             return {row[0] for row in result}
 
@@ -208,7 +210,9 @@ class DataModel:
         """Return concatenated SDF blocks for the provided structure IDs."""
         ranges = self.sdf_ranges
         mm = self.sdf
-        return "".join(mm[start:end].decode() for sid in sids for (start, end) in (ranges[sid],))
+        return "".join(
+            mm[start:end].decode() for sid in sids for (start, end) in (ranges[sid],)
+        )
 
     def get_structure_object_from_dict_of_sids(
         self,
@@ -220,21 +224,28 @@ class DataModel:
             descriptors: dict[str, list[Any]] = {}
             if return_descriptors:
                 descriptors = self.get_structure_descriptors_from_dict_of_sids(sids)
-            result = (
-                session.query(
-                    Structures.id,
-                    Structures.smiles,
-                    Structures.smiles_no_stereo,
-                    Structures.inchi,
-                    Structures.inchi_no_stereo,
-                    Structures.inchikey,
-                    Structures.inchikey_no_stereo,
-                    Structures.formula,
+            # SQLite default max variables is 999, use 900 to be safe
+            CHUNK_SIZE = 900
+            all_results = []
+            sids_list = list(sids)
+            for i in range(0, len(sids_list), CHUNK_SIZE):
+                chunk = sids_list[i:i+CHUNK_SIZE]
+                result = (
+                    session.query(
+                        Structures.id,
+                        Structures.smiles,
+                        Structures.smiles_no_stereo,
+                        Structures.inchi,
+                        Structures.inchi_no_stereo,
+                        Structures.inchikey,
+                        Structures.inchikey_no_stereo,
+                        Structures.formula,
+                    )
+                    .filter(Structures.id.in_(chunk))
+                    .all()
                 )
-                .filter(Structures.id.in_(sids))
-                .all()
-            )
-            if result:
+                all_results.extend(result)
+            if all_results:
                 return {
                     row.id: StructureObject(
                         smiles=row.smiles,
@@ -246,7 +257,7 @@ class DataModel:
                         formula=row.formula,
                         descriptors=descriptors,
                     )
-                    for row in result
+                    for row in all_results
                 }
             return {}
 
@@ -311,7 +322,11 @@ class DataModel:
     def structure_search(self, query: str) -> list[tuple[int, float]]:
         """Similarity search (Tanimoto) returning list of (WID, score)."""
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
-        db = self.db["structure_sim_h_fps"] if explicit_h else self.db["structure_sim_fps"]
+        db = (
+            self.db["structure_sim_h_fps"]
+            if explicit_h
+            else self.db["structure_sim_fps"]
+        )
         scores = DataStructs.BulkTanimotoSimilarity(fp, db)
         return [
             (wid, score)
@@ -352,7 +367,10 @@ class DataModel:
         """Return TSV string for similarity results (Wikidata URL, score, SMILES)."""
         out = "Wikidata link\tSimilarity\tSmiles\n"
         structure_objects = self.get_structure_object_from_dict_of_sids(wids)
-        smiles_dict = {wid: structure_object.smiles for wid, structure_object in structure_objects.items()}
+        smiles_dict = {
+            wid: structure_object.smiles
+            for wid, structure_object in structure_objects.items()
+        }
         for idx, score in enumerate(scores):
             wid = wids[idx]
             smiles = smiles_dict[wid]
@@ -388,7 +406,9 @@ class DataModel:
                     Journals.id,
                     Journals.title,
                 ).filter(Journals.id.in_(journal_ids))
-                journal_titles = {journal.id: journal.title for journal in result_journal}
+                journal_titles = {
+                    journal.id: journal.title for journal in result_journal
+                }
             if result:
                 return {
                     row.id: ReferenceObject(

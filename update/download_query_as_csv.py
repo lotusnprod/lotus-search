@@ -21,8 +21,12 @@ logging.basicConfig(
 # Environment tunables (do not break tests; defaults are conservative)
 MAX_RETRIES = int(os.getenv("LOTUS_UPDATE_MAX_RETRIES", "6"))
 BACKOFF_BASE = float(os.getenv("LOTUS_UPDATE_BACKOFF_BASE", "1.5"))
-BACKOFF_JITTER = float(os.getenv("LOTUS_UPDATE_BACKOFF_JITTER", "0.25"))  # fraction of backoff added/subtracted
-SWITCH_TO_QLEVER_AFTER = int(os.getenv("LOTUS_UPDATE_SWITCH_AFTER", "3"))  # attempts on WD before trying QLever
+BACKOFF_JITTER = float(
+    os.getenv("LOTUS_UPDATE_BACKOFF_JITTER", "0.25")
+)  # fraction of backoff added/subtracted
+SWITCH_TO_QLEVER_AFTER = int(
+    os.getenv("LOTUS_UPDATE_SWITCH_AFTER", "3")
+)  # attempts on WD before trying QLever
 RATE_LIMIT_TOKENS = ["rate limit", "ratelimit", "too many requests"]
 
 
@@ -63,7 +67,7 @@ def run(
 
     while attempt < MAX_RETRIES:
         attempt += 1
-        as_post = (attempt == MAX_RETRIES)  # last attempt try POST as a variation
+        as_post = attempt == MAX_RETRIES  # last attempt try POST as a variation
         logging.info(
             f"Fetching query {query_file} (attempt {attempt}/{MAX_RETRIES}) via {'POST' if as_post else 'GET'} on {current_url}",
         )
@@ -83,11 +87,13 @@ def run(
 
         # Decide on fallback endpoint switch
         if current_url == WD_URL and attempt >= SWITCH_TO_QLEVER_AFTER:
-            logging.info("Switching to QLever endpoint due to repeated limitations/timeouts.")
+            logging.info(
+                "Switching to QLever endpoint due to repeated limitations/timeouts."
+            )
             current_url = QLEVER_URL
 
         # Compute backoff (exponential with jitter)
-        backoff = (BACKOFF_BASE ** attempt)
+        backoff = BACKOFF_BASE**attempt
         jitter = backoff * BACKOFF_JITTER * (2 * random.random() - 1)
         sleep_time = max(0.5, backoff + jitter)
         logging.info(f"Retrying after {sleep_time:.2f}s backoff...")

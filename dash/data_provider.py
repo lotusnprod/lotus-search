@@ -5,6 +5,7 @@ instead of each page instantiating its own (saves memory & startup time).
 
 This does NOT change any business logic; it simply centralizes object reuse.
 """
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -24,4 +25,3 @@ def get_data_model(path: Optional[str] = None) -> DataModel:
     """
     data_path = Path(path) if path else Path("data")
     return DataModel(data_path)
-

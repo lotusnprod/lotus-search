@@ -169,8 +169,8 @@ Data originates from LOTUS and Wikidata. Cite appropriately when publishing resu
 Questions or suggestions? Open an issue on the repository.
 """
 
+
 def layout():  # pragma: no cover - UI layer
     return dbc.Container([
         dcc.Markdown(_API_MD, link_target="_blank"),
     ])
-
