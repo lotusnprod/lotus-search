@@ -1,6 +1,7 @@
 from requests import request
 
-WD_URL = "https://query.wikidata.org/sparql"
+# Allows to use queries without SERVICE <>
+WD_URL = "https://query-legacy-full.wikidata.org/sparql"
 QLEVER_URL = "https://qlever.cs.uni-freiburg.de/api/wikidata"
 
 
