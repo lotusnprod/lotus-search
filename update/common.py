@@ -2,7 +2,7 @@ from requests import request
 
 # Allows to use queries without SERVICE <>
 WD_URL = "https://query-legacy-full.wikidata.org/sparql"
-QLEVER_URL = "https://qlever.cs.uni-freiburg.de/api/wikidata"
+QLEVER_URL = "https://qlever.dev/api/wikidata"
 
 
 def sparql_to_csv(query: str, url: str = WD_URL, as_post: bool = False) -> str:

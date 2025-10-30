@@ -49,7 +49,7 @@ class TestRunQueryToCSV:
                 assert (
                     urls
                     == ["foo"] * 3
-                    + ["https://qlever.cs.uni-freiburg.de/api/wikidata"] * 2
+                    + ["https://qlever.dev/api/wikidata"] * 2
                 )
                 assert self.output_file.read_text() == "valid result"
                 assert mock_sleep.call_count == 2
