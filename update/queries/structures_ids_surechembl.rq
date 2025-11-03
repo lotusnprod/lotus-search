@@ -1,5 +1,5 @@
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?structure ?structure_id_surechembl WHERE {
-    ?structure wdt:P2877 ?structure_id_surechembl. # str
+    ?structure wdt:P2877 ?structure_id_surechembl. # int
 }
