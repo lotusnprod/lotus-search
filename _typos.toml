@@ -1,8 +1,8 @@
 [files]
 extend-exclude = [
-    "cache/",
-    "data/",
-    "scratch/",
-    "plotly_dash_ketcher/",
-    "frontend/"
+  "cache/",
+  "data/",
+  "scratch/",
+  "plotly_dash_ketcher/",
+  "frontend/"
 ]
