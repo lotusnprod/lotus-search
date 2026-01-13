@@ -7,7 +7,7 @@ name = "lotus_search"
 version = "0.1.2"
 description = "Lotus Search"
 readme = "README.md"
-requires-python = ">=3.13.0,<3.14.0"
+requires-python = "==3.13.*"
 license = { text = "LICENSE" }
 authors = [
   { name = "Jonathan Bisson", email = "bjonnh-git@bjonnh.net" },
@@ -32,31 +32,31 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "dash>=3.3.0,<4.0.0",
-  "dash-bootstrap-components>=2.0.4,<3.0.0",
-  "fastapi>=0.128.0,<1.0.0",
-  "fastapi-versioning>=0.10.0,<1.0.0",
-  "flask-caching>=2.3.1,<3.0.0",
-  "gunicorn>=23.0.0,<24.0.0",
-  "orjson>=3.11.5,<4.0.0",
-  "pydantic>=2.12.5,<3.0.0",
-  "rdkit>=2025.9.1,<2026.0.0",
-  "requests>=2.32.3,<3.0.0",
-  "sqlalchemy>=2.0.45,<3.0.0",
-  "tqdm>=4.67.1,<5.0.0",
-  "uvicorn>=0.40.0,<1.0.0",
+  "dash>=3.3.0",
+  "dash-bootstrap-components>=2.0.4",
+  "fastapi>=0.128.0",
+  "fastapi-versioning>=0.10.0",
+  "flask-caching>=2.3.1",
+  "gunicorn>=23.0.0",
+  "orjson>=3.11.5",
+  "pydantic>=2.12.5",
+  "rdkit>=2025.9.3",
+  "requests>=2.32.5",
+  "sqlalchemy>=2.0.45",
+  "tqdm>=4.67.1",
+  "uvicorn>=0.40.0",
 ]
 
 [dependency-groups]
 dev = [
-  "coverage>=7.13.1,<8.0.0",
-  "pre-commit>=4.5.1,<5.0.0",
-  "pytest>=9.0.2,<10.0.0",
-  "pytest-asyncio>=1.3.0,<2.0.0",
-  "pytest-cov>=7.0.0,<8.0.0",
-  "pytest-mock>=3.15.1,<4.0.0",
-  "pytest-xdist>=3.8.0,<4.0.0",
-  "requests-mock>=1.12.1,<2.0.0",
+  "coverage>=7.13.1",
+  "pre-commit>=4.5.1",
+  "pytest>=9.0.2",
+  "pytest-asyncio>=1.3.0",
+  "pytest-cov>=7.0.0",
+  "pytest-mock>=3.15.1",
+  "pytest-xdist>=3.8.0",
+  "requests-mock>=1.12.1",
 ]
 
 [project.scripts]
