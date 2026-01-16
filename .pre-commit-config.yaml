@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -33,56 +33,62 @@ repos:
     hooks:
       - id: bashate
   - repo: https://github.com/fpgmaas/deptry
-    rev: 0.23.1
+    rev: 0.24.0
     hooks:
       - id: deptry
         language: python
         additional_dependencies: [deptry]
+        exclude: '\.qmd$|\.yaml$|\.yml$|\.json$|\.xml$|\.md$|\.toml$'
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.33.2
+    rev: 0.36.0
     hooks:
       - id: check-github-workflows
       - id: check-taskfile
   - repo: https://github.com/mrtazz/checkmake.git
-    rev: 0.2.2
+    rev: v0.3.0
     hooks:
       - id: checkmake
-  - repo: https://github.com/markdownlint/markdownlint
-    rev: v0.12.0
-    hooks:
-      - id: markdownlint
   - repo: https://github.com/shssoichiro/oxipng
-    rev: v9.1.5
+    rev: v10.0.0
     hooks:
       - id: oxipng
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.2.0
+    rev: v4.0.0
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.7
+    rev: v0.14.13
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
+  - repo: https://github.com/tombi-toml/tombi-pre-commit
+    rev: v0.7.19
+    hooks:
+      - id: tombi-format
+      - id: tombi-lint
   - repo: https://github.com/crate-ci/typos
-    rev: v1.34.0
+    rev: v1
     hooks:
       - id: typos
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.4.2
+    rev: 4.0.0
     hooks:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.26
+    hooks:
+      - id: uv-lock
   - repo: local
     hooks:
       - id: ty-check

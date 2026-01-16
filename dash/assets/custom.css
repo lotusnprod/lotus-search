@@ -7,4 +7,3 @@ body { background-color: #f8f9fb; }
 @media (min-width: 992px) {
   #structure-search-results, #cards { display: flex; flex-wrap: wrap; }
 }
-

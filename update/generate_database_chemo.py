@@ -44,7 +44,7 @@ def load_processed_smiles(path: Path) -> set:
             for row in reader:
                 if len(row) >= 2:
                     processed_smiles_set.add(
-                        row[1]
+                        row[1],
                     )  # cleaned smiles from previous runs
     return processed_smiles_set
 
@@ -104,7 +104,7 @@ def run(path: Path) -> None:
                 continue
             batch_seen.add(canon)
             smileses.append(
-                raw
+                raw,
             )  # keep original (will be cleaned later in process_smiles)
             links.append(int(c))
 
@@ -265,7 +265,7 @@ def run(path: Path) -> None:
         if not file_exists:
             csv_file.writerow(["structure", "block_range"])
         csv_file.writerows(
-            zip(structures_ranges, structures_ranges.values(), strict=False)
+            zip(structures_ranges, structures_ranges.values(), strict=False),
         )
 
     logging.info("Exporting rdkit descriptors")

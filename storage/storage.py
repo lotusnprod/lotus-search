@@ -106,12 +106,12 @@ class Storage:
         # Allow override mainly for debugging / tuning
         default_lookup_batch = max(50, self.list_limit - 10)
         lookup_batch_size = int(
-            os.getenv("LOTUS_DESCRIPTOR_LOOKUP_BATCH", default_lookup_batch)
+            os.getenv("LOTUS_DESCRIPTOR_LOOKUP_BATCH", default_lookup_batch),
         )
         # Each descriptor row has 3 bound parameters; keep comfortable margin
         default_insert_batch = max(50, (self.list_limit // 3) - 10)
         insert_batch_size = int(
-            os.getenv("LOTUS_DESCRIPTOR_INSERT_BATCH", default_insert_batch)
+            os.getenv("LOTUS_DESCRIPTOR_INSERT_BATCH", default_insert_batch),
         )
 
         with self.session(autoflush=False) as session:
@@ -208,7 +208,8 @@ class Storage:
         apply_pragmas = os.getenv("LOTUS_TAXO_PARENTING_PRAGMAS", "1") == "1"
         drop_indexes = os.getenv("LOTUS_TAXO_PARENTING_DROP_INDEXES", "1") == "1"
         progress_every = max(
-            1, int(os.getenv("LOTUS_TAXO_PARENTING_PROGRESS_EVERY", "100"))
+            1,
+            int(os.getenv("LOTUS_TAXO_PARENTING_PROGRESS_EVERY", "100")),
         )
         stats_every = max(1, int(os.getenv("LOTUS_TAXO_PARENTING_STATS_EVERY", "20")))
 
@@ -218,7 +219,8 @@ class Storage:
         # Use large batches for fewer round-trips while keeping memory modest.
         if os.getenv("LOTUS_TAXO_PARENTING_BATCH"):
             batch_size = max(
-                1000, int(os.getenv("LOTUS_TAXO_PARENTING_BATCH", "50000"))
+                1000,
+                int(os.getenv("LOTUS_TAXO_PARENTING_BATCH", "50000")),
             )
         else:
             # Adaptive: aim for about 2k batches (cap 100k) but at least 10k.

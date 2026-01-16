@@ -4,7 +4,6 @@ import random
 import sys
 import time
 from pathlib import Path
-from time import sleep
 
 from update.common import (
     QLEVER_URL,
@@ -22,10 +21,10 @@ logging.basicConfig(
 MAX_RETRIES = int(os.getenv("LOTUS_UPDATE_MAX_RETRIES", "6"))
 BACKOFF_BASE = float(os.getenv("LOTUS_UPDATE_BACKOFF_BASE", "1.5"))
 BACKOFF_JITTER = float(
-    os.getenv("LOTUS_UPDATE_BACKOFF_JITTER", "0.25")
+    os.getenv("LOTUS_UPDATE_BACKOFF_JITTER", "0.25"),
 )  # fraction of backoff added/subtracted
 SWITCH_TO_QLEVER_AFTER = int(
-    os.getenv("LOTUS_UPDATE_SWITCH_AFTER", "3")
+    os.getenv("LOTUS_UPDATE_SWITCH_AFTER", "3"),
 )  # attempts on WD before trying QLever
 RATE_LIMIT_TOKENS = ["rate limit", "ratelimit", "too many requests"]
 
@@ -88,7 +87,7 @@ def run(
         # Decide on fallback endpoint switch
         if current_url == WD_URL and attempt >= SWITCH_TO_QLEVER_AFTER:
             logging.info(
-                "Switching to QLever endpoint due to repeated limitations/timeouts."
+                "Switching to QLever endpoint due to repeated limitations/timeouts.",
             )
             current_url = QLEVER_URL
 

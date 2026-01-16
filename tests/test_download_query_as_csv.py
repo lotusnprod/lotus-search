@@ -46,11 +46,7 @@ class TestRunQueryToCSV:
                     for arg_list in mock_sparql_to_csv.call_args_list
                 ]
                 assert as_post == [False, False, True, True, True]
-                assert (
-                    urls
-                    == ["foo"] * 3
-                    + ["https://qlever.dev/api/wikidata"] * 2
-                )
+                assert urls == ["foo"] * 3 + ["https://qlever.dev/api/wikidata"] * 2
                 assert self.output_file.read_text() == "valid result"
                 assert mock_sleep.call_count == 2
                 sleep_times = [arg_list[0][0] for arg_list in mock_sleep.call_args_list]

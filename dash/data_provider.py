@@ -10,13 +10,12 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional
 
 from model.model import DataModel
 
 
 @lru_cache(maxsize=1)
-def get_data_model(path: Optional[str] = None) -> DataModel:
+def get_data_model(path: str | None = None) -> DataModel:
     """Return a cached DataModel instance.
 
     Parameters

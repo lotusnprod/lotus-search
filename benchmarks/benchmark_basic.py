@@ -28,7 +28,7 @@ def time_block(label: str, func, *args, **kwargs):  # noqa: ANN001, D401
             "benchmark": label,
             "seconds": duration,
             "size": getattr(result, "__len__", lambda: None)(),
-        })
+        }),
     )
     return result
 
@@ -60,7 +60,9 @@ def main() -> None:  # pragma: no cover - benchmark utility
     existing_ids = list(dm.structures_set())[:3]
     if existing_ids:
         time_block(
-            "sdf_extraction_three", dm.get_structure_sdf_from_dict_of_sids, existing_ids
+            "sdf_extraction_three",
+            dm.get_structure_sdf_from_dict_of_sids,
+            existing_ids,
         )
 
 

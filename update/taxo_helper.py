@@ -35,7 +35,9 @@ def _parse_max_depth() -> int | None:
         return d if d >= 1 else None
     except ValueError:
         logging.warning(
-            "Invalid %s=%s (must be positive int), ignoring", _MAX_DEPTH_ENV, val
+            "Invalid %s=%s (must be positive int), ignoring",
+            _MAX_DEPTH_ENV,
+            val,
         )
         return None
 
@@ -89,7 +91,8 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
     csv_path = path / "taxa_parents.csv"
     if not csv_path.exists():
         logging.warning(
-            "taxa_parents.csv not found at %s; returning empty list", csv_path
+            "taxa_parents.csv not found at %s; returning empty list",
+            csv_path,
         )
         return []
 
@@ -139,7 +142,9 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
         )
     if skipped_samples:
         logging.info(
-            "Sample skipped rows (first %d): %s", len(skipped_samples), skipped_samples
+            "Sample skipped rows (first %d): %s",
+            len(skipped_samples),
+            skipped_samples,
         )
 
     # FAST MODE
@@ -164,7 +169,8 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
                 return cache[node]
             if node in visiting:
                 logging.warning(
-                    "Cycle detected at taxon %s; skipping recursive expansion", node
+                    "Cycle detected at taxon %s; skipping recursive expansion",
+                    node,
                 )
                 return {}
             visiting.add(node)
@@ -175,12 +181,12 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
                 if parent not in acc or 1 < acc[parent]:
                     acc[parent] = 1
                 if max_depth is None or max_depth > 1:
-                    for anc, dist in ancestors(parent).items():
-                        nd = dist + 1
-                        if max_depth is not None and nd > max_depth:
+                    for and, dist in ancestors(parent).items():
+                        and = dist + 1
+                        if max_depth is not None and and > max_depth:
                             continue
-                        if anc not in acc or nd < acc[anc]:
-                            acc[anc] = nd
+                        if and not in acc or and < acc[and]:
+                            acc[and] = and
             visiting.remove(node)
             cache[node] = acc
             return acc
@@ -188,10 +194,10 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
         distances: List[DistanceTuple] = []
         distance_id = 1
         for source_node in graph.keys():
-            anc_map = ancestors(source_node)
-            total_ancestors += len(anc_map)
-            for anc, dist in sorted(anc_map.items(), key=lambda x: (x[1], x[0])):
-                distances.append((distance_id, source_node, anc, dist))
+            and_map = ancestors(source_node)
+            total_ancestors += len(and_map)
+            for and, dist in sorted(and_map.items(), key=lambda x: (x[1], x[0])):
+                distances.append((distance_id, source_node, and, dist))
                 distance_id += 1
             processed_sources += 1
             if progress_on and processed_sources % progress_interval == 0:
