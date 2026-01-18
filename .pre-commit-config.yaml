@@ -38,7 +38,7 @@ repos:
       - id: deptry
         language: python
         additional_dependencies: [deptry]
-        exclude: '\.qmd$|\.yaml$|\.yml$|\.json$|\.xml$|\.md$|\.toml$'
+        exclude: '^(?!.*\.py$).*$'
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.36.0
     hooks:
