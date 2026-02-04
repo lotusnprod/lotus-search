@@ -45,7 +45,7 @@ repos:
       - id: check-github-workflows
       - id: check-taskfile
   - repo: https://github.com/mrtazz/checkmake.git
-    rev: v0.3.0
+    rev: v0.3.2
     hooks:
       - id: checkmake
   - repo: https://github.com/shssoichiro/oxipng
@@ -73,7 +73,7 @@ repos:
       - id: tombi-format
       - id: tombi-lint
   - repo: https://github.com/crate-ci/typos
-    rev: v1
+    rev: v1.43.1
     hooks:
       - id: typos
   - repo: https://github.com/shellcheck-py/shellcheck-py
