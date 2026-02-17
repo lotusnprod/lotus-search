@@ -7,7 +7,7 @@ name = "lotus_search"
 version = "0.1.2"
 description = "Lotus Search"
 readme = "README.md"
-requires-python = "==3.13.*"
+requires-python = "==3.14.*"
 license = { text = "LICENSE" }
 authors = [
   { name = "Jonathan Bisson", email = "bjonnh-git@bjonnh.net" },
@@ -29,7 +29,7 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "dash>=4.0.0",
@@ -44,7 +44,7 @@ dependencies = [
   "requests>=2.32.5",
   "sqlalchemy>=2.0.46",
   "tqdm>=4.67.3",
-  "uvicorn>=0.40.0",
+  "uvicorn>=0.41.0",
 ]
 
 [dependency-groups]
