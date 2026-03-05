@@ -40,7 +40,7 @@ repos:
         additional_dependencies: [deptry]
         exclude: '^(?!.*\.py$).*$'
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.2
+    rev: 0.37.0
     hooks:
       - id: check-github-workflows
       - id: check-taskfile
@@ -61,19 +61,19 @@ repos:
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.2
+    rev: v0.15.5
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.7.32
+    rev: v0.9.0
     hooks:
       - id: tombi-format
       - id: tombi-lint
   - repo: https://github.com/crate-ci/typos
-    rev: v1.43.5
+    rev: v1.44.0
     hooks:
       - id: typos
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -86,7 +86,7 @@ repos:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.10.5
+    rev: 0.10.8
     hooks:
       - id: uv-lock
   - repo: local
@@ -96,5 +96,4 @@ repos:
         language: python
         entry: ty check
         exclude: '^(?!.*\.py$).*$'
-        respect-ignore-files: true
         additional_dependencies: [ty]
