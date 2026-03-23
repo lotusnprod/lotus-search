@@ -44,16 +44,16 @@ dependencies = [
   "requests>=2.32.5",
   "sqlalchemy>=2.0.48",
   "tqdm>=4.67.3",
-  "uvicorn>=0.41.0",
+  "uvicorn>=0.42.0",
 ]
 
 [dependency-groups]
 dev = [
-  "coverage>=7.13.4",
-  "prek>=0.3.5",
+  "coverage>=7.13.5",
+  "prek>=0.3.8",
   "pytest>=9.0.2",
   "pytest-asyncio>=1.3.0",
-  "pytest-cov>=7.0.0",
+  "pytest-cov>=7.1.0",
   "pytest-mock>=3.15.1",
   "pytest-xdist>=3.8.0",
   "requests-mock>=1.12.1",
