@@ -68,7 +68,7 @@ repos:
           - --fix
       - id: ruff-format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.9.9
+    rev: v0.9.11
     hooks:
       - id: tombi-format
       - id: tombi-lint
@@ -81,12 +81,12 @@ repos:
     hooks:
       - id: shellcheck
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 4.0.4
+    rev: 4.1.0
     hooks:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.1
+    rev: 0.11.2
     hooks:
       - id: uv-lock
   - repo: local
