@@ -10,13 +10,13 @@ from update.common import (
 class TestWdSparqlToCsv:
     def test_returns_expected_csv(self):
         with Mocker() as m:
-            m.get("https://query.wikidata.org/sparql", text="expected_csv")
+            m.get("https://query-legacy-full.wikidata.org/sparql", text="expected_csv")
             result = sparql_to_csv("query")
             assert result == "expected_csv"
 
     def test_returns_expected_csv_with_post(self):
         with Mocker() as m:
-            m.post("https://query.wikidata.org/sparql", text="expected_csv")
+            m.post("https://query-legacy-full.wikidata.org/sparql", text="expected_csv")
             result = sparql_to_csv("query", as_post=True)
             assert result == "expected_csv"
 

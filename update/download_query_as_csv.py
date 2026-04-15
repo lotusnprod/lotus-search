@@ -1,9 +1,8 @@
 import logging
 import os
-import random
 import sys
-import time
 from pathlib import Path
+from time import sleep
 
 from update.common import (
     QLEVER_URL,
@@ -19,13 +18,10 @@ logging.basicConfig(
 
 # Environment tunables (do not break tests; defaults are conservative)
 MAX_RETRIES = int(os.getenv("LOTUS_UPDATE_MAX_RETRIES", "6"))
-BACKOFF_BASE = float(os.getenv("LOTUS_UPDATE_BACKOFF_BASE", "1.5"))
-BACKOFF_JITTER = float(
-    os.getenv("LOTUS_UPDATE_BACKOFF_JITTER", "0.25"),
-)  # fraction of backoff added/subtracted
 SWITCH_TO_QLEVER_AFTER = int(
     os.getenv("LOTUS_UPDATE_SWITCH_AFTER", "3"),
-)  # attempts on WD before trying QLever
+)  # attempts on WD before switching to POST and then QLever
+SLEEP_TIME = 5  # seconds between retries (while still on original endpoint)
 RATE_LIMIT_TOKENS = ["rate limit", "ratelimit", "too many requests"]
 
 
@@ -49,13 +45,11 @@ def run(
 ) -> None:
     """Download SPARQL results to CSV with order-preserving de-duplication.
 
-    Enhanced with:
-      - Rate limit detection (string heuristics) and exponential backoff with jitter.
-      - Automatic fallback from Wikidata endpoint to QLever after configurable attempts.
-      - Timeout text detection retained.
-
-    Existing behavior (successful path & file format) is unchanged.
-    Test suite compatibility: only a single call is made when mock returns normal text.
+    Retry logic:
+      - Uses GET for the first SWITCH_TO_QLEVER_AFTER-1 attempts, then POST.
+      - Switches from the original endpoint to QLever after SWITCH_TO_QLEVER_AFTER attempts.
+      - Sleeps SLEEP_TIME seconds between retries while still on the original endpoint
+        (i.e., only for attempt < SWITCH_TO_QLEVER_AFTER).
     """
     with open(query_file) as qf:
         query = qf.read()
@@ -66,7 +60,15 @@ def run(
 
     while attempt < MAX_RETRIES:
         attempt += 1
-        as_post = attempt == MAX_RETRIES  # last attempt try POST as a variation
+        # Switch to POST once we've exhausted GET attempts
+        as_post = attempt >= SWITCH_TO_QLEVER_AFTER
+        # Switch to QLever URL after SWITCH_TO_QLEVER_AFTER attempts
+        if current_url != QLEVER_URL and attempt > SWITCH_TO_QLEVER_AFTER:
+            logging.info(
+                "Switching to QLever endpoint due to repeated limitations/timeouts.",
+            )
+            current_url = QLEVER_URL
+
         logging.info(
             f"Fetching query {query_file} (attempt {attempt}/{MAX_RETRIES}) via {'POST' if as_post else 'GET'} on {current_url}",
         )
@@ -84,19 +86,10 @@ def run(
             # Success path: break
             break
 
-        # Decide on fallback endpoint switch
-        if current_url == WD_URL and attempt >= SWITCH_TO_QLEVER_AFTER:
-            logging.info(
-                "Switching to QLever endpoint due to repeated limitations/timeouts.",
-            )
-            current_url = QLEVER_URL
-
-        # Compute backoff (exponential with jitter)
-        backoff = BACKOFF_BASE**attempt
-        jitter = backoff * BACKOFF_JITTER * (2 * random.random() - 1)
-        sleep_time = max(0.5, backoff + jitter)
-        logging.info(f"Retrying after {sleep_time:.2f}s backoff...")
-        time.sleep(sleep_time)
+        # Sleep only while still below the switch threshold (original endpoint, GET phase)
+        if attempt < SWITCH_TO_QLEVER_AFTER:
+            logging.info(f"Retrying after {SLEEP_TIME}s...")
+            sleep(SLEEP_TIME)
 
     if response_text is None:
         logging.error("No response received; aborting without writing file.")
