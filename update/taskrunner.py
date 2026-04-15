@@ -33,18 +33,18 @@ class TaskRunner:
     ) -> None:
         """Run tasks in order, optionally skipping or stopping at a task.
 
-        :return:
+                :return:
 
-Parameters
-----------
-only : str | None
-    None. Default is None.
-stop : str | None
-    None. Default is None.
-skip : str | None
-    None. Default is None.
-parallel : bool
-    True. Default is True.
+        Parameters
+        ----------
+        only : str | None
+            None. Default is None.
+        stop : str | None
+            None. Default is None.
+        skip : str | None
+            None. Default is None.
+        parallel : bool
+            True. Default is True.
         """
         start = time.time()
 

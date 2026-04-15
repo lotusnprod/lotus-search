@@ -52,19 +52,19 @@ def load_processed_smiles(path: Path) -> set:
 def _quick_canonical(smiles: str) -> str | None:
     """Lightweight canonicalization to approximate standardized output for duplicate filtering.
 
-    This is cheaper than full `process_smiles` standardization and helps avoid
-    reprocessing between runs when raw input differs but canonical form matches
-    a previously processed structure.
+        This is cheaper than full `process_smiles` standardization and helps avoid
+        reprocessing between runs when raw input differs but canonical form matches
+        a previously processed structure.
 
-Parameters
-----------
-smiles : str
-    Smiles.
+    Parameters
+    ----------
+    smiles : str
+        Smiles.
 
-Returns
--------
-str | None
-    Return value produced by  quick canonical.
+    Returns
+    -------
+    str | None
+        Result quick canonical.
     """
     try:
         mol = Chem.MolFromSmiles(smiles)

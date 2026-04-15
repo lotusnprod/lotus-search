@@ -18,15 +18,15 @@ from model.model import DataModel
 def get_data_model(path: str | None = None) -> DataModel:
     """Return a cached DataModel instance.
 
-Parameters
-----------
-path : str | None
-    None. Default is None.
+    Parameters
+    ----------
+    path : str | None
+        None. Default is None.
 
-Returns
--------
-DataModel
-    Return value produced by get data model.
+    Returns
+    -------
+    DataModel
+        Retrieved data model.
     """
     data_path = Path(path) if path else Path("data")
     return DataModel(data_path)

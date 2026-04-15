@@ -64,15 +64,15 @@ class DataModel:
     def load_all_data(cls, path: Path):
         """Load pickled data that embeds RDKit substructure libraries.
 
-        The pickled payload stores the binary stream of two SubstructLibrary
-        instances (with & without explicit hydrogens). They are reconstructed
-        here to avoid re-computation. Cached at the class level to reuse
-        across multiple DataModel instances (e.g. in tests).
+                The pickled payload stores the binary stream of two SubstructLibrary
+                instances (with & without explicit hydrogens). They are reconstructed
+                here to avoid re-computation. Cached at the class level to reuse
+                across multiple DataModel instances (e.g. in tests).
 
-Parameters
-----------
-path : Path
-    Path.
+        Parameters
+        ----------
+        path : Path
+            Path.
         """
         with open(path / "database_chemo.pkl", "rb") as f:
             data = pickle.load(f)
@@ -91,10 +91,10 @@ path : Path
     def load_sdf_data(cls, path: Path):
         """Memory-map the main SDF file (heavy file, so mmap is efficient).
 
-Parameters
-----------
-path : Path
-    Path.
+        Parameters
+        ----------
+        path : Path
+            Path.
         """
         mapped_sdf = mmap_file(path / "lotus.sdf")
         return mapped_sdf
@@ -104,10 +104,10 @@ path : Path
     def load_sdf_ranges(cls, sdf):  # type: ignore[no-untyped-def]
         """Pre-compute (and cache) byte ranges for each SDF record.
 
-Parameters
-----------
-sdf : Any
-    Sdf.
+        Parameters
+        ----------
+        sdf : Any
+            Sdf.
         """
         ranges = find_structures_bytes_ranges(sdf)
         return ranges
@@ -119,22 +119,21 @@ sdf : Any
     ) -> dict[int, TaxonObject]:
         """Return TaxonObject mapping for provided taxon IDs.
 
-        Returns an empty dict if none found.
+                Returns an empty dict if none found.
 
-Parameters
-----------
-tids : Iterable[int]
-    Tids.
+        Parameters
+        ----------
+        tids : Iterable[int]
+            Tids.
 
-Returns
--------
-dict[int, TaxonObject]
-    Return value produced by get taxon object from dict of tids.
+        Returns
+        -------
+        dict[int, TaxonObject]
+            Dictionary containing taxon object from dict of tids.
         """
         with self.storage.session() as session:
             result = (
-                session
-                .query(
+                session.query(
                     TaxoNames.id,
                     TaxoNames.name,
                 )
@@ -153,19 +152,19 @@ dict[int, TaxonObject]
     def get_taxa_with_name_matching(self, query: str, exact: bool = False) -> set[int]:
         """Return IDs of taxa whose names match the query.
 
-        If exact is False a case-sensitive SQL LIKE %query% is used.
+                If exact is False a case-sensitive SQL LIKE %query% is used.
 
-Parameters
-----------
-query : str
-    Query.
-exact : bool
-    False. Default is False.
+        Parameters
+        ----------
+        query : str
+            Query.
+        exact : bool
+            False. Default is False.
 
-Returns
--------
-set[int]
-    Return value produced by get taxa with name matching.
+        Returns
+        -------
+        set[int]
+            Set of taxa with name matching.
         """
         with self.storage.session() as session:
             matcher = (
@@ -183,15 +182,15 @@ set[int]
     def resolve_taxon(self, query: str) -> Any:
         """Call Global Names resolver (best-effort, network errors swallowed).
 
-Parameters
-----------
-query : str
-    Query.
+        Parameters
+        ----------
+        query : str
+            Query.
 
-Returns
--------
-Any
-    Return value produced by resolve taxon.
+        Returns
+        -------
+        Any
+            Result resolve taxon.
         """
         payload = {
             "nameStrings": [query],
@@ -229,10 +228,10 @@ Any
     def structures_set(self) -> set[int]:
         """Return a cached set of all known structure WIDs.
 
-Returns
--------
-set[int]
-    Return value produced by structures set.
+        Returns
+        -------
+        set[int]
+            Set of structures set.
         """
         return set(self.db["structure_wid"])
 
@@ -245,20 +244,19 @@ set[int]
     ) -> dict[str, list[Any]]:
         """Return descriptor name -> list of values for given structure IDs.
 
-Parameters
-----------
-sids : Iterable[int]
-    Sids.
+        Parameters
+        ----------
+        sids : Iterable[int]
+            Sids.
 
-Returns
--------
-dict[str, list[Any]]
-    Return value produced by get structure descriptors from dict of sids.
+        Returns
+        -------
+        dict[str, list[Any]]
+            Dictionary containing structure descriptors from dict of sids.
         """
         with self.storage.session() as session:
             result = (
-                session
-                .query(
+                session.query(
                     StructuresDescriptors.descriptor_name,
                     StructuresDescriptors.descriptor_value,
                 )
@@ -278,15 +276,15 @@ dict[str, list[Any]]
     ) -> str:
         """Return concatenated SDF blocks for the provided structure IDs.
 
-Parameters
-----------
-sids : Iterable[int]
-    Sids.
+        Parameters
+        ----------
+        sids : Iterable[int]
+            Sids.
 
-Returns
--------
-str
-    Return value produced by get structure sdf from dict of sids.
+        Returns
+        -------
+        str
+            String representation of structure sdf from dict of sids.
         """
         ranges = self.sdf_ranges
         mm = self.sdf
@@ -301,17 +299,17 @@ str
     ) -> dict[int, StructureObject]:
         """Return StructureObject mapping (optionally with descriptors).
 
-Parameters
-----------
-sids : Iterable[int]
-    Sids.
-return_descriptors : bool
-    False. Default is False.
+        Parameters
+        ----------
+        sids : Iterable[int]
+            Sids.
+        return_descriptors : bool
+            False. Default is False.
 
-Returns
--------
-dict[int, StructureObject]
-    Return value produced by get structure object from dict of sids.
+        Returns
+        -------
+        dict[int, StructureObject]
+            Dictionary containing structure object from dict of sids.
         """
         with self.storage.session() as session:
             descriptors: dict[str, list[Any]] = {}
@@ -324,8 +322,7 @@ dict[int, StructureObject]
             for i in range(0, len(sids_list), CHUNK_SIZE):
                 chunk = sids_list[i : i + CHUNK_SIZE]
                 result = (
-                    session
-                    .query(
+                    session.query(
                         Structures.id,
                         Structures.smiles,
                         Structures.smiles_no_stereo,
@@ -358,17 +355,17 @@ dict[int, StructureObject]
     def get_structure_with_descriptors(self, descriptors: dict) -> set[int]:
         """Return structure IDs matching descriptor min/max constraints.
 
-        Input descriptors dict uses the pattern <DescriptorName>_min / _max.
+                Input descriptors dict uses the pattern <DescriptorName>_min / _max.
 
-Parameters
-----------
-descriptors : dict
-    Descriptors.
+        Parameters
+        ----------
+        descriptors : dict
+            Descriptors.
 
-Returns
--------
-set[int]
-    Return value produced by get structure with descriptors.
+        Returns
+        -------
+        set[int]
+            Set of structure with descriptors.
         """
         with self.storage.session() as session:
             query = session.query(StructuresDescriptors.structure_id)
@@ -415,10 +412,10 @@ set[int]
     def structure_get_mol_fp_and_explicit(self, query: str):  # type: ignore[no-untyped-def]
         """Return (mol, fingerprint, explicit_h_present) for a SMILES query.
 
-Parameters
-----------
-query : str
-    Query.
+        Parameters
+        ----------
+        query : str
+            Query.
         """
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
@@ -432,15 +429,15 @@ query : str
     def structure_search(self, query: str) -> list[tuple[int, float]]:
         """Similarity search (Tanimoto) returning list of (WID, score).
 
-Parameters
-----------
-query : str
-    Query.
+        Parameters
+        ----------
+        query : str
+            Query.
 
-Returns
--------
-list[tuple[int, float]]
-    Return value produced by structure search.
+        Returns
+        -------
+        list[tuple[int, float]]
+            List of structure search.
         """
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
         db = (
@@ -461,20 +458,20 @@ list[tuple[int, float]]
     ) -> list[tuple[int, float]]:
         """Substructure search returning (WID, tanimoto_score) list.
 
-        The tanimoto score is computed between the query fingerprint and the
-        stored fingerprint for each match; original ordering preserved.
+                The tanimoto score is computed between the query fingerprint and the
+                stored fingerprint for each match; original ordering preserved.
 
-Parameters
-----------
-query : str
-    Query.
-chirality : bool
-    False. Default is False.
+        Parameters
+        ----------
+        query : str
+            Query.
+        chirality : bool
+            False. Default is False.
 
-Returns
--------
-list[tuple[int, float]]
-    Return value produced by structure search substructure.
+        Returns
+        -------
+        list[tuple[int, float]]
+            List of structure search substructure.
         """
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
         if explicit_h:
@@ -499,17 +496,17 @@ list[tuple[int, float]]
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:  # type: ignore[no-untyped-def]
         """Return TSV string for similarity results (Wikidata URL, score, SMILES).
 
-Parameters
-----------
-wids : list[int]
-    Wids.
-scores : Any
-    Scores.
+        Parameters
+        ----------
+        wids : list[int]
+            Wids.
+        scores : Any
+            Scores.
 
-Returns
--------
-str
-    Return value produced by structure get tsv from scores.
+        Returns
+        -------
+        str
+            String representation of structure get tsv from scores.
         """
         out = "Wikidata link\tSimilarity\tSmiles\n"
         structure_objects = self.get_structure_object_from_dict_of_sids(wids)
@@ -535,8 +532,7 @@ str
     ) -> dict[int, ReferenceObject]:
         with self.storage.session() as session:
             result = (
-                session
-                .query(
+                session.query(
                     References.id,
                     References.doi,
                     References.title,
@@ -597,8 +593,7 @@ str
     def get_references_with_journal(self, journal_title: str) -> set[int]:
         with self.storage.session() as session:
             result = (
-                session
-                .query(References.id)
+                session.query(References.id)
                 .filter(
                     References.journal.in_(
                         session.query(Journals.id).filter(
@@ -725,8 +720,7 @@ str
         with self.storage.session() as session:
             # Recursive query to fetch all children for the given taxon ID
             recursive_query = (
-                session
-                .query(TaxoParents.child_id)
+                session.query(TaxoParents.child_id)
                 .filter(TaxoParents.parent_id == tid)
                 .cte(name="recursive_query", recursive=True)
             )

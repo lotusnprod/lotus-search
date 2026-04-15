@@ -73,19 +73,19 @@ def _format_eta(elapsed: float, done: int, total: int) -> str:
 def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
     """Compute (id, source_taxon, parent_taxon, distance) tuples for all ancestry paths.
 
-    Skips rows whose taxon/parent fields cannot be parsed as plain integers
-    (e.g. internal blank node IRIs like `.well-known/genid/...`).
-    Avoids raising stack traces; logs a concise summary instead.
+        Skips rows whose taxon/parent fields cannot be parsed as plain integers
+        (e.g. internal blank node IRIs like `.well-known/genid/...`).
+        Avoids raising stack traces; logs a concise summary instead.
 
-Parameters
-----------
-path : Path
-    Path.
+    Parameters
+    ----------
+    path : Path
+        Path.
 
-Returns
--------
-List[DistanceTuple]
-    Return value produced by generate taxon parents with distance.
+    Returns
+    -------
+    List[DistanceTuple]
+        List of taxon parents with distance.
     """
     graph: DefaultDict[int, List[int]] = defaultdict(list)
 

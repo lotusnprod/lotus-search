@@ -21,24 +21,24 @@ IDSet = set[int]
 def parse_date(date_str: str) -> datetime:
     """Parse a flexible date string into a datetime.
 
-    Accepted formats (progressively tried):
-      - YYYY
-      - YYYY-MM
-      - YYYY-MM-DD
+        Accepted formats (progressively tried):
+          - YYYY
+          - YYYY-MM
+          - YYYY-MM-DD
 
-Parameters
-----------
-date_str : str
-    Date str.
+    Parameters
+    ----------
+    date_str : str
+        Date str.
 
-Returns
--------
-datetime
-    Return value produced by parse date.
+    Returns
+    -------
+    datetime
+        Extracted date.
 
-Raises
-------
-    HTTPException (400): if the date does not match any accepted format.
+    Raises
+    ------
+        HTTPException (400): if the date does not match any accepted format.
     """
     # TODO this has to be explained in the API doc
     formats = ["%Y", "%Y-%m", "%Y-%m-%d"]
@@ -56,21 +56,21 @@ Raises
 def references_from_reference_in_item(dm: DataModel, item: Item) -> IDSet | None:
     """Return matching reference IDs based on the reference sub-object of an Item.
 
-    Only one of wid / doi / title can be provided (validated here).
-    Additional filters (date range, journal) are applied as intersections.
-    Returns None if no identifying criteria are supplied.
+        Only one of wid / doi / title can be provided (validated here).
+        Additional filters (date range, journal) are applied as intersections.
+        Returns None if no identifying criteria are supplied.
 
-Parameters
-----------
-dm : DataModel
-    Dm.
-item : Item
-    Item.
+    Parameters
+    ----------
+    dm : DataModel
+        Dm.
+    item : Item
+        Item.
 
-Returns
--------
-IDSet | None
-    Return value produced by references from reference in item.
+    Returns
+    -------
+    IDSet | None
+        Result references from reference in item.
     """
     references: IDSet | None = None
 
@@ -121,23 +121,23 @@ IDSet | None
 def structures_from_structure_in_item(dm: DataModel, item: Item) -> IDSet | None:
     """Return matching structure IDs based on the structure sub-object of an Item.
 
-    Rules
-    -----
-    - Only one of wid / molecule / formula may be provided.
-    - Substructure and similarity searches are delegated to the data model.
-    - Descriptor filters (if provided) are intersected with previous results.
+        Rules
+        -----
+        - Only one of wid / molecule / formula may be provided.
+        - Substructure and similarity searches are delegated to the data model.
+        - Descriptor filters (if provided) are intersected with previous results.
 
-Parameters
-----------
-dm : DataModel
-    Dm.
-item : Item
-    Item.
+    Parameters
+    ----------
+    dm : DataModel
+        Dm.
+    item : Item
+        Item.
 
-Returns
--------
-IDSet | None
-    Return value produced by structures from structure in item.
+    Returns
+    -------
+    IDSet | None
+        Result structures from structure in item.
     """
     structures: IDSet | None = None
 
@@ -212,17 +212,17 @@ IDSet | None
 def taxa_from_taxon_in_item(dm: DataModel, item: Item) -> IDSet | None:
     """Return matching taxon IDs based on the taxon sub-object of an Item.
 
-Parameters
-----------
-dm : DataModel
-    Dm.
-item : Item
-    Item.
+    Parameters
+    ----------
+    dm : DataModel
+        Dm.
+    item : Item
+        Item.
 
-Returns
--------
-IDSet | None
-    Return value produced by taxa from taxon in item.
+    Returns
+    -------
+    IDSet | None
+        Result taxa from taxon in item.
     """
     wid = item.taxon.wid
     name = item.taxon.name
@@ -305,20 +305,20 @@ def taxa_from_reference_in_item(dm: DataModel, item: Item) -> IDSet | None:
 def combine_and_filter_outputs(sets: list[IDSet | None], limit: int) -> list[int]:
     """Intersect provided non-None ID sets and apply limit.
 
-    If all inputs are None (i.e. no constraints) an empty list is returned.
-    A limit of 0 means "no truncation".
+        If all inputs are None (i.e. no constraints) an empty list is returned.
+        A limit of 0 means "no truncation".
 
-Parameters
-----------
-sets : list[IDSet | None]
-    Sets.
-limit : int
-    Limit.
+    Parameters
+    ----------
+    sets : list[IDSet | None]
+        Sets.
+    limit : int
+        Limit.
 
-Returns
--------
-list[int]
-    Return value produced by combine and filter outputs.
+    Returns
+    -------
+    list[int]
+        List of combine and filter outputs.
     """
     non_none_outputs: list[IDSet] = [s for s in sets if s is not None]
     items = list(set.intersection(*non_none_outputs) if non_none_outputs else set())
@@ -330,17 +330,17 @@ list[int]
 def apply_limit(item: Item, items: list[Any] | set[Any]) -> list[Any]:
     """Return a list of items respecting the limit semantics (0 = no truncation).
 
-Parameters
-----------
-item : Item
-    Item.
-items : list[Any] | set[Any]
-    Items.
+    Parameters
+    ----------
+    item : Item
+        Item.
+    items : list[Any] | set[Any]
+        Items.
 
-Returns
--------
-list[Any]
-    Return value produced by apply limit.
+    Returns
+    -------
+    list[Any]
+        List of apply limit.
     """
     lim = item.limit
     if lim == 0:
@@ -351,17 +351,17 @@ list[Any]
 def get_triplets_for_item(item: Item, dm: DataModel) -> list[tuple[int, int, int]]:
     """Return triplets matching the combined item constraints (respecting limit).
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Dm.
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Dm.
 
-Returns
--------
-list[tuple[int, int, int]]
-    Return value produced by get triplets for item.
+    Returns
+    -------
+    list[tuple[int, int, int]]
+        List of triplets for item.
     """
     triplets_set = dm.get_triplets_for(
         reference_ids=references_from_reference_in_item(dm, item),
@@ -374,14 +374,14 @@ list[tuple[int, int, int]]
 def get_structures_for_item(item: Item, dm: DataModel):  # type: ignore[override]
     """Resolve matching structure IDs (intersection) and fetch their objects.
 
-    Returned dictionary mapping ID -> StructureObject is produced by the DataModel.
+        Returned dictionary mapping ID -> StructureObject is produced by the DataModel.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Dm.
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Dm.
     """
     ids = combine_and_filter_outputs(
         [
@@ -400,12 +400,12 @@ dm : DataModel
 def get_taxa_for_item(item: Item, dm: DataModel):  # type: ignore[override]
     """Resolve matching taxon IDs (intersection) and fetch their objects.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Dm.
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Dm.
     """
     ids = combine_and_filter_outputs(
         [
@@ -421,12 +421,12 @@ dm : DataModel
 def get_references_for_item(item: Item, dm: DataModel):  # type: ignore[override]
     """Resolve matching reference IDs (intersection) and fetch their objects.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Dm.
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Dm.
     """
     ids = combine_and_filter_outputs(
         [

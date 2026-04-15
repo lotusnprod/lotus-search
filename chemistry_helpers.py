@@ -39,10 +39,10 @@ def fingerprint(mol):
 def get_mol_descriptors_rdkit(mol):
     """calculate the full list of descriptors for a molecule.
 
-Parameters
-----------
-mol : Any
-    Mol.
+    Parameters
+    ----------
+    mol : Any
+        Mol.
     """
     res = {}
     for nm, fn in Descriptors._descList:

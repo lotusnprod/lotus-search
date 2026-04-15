@@ -62,15 +62,15 @@ def _read_references_and_journals(path: Path) -> tuple[list[dict], list[dict]]:
     Skips malformed / short rows instead of raising IndexError / ValueError.
     Preserves last occurrence for duplicate reference IDs (prior behavior).
 
-Parameters
-----------
-path : Path
-    Path.
+    Parameters
+    ----------
+    path : Path
+        Path.
 
-Returns
--------
-tuple[list[dict], list[dict]]
-    Return value produced by  read references and journals.
+    Returns
+    -------
+    tuple[list[dict], list[dict]]
+        Tuple containing read references and journals.
     """
     ref_path = path / "references.csv"
     if not ref_path.exists():
@@ -256,7 +256,7 @@ def run(path: Path) -> None:
         for row in reader:
             try:
                 ranks_names.append({"id": int(row["rank"]), "name": row["rankLabel"]})
-            except ValueError, KeyError:
+            except (ValueError, KeyError):
                 continue
     logging.info(" Processed rank names")
 
@@ -268,7 +268,7 @@ def run(path: Path) -> None:
                 taxon_id = int(row["taxon"])  # noqa: F841 (document structure for future multi-rank support)
                 rank_value = int(row["taxon_rank"])  # noqa: F841
                 taxon_ranks_dict[taxon_id] = {rank_value}
-            except ValueError, KeyError:
+            except (ValueError, KeyError):
                 continue
     taxo_ranks = [
         {"id": taxon, "rank_id": rank}

@@ -38,12 +38,12 @@ data_model: None | DataModel = None
 def get_data_model() -> DataModel:
     """Return the singleton DataModel instance.
 
-    This indirection allows tests to inject a controlled DataModel.
+        This indirection allows tests to inject a controlled DataModel.
 
-Returns
--------
-DataModel
-    Return value produced by get data model.
+    Returns
+    -------
+    DataModel
+        Retrieved data model.
     """
     global data_model
     return data_model  # type: ignore[return-value]
@@ -72,19 +72,19 @@ app = FastAPI(
 async def lifespan(_: FastAPI):  # type: ignore[override]
     """FastAPI lifespan context to create and clean-up the DataModel.
 
-    The DataModel loads all required databases on startup and is cleared
-    on shutdown to free resources. This maintains prior behavior while
-    making lifecycle explicit.
+        The DataModel loads all required databases on startup and is cleared
+        on shutdown to free resources. This maintains prior behavior while
+        making lifecycle explicit.
 
-Parameters
-----------
-_ : FastAPI
-    .
+    Parameters
+    ----------
+    _ : FastAPI
+        .
 
-Yields
-------
-object
-    Generated values.
+    Yields
+    ------
+    object
+        Yielded values for lifespan.
     """
     global data_model
     data_model = DataModel()
@@ -100,20 +100,20 @@ async def search_triplets(
 ) -> TripletResult:
     """Search for triplets (reference, structure, taxon) matching input constraints.
 
-    Returned fields mirror existing behavior. If modeEnum == 'objects',
-    expanded reference/structure/taxon objects are included.
+        Returned fields mirror existing behavior. If modeEnum == 'objects',
+        expanded reference/structure/taxon objects are included.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Depends(get_data_model). Default is Depends(get_data_model).
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Depends(get_data_model). Default is Depends(get_data_model).
 
-Returns
--------
-TripletResult
-    Return value produced by search triplets.
+    Returns
+    -------
+    TripletResult
+        Result search triplets.
     """
     triplets = get_triplets_for_item(item, dm)
 
@@ -157,20 +157,20 @@ async def search_structures(
 ) -> StructureResult:
     """Search structures constrained by structure / taxon / reference facets.
 
-    If option.sdf is true an SDF block is returned. If modeEnum == 'objects'
-    structure objects are expanded; else only IDs are returned.
+        If option.sdf is true an SDF block is returned. If modeEnum == 'objects'
+        structure objects are expanded; else only IDs are returned.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Depends(get_data_model). Default is Depends(get_data_model).
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Depends(get_data_model). Default is Depends(get_data_model).
 
-Returns
--------
-StructureResult
-    Return value produced by search structures.
+    Returns
+    -------
+    StructureResult
+        Result search structures.
     """
     dict_items = get_structures_for_item(item, dm)
 
@@ -205,17 +205,17 @@ async def search_taxa(
 ) -> TaxonResult:
     """Search taxa constrained by taxon / structure / reference inputs.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Depends(get_data_model). Default is Depends(get_data_model).
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Depends(get_data_model). Default is Depends(get_data_model).
 
-Returns
--------
-TaxonResult
-    Return value produced by search taxa.
+    Returns
+    -------
+    TaxonResult
+        Result search taxa.
     """
     dict_items = get_taxa_for_item(item, dm)
 
@@ -242,17 +242,17 @@ async def search_references(
 ) -> ReferenceResult:
     """Search references constrained by reference / structure / taxon inputs.
 
-Parameters
-----------
-item : Item
-    Item.
-dm : DataModel
-    Depends(get_data_model). Default is Depends(get_data_model).
+    Parameters
+    ----------
+    item : Item
+        Item.
+    dm : DataModel
+        Depends(get_data_model). Default is Depends(get_data_model).
 
-Returns
--------
-ReferenceResult
-    Return value produced by search references.
+    Returns
+    -------
+    ReferenceResult
+        Result search references.
     """
     dict_items = get_references_for_item(item, dm)
 
@@ -279,17 +279,17 @@ async def autocomplete_taxa(
 ) -> dict[str, int]:
     """Simple prefix autocomplete for taxon names (returns {name: id}).
 
-Parameters
-----------
-inp : AutocompleteTaxa
-    Inp.
-dm : DataModel
-    Depends(get_data_model). Default is Depends(get_data_model).
+    Parameters
+    ----------
+    inp : AutocompleteTaxa
+        Inp.
+    dm : DataModel
+        Depends(get_data_model). Default is Depends(get_data_model).
 
-Returns
--------
-dict[str, int]
-    Return value produced by autocomplete taxa.
+    Returns
+    -------
+    dict[str, int]
+        Dictionary containing autocomplete taxa.
     """
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
@@ -301,15 +301,15 @@ async def depiction_structure(
 ) -> dict[str, str]:
     """Return an SVG depiction for a provided structure string.
 
-Parameters
-----------
-depiction_structure : DepictionStructure
-    Depiction structure.
+    Parameters
+    ----------
+    depiction_structure : DepictionStructure
+        Depiction structure.
 
-Returns
--------
-dict[str, str]
-    Return value produced by depiction structure.
+    Returns
+    -------
+    dict[str, str]
+        Dictionary containing depiction structure.
     """
     return {
         "svg": molecule_svg(
@@ -322,8 +322,7 @@ dict[str, str]
 @app.get("/descriptors/")
 @version(1, 0)
 async def get_descriptors():
-    """Return the list of available RDKit descriptor names.
-    """
+    """Return the list of available RDKit descriptor names."""
     from rdkit.Chem import Descriptors
 
     return [desc[0] for desc in Descriptors._descList]
