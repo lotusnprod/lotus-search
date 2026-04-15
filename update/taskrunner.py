@@ -31,14 +31,20 @@ class TaskRunner:
         skip: str | None = None,
         parallel: bool = True,
     ) -> None:
-        """
-        Run tasks in order, optionally skipping or stopping at a task.
+        """Run tasks in order, optionally skipping or stopping at a task.
 
-        :param only:
-        :param stop:
-        :param skip:
-        :param parallel: Set to False in tests so we can get accurate coverage
         :return:
+
+Parameters
+----------
+only : str | None
+    None. Default is None.
+stop : str | None
+    None. Default is None.
+skip : str | None
+    None. Default is None.
+parallel : bool
+    True. Default is True.
         """
         start = time.time()
 

@@ -76,6 +76,16 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
     Skips rows whose taxon/parent fields cannot be parsed as plain integers
     (e.g. internal blank node IRIs like `.well-known/genid/...`).
     Avoids raising stack traces; logs a concise summary instead.
+
+Parameters
+----------
+path : Path
+    Path.
+
+Returns
+-------
+List[DistanceTuple]
+    Return value produced by generate taxon parents with distance.
     """
     graph: DefaultDict[int, List[int]] = defaultdict(list)
 

@@ -55,6 +55,16 @@ def _quick_canonical(smiles: str) -> str | None:
     This is cheaper than full `process_smiles` standardization and helps avoid
     reprocessing between runs when raw input differs but canonical form matches
     a previously processed structure.
+
+Parameters
+----------
+smiles : str
+    Smiles.
+
+Returns
+-------
+str | None
+    Return value produced by  quick canonical.
     """
     try:
         mol = Chem.MolFromSmiles(smiles)

@@ -50,6 +50,19 @@ def run(
       - Switches from the original endpoint to QLever after SWITCH_TO_QLEVER_AFTER attempts.
       - Sleeps SLEEP_TIME seconds between retries while still on the original endpoint
         (i.e., only for attempt < SWITCH_TO_QLEVER_AFTER).
+
+Parameters
+----------
+path : Path
+    Path.
+query_file : Path
+    Query file.
+output_file : Path
+    Output file.
+retry : int
+    Default is 3.
+url : str
+    WD_URL. Default is WD_URL.
     """
     with open(query_file) as qf:
         query = qf.read()

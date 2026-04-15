@@ -44,18 +44,36 @@ class Storage:
             self.create_tables()
 
     def session(self, autoflush: bool = True):
-        """Create a new session."""
+        """Create a new session.
+
+Parameters
+----------
+autoflush : bool
+    True. Default is True.
+        """
         Session = sessionmaker(bind=self.engine, autoflush=autoflush)
         return Session()
 
     def query(self, query: str):  # type: ignore[no-untyped-def]
-        """Execute a query and return all results."""
+        """Execute a query and return all results.
+
+Parameters
+----------
+query : str
+    Query.
+        """
         with self.engine.connect() as connection:
             result = connection.execute(text(query))
         return result.fetchall()
 
     def upsert_journals(self, journals: list[dict[str, object]]) -> None:
-        """Upsert journals data."""
+        """Upsert journals data.
+
+Parameters
+----------
+journals : list[dict[str, object]]
+    Journals.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(journals), self.list_limit // 2):
                 session.execute(
@@ -65,7 +83,13 @@ class Storage:
             session.commit()
 
     def upsert_triplets(self, triplets: list[dict[str, int]]) -> None:
-        """Upsert triplets data."""
+        """Upsert triplets data.
+
+Parameters
+----------
+triplets : list[dict[str, int]]
+    Triplets.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(triplets), self.list_limit // 3):
                 session.execute(
@@ -75,7 +99,13 @@ class Storage:
             session.commit()
 
     def upsert_references(self, references: list[dict[str, object]]) -> None:
-        """Upsert references data."""
+        """Upsert references data.
+
+Parameters
+----------
+references : list[dict[str, object]]
+    References.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(references), self.list_limit // 2):
                 session.execute(
@@ -85,7 +115,13 @@ class Storage:
             session.commit()
 
     def upsert_structures(self, structures: list[dict[str, object]]) -> None:
-        """Upsert structures data."""
+        """Upsert structures data.
+
+Parameters
+----------
+structures : list[dict[str, object]]
+    Structures.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(structures), self.list_limit // 2):
                 session.execute(
@@ -100,6 +136,11 @@ class Storage:
         Previous implementation could hit 'too many SQL variables' when the number
         of SMILES exceeded the backend parameter limit (seen as an OperationalError).
         We now batch both the lookup (IN clause) and the bulk insert.
+
+Parameters
+----------
+descriptors : dict[str, dict]
+    Descriptors.
         """
         if not descriptors:
             return
@@ -152,7 +193,13 @@ class Storage:
             session.commit()
 
     def upsert_taxo_names(self, taxo_names: list[dict[str, object]]) -> None:
-        """Upsert taxonomy names data."""
+        """Upsert taxonomy names data.
+
+Parameters
+----------
+taxo_names : list[dict[str, object]]
+    Taxo names.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_names), self.list_limit // 2):
                 session.execute(
@@ -162,7 +209,13 @@ class Storage:
             session.commit()
 
     def upsert_rank_names(self, ranks_names: list[dict[str, object]]) -> None:
-        """Upsert taxonomy rank names data."""
+        """Upsert taxonomy rank names data.
+
+Parameters
+----------
+ranks_names : list[dict[str, object]]
+    Ranks names.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(ranks_names), self.list_limit // 2):
                 session.execute(
@@ -172,7 +225,13 @@ class Storage:
             session.commit()
 
     def upsert_taxo_ranks(self, taxo_ranks: list[dict[str, int]]) -> None:
-        """Upsert taxonomy ranks data."""
+        """Upsert taxonomy ranks data.
+
+Parameters
+----------
+taxo_ranks : list[dict[str, int]]
+    Taxo ranks.
+        """
         with self.session(autoflush=False) as session:
             for i in range(0, len(taxo_ranks), self.list_limit // 2):
                 session.execute(
@@ -198,6 +257,11 @@ class Storage:
         LOTUS_TAXO_PARENTING_PRAGMAS=1              Apply speed PRAGMAs during load (default 1)
         LOTUS_TAXO_PARENTING_DROP_INDEXES=1         Drop existing indexes before load (default 1)
         LOTUS_TAXO_PARENTING_STATS_EVERY=N          Compute and log rolling r/s (default 20)
+
+Parameters
+----------
+parenting : list[tuple[int, int, int, int]]
+    Parenting.
         """
         if not parenting:
             return
@@ -369,13 +433,43 @@ class Storage:
         # No return value; side effects committed
 
     def get_generic_of_generic(self, out: Any, inp: Any, item: int) -> set[int]:
-        """Get generic items of a generic item."""
+        """Get generic items of a generic item.
+
+Parameters
+----------
+out : Any
+    Out.
+inp : Any
+    Inp.
+item : int
+    Item.
+
+Returns
+-------
+set[int]
+    Return value produced by get generic of generic.
+        """
         with self.session() as session:
             result = session.query(out).filter(inp == item).distinct()
             return {row[0] for row in result}
 
     def get_generics_of_generics(self, out: Any, inp: Any, items: set[int]) -> set[int]:
-        """Get generics of multiple generic items."""
+        """Get generics of multiple generic items.
+
+Parameters
+----------
+out : Any
+    Out.
+inp : Any
+    Inp.
+items : set[int]
+    Items.
+
+Returns
+-------
+set[int]
+    Return value produced by get generics of generics.
+        """
         items_set = list(items)
         output: set[int] = set()
 
@@ -394,7 +488,22 @@ class Storage:
         structure_ids: set[int] | None,
         taxon_ids: set[int] | None,
     ) -> set[tuple[int, int, int]]:
-        """Get triplets for given reference, structure, and taxon IDs."""
+        """Get triplets for given reference, structure, and taxon IDs.
+
+Parameters
+----------
+reference_ids : set[int] | None
+    Reference ids.
+structure_ids : set[int] | None
+    Structure ids.
+taxon_ids : set[int] | None
+    Taxon ids.
+
+Returns
+-------
+set[tuple[int, int, int]]
+    Return value produced by get triplets for.
+        """
         with self.session() as session:
             filters = []
             if reference_ids is not None:
@@ -415,13 +524,15 @@ class Storage:
             return {(row[0], row[1], row[2]) for row in result}
 
     def create_tables(self):
-        """Create database tables and initial schema version entry."""
+        """Create database tables and initial schema version entry.
+        """
         Base.metadata.create_all(self.engine)
         with self.session() as session:
             session.add(SchemaVersion(version=self.SCHEMA_VERSION))
             session.commit()
 
     def drop_and_create_tables(self):
-        """Drop and recreate all database tables."""
+        """Drop and recreate all database tables.
+        """
         Base.metadata.drop_all(self.engine)
         self.create_tables()

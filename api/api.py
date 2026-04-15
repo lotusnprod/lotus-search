@@ -39,6 +39,11 @@ def get_data_model() -> DataModel:
     """Return the singleton DataModel instance.
 
     This indirection allows tests to inject a controlled DataModel.
+
+Returns
+-------
+DataModel
+    Return value produced by get data model.
     """
     global data_model
     return data_model  # type: ignore[return-value]
@@ -70,6 +75,16 @@ async def lifespan(_: FastAPI):  # type: ignore[override]
     The DataModel loads all required databases on startup and is cleared
     on shutdown to free resources. This maintains prior behavior while
     making lifecycle explicit.
+
+Parameters
+----------
+_ : FastAPI
+    .
+
+Yields
+------
+object
+    Generated values.
     """
     global data_model
     data_model = DataModel()
@@ -87,6 +102,18 @@ async def search_triplets(
 
     Returned fields mirror existing behavior. If modeEnum == 'objects',
     expanded reference/structure/taxon objects are included.
+
+Parameters
+----------
+item : Item
+    Item.
+dm : DataModel
+    Depends(get_data_model). Default is Depends(get_data_model).
+
+Returns
+-------
+TripletResult
+    Return value produced by search triplets.
     """
     triplets = get_triplets_for_item(item, dm)
 
@@ -132,6 +159,18 @@ async def search_structures(
 
     If option.sdf is true an SDF block is returned. If modeEnum == 'objects'
     structure objects are expanded; else only IDs are returned.
+
+Parameters
+----------
+item : Item
+    Item.
+dm : DataModel
+    Depends(get_data_model). Default is Depends(get_data_model).
+
+Returns
+-------
+StructureResult
+    Return value produced by search structures.
     """
     dict_items = get_structures_for_item(item, dm)
 
@@ -164,7 +203,20 @@ async def search_taxa(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> TaxonResult:
-    """Search taxa constrained by taxon / structure / reference inputs."""
+    """Search taxa constrained by taxon / structure / reference inputs.
+
+Parameters
+----------
+item : Item
+    Item.
+dm : DataModel
+    Depends(get_data_model). Default is Depends(get_data_model).
+
+Returns
+-------
+TaxonResult
+    Return value produced by search taxa.
+    """
     dict_items = get_taxa_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -188,7 +240,20 @@ async def search_references(
     item: Item,
     dm: DataModel = Depends(get_data_model),
 ) -> ReferenceResult:
-    """Search references constrained by reference / structure / taxon inputs."""
+    """Search references constrained by reference / structure / taxon inputs.
+
+Parameters
+----------
+item : Item
+    Item.
+dm : DataModel
+    Depends(get_data_model). Default is Depends(get_data_model).
+
+Returns
+-------
+ReferenceResult
+    Return value produced by search references.
+    """
     dict_items = get_references_for_item(item, dm)
 
     if item.modeEnum == "objects":
@@ -212,7 +277,20 @@ async def autocomplete_taxa(
     inp: AutocompleteTaxa,
     dm: DataModel = Depends(get_data_model),
 ) -> dict[str, int]:
-    """Simple prefix autocomplete for taxon names (returns {name: id})."""
+    """Simple prefix autocomplete for taxon names (returns {name: id}).
+
+Parameters
+----------
+inp : AutocompleteTaxa
+    Inp.
+dm : DataModel
+    Depends(get_data_model). Default is Depends(get_data_model).
+
+Returns
+-------
+dict[str, int]
+    Return value produced by autocomplete taxa.
+    """
     return dm.get_dict_of_taxa_from_name(inp.taxon_name)
 
 
@@ -221,7 +299,18 @@ async def autocomplete_taxa(
 async def depiction_structure(
     depiction_structure: DepictionStructure,
 ) -> dict[str, str]:
-    """Return an SVG depiction for a provided structure string."""
+    """Return an SVG depiction for a provided structure string.
+
+Parameters
+----------
+depiction_structure : DepictionStructure
+    Depiction structure.
+
+Returns
+-------
+dict[str, str]
+    Return value produced by depiction structure.
+    """
     return {
         "svg": molecule_svg(
             depiction_structure.structure,
@@ -233,7 +322,8 @@ async def depiction_structure(
 @app.get("/descriptors/")
 @version(1, 0)
 async def get_descriptors():
-    """Return the list of available RDKit descriptor names."""
+    """Return the list of available RDKit descriptor names.
+    """
     from rdkit.Chem import Descriptors
 
     return [desc[0] for desc in Descriptors._descList]

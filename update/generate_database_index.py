@@ -61,6 +61,16 @@ def _read_references_and_journals(path: Path) -> tuple[list[dict], list[dict]]:
 
     Skips malformed / short rows instead of raising IndexError / ValueError.
     Preserves last occurrence for duplicate reference IDs (prior behavior).
+
+Parameters
+----------
+path : Path
+    Path.
+
+Returns
+-------
+tuple[list[dict], list[dict]]
+    Return value produced by  read references and journals.
     """
     ref_path = path / "references.csv"
     if not ref_path.exists():

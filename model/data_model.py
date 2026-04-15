@@ -68,6 +68,11 @@ class DataModel:
         instances (with & without explicit hydrogens). They are reconstructed
         here to avoid re-computation. Cached at the class level to reuse
         across multiple DataModel instances (e.g. in tests).
+
+Parameters
+----------
+path : Path
+    Path.
         """
         with open(path / "database_chemo.pkl", "rb") as f:
             data = pickle.load(f)
@@ -84,14 +89,26 @@ class DataModel:
     @classmethod
     @functools.cache
     def load_sdf_data(cls, path: Path):
-        """Memory-map the main SDF file (heavy file, so mmap is efficient)."""
+        """Memory-map the main SDF file (heavy file, so mmap is efficient).
+
+Parameters
+----------
+path : Path
+    Path.
+        """
         mapped_sdf = mmap_file(path / "lotus.sdf")
         return mapped_sdf
 
     @classmethod
     @functools.cache
     def load_sdf_ranges(cls, sdf):  # type: ignore[no-untyped-def]
-        """Pre-compute (and cache) byte ranges for each SDF record."""
+        """Pre-compute (and cache) byte ranges for each SDF record.
+
+Parameters
+----------
+sdf : Any
+    Sdf.
+        """
         ranges = find_structures_bytes_ranges(sdf)
         return ranges
 
@@ -103,6 +120,16 @@ class DataModel:
         """Return TaxonObject mapping for provided taxon IDs.
 
         Returns an empty dict if none found.
+
+Parameters
+----------
+tids : Iterable[int]
+    Tids.
+
+Returns
+-------
+dict[int, TaxonObject]
+    Return value produced by get taxon object from dict of tids.
         """
         with self.storage.session() as session:
             result = (
@@ -127,6 +154,18 @@ class DataModel:
         """Return IDs of taxa whose names match the query.
 
         If exact is False a case-sensitive SQL LIKE %query% is used.
+
+Parameters
+----------
+query : str
+    Query.
+exact : bool
+    False. Default is False.
+
+Returns
+-------
+set[int]
+    Return value produced by get taxa with name matching.
         """
         with self.storage.session() as session:
             matcher = (
@@ -142,7 +181,18 @@ class DataModel:
             return None if result is None else result.name
 
     def resolve_taxon(self, query: str) -> Any:
-        """Call Global Names resolver (best-effort, network errors swallowed)."""
+        """Call Global Names resolver (best-effort, network errors swallowed).
+
+Parameters
+----------
+query : str
+    Query.
+
+Returns
+-------
+Any
+    Return value produced by resolve taxon.
+        """
         payload = {
             "nameStrings": [query],
             "withVernaculars": False,
@@ -177,7 +227,13 @@ class DataModel:
     # --------------------------- Structureonomy -----------------------------
     @functools.cache
     def structures_set(self) -> set[int]:
-        """Return a cached set of all known structure WIDs."""
+        """Return a cached set of all known structure WIDs.
+
+Returns
+-------
+set[int]
+    Return value produced by structures set.
+        """
         return set(self.db["structure_wid"])
 
     def get_structure_object_from_sid(self, sid: int) -> dict | None:  # legacy
@@ -187,7 +243,18 @@ class DataModel:
         self,
         sids: Iterable[int],
     ) -> dict[str, list[Any]]:
-        """Return descriptor name -> list of values for given structure IDs."""
+        """Return descriptor name -> list of values for given structure IDs.
+
+Parameters
+----------
+sids : Iterable[int]
+    Sids.
+
+Returns
+-------
+dict[str, list[Any]]
+    Return value produced by get structure descriptors from dict of sids.
+        """
         with self.storage.session() as session:
             result = (
                 session
@@ -209,7 +276,18 @@ class DataModel:
         self,
         sids: Iterable[int],
     ) -> str:
-        """Return concatenated SDF blocks for the provided structure IDs."""
+        """Return concatenated SDF blocks for the provided structure IDs.
+
+Parameters
+----------
+sids : Iterable[int]
+    Sids.
+
+Returns
+-------
+str
+    Return value produced by get structure sdf from dict of sids.
+        """
         ranges = self.sdf_ranges
         mm = self.sdf
         return "".join(
@@ -221,7 +299,20 @@ class DataModel:
         sids: Iterable[int],
         return_descriptors: bool = False,
     ) -> dict[int, StructureObject]:
-        """Return StructureObject mapping (optionally with descriptors)."""
+        """Return StructureObject mapping (optionally with descriptors).
+
+Parameters
+----------
+sids : Iterable[int]
+    Sids.
+return_descriptors : bool
+    False. Default is False.
+
+Returns
+-------
+dict[int, StructureObject]
+    Return value produced by get structure object from dict of sids.
+        """
         with self.storage.session() as session:
             descriptors: dict[str, list[Any]] = {}
             if return_descriptors:
@@ -268,6 +359,16 @@ class DataModel:
         """Return structure IDs matching descriptor min/max constraints.
 
         Input descriptors dict uses the pattern <DescriptorName>_min / _max.
+
+Parameters
+----------
+descriptors : dict
+    Descriptors.
+
+Returns
+-------
+set[int]
+    Return value produced by get structure with descriptors.
         """
         with self.storage.session() as session:
             query = session.query(StructuresDescriptors.structure_id)
@@ -312,7 +413,13 @@ class DataModel:
             return {row[0] for row in result}
 
     def structure_get_mol_fp_and_explicit(self, query: str):  # type: ignore[no-untyped-def]
-        """Return (mol, fingerprint, explicit_h_present) for a SMILES query."""
+        """Return (mol, fingerprint, explicit_h_present) for a SMILES query.
+
+Parameters
+----------
+query : str
+    Query.
+        """
         explicit_h = "[H]" in query
         p = Chem.SmilesParserParams()
         p.removeHs = not explicit_h
@@ -323,7 +430,18 @@ class DataModel:
         return mol, fp, explicit_h
 
     def structure_search(self, query: str) -> list[tuple[int, float]]:
-        """Similarity search (Tanimoto) returning list of (WID, score)."""
+        """Similarity search (Tanimoto) returning list of (WID, score).
+
+Parameters
+----------
+query : str
+    Query.
+
+Returns
+-------
+list[tuple[int, float]]
+    Return value produced by structure search.
+        """
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
         db = (
             self.db["structure_sim_h_fps"]
@@ -345,6 +463,18 @@ class DataModel:
 
         The tanimoto score is computed between the query fingerprint and the
         stored fingerprint for each match; original ordering preserved.
+
+Parameters
+----------
+query : str
+    Query.
+chirality : bool
+    False. Default is False.
+
+Returns
+-------
+list[tuple[int, float]]
+    Return value produced by structure search substructure.
         """
         mol, fp, explicit_h = self.structure_get_mol_fp_and_explicit(query)
         if explicit_h:
@@ -367,7 +497,20 @@ class DataModel:
         return out
 
     def structure_get_tsv_from_scores(self, wids: list[int], scores) -> str:  # type: ignore[no-untyped-def]
-        """Return TSV string for similarity results (Wikidata URL, score, SMILES)."""
+        """Return TSV string for similarity results (Wikidata URL, score, SMILES).
+
+Parameters
+----------
+wids : list[int]
+    Wids.
+scores : Any
+    Scores.
+
+Returns
+-------
+str
+    Return value produced by structure get tsv from scores.
+        """
         out = "Wikidata link\tSimilarity\tSmiles\n"
         structure_objects = self.get_structure_object_from_dict_of_sids(wids)
         smiles_dict = {

@@ -37,7 +37,13 @@ def fingerprint(mol):
 
 # from https://greglandrum.github.io/rdkit-blog/posts/2022-12-23-descriptor-tutorial.html
 def get_mol_descriptors_rdkit(mol):
-    """calculate the full list of descriptors for a molecule."""
+    """calculate the full list of descriptors for a molecule.
+
+Parameters
+----------
+mol : Any
+    Mol.
+    """
     res = {}
     for nm, fn in Descriptors._descList:
         # some of the descriptor functions can throw errors if they fail, catch those here:

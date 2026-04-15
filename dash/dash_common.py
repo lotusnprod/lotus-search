@@ -23,7 +23,20 @@ cache = Cache(
 
 @cache.memoize(timeout=3600)
 def get_svg_of_wid(j: int, molecule: str | None = None) -> str:
-    """Return SVG (as text) for structure WID, optionally with a highlight molecule."""
+    """Return SVG (as text) for structure WID, optionally with a highlight molecule.
+
+Parameters
+----------
+j : int
+    J.
+molecule : str | None
+    None. Default is None.
+
+Returns
+-------
+str
+    Return value produced by get svg of wid.
+    """
     return molecule_svg(dm.get_structure_object_from_sid(j), molecule)
 
 
