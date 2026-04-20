@@ -61,14 +61,14 @@ repos:
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.10
+    rev: v0.15.11
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.9.17
+    rev: v0.9.19
     hooks:
       - id: tombi-format
       - id: tombi-lint
@@ -86,7 +86,7 @@ repos:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.6
+    rev: 0.11.7
     hooks:
       - id: uv-lock
   - repo: local
