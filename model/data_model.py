@@ -133,7 +133,8 @@ class DataModel:
         """
         with self.storage.session() as session:
             result = (
-                session.query(
+                session
+                .query(
                     TaxoNames.id,
                     TaxoNames.name,
                 )
@@ -256,7 +257,8 @@ class DataModel:
         """
         with self.storage.session() as session:
             result = (
-                session.query(
+                session
+                .query(
                     StructuresDescriptors.descriptor_name,
                     StructuresDescriptors.descriptor_value,
                 )
@@ -322,7 +324,8 @@ class DataModel:
             for i in range(0, len(sids_list), CHUNK_SIZE):
                 chunk = sids_list[i : i + CHUNK_SIZE]
                 result = (
-                    session.query(
+                    session
+                    .query(
                         Structures.id,
                         Structures.smiles,
                         Structures.smiles_no_stereo,
@@ -532,7 +535,8 @@ class DataModel:
     ) -> dict[int, ReferenceObject]:
         with self.storage.session() as session:
             result = (
-                session.query(
+                session
+                .query(
                     References.id,
                     References.doi,
                     References.title,
@@ -593,7 +597,8 @@ class DataModel:
     def get_references_with_journal(self, journal_title: str) -> set[int]:
         with self.storage.session() as session:
             result = (
-                session.query(References.id)
+                session
+                .query(References.id)
                 .filter(
                     References.journal.in_(
                         session.query(Journals.id).filter(
@@ -720,7 +725,8 @@ class DataModel:
         with self.storage.session() as session:
             # Recursive query to fetch all children for the given taxon ID
             recursive_query = (
-                session.query(TaxoParents.child_id)
+                session
+                .query(TaxoParents.child_id)
                 .filter(TaxoParents.parent_id == tid)
                 .cte(name="recursive_query", recursive=True)
             )
