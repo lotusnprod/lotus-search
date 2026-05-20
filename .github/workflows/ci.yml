@@ -32,7 +32,7 @@ jobs:
 
       - name: Get Cover
         if: github.event_name == 'pull_request'
-        uses: orgoro/coverage@v3.3
+        uses: orgoro/coverage@ca0c362dc1a4f100447309405e6dfea47e251495
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
