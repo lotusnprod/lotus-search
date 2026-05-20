@@ -61,19 +61,19 @@ repos:
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.13
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.11.2
+    rev: v0.11.5
     hooks:
       - id: tombi-format
       - id: tombi-lint
   - repo: https://github.com/crate-ci/typos
-    rev: v1.46.1
+    rev: v1.46.2
     hooks:
       - id: typos
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -81,12 +81,12 @@ repos:
     hooks:
       - id: shellcheck
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 4.1.0
+    rev: 4.2.1
     hooks:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.14
+    rev: 0.11.15
     hooks:
       - id: uv-lock
   - repo: local
@@ -97,3 +97,8 @@ repos:
         entry: ty check
         exclude: '^(?!.*\.py$).*$'
         additional_dependencies: [ty]
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.25.2
+    hooks:
+      - id: zizmor
+        entry: zizmor --fix=all .

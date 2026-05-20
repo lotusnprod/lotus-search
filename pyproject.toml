@@ -1,7 +1,3 @@
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
 [project]
 name = "lotus_search"
 version = "0.1.2"
@@ -40,17 +36,25 @@ dependencies = [
   "gunicorn>=26.0.0",
   "orjson>=3.11.9",
   "pydantic>=2.13.4",
-  "rdkit>=2026.3.1",
-  "requests>=2.34.0",
+  "rdkit>=2026.3.2",
+  "requests>=2.34.2",
   "sqlalchemy>=2.0.49",
   "tqdm>=4.67.3",
-  "uvicorn>=0.46.0",
+  "uvicorn>=0.47.0",
 ]
+
+[project.urls]
+documentation = "https://github.com/lotusnprod/lotus-search"
+homepage = "https://search.nprod.net"
+repository = "https://github.com/lotusnprod/lotus-search"
+
+[project.scripts]
+start = "app:main"
 
 [dependency-groups]
 dev = [
   "coverage>=7.14.0",
-  "prek>=0.3.13",
+  "prek>=0.4.1",
   "pytest>=9.0.3",
   "pytest-asyncio>=1.3.0",
   "pytest-cov>=7.1.0",
@@ -59,13 +63,9 @@ dev = [
   "requests-mock>=1.12.1",
 ]
 
-[project.scripts]
-start = "app:main"
-
-[project.urls]
-documentation = "https://github.com/lotusnprod/lotus-search"
-homepage = "https://search.nprod.net"
-repository = "https://github.com/lotusnprod/lotus-search"
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.coverage.report]
 skip_empty = true
@@ -74,8 +74,8 @@ skip_empty = true
 branch = true
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.ruff]
 fix = true
