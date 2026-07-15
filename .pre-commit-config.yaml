@@ -40,7 +40,7 @@ repos:
         additional_dependencies: [deptry]
         exclude: '^(?!.*\.py$).*$'
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
+    rev: 0.37.4
     hooks:
       - id: check-github-workflows
       - id: check-taskfile
@@ -61,20 +61,20 @@ repos:
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.15
+    rev: v0.15.21
     hooks:
       - id: ruff-check
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v1.1.1
+    rev: v1.2.0
     hooks:
       - id: tombi-format
         exclude: ^uv\.lock$
       - id: tombi-lint
   - repo: https://github.com/crate-ci/typos
-    rev: v1.47.2
+    rev: v1.48.0
     hooks:
       - id: typos
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -82,12 +82,12 @@ repos:
     hooks:
       - id: shellcheck
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 4.2.1
+    rev: 4.2.2
     hooks:
       - id: sqlfluff-fix
       - id: sqlfluff-lint
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.19
+    rev: 0.11.28
     hooks:
       - id: uv-lock
   - repo: local
@@ -99,7 +99,7 @@ repos:
         exclude: '^(?!.*\.py$).*$'
         additional_dependencies: [ty]
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.2
+    rev: v1.27.0
     hooks:
       - id: zizmor
         entry: zizmor --fix=all .

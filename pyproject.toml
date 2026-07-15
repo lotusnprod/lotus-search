@@ -21,26 +21,25 @@ classifiers = [
   "Framework :: Sphinx",
   "Framework :: tox",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-  "dash>=4.2.0",
+  "dash>=4.4.0",
   "dash-bootstrap-components>=2.0.4",
-  "fastapi>=0.136.3",
+  "fastapi>=0.139.0",
   "fastapi-versioning>=0.10.0",
-  "flask-caching>=2.4.0",
+  "flask-caching>=2.4.1",
   "gunicorn>=26.0.0",
   "orjson>=3.11.9",
   "pydantic>=2.13.4",
-  "rdkit>=2026.3.2",
+  "rdkit>=2026.3.3",
   "requests>=2.34.2",
-  "sqlalchemy>=2.0.50",
-  "tqdm>=4.67.3",
-  "uvicorn>=0.49.0",
+  "sqlalchemy>=2.0.51",
+  "tqdm>=4.68.4",
+  "uvicorn>=0.51.0",
 ]
 
 [project.urls]
@@ -53,9 +52,9 @@ start = "app:main"
 
 [dependency-groups]
 dev = [
-  "coverage>=7.14.1",
-  "prek>=0.4.4",
-  "pytest>=9.0.3",
+  "coverage>=7.15.1",
+  "prek>=0.4.9",
+  "pytest>=9.1.1",
   "pytest-asyncio>=1.4.0",
   "pytest-cov>=7.1.0",
   "pytest-mock>=3.15.1",
@@ -64,8 +63,8 @@ dev = [
 ]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
 
 [tool.coverage.report]
 skip_empty = true
@@ -85,3 +84,14 @@ preview = true
 
 [tool.ty.rules]
 unresolved-import = "ignore"
+
+[tool.uv.build-backend]
+module-root = "."
+module-name = [
+  "api",
+  "benchmarks",
+  "model",
+  "plotly_dash_ketcher",
+  "storage",
+  "update"
+]
