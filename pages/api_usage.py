@@ -1,5 +1,6 @@
-import dash
 import dash_bootstrap_components as dbc
+
+import dash
 from dash import dcc
 
 # Register page (exposed in top navigation)

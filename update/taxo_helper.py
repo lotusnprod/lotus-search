@@ -4,7 +4,6 @@ import os
 import time
 from collections import defaultdict, deque
 from pathlib import Path
-from typing import DefaultDict, Deque, Dict, List, Tuple, Set
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,7 +15,7 @@ logging.basicConfig(
 __all__ = ["generate_taxon_parents_with_distance"]
 
 # Type alias for readability
-DistanceTuple = Tuple[int, int, int, int]
+DistanceTuple = tuple[int, int, int, int]
 
 # Environment knobs (non-breaking defaults)
 _FAST_FLAG = "LOTUS_FAST_TAXO"
@@ -70,7 +69,7 @@ def _format_eta(elapsed: float, done: int, total: int) -> str:
     return f"ETA:{remaining / 3600:0.1f}h"
 
 
-def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
+def generate_taxon_parents_with_distance(path: Path) -> list[DistanceTuple]:
     """Compute (id, source_taxon, parent_taxon, distance) tuples for all ancestry paths.
 
         Skips rows whose taxon/parent fields cannot be parsed as plain integers
@@ -87,7 +86,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
     List[DistanceTuple]
         List of taxon parents with distance.
     """
-    graph: DefaultDict[int, List[int]] = defaultdict(list)
+    graph: defaultdict[int, list[int]] = defaultdict(list)
 
     max_depth = _parse_max_depth()
     sample_limit = 0
@@ -95,7 +94,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
         sample_limit = int(os.getenv(_SAMPLE_SKIPS_ENV, "0"))
     except ValueError:
         sample_limit = 0
-    skipped_samples: List[str] = []
+    skipped_samples: list[str] = []
 
     t_start_read = _now()
     csv_path = path / "taxa_parents.csv"
@@ -113,7 +112,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
     # Build adjacency list (child -> list[parent]) ensuring uniqueness per child
     with open(csv_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        per_child_seen: Dict[int, Set[int]] = defaultdict(set)
+        per_child_seen: dict[int, set[int]] = defaultdict(set)
         for row in reader:
             processed_rows += 1
             taxon_raw = row.get("taxon")
@@ -165,8 +164,8 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
             f", max_depth={max_depth}" if max_depth else "",
         )
         t_fast_start = _now()
-        cache: Dict[int, Dict[int, int]] = {}
-        visiting: Set[int] = set()
+        cache: dict[int, dict[int, int]] = {}
+        visiting: set[int] = set()
         total_sources = len(graph)
         progress_on = _progress_enabled()
         progress_interval = _progress_interval()
@@ -174,7 +173,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
         total_ancestors = 0
         start_time = time.perf_counter()
 
-        def ancestors(node: int) -> Dict[int, int]:
+        def ancestors(node: int) -> dict[int, int]:
             if node in cache:
                 return cache[node]
             if node in visiting:
@@ -184,7 +183,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
                 )
                 return {}
             visiting.add(node)
-            acc: Dict[int, int] = {}
+            acc: dict[int, int] = {}
             for parent in graph.get(node, ()):  # immediate parents
                 if max_depth is not None and 1 > max_depth:
                     continue
@@ -201,7 +200,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
             cache[node] = acc
             return acc
 
-        distances: List[DistanceTuple] = []
+        distances: list[DistanceTuple] = []
         distance_id = 1
         for source_node in graph.keys():
             and_map = ancestors(source_node)
@@ -242,7 +241,7 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
 
     # Original BFS implementation
     t_bfs_start = _now()
-    distances: List[DistanceTuple] = []
+    distances: list[DistanceTuple] = []
     distance_id = 1
     total_sources = len(graph)
     progress_on = _progress_enabled()
@@ -259,8 +258,8 @@ def generate_taxon_parents_with_distance(path: Path) -> List[DistanceTuple]:
             processed_sources += 1
             continue
         prev_len = len(distances)
-        visited: Dict[int, int] = {source_node: 0}
-        queue: Deque[Tuple[int, int]] = deque([(source_node, 0)])
+        visited: dict[int, int] = {source_node: 0}
+        queue: deque[tuple[int, int]] = deque([(source_node, 0)])
         append_distance = distances.append
         get_neighbors = graph.get
         while queue:

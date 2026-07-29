@@ -29,7 +29,7 @@ classifiers = [
 dependencies = [
   "dash>=4.4.1",
   "dash-bootstrap-components>=2.0.4",
-  "fastapi>=0.139.2",
+  "fastapi>=0.141.1",
   "fastapi-versioning>=0.10.0",
   "flask-caching>=2.4.1",
   "gunicorn>=26.0.0",
@@ -38,8 +38,8 @@ dependencies = [
   "rdkit>=2026.3.4",
   "requests>=2.34.2",
   "sqlalchemy>=2.0.51",
-  "tqdm>=4.69.0",
-  "uvicorn>=0.51.0",
+  "tqdm>=4.70.0",
+  "uvicorn>=0.52.0",
 ]
 
 [project.urls]
@@ -53,7 +53,7 @@ start = "app:main"
 [dependency-groups]
 dev = [
   "coverage>=7.15.2",
-  "prek>=0.4.10",
+  "prek>=0.4.11",
   "pytest>=9.1.1",
   "pytest-asyncio>=1.4.0",
   "pytest-cov>=7.1.0",

@@ -256,7 +256,7 @@ def run(path: Path) -> None:
         for row in reader:
             try:
                 ranks_names.append({"id": int(row["rank"]), "name": row["rankLabel"]})
-            except (ValueError, KeyError):
+            except ValueError, KeyError:
                 continue
     logging.info(" Processed rank names")
 
@@ -265,10 +265,10 @@ def run(path: Path) -> None:
         reader = csv.DictReader(f)
         for row in reader:
             try:
-                taxon_id = int(row["taxon"])  # noqa: F841 (document structure for future multi-rank support)
-                rank_value = int(row["taxon_rank"])  # noqa: F841
+                taxon_id = int(row["taxon"])
+                rank_value = int(row["taxon_rank"])
                 taxon_ranks_dict[taxon_id] = {rank_value}
-            except (ValueError, KeyError):
+            except ValueError, KeyError:
                 continue
     taxo_ranks = [
         {"id": taxon, "rank_id": rank}

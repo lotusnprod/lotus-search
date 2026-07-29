@@ -27,5 +27,5 @@ class Task:
 
         logging.info(f"Started {self.name} group={self.group.name}")
         start_task = time.time()
-        self.f(**{**self.params, **{"path": path}})
+        self.f(**{**self.params, "path": path})
         logging.info(f" Task {self.name} took {time.time() - start_task:.2f}s")

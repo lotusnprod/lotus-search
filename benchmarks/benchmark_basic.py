@@ -19,7 +19,7 @@ from pathlib import Path
 from model.data_model import DataModel
 
 
-def time_block(label: str, func, *args, **kwargs):  # noqa: ANN001, D401
+def time_block(label: str, func, *args, **kwargs):
     start = time.perf_counter()
     result = func(*args, **kwargs)
     duration = time.perf_counter() - start

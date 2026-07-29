@@ -18,11 +18,11 @@ class TaskRunner:
         group = None
         for task in self.tasks:
             if task.group != group:
-                print("")
+                print()
                 group = task.group
                 print(group.name, end=" > ")
             print(task.name, end=" ")
-        print("")
+        print()
 
     def run_tasks(
         self,

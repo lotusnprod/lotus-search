@@ -4,8 +4,8 @@ import multiprocessing
 import pickle  # S403
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from rdkit import Chem
-from rdkit import RDLogger
+
+from rdkit import Chem, RDLogger
 from rdkit.Chem import Mol, rdSubstructLibrary
 from tqdm import tqdm
 
