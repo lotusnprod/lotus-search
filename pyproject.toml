@@ -35,11 +35,11 @@ dependencies = [
   "gunicorn>=26.0.0",
   "orjson>=3.11.9",
   "pydantic>=2.13.4",
-  "rdkit>=2026.3.4",
+  "rdkit>=2026.3.5",
   "requests>=2.34.2",
   "sqlalchemy>=2.0.51",
   "tqdm>=4.70.0",
-  "uvicorn>=0.52.0",
+  "uvicorn>=0.52.1",
 ]
 
 [project.urls]
@@ -52,8 +52,8 @@ start = "app:main"
 
 [dependency-groups]
 dev = [
-  "coverage>=7.15.2",
-  "prek>=0.4.11",
+  "coverage>=7.15.3",
+  "prek>=0.4.12",
   "pytest>=9.1.1",
   "pytest-asyncio>=1.4.0",
   "pytest-cov>=7.1.0",
