@@ -33,13 +33,13 @@ dependencies = [
   "fastapi-versioning>=0.10.0",
   "flask-caching>=2.4.1",
   "gunicorn>=26.0.0",
-  "orjson>=3.11.9",
+  "orjson>=3.12.0",
   "pydantic>=2.13.4",
   "rdkit>=2026.3.5",
   "requests>=2.34.2",
-  "sqlalchemy>=2.0.51",
+  "sqlalchemy>=2.0.52",
   "tqdm>=4.70.0",
-  "uvicorn>=0.52.1",
+  "uvicorn>=0.52.3",
 ]
 
 [project.urls]
@@ -52,8 +52,8 @@ start = "app:main"
 
 [dependency-groups]
 dev = [
-  "coverage>=7.15.3",
-  "prek>=0.4.12",
+  "coverage>=7.15.4",
+  "prek>=0.4.14",
   "pytest>=9.1.1",
   "pytest-asyncio>=1.4.0",
   "pytest-cov>=7.1.0",
@@ -87,11 +87,4 @@ unresolved-import = "ignore"
 
 [tool.uv.build-backend]
 module-root = "."
-module-name = [
-  "api",
-  "benchmarks",
-  "model",
-  "plotly_dash_ketcher",
-  "storage",
-  "update"
-]
+module-name = ["api", "benchmarks", "model", "plotly_dash_ketcher", "storage", "update"]
