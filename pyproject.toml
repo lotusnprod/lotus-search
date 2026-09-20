@@ -31,15 +31,15 @@ dependencies = [
   "dash-bootstrap-components>=2.0.4",
   "fastapi>=0.141.1",
   "fastapi-versioning>=0.10.0",
-  "flask-caching>=2.4.1",
-  "gunicorn>=26.0.0",
+  "flask-caching>=2.5.1",
+  "gunicorn>=26.2.0",
   "orjson>=3.12.0",
-  "pydantic>=2.13.4",
-  "rdkit>=2026.3.5",
+  "pydantic>=2.13.5",
+  "rdkit>=2026.3.6",
   "requests>=2.34.2",
-  "sqlalchemy>=2.0.52",
-  "tqdm>=4.70.0",
-  "uvicorn>=0.52.3",
+  "sqlalchemy>=2.0.54",
+  "tqdm>=4.70.1",
+  "uvicorn>=0.53.0",
 ]
 
 [project.urls]
@@ -52,8 +52,8 @@ start = "app:main"
 
 [dependency-groups]
 dev = [
-  "coverage>=7.15.4",
-  "prek>=0.4.14",
+  "coverage>=7.16.1",
+  "prek>=0.5.3",
   "pytest>=9.1.1",
   "pytest-asyncio>=1.4.0",
   "pytest-cov>=7.1.0",
