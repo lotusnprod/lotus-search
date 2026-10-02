@@ -1,5 +1,9 @@
 # README
 
+> [!IMPORTANT]
+> **This repository has moved.** Development continues at **[github.com/lotus-initiative](https://github.com/lotus-initiative)**.
+> This repo is archived and kept only for backward compatibility. Please head over there for the latest code, issues, and releases.
+
 ## Description
 
 This application is available on [Nprod.net](https://search.nprod.net)
